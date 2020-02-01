@@ -1,0 +1,142 @@
+﻿<Window x:Class="PhotoViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Icon="/Images/PhotoExifViewerIcon.ico"
+        ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
+        Title="Kleon Photograph Viewer" Height="890" Width="1240" MinHeight="890" MinWidth="1240">
+    <Window.Background>
+        <SolidColorBrush Color="#F0F0F0"/>
+    </Window.Background>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Rectangle Grid.Row="0" Fill="LightSkyBlue"/>
+        <TextBlock Grid.Row="0" Text="Kleon Photograph Viewer" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="28" FontWeight="Medium"/>
+        <Grid Grid.Row="0" Margin="10,0" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ReferenceButtonCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/Folder_small.png" HorizontalAlignment="Center" Height="20"/>
+                    <TextBlock Text="開く" FontSize="16" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="1" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ExifDeleteButtonCommand}" IsEnabled="{Binding ExifDeleteButtonIsEnable}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/ExifCleanIcon.png" HorizontalAlignment="Center" Height="20"/>
+                    <TextBlock Text="削除" FontSize="16" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="2" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding GearButtonCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/Gear_small.png" HorizontalAlignment="Center" Height="20"/>
+                    <TextBlock Text="設定" FontSize="16" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.3*"/>
+                <ColumnDefinition Width="0.7*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 右側のレイアウト -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="410"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <GroupBox Grid.Row="0" Margin="10,0" BorderBrush="LightGray" BorderThickness="1.5" Header="Exif情報" FontSize="16" FontWeight="Medium">
+                    <DataGrid Margin="5,5" BorderBrush="LightGray" BorderThickness="1"/>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Margin="10,5" BorderBrush="LightGray" BorderThickness="1.5" Header="フォルダ選択" FontSize="16" FontWeight="Medium">
+                    
+                </GroupBox>
+            </Grid>
+            <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="0 0 1 0"/>
+            
+            <!-- 左側のレイアウト -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="660"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="5,0" Orientation="Horizontal">
+                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="フォルダパス："/>
+                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectedFolderPath}"/>
+                </StackPanel>
+
+                <Border Grid.Row="1" BorderBrush="DarkGray" BorderThickness="0,1,0,1">
+                    <ListBox x:Name="mediaListBox" ItemsSource="{Binding MediaInfoList}" SelectedItem="{Binding SelectedMedia}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
+                             VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderBrush="{x:Null}">
+                        <ListBox.Resources>
+                            <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" >
+                                <ContextMenu.ItemContainerStyle>
+                                    <Style TargetType="{x:Type MenuItem}">
+                                        <Setter Property="Header" Value="{Binding Path=DisplayName}"/>
+                                        <Setter Property="Icon" Value="{DynamicResource Icon}"/>
+                                    </Style>
+                                </ContextMenu.ItemContainerStyle>
+                            </ContextMenu>
+                            <Image x:Key="Icon" Source="{Binding Path=ContextIcon}" x:Shared="false"/>
+                        </ListBox.Resources>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="ToolTip" Value="{Binding FileName}"/>
+                                <Setter Property="ContextMenu" Value="{StaticResource ListBoxItemMenu}"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.Style>
+                            <Style TargetType="{x:Type ListBox}">
+                                <Setter Property="Background" Value="#F0F0F0"/>
+                                <Setter Property="ItemTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate>
+                                            <Grid Width="100" Height="95">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="75"/>
+                                                    <RowDefinition Height="*"/>
+                                                </Grid.RowDefinitions>
+                                                <Image Grid.Row="0" Source="{Binding ThumbnailImage}"/>
+                                                <TextBlock Grid.Row="1" HorizontalAlignment="Center" Text="{Binding FileName}" TextTrimming="CharacterEllipsis"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.Style>
+                    </ListBox>
+                </Border>
+
+                <Image Grid.Row="2" x:Name="viewImage" Source="{Binding ViewImageSource}" VerticalAlignment="Center" Stretch="Uniform" Margin="5"
+                       Width="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelWidth}"
+                       Height="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelHeight}"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
