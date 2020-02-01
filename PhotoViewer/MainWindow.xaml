@@ -76,7 +76,7 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="5,0" Orientation="Horizontal">
-                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="フォルダパス："/>
+                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="フォルダパス：" FontWeight="Medium"/>
                     <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectedFolderPath}"/>
                 </StackPanel>
 
