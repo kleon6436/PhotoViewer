@@ -1,5 +1,4 @@
-﻿using PhotoViewer.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,19 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PhotoViewer
+namespace PhotoViewer.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ExplorerView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ExplorerView : UserControl
     {
-        public MainWindow()
+        public ExplorerView()
         {
             InitializeComponent();
-
-            var model = new MainWindowViewModel();
-            this.DataContext = model;
         }
     }
 }

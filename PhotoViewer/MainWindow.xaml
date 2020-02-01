@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:view="clr-namespace:PhotoViewer.Views"
         mc:Ignorable="d"
         Icon="/Images/PhotoExifViewerIcon.ico"
         ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
@@ -25,23 +26,14 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ReferenceButtonCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Images/Folder_small.png" HorizontalAlignment="Center" Height="20"/>
-                    <TextBlock Text="開く" FontSize="16" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                </StackPanel>
+            <Button Grid.Column="0" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ReferenceButtonCommand}" ToolTip="エクスプローラーでフォルダを開く...">
+                <Image Source="/Images/Folder_small.png" HorizontalAlignment="Center" Height="20"/>
             </Button>
-            <Button Grid.Column="1" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ExifDeleteButtonCommand}" IsEnabled="{Binding ExifDeleteButtonIsEnable}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Images/ExifCleanIcon.png" HorizontalAlignment="Center" Height="20"/>
-                    <TextBlock Text="削除" FontSize="16" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                </StackPanel>
+            <Button Grid.Column="1" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ExifDeleteButtonCommand}" IsEnabled="{Binding ExifDeleteButtonIsEnable}" ToolTip="表示中の画像のExifを削除して保存する...">
+                <Image Source="/Images/ExifCleanIcon.png" HorizontalAlignment="Center" Height="20"/>
             </Button>
-            <Button Grid.Column="2" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding GearButtonCommand}">
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="/Images/Gear_small.png" HorizontalAlignment="Center" Height="20"/>
-                    <TextBlock Text="設定" FontSize="16" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                </StackPanel>
+            <Button Grid.Column="2" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding GearButtonCommand}" ToolTip="アプリの設定画面を開く...">
+                <Image Source="/Images/Gear_small.png" HorizontalAlignment="Center" Height="20"/>
             </Button>
         </Grid>
 
@@ -51,7 +43,7 @@
                 <ColumnDefinition Width="0.7*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- 右側のレイアウト -->
+            <!-- 左側のレイアウト -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="410"/>
@@ -62,7 +54,7 @@
                     <DataGrid Margin="5,5" BorderBrush="LightGray" BorderThickness="1"/>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Margin="10,5" BorderBrush="LightGray" BorderThickness="1.5" Header="フォルダ選択" FontSize="16" FontWeight="Medium">
-                    
+                    <view:ExplorerView DataContext="{Binding ExplorerViewModel}"/>
                 </GroupBox>
             </Grid>
             <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="0 0 1 0"/>

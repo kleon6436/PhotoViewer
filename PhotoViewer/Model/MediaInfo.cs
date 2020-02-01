@@ -87,7 +87,7 @@ namespace PhotoViewer.Model
         /// <summary>
         /// サムネイル画像の生成
         /// </summary>
-        /// <returns></returns>
+        /// <returns>サムネイル成功時: True、失敗時: False</returns>
         public bool CreateThumbnailImage()
         {
             if (this.FilePath == null || !File.Exists(this.FilePath))
