@@ -27,7 +27,13 @@ namespace PhotoViewer.Model
 
                 // ストリーム位置をリセットし、画像をでコード
                 ms.Seek(0, SeekOrigin.Begin);
-                BitmapDecoder decoder = BitmapDecoder.Create(ms, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+
+                var bmpImage = new BitmapImage();
+                bmpImage.BeginInit();
+                bmpImage.CreateOptions = BitmapCreateOptions.None;
+                bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                bmpImage.StreamSource = ms;
+                bmpImage.EndInit();
 
                 int maxViewWidth = 880;
                 int maxViewHeight = 660;
@@ -41,7 +47,7 @@ namespace PhotoViewer.Model
                     maxViewHeight = tmp;
                 }
 
-                BitmapSource viewImage = decoder.Frames[0];
+                BitmapSource viewImage = (BitmapSource)bmpImage;
 
                 // リサイズ後に回転する
                 if (viewImage.PixelWidth > maxViewWidth || viewImage.PixelHeight > maxViewHeight)
@@ -90,10 +96,16 @@ namespace PhotoViewer.Model
                 {
                     // ストリーム位置をリセットし、画像をデコード
                     ms.Seek(0, SeekOrigin.Begin);
-                    BitmapDecoder decoder = BitmapDecoder.Create(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+
+                    var bmpImage = new BitmapImage();
+                    bmpImage.BeginInit();
+                    bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                    bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bmpImage.StreamSource = ms;
+                    bmpImage.EndInit();
 
                     // 画像の縮小処理
-                    thumbnailImage = ResizeImage(decoder.Frames[0], maxScaledWidth, maxScaledHeight);
+                    thumbnailImage = ResizeImage(bmpImage, maxScaledWidth, maxScaledHeight);
                 }
                 else
                 {

@@ -5,10 +5,10 @@ namespace PhotoViewer.Model
 {
     public static class MediaChecker
     {
-        private static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif"};
+        private static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng" };
 
         /// <summary>
-        /// アプリがサポートする拡張子リストを取得
+        /// アプリがサポートする拡張子リストを取得する
         /// </summary>
         /// <returns>サポートする拡張子リスト</returns>
         public static List<string> GetSupportExtentions()
@@ -24,6 +24,16 @@ namespace PhotoViewer.Model
         public static bool CheckPictureExtensions(string extension)
         {
             return SupportPictureExtensions.Any(supportExtension => supportExtension == extension);
+        }
+
+        /// <summary>
+        /// ファイルがNikonRawFile(NEFファイル)であるか確認する
+        /// </summary>
+        /// <param name="extension">確認するファイルの拡張子</param>
+        /// <returns>NEFファイルの場合: True、それ以外のファイルの場合: False</returns>
+        public static bool CheckNikonRawFileExtension(string extension)
+        {
+            return (extension == ".nef") ? true : false;
         }
     }
 }
