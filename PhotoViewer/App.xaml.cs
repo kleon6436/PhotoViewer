@@ -23,5 +23,15 @@ namespace PhotoViewer
         {
             Console.WriteLine("ERROR -> " + ex.Message + ", LineNumber:" + callerLineNumber + ", FilePath:" + callerFilePath);
         }
+
+        /// <summary>
+        /// エラーメッセージボックスを表示する
+        /// </summary>
+        /// <param name="message">メッセージ</param>
+        /// <param name="caption">タイトル</param>
+        public static void ShowErrorMessageBox(string message, string caption)
+        {
+            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }

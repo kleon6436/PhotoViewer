@@ -1,11 +1,20 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace PhotoViewer.Model
 {
     public static class MediaChecker
     {
         private static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".nef", ".dng" };
-        private static readonly string[] SupportRawPictureExtensions = { ".nef", ".dng" };
+
+        /// <summary>
+        /// アプリがサポートする拡張子リストを取得
+        /// </summary>
+        /// <returns>サポートする拡張子リスト</returns>
+        public static List<string> GetSupportExtentions()
+        {
+            return SupportPictureExtensions.ToList();
+        }
 
         /// <summary>
         /// 静止画のサポートする拡張子であるか確認する

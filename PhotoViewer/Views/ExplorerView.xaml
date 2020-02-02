@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
-        <TreeView ItemsSource="{Binding ExplorerItems}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <TreeView ItemsSource="{Binding ExplorerItems}" SelectedItemChanged="TreeView_SelectedItemChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <TreeView.Style>
                 <Style TargetType="{x:Type TreeView}">
                     <Setter Property="Background" Value="#F0F0F0"/>

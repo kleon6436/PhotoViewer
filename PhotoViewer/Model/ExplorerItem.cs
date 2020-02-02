@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -9,71 +9,48 @@ using System.Windows.Media.Imaging;
 
 namespace PhotoViewer.Model
 {
-    public class ExplorerItem : TreeViewItem, INotifyPropertyChanged
+    public class ExplorerItem : TreeViewItem
     {
-        private enum ExplorerItemStatus
-        {
-            Expand,
-            Contract,
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private string treeItemName;
-        public string TreeItemName
-        {
-            get { return treeItemName; }
-            set
-            {
-                if (treeItemName != value)
-                {
-                    treeItemName = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TreeItemName)));
-                }
-            }
-        }
-
-        private BitmapSource treeIcon;
-        public BitmapSource TreeIcon
-        {
-            get { return treeIcon; }
-            set
-            {
-                if (treeIcon != value)
-                {
-                    treeIcon = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TreeIcon)));
-                }
-            }
-        }
-
+        // アイテム情報
+        public string ExplorerItemPath { get; private set; }
         // 内部ディレクトリ情報
         private DirectoryInfo InnerDirectory;
         // アイテムの展開状態
-        private ExplorerItemStatus ItemStatus;
-        // フォルダ監視用
-        private FileSystemWatcher FileSystemWatcher;
+        private bool IsExpand;
 
         public ExplorerItem(string path, bool isDrive)
         {
             // イベントと初期値の設定
             Expanded += ExplorerItem_Expanded;
-            Selected += ExplorerItem_Selected;
-            ItemStatus = ExplorerItemStatus.Contract;
+            IsExpand = false;
+            ExplorerItemPath = path;
 
-            // ドライブ情報の設定
-            this.Header = CreateExplorerItemHeader(path, isDrive);
+            // Explorerに表示するヘッダー情報の設定
+            if (isDrive)
+            {
+                this.Header = CreateExplorerItemHeader(ExplorerItemPath, true);
+            }
+            else
+            {
+                this.Header = CreateExplorerItemHeader(Path.GetFileName(ExplorerItemPath), false);
+            }
 
             // ドライブ内のディレクトリ情報(存在する場合は、空のTreeItemを作成しておく)
             // ※ メモリ消費を抑えるため、中身はツリー展開時に作成する
-            InnerDirectory = new DirectoryInfo(path);
-            if (InnerDirectory.GetDirectories().Length > 0)
-            {
-                this.Items.Add(new TreeViewItem());
-            }
+            InnerDirectory = new DirectoryInfo(ExplorerItemPath);
 
-            // ディレクトリ情報を監視
-            SetDriveWatcher(path);
+            try
+            {
+                if (InnerDirectory.Exists && InnerDirectory.GetDirectories().Length > 0)
+                {
+                    this.Items.Add(new TreeViewItem());
+                }
+            }
+            catch (Exception ex)
+            {
+                // アクセス拒否などでエラーが発生した時は、ログ収集を行い、そのフォルダをスキップ
+                App.LogException(ex);
+            }
         }
 
         /// <summary>
@@ -99,7 +76,7 @@ namespace PhotoViewer.Model
             stackpanel.Children.Add(new TextBlock()
             {
                 Text = path,
-                TextWrapping = TextWrapping.Wrap,
+                ToolTip = path,
                 Margin = new Thickness(2.5, 0, 0, 0)
             });
             stackpanel.Margin = new Thickness(0, 5, 0, 0);
@@ -124,10 +101,9 @@ namespace PhotoViewer.Model
             {
                 // ファイル名の最初の文字を取得
                 string fileNameFirst = Path.GetFileName(directory.FullName).Substring(0, 1);
-                const string tempRecycleFileIndicator = "$";
 
-                // 最初の文字が"$"だった場合は、Windowsの特殊ファイルのためスキップする
-                if (fileNameFirst == tempRecycleFileIndicator)
+                // 最初の文字が"$"だった場合や属性が隠し状態だった場合は、Windowsの特殊ファイルのためスキップする
+                if (fileNameFirst == "$" || (directory.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                 {
                     continue;
                 }
@@ -155,55 +131,20 @@ namespace PhotoViewer.Model
             }
         }
 
-        private void ExplorerItem_Selected(object sender, System.Windows.RoutedEventArgs e)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private void ExplorerItem_Expanded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            switch (ItemStatus)
-            {
-                case ExplorerItemStatus.Contract:
-                    ItemStatus = ExplorerItemStatus.Expand;
-                    UpdateDirectoryTree();
-                    return;
-
-                case ExplorerItemStatus.Expand:
-                    ItemStatus = ExplorerItemStatus.Contract;
-                    return;
-
-                default:
-                    throw new InvalidEnumArgumentException();
-            }
-        }
-
         /// <summary>
-        /// ドライブ内の情報を監視する
+        /// Explorerのツリー展開時
         /// </summary>
-        /// <param name="drive">監視するドライブ情報</param>
-        private void SetDriveWatcher(string path)
+        /// <param name="sender">TreeView</param>
+        /// <param name="e">引数情報</param>
+        private void ExplorerItem_Expanded(object sender, RoutedEventArgs e)
         {
-            // ディレクトリ情報ごとに監視を設定
-            FileSystemWatcher = new FileSystemWatcher();
-            FileSystemWatcher.Path = path;
-            FileSystemWatcher.Filter = "*";
-            FileSystemWatcher.IncludeSubdirectories = false;
-            FileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            if (!IsExpand)
+            {
+                // 展開先のディレクトリ情報を子要素に設定
+                UpdateDirectoryTree();
+            }
 
-            // ディレクトリ監視で発生するイベントの設定
-            FileSystemWatcher.Changed += FileSystemWatcher_Changed;
-            FileSystemWatcher.Created += FileSystemWatcher_Changed;
-            FileSystemWatcher.Deleted += FileSystemWatcher_Changed;
-            FileSystemWatcher.Renamed += FileSystemWatcher_Changed;
-
-            // 監視を開始
-            FileSystemWatcher.EnableRaisingEvents = true;
-        }
-
-        private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
-        {
-            throw new System.NotImplementedException();
+            IsExpand = true;
         }
     }
 }

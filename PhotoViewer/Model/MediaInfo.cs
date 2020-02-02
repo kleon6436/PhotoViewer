@@ -26,25 +26,30 @@ namespace PhotoViewer.Model
             get { return CheckMediaType(FilePath); }
         }
 
-        private string filePath;
-        /// <summary>
-        /// ファイルパス
-        /// </summary>
-        public string FilePath
-        {
-            get { return filePath; }
-            set { SetProperty(ref filePath, value); }
-        }
-
-        private BitmapImage thumbnailImage;
+        private BitmapSource thumbnailImage;
         /// <summary>
         /// サムネイルイメージ
         /// </summary>
-        public BitmapImage ThumbnailImage
+        public BitmapSource ThumbnailImage
         {
             get { return thumbnailImage; }
             set { SetProperty(ref thumbnailImage, value); }
         }
+
+        private string fileName;
+        /// <summary>
+        /// ファイル名
+        /// </summary>
+        public string FileName
+        {
+            get { return fileName; }
+            set { SetProperty(ref fileName, value); }
+        }
+
+        /// <summary>
+        /// ファイルパス
+        /// </summary>
+        public string FilePath { get; set; }
         #endregion
 
         /// <summary>
@@ -62,6 +67,7 @@ namespace PhotoViewer.Model
         public MediaInfo(MediaInfo mediaFileInfo)
         {
             this.FilePath = mediaFileInfo.FilePath;
+            this.FileName = Path.GetFileName(this.FilePath);
             this.ThumbnailImage = mediaFileInfo.ThumbnailImage;
         }
 
@@ -88,22 +94,22 @@ namespace PhotoViewer.Model
         /// サムネイル画像の生成
         /// </summary>
         /// <returns>サムネイル成功時: True、失敗時: False</returns>
-        public bool CreateThumbnailImage()
+        public void CreateThumbnailImage()
         {
             if (this.FilePath == null || !File.Exists(this.FilePath))
             {
-                return false;
+                throw new FileLoadException();
             }
 
             switch (this.ContentMediaType)
             {
                 case MediaType.PICTURE:
-                    //this.ThumbnailImage =
-                    return true;
+                    this.ThumbnailImage = ImageControl.CreatePictureThumbnailImage(this.FilePath);
+                    return;
 
                 case MediaType.MOVIE:
                 default:
-                    return false;
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }
