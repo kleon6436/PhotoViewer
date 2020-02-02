@@ -1,4 +1,5 @@
-﻿using PhotoViewer.ViewModels;
+﻿using PhotoViewer.Model;
+using PhotoViewer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,18 @@ namespace PhotoViewer
 
             var model = new MainWindowViewModel();
             this.DataContext = model;
+        }
+
+        private void mediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox == null) return;
+
+            var mediaInfo = listBox.SelectedItem as MediaInfo;
+            if (mediaInfo == null) return;
+
+            var vm = this.DataContext as MainWindowViewModel;
+            vm.LoadMedia(mediaInfo);
         }
     }
 }

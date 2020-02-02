@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Collections.Generic;
 
 namespace PhotoViewer.Model
 {
@@ -76,6 +75,7 @@ namespace PhotoViewer.Model
             stackpanel.Children.Add(new TextBlock()
             {
                 Text = path,
+                FontWeight = FontWeights.Normal,
                 ToolTip = path,
                 Margin = new Thickness(2.5, 0, 0, 0)
             });

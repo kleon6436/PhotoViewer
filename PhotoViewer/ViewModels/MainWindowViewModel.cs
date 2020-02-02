@@ -7,7 +7,8 @@ using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using Prism.Mvvm;
 using PhotoViewer.Model;
-
+using System.Windows.Media.Imaging;
+using System.Windows.Input;
 
 namespace PhotoViewer.ViewModels
 {
@@ -33,6 +34,13 @@ namespace PhotoViewer.ViewModels
         {
             get { return mediaInfoList; }
             set { SetProperty(ref mediaInfoList, value); }
+        }
+
+        private BitmapSource pictureImageSource;
+        public BitmapSource PictureImageSource
+        {
+            get { return pictureImageSource; }
+            set { SetProperty(ref pictureImageSource, value); }
         }
         #endregion
 
@@ -220,6 +228,54 @@ namespace PhotoViewer.ViewModels
             if (LoadContentsBackgroundWorker != null)
             {
                 LoadContentsBackgroundWorker.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 選択された画像を読み込み、表示用に変換する
+        /// </summary>
+        /// <param name="mediaInfo">選択されたメディア情報</param>
+        public bool LoadMedia(MediaInfo mediaInfo)
+        {
+            if (!File.Exists(mediaInfo.FilePath))
+            {
+                App.ShowErrorMessageBox("ファイルが存在しません。", "ファイルアクセスエラー");
+            }
+            
+            // Viewに設定されているものをクリア
+            PictureImageSource = null;
+
+            switch (mediaInfo.ContentMediaType)
+            {
+                case MediaInfo.MediaType.PICTURE:
+                    return LoadPictureImage(mediaInfo);
+
+                case MediaInfo.MediaType.MOVIE:
+                default:
+                    return false;
+            }
+        }
+
+        private bool LoadPictureImage(MediaInfo mediaInfo)
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                // 表示する画像を作成
+                PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+
+                App.ShowErrorMessageBox("ファイルアクセスでエラーが発生しました。", "ファイルアクセスエラー");
+                return false;
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
             }
         }
     }
