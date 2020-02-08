@@ -1,9 +1,5 @@
 ﻿using Microsoft.WindowsAPICodePack.Shell;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PhotoViewer.Model
 {
@@ -17,7 +13,7 @@ namespace PhotoViewer.Model
         {
             string propertyValue = "Null";
 
-            var property = shell.Properties.System.DateCreated;
+            var property = shell.Properties.System.DateModified;
             if (property?.ValueAsObject == null)
             {
                 propertyValue = "Null";

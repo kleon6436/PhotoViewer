@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
         <DataGrid Margin="5,5" BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14"
-                  ItemsSource="{Binding ExifDataList}" IsReadOnly="True" Width="auto" Height="auto"
+                  ItemsSource="{Binding ExifDataList}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False"
                   VerticalGridLinesBrush="LightSlateGray" HorizontalGridLinesBrush="LightSlateGray">
@@ -16,16 +16,18 @@
                 <DataGridTextColumn Header="パラメータ名" Binding="{Binding ExifParameterText}" Width="auto" MinWidth="100">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
-                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                            <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis"/>
                             <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextBlock.Margin" Value="5,0,0,0"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="値" Binding="{Binding ExifParameterValue}" Width="*" MinWidth="100">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
-                            <Setter Property="TextBlock.TextWrapping" Value="Wrap"/>
+                            <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis"/>
                             <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextBlock.Margin" Value="5,0,0,0"/>
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>

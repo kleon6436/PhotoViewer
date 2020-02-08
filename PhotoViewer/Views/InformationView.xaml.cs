@@ -3,11 +3,11 @@
 namespace PhotoViewer.Views
 {
     /// <summary>
-    /// Interaction logic for ExifInfoView.xaml
+    /// Interaction logic for InformationView.xaml
     /// </summary>
-    public partial class ExifInfoView : UserControl
+    public partial class InformationView : Page
     {
-        public ExifInfoView()
+        public InformationView()
         {
             InitializeComponent();
         }

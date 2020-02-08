@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using Prism.Mvvm;
 using Prism.Commands;
 using PhotoViewer.Model;
+using PhotoViewer.Views;
 
 namespace PhotoViewer.ViewModels
 {
@@ -49,6 +50,7 @@ namespace PhotoViewer.ViewModels
 
         #region Command
         public ICommand OpenFolderButtonCommand { get; set; }
+        public ICommand SettingButtonCommand { get; set; }
         #endregion
 
         // メディア情報の読み込みスレッド
@@ -60,6 +62,7 @@ namespace PhotoViewer.ViewModels
         {
             // コマンドの設定
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
+            SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
 
             // エクスプローラー部のViewModel設定
             ExplorerViewModel = new ExplorerViewModel();
@@ -87,10 +90,23 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
+        /// 設定画面を開く
+        /// </summary>
+        private void SettingButtonClicked()
+        {
+            var vm = new SettingViewModel();
+
+            var settingDialog = new SettingView();
+            settingDialog.DataContext = vm;
+            settingDialog.Owner = App.Current.MainWindow;
+            settingDialog.ShowDialog();
+        }
+
+        /// <summary>
         /// ExplorerViewでフォルダ選択変更があった場合
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">ExplorerViewModel</param>
+        /// <param name="e">引数情報</param>
         private void ExplorerViewModel_ChangeSelectItemEvent(object sender, EventArgs e)
         {
             var selectedExplorerItem = ExplorerViewModel.SelectedItem;
