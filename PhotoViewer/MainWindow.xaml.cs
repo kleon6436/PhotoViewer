@@ -1,19 +1,7 @@
-﻿using PhotoViewer.Model;
-using PhotoViewer.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using PhotoViewer.Model;
+using PhotoViewer.ViewModels;
 
 namespace PhotoViewer
 {
@@ -30,6 +18,11 @@ namespace PhotoViewer
             this.DataContext = model;
         }
 
+        /// <summary>
+        /// リストボックスで選択されたアイテムが変更されたとき
+        /// </summary>
+        /// <param name="sender">mediaListBox</param>
+        /// <param name="e">引数情報</param>
         private void mediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listBox = sender as ListBox;

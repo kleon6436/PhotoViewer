@@ -5,10 +5,10 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Prism.Mvvm;
 using PhotoViewer.Model;
-using System.Windows.Media.Imaging;
-using System.Windows.Input;
 
 namespace PhotoViewer.ViewModels
 {
@@ -16,6 +16,7 @@ namespace PhotoViewer.ViewModels
     {
         #region ViewModels
         public ExplorerViewModel ExplorerViewModel { get; set; }
+        public ExifInfoViewModel ExifInfoViewModel { get; set; }
         #endregion
 
         #region UI binding parameters
@@ -51,9 +52,13 @@ namespace PhotoViewer.ViewModels
 
         public MainWindowViewModel()
         {
+            // エクスプローラー部のViewModel設定
             ExplorerViewModel = new ExplorerViewModel();
             ExplorerViewModel.ChangeSelectItemEvent += ExplorerViewModel_ChangeSelectItemEvent;
             UpdateExplorerTree();
+
+            // Exif表示部のViewModel設定
+            ExifInfoViewModel = new ExifInfoViewModel();
 
             string defaultPicturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
             ChangeContents(defaultPicturePath);
@@ -95,6 +100,9 @@ namespace PhotoViewer.ViewModels
             UpdateContents();
         }
 
+        /// <summary>
+        /// コンテンツリストの表示を更新
+        /// </summary>
         private void UpdateContents()
         {
             if (LoadContentsBackgroundWorker != null && LoadContentsBackgroundWorker.IsBusy)
@@ -108,6 +116,9 @@ namespace PhotoViewer.ViewModels
             LoadContentsList();
         }
 
+        /// <summary>
+        /// コンテンツリストの読み込み
+        /// </summary>
         private void LoadContentsList()
         {
             // 読み込み前に表示リストをクリア
@@ -124,6 +135,11 @@ namespace PhotoViewer.ViewModels
             LoadContentsBackgroundWorker.RunWorkerAsync();
         }
 
+        /// <summary>
+        /// 別スレッドで動作する処理
+        /// </summary>
+        /// <param name="sender">BackgroundWorker</param>
+        /// <param name="e">引数情報</param>
         private void LoadContentsWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             try
@@ -150,6 +166,7 @@ namespace PhotoViewer.ViewModels
 
                 if (IsReloadContents)
                 {
+                    // 非同期で読み込んでいるコンテンツリストの読み込み完了後にリロード
                     App.Current.Dispatcher.BeginInvoke((Action)(() => 
                     { 
                         UpdateContents();
@@ -163,6 +180,11 @@ namespace PhotoViewer.ViewModels
             }
         }
 
+        /// <summary>
+        /// コンテンツリストの読み込みの実処理
+        /// </summary>
+        /// <param name="sender">BackgroundWorker</param>
+        /// <param name="e">引数情報</param>
         private void LoadContentsWorker(object sender, DoWorkEventArgs e)
         {
             List<string> filePaths = new List<string>();
@@ -199,7 +221,12 @@ namespace PhotoViewer.ViewModels
                 {
                     mediaInfo.CreateThumbnailImage();
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    // サムネイル画像が作成できないものは、ログ出力して読み込みスキップ
+                    App.LogException(ex);
+                    continue;
+                }
 
                 int count = 0;
                 readyFiles.Enqueue(mediaInfo);
@@ -256,6 +283,11 @@ namespace PhotoViewer.ViewModels
             }
         }
 
+        /// <summary>
+        /// 拡大表示する画像を読み込む
+        /// </summary>
+        /// <param name="mediaInfo">選択されたメディア情報</param>
+        /// <returns>読み込み成功: True、失敗: False</returns>
         private bool LoadPictureImage(MediaInfo mediaInfo)
         {
             try
@@ -264,6 +296,9 @@ namespace PhotoViewer.ViewModels
 
                 // 表示する画像を作成
                 PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath);
+
+                // Exif情報を設定
+                ExifInfoViewModel.SetExif(mediaInfo.FilePath);
                 return true;
             }
             catch (Exception ex)

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -11,6 +7,11 @@ namespace PhotoViewer.Model
 {
     public static class ImageControl
     {
+        /// <summary>
+        /// 拡大表示する画像を生成する
+        /// </summary>
+        /// <param name="filePath">ファイルパス</param>
+        /// <returns>BitmapSource(生成した画像)</returns>
         public static BitmapSource CreatePictureViewImage(string filePath)
         {
             using (var ms = new MemoryStream())
@@ -64,6 +65,11 @@ namespace PhotoViewer.Model
             }
         }
 
+        /// <summary>
+        /// 静止画のサムネイル画像を作成する
+        /// </summary>
+        /// <param name="filePath">ファイルパス</param>
+        /// <returns>BitmapSource(生成したサムネイル画像)</returns>
         public static BitmapSource CreatePictureThumbnailImage(string filePath)
         {
             using (var ms = new MemoryStream())
@@ -127,6 +133,13 @@ namespace PhotoViewer.Model
             }
         }
 
+        /// <summary>
+        /// 画像を指定サイズにリサイズする
+        /// </summary>
+        /// <param name="image">BitmapSource(画像データ)</param>
+        /// <param name="maxScaledWidth">指定幅</param>
+        /// <param name="maxScaledHeight">指定高さ</param>
+        /// <returns>BitmapSource(リサイズ後の画像)</returns>
         private static BitmapSource ResizeImage(BitmapSource image, int maxScaledWidth, int maxScaledHeight)
         {
             // 拡大/縮小したイメージを生成する
@@ -138,6 +151,12 @@ namespace PhotoViewer.Model
             return new TransformedBitmap(image, new ScaleTransform(scale, scale));
         }
 
+        /// <summary>
+        /// 画像を回転する
+        /// </summary>
+        /// <param name="metaData">メタデータ</param>
+        /// <param name="image">BitmapSource(画像データ)</param>
+        /// <returns>BitmapSource(回転後の画像)</returns>
         private static BitmapSource RotateImage(BitmapMetadata metaData, BitmapSource image)
         {
             uint rotation = GetRotation(metaData);
@@ -172,6 +191,11 @@ namespace PhotoViewer.Model
             }
         }
 
+        /// <summary>
+        /// 画像のメタデータから画像の回転情報を取得する
+        /// </summary>
+        /// <param name="metaData">メタデータ</param>
+        /// <returns>rotation値</returns>
         private static uint GetRotation(BitmapMetadata metaData)
         {
             string _query = "/app1/ifd/exif:{uint=274}";

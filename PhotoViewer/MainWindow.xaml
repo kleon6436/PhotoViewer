@@ -51,7 +51,7 @@
                 </Grid.RowDefinitions>
 
                 <GroupBox Grid.Row="0" Margin="10,0" BorderBrush="LightGray" BorderThickness="1.5" Header="Exif情報" FontSize="16" FontWeight="Medium">
-                    <DataGrid Margin="5,5" BorderBrush="LightGray" BorderThickness="1"/>
+                    <view:ExifInfoView DataContext="{Binding ExifInfoViewModel}"/>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Margin="10,5" BorderBrush="LightGray" BorderThickness="1.5" Header="フォルダ選択" FontSize="16" FontWeight="Medium">
                     <view:ExplorerView DataContext="{Binding ExplorerViewModel}"/>
