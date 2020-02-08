@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,6 +9,7 @@ using System.Windows.Threading;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Prism.Mvvm;
+using Prism.Commands;
 using PhotoViewer.Model;
 
 namespace PhotoViewer.ViewModels
@@ -45,6 +47,10 @@ namespace PhotoViewer.ViewModels
         }
         #endregion
 
+        #region Command
+        public ICommand OpenFolderButtonCommand { get; set; }
+        #endregion
+
         // メディア情報の読み込みスレッド
         private BackgroundWorker LoadContentsBackgroundWorker;
         // メディアリストのリロードフラグ
@@ -52,6 +58,9 @@ namespace PhotoViewer.ViewModels
 
         public MainWindowViewModel()
         {
+            // コマンドの設定
+            OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
+
             // エクスプローラー部のViewModel設定
             ExplorerViewModel = new ExplorerViewModel();
             ExplorerViewModel.ChangeSelectItemEvent += ExplorerViewModel_ChangeSelectItemEvent;
@@ -62,6 +71,19 @@ namespace PhotoViewer.ViewModels
 
             string defaultPicturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
             ChangeContents(defaultPicturePath);
+        }
+
+        /// <summary>
+        /// エクスプローラーで選択されているフォルダを開く
+        /// </summary>
+        private void OpenFolderButtonClicked()
+        {
+            if (string.IsNullOrEmpty(SelectFolderPath))
+            {
+                return;
+            }
+
+            Process.Start("EXPLORER.EXE", SelectFolderPath);
         }
 
         /// <summary>

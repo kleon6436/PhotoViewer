@@ -26,7 +26,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ReferenceButtonCommand}" ToolTip="エクスプローラーでフォルダを開く...">
+            <Button Grid.Column="0" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding OpenFolderButtonCommand}" ToolTip="エクスプローラーでフォルダを開く...">
                 <Image Source="/Images/Folder_small.png" HorizontalAlignment="Center" Height="20"/>
             </Button>
             <Button Grid.Column="1" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ExifDeleteButtonCommand}" IsEnabled="{Binding ExifDeleteButtonIsEnable}" ToolTip="表示中の画像のExifを削除して保存する...">
@@ -46,7 +46,7 @@
             <!-- 左側のレイアウト -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="410"/>
+                    <RowDefinition MinHeight="390" Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
