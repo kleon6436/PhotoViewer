@@ -23,11 +23,11 @@ Exif情報や写真の閲覧ができます。
 
 - Exif情報の閲覧
 
-- 連携アプリの起動（設定画面で設定が必要）
+- 連携アプリの起動（設定画面で設定が必要）: 作成中。
 
-- Exif情報の削除
+- Exif情報の削除: 作成中
 
 ## クレジット
-- KLeon @kleon64 (Author, Developer)
+- kchary @kleon6436 (Author, Developer)
 
 This software is released under the MIT License, see LICENSE.txt.
