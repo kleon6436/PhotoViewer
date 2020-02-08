@@ -1,10 +1,22 @@
 ﻿using Microsoft.WindowsAPICodePack.Shell;
 using System.Collections.Generic;
+using System.IO;
 
 namespace PhotoViewer.Model
 {
     public static class ExifParser
     {
+        /// <summary>
+        /// ファイル名を取得する
+        /// </summary>
+        /// <param name="filePath">ファイルパス</param>
+        private static ExifInfo GetFileName(string filePath)
+        {
+            string propertyValue = Path.GetFileName(filePath);
+            string propertyText = "ファイル名";
+            return new ExifInfo(propertyText, propertyValue);
+        }
+
         /// <summary>
         /// 撮影日時の情報を取得する
         /// </summary>
@@ -341,6 +353,8 @@ namespace PhotoViewer.Model
             {
                 List<ExifInfo> exifInfos = new List<ExifInfo>();
 
+                // ファイル名を取得
+                exifInfos.Add(GetFileName(filePath));
                 // 撮影日時を取得
                 exifInfos.Add(GetMediaDate(shell));
                 // カメラモデルの情報を取得

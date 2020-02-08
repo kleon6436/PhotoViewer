@@ -40,6 +40,13 @@ namespace PhotoViewer.ViewModels
             set { SetProperty(ref mediaInfoList, value); }
         }
 
+        private MediaInfo selectedMedia;
+        public MediaInfo SelectedMedia
+        {
+            get { return selectedMedia; }
+            set { SetProperty(ref selectedMedia, value); }
+        }
+
         private BitmapSource pictureImageSource;
         public BitmapSource PictureImageSource
         {
