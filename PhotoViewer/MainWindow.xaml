@@ -73,16 +73,17 @@
                 </StackPanel>
 
                 <Border Grid.Row="1" BorderBrush="DarkGray" BorderThickness="0,1,0,1">
-                    <ListBox x:Name="mediaListBox" ItemsSource="{Binding MediaInfoList}" SelectedItem="{Binding SelectedMedia, Mode=OneWay}" SelectionChanged="mediaListBox_SelectionChanged"
+                    <ListBox x:Name="mediaListBox" ItemsSource="{Binding MediaInfoList}" SelectedItem="{Binding SelectedMedia, Mode=TwoWay}" SelectionChanged="mediaListBox_SelectionChanged"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
                              ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
                              VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderBrush="{x:Null}">
                         <ListBox.Resources>
-                            <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" >
+                            <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}">
                                 <ContextMenu.ItemContainerStyle>
                                     <Style TargetType="{x:Type MenuItem}">
                                         <Setter Property="Header" Value="{Binding Path=DisplayName}"/>
                                         <Setter Property="Icon" Value="{DynamicResource Icon}"/>
+                                        <EventSetter Event="Click" Handler="MenuItem_Click"/>
                                     </Style>
                                 </ContextMenu.ItemContainerStyle>
                             </ContextMenu>
@@ -96,11 +97,16 @@
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}">
                                 <Setter Property="ToolTip" Value="{Binding FileName}"/>
-                                <Setter Property="ContextMenu" Value="{StaticResource ListBoxItemMenu}"/>
+                                <Setter Property="ContextMenu" Value="{x:Null}"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
                                 <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=DataContext.IsShowContextMenu, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" Value="True">
+                                        <Setter Property="ContextMenu" Value="{StaticResource ListBoxItemMenu}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
                         </ListBox.ItemContainerStyle>
                         <ListBox.Style>

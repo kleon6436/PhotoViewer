@@ -33,5 +33,15 @@ namespace PhotoViewer
         {
             MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
         }
+
+        /// <summary>
+        /// 成功メッセージボックスを表示する
+        /// </summary>
+        /// <param name="message">メッセージ</param>
+        /// <param name="caption">タイトル</param>
+        public static void ShowSuccessMessageBox(string message, string caption)
+        {
+            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }

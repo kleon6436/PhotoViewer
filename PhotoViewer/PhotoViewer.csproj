@@ -51,6 +51,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -76,9 +77,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converter\BoolToEnumConverter.cs" />
+    <Compile Include="Model\AppConfigManager.cs" />
+    <Compile Include="Model\ContextMenuInfo.cs" />
     <Compile Include="Model\ExifInfo.cs" />
     <Compile Include="Model\ExifParser.cs" />
     <Compile Include="Model\ExplorerItem.cs" />
+    <Compile Include="Model\ExtraAppSetting.cs" />
     <Compile Include="Model\ImageControl.cs" />
     <Compile Include="Model\MediaChecker.cs" />
     <Compile Include="Model\MediaInfo.cs" />
@@ -86,6 +90,7 @@
     <Compile Include="Model\WindowsIconCreator.cs" />
     <Compile Include="ViewModels\ExifInfoViewModel.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
+    <Compile Include="ViewModels\LinkageAppViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SettingViewModel.cs" />
     <Compile Include="Views\ExifInfoView.xaml.cs">
@@ -96,6 +101,9 @@
     </Compile>
     <Compile Include="Views\InformationView.xaml.cs">
       <DependentUpon>InformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LinkageAppView.xaml.cs">
+      <DependentUpon>LinkageAppView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingView.xaml.cs">
       <DependentUpon>SettingView.xaml</DependentUpon>
@@ -121,6 +129,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\InformationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LinkageAppView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

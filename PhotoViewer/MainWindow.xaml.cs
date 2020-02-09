@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using PhotoViewer.Model;
 using PhotoViewer.ViewModels;
@@ -33,6 +34,20 @@ namespace PhotoViewer
 
             var vm = this.DataContext as MainWindowViewModel;
             vm.LoadMedia(mediaInfo);
+        }
+
+        /// <summary>
+        /// コンテキストメニューがクリックされたとき
+        /// </summary>
+        /// <param name="sender">MenuItem</param>
+        /// <param name="e">引数情報</param>
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            if (menuItem == null) return;
+
+            var vm = this.DataContext as MainWindowViewModel;
+            vm.ExecuteContextMenu(Convert.ToString(menuItem.Header));
         }
     }
 }

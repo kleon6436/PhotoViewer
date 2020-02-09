@@ -13,6 +13,8 @@ namespace PhotoViewer.ViewModels
             InformationPage,
         }
 
+        public event EventHandler ReloadContextMenuEvent;
+
         private SelectPage selectPageButtonValue;
         /// <summary>
         /// ラジオボタンで選択されているページ
@@ -27,7 +29,11 @@ namespace PhotoViewer.ViewModels
                 switch (selectPageButtonValue)
                 {
                     case SelectPage.LinkageAppPage:
-                        DisplayPage = null;
+                        var vm = new LinkageAppViewModel();
+                        vm.ChangeLinkageAppEvent += ChangeLinkageApp;
+
+                        DisplayPage = new LinkageAppView();
+                        DisplayPage.DataContext = vm;
                         break;
 
                     case SelectPage.InformationPage:
@@ -56,7 +62,21 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         public SettingViewModel()
         {
+            // デフォルトのページ設定
+            SelectPageButtonValue = SelectPage.LinkageAppPage;
+        }
 
+        /// <summary>
+        /// 連携アプリの状態が変更されたとき
+        /// </summary>
+        /// <param name="sender">LinkageAppViewModel</param>
+        /// <param name="e">引数情報</param>
+        private void ChangeLinkageApp(object sender, EventArgs e)
+        {
+            var linkageAppVM = sender as LinkageAppViewModel;
+            if (linkageAppVM == null) return;
+
+            ReloadContextMenuEvent?.Invoke(this, EventArgs.Empty);
         }
     }
 }

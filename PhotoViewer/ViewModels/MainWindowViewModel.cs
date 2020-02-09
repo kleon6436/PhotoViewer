@@ -1,17 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Drawing;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Prism.Mvvm;
 using Prism.Commands;
 using PhotoViewer.Model;
 using PhotoViewer.Views;
+using System.Windows;
 
 namespace PhotoViewer.ViewModels
 {
@@ -34,6 +37,9 @@ namespace PhotoViewer.ViewModels
         }
 
         private ObservableCollection<MediaInfo> mediaInfoList = new ObservableCollection<MediaInfo>();
+        /// <summary>
+        /// ListBoxに表示するメディアリスト
+        /// </summary>
         public ObservableCollection<MediaInfo> MediaInfoList
         {
             get { return mediaInfoList; }
@@ -41,6 +47,9 @@ namespace PhotoViewer.ViewModels
         }
 
         private MediaInfo selectedMedia;
+        /// <summary>
+        /// ListBoxで選択されているメディア
+        /// </summary>
         public MediaInfo SelectedMedia
         {
             get { return selectedMedia; }
@@ -48,16 +57,36 @@ namespace PhotoViewer.ViewModels
         }
 
         private BitmapSource pictureImageSource;
+        /// <summary>
+        /// 拡大表示しているメディアの画像
+        /// </summary>
         public BitmapSource PictureImageSource
         {
             get { return pictureImageSource; }
             set { SetProperty(ref pictureImageSource, value); }
         }
+
+        private ObservableCollection<ContextMenuInfo> contextMenuCollection = new ObservableCollection<ContextMenuInfo>();
+        /// <summary>
+        /// ContextMenuで表示するメニューアイテムリスト
+        /// </summary>
+        public ObservableCollection<ContextMenuInfo> ContextMenuCollection
+        {
+            get { return contextMenuCollection; }
+            set { SetProperty(ref contextMenuCollection, value); }
+        }
+
+        private bool isShowContextMenu;
+        public bool IsShowContextMenu
+        {
+            get { return isShowContextMenu; }
+            set { SetProperty(ref isShowContextMenu, value); }
+        }
         #endregion
 
         #region Command
-        public ICommand OpenFolderButtonCommand { get; set; }
-        public ICommand SettingButtonCommand { get; set; }
+        public ICommand OpenFolderButtonCommand { get; private set; }
+        public ICommand SettingButtonCommand { get; private set; }
         #endregion
 
         // メディア情報の読み込みスレッド
@@ -67,6 +96,12 @@ namespace PhotoViewer.ViewModels
 
         public MainWindowViewModel()
         {
+            // 初期値設定
+            MediaInfoList.Clear();
+            ContextMenuCollection.Clear();
+            PictureImageSource = null;
+            IsShowContextMenu = false;
+
             // コマンドの設定
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
             SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
@@ -78,6 +113,22 @@ namespace PhotoViewer.ViewModels
 
             // Exif表示部のViewModel設定
             ExifInfoViewModel = new ExifInfoViewModel();
+
+            // 設定情報の読み込み
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.Import();
+
+            if (appConfigManager.LinkageApp != null)
+            {
+                // アプリアイコンを読み込み
+                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.LinkageApp.AppPath);
+                var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+                // コンテキストメニューの設定
+                var contextMenu = new ContextMenuInfo(appConfigManager.LinkageApp.AppName, iconBitmapSource);
+                ContextMenuCollection.Add(contextMenu);
+                IsShowContextMenu = true;
+            }
 
             string defaultPicturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
             ChangeContents(defaultPicturePath);
@@ -93,7 +144,19 @@ namespace PhotoViewer.ViewModels
                 return;
             }
 
-            Process.Start("EXPLORER.EXE", SelectFolderPath);
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                Process.Start("EXPLORER.EXE", SelectFolderPath);
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         /// <summary>
@@ -102,11 +165,67 @@ namespace PhotoViewer.ViewModels
         private void SettingButtonClicked()
         {
             var vm = new SettingViewModel();
+            vm.ReloadContextMenuEvent += ReloadContextMenu;
 
             var settingDialog = new SettingView();
             settingDialog.DataContext = vm;
             settingDialog.Owner = App.Current.MainWindow;
             settingDialog.ShowDialog();
+        }
+
+        /// <summary>
+        /// コンテキストメニューを読み直す
+        /// </summary>
+        /// <param name="sender">SettingViewModel</param>
+        /// <param name="e">引数情報</param>
+        private void ReloadContextMenu(object sender, EventArgs e)
+        {
+            // 設定情報から連携アプリ関連の情報を再読み込み
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.ImportLinkageAppXml();
+
+            // 現在のコンテキストメニューをリセット
+            ContextMenuCollection.Clear();
+            IsShowContextMenu = false;
+
+            if (appConfigManager.LinkageApp != null)
+            { 
+                // アプリアイコンを読み込み
+                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.LinkageApp.AppPath);
+                var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+                // コンテキストメニューの設定
+                var contextMenu = new ContextMenuInfo(appConfigManager.LinkageApp.AppName, iconBitmapSource);
+                ContextMenuCollection.Add(contextMenu);
+                IsShowContextMenu = true;
+            }
+        }
+
+        /// <summary>
+        /// コンテキストメニューがクリックされたとき
+        /// </summary>
+        /// <param name="appName">アプリ名</param>
+        public void ExecuteContextMenu(string appName)
+        {
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            if (appName != appConfigManager.LinkageApp.AppName)
+            {
+                return;
+            }
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                Process.Start(appConfigManager.LinkageApp.AppPath, SelectedMedia.FilePath);
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         /// <summary>
