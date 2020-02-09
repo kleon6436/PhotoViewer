@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Icon="/Images/PhotoExifViewerIcon.ico"
         ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
-        Title="Kchary Photograph Viewer" Height="890" Width="1320" MinHeight="890" MinWidth="1320">
+        Title="Kchary Photograph Viewer" Height="890" Width="1320" MinHeight="890" MinWidth="1320"
+        Closing="Window_Closing">
     <Window.Background>
         <SolidColorBrush Color="#F0F0F0"/>
     </Window.Background>
@@ -24,15 +25,19 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding OpenFolderButtonCommand}" ToolTip="エクスプローラーでフォルダを開く...">
                 <Image Source="/Images/Folder_small.png" HorizontalAlignment="Center" Height="20"/>
             </Button>
-            <Button Grid.Column="1" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ExifDeleteButtonCommand}" IsEnabled="{Binding ExifDeleteButtonIsEnable}" ToolTip="表示中の画像のExifを削除して保存する...">
+            <Button Grid.Column="1" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ReloadButtonCommand}" ToolTip="コンテンツリストを再読み込みする...">
+                <Image Source="/Images/reload.png" HorizontalAlignment="Center" Height="20"/>
+            </Button>
+            <Button Grid.Column="2" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ExifDeleteButtonCommand}" IsEnabled="{Binding ExifDeleteButtonIsEnable}" ToolTip="表示中の画像のExifを削除して保存する...">
                 <Image Source="/Images/ExifCleanIcon.png" HorizontalAlignment="Center" Height="20"/>
             </Button>
-            <Button Grid.Column="2" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding SettingButtonCommand}" ToolTip="アプリの設定画面を開く...">
+            <Button Grid.Column="3" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding SettingButtonCommand}" ToolTip="アプリの設定画面を開く...">
                 <Image Source="/Images/Gear_small.png" HorizontalAlignment="Center" Height="20"/>
             </Button>
         </Grid>

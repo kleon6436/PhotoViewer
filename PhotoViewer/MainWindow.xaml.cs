@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using PhotoViewer.Model;
@@ -48,6 +49,21 @@ namespace PhotoViewer
 
             var vm = this.DataContext as MainWindowViewModel;
             vm.ExecuteContextMenu(Convert.ToString(menuItem.Header));
+        }
+
+        /// <summary>
+        /// ウィンドウクローズ処理
+        /// </summary>
+        /// <param name="sender">Window</param>
+        /// <param name="e">引数情報</param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var vm = this.DataContext as MainWindowViewModel;
+            if (!vm.StopThreadAndTask())
+            {
+                // 少し待ってからクローズ
+                Thread.Sleep(200);
+            }
         }
     }
 }

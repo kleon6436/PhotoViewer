@@ -16,6 +16,8 @@ namespace PhotoViewer.Model
         private DirectoryInfo InnerDirectory;
         // アイテムの展開状態
         private bool IsExpand;
+        // ディレクトリ監視用
+        private FileSystemWatcher FileSystemWatcher;
 
         public ExplorerItem(string path, bool isDrive)
         {
@@ -50,6 +52,9 @@ namespace PhotoViewer.Model
                 // アクセス拒否などでエラーが発生した時は、ログ収集を行い、そのフォルダをスキップ
                 App.LogException(ex);
             }
+
+            // ディレクトリの監視をスタート
+            StartWatcher(path);
         }
 
         /// <summary>
@@ -145,6 +150,38 @@ namespace PhotoViewer.Model
             }
 
             IsExpand = true;
+        }
+
+        /// <summary>
+        /// ドライブ内の情報を監視する
+        /// </summary>
+        /// <param name="drive">監視するディレクトリ情報</param>
+        private void StartWatcher(string path)
+        {
+            // ディレクトリ情報ごとに監視を設定
+            FileSystemWatcher = new FileSystemWatcher();
+            FileSystemWatcher.Path = path;
+            FileSystemWatcher.Filter = "*";
+            FileSystemWatcher.IncludeSubdirectories = false;
+            FileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+
+            // ディレクトリ監視で発生するイベントの設定
+            FileSystemWatcher.Changed += FileSystemWatcher_Changed;
+            FileSystemWatcher.Created += FileSystemWatcher_Changed;
+            FileSystemWatcher.Deleted += FileSystemWatcher_Changed;
+            FileSystemWatcher.Renamed += FileSystemWatcher_Changed;
+
+            // 監視を開始
+            FileSystemWatcher.EnableRaisingEvents = true;
+        }
+
+        private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            // 再度読み込み直す
+            App.Current.Dispatcher.Invoke((Action)(() =>
+            {
+                UpdateDirectoryTree();
+            }));
         }
     }
 }

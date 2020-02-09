@@ -86,6 +86,7 @@ namespace PhotoViewer.ViewModels
 
         #region Command
         public ICommand OpenFolderButtonCommand { get; private set; }
+        public ICommand ReloadButtonCommand { get; private set; }
         public ICommand SettingButtonCommand { get; private set; }
         #endregion
 
@@ -104,6 +105,7 @@ namespace PhotoViewer.ViewModels
 
             // コマンドの設定
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
+            ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
             SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
 
             // エクスプローラー部のViewModel設定
@@ -157,6 +159,14 @@ namespace PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = null;
             }
+        }
+
+        /// <summary>
+        /// ListBoxの表示を更新する
+        /// </summary>
+        private void ReloadButtonClicked()
+        {
+            UpdateContents();
         }
 
         /// <summary>
@@ -244,8 +254,7 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void UpdateExplorerTree()
         {
-            List<DriveInfo> allDriveList = DriveInfo.GetDrives().ToList();
-            ExplorerViewModel.CreateDriveTreeItem(allDriveList);
+            ExplorerViewModel.CreateDriveTreeItem();
         }
 
         /// <summary>
@@ -476,6 +485,24 @@ namespace PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = null;
             }
+        }
+
+        /// <summary>
+        /// 実行中のスレッドとタスクを停止する
+        /// </summary>
+        /// <returns>Thread実行中の場合: False、それ以外: True</returns>
+        public bool StopThreadAndTask()
+        {
+            bool CanClose = true;
+
+            // コンテンツ読み込みスレッドが動作中の場合、キャンセル通知
+            if (LoadContentsBackgroundWorker != null && LoadContentsBackgroundWorker.IsBusy)
+            {
+                LoadContentsBackgroundWorker.CancelAsync();
+                CanClose = false;
+            }
+
+            return CanClose;
         }
     }
 }
