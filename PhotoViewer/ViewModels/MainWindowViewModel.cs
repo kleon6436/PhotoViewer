@@ -118,7 +118,7 @@ namespace PhotoViewer.ViewModels
 
             // 設定情報の読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.Import();
+            appConfigManager.ImportLinkageAppXml();
 
             if (appConfigManager.LinkageApp != null)
             {

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using PhotoViewer.Model;
 using PhotoViewer.ViewModels;
 
@@ -25,7 +26,7 @@ namespace PhotoViewer
         /// </summary>
         /// <param name="sender">mediaListBox</param>
         /// <param name="e">引数情報</param>
-        private void mediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listBox = sender as ListBox;
             if (listBox == null) return;
@@ -52,6 +53,22 @@ namespace PhotoViewer
         }
 
         /// <summary>
+        /// Window初期化時
+        /// </summary>
+        /// <param name="e">引数情報</param>
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.Import();
+
+            var hwnd = new WindowInteropHelper(this).Handle;
+            var windowPlacement = appConfigManager.WindowPlaceData;
+            WindowPlacement.SetWindowPlacement(hwnd, ref windowPlacement);
+        }
+
+        /// <summary>
         /// ウィンドウクローズ処理
         /// </summary>
         /// <param name="sender">Window</param>
@@ -64,6 +81,15 @@ namespace PhotoViewer
                 // 少し待ってからクローズ
                 Thread.Sleep(200);
             }
+
+            // ウィンドウ情報を保存
+            WINDOWPLACEMENT placement;
+            var hwnd = new WindowInteropHelper(this).Handle;
+            WindowPlacement.GetWindowPlacement(hwnd, out placement);
+
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.WindowPlaceData = placement;
+            appConfigManager.Export();
         }
     }
 }
