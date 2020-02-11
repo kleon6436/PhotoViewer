@@ -25,8 +25,6 @@ Exif情報や写真の閲覧ができます。
 
 - 連携アプリの起動（設定画面で設定が必要）
 
-- Exif情報の削除: 作成中
-
 ## クレジット
 - kchary @kleon6436 (Author, Developer)
 
