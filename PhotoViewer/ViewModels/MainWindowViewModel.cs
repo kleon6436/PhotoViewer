@@ -82,12 +82,20 @@ namespace PhotoViewer.ViewModels
             get { return isShowContextMenu; }
             set { SetProperty(ref isShowContextMenu, value); }
         }
+
+        private bool isEnableImageEditButton;
+        public bool IsEnableImageEditButton
+        {
+            get { return isEnableImageEditButton; }
+            set { SetProperty(ref isEnableImageEditButton, value); }
+        }
         #endregion
 
         #region Command
         public ICommand OpenFolderButtonCommand { get; private set; }
         public ICommand ReloadButtonCommand { get; private set; }
         public ICommand SettingButtonCommand { get; private set; }
+        public ICommand ImageEditButtonCommand { get; private set; }
         #endregion
 
         // メディア情報の読み込みスレッド
@@ -102,11 +110,13 @@ namespace PhotoViewer.ViewModels
             ContextMenuCollection.Clear();
             PictureImageSource = null;
             IsShowContextMenu = false;
+            IsEnableImageEditButton = false;
 
             // コマンドの設定
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
             ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
             SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
+            ImageEditButtonCommand = new DelegateCommand(ImageEditButtonClicked);
 
             // エクスプローラー部のViewModel設定
             ExplorerViewModel = new ExplorerViewModel();
@@ -184,6 +194,20 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
+        /// 画像編集ツールを開く
+        /// </summary>
+        private void ImageEditButtonClicked()
+        {
+            var vm = new ImageEditToolViewModel();
+            vm.SetEditFileData(SelectedMedia.FilePath);
+
+            var imageEditToolDialog = new ImageEditToolView();
+            imageEditToolDialog.DataContext = vm;
+            imageEditToolDialog.Owner = App.Current.MainWindow;
+            imageEditToolDialog.ShowDialog();
+        }
+
+        /// <summary>
         /// コンテキストメニューを読み直す
         /// </summary>
         /// <param name="sender">SettingViewModel</param>
@@ -245,6 +269,10 @@ namespace PhotoViewer.ViewModels
         /// <param name="e">引数情報</param>
         private void ExplorerViewModel_ChangeSelectItemEvent(object sender, EventArgs e)
         {
+            SelectedMedia = null;
+            PictureImageSource = null;
+            IsEnableImageEditButton = false;
+
             var selectedExplorerItem = ExplorerViewModel.SelectedItem;
             ChangeContents(selectedExplorerItem.ExplorerItemPath);
         }
@@ -444,6 +472,7 @@ namespace PhotoViewer.ViewModels
             
             // Viewに設定されているものをクリア
             PictureImageSource = null;
+            IsEnableImageEditButton = false;
 
             switch (mediaInfo.ContentMediaType)
             {
@@ -472,6 +501,8 @@ namespace PhotoViewer.ViewModels
 
                 // Exif情報を設定
                 ExifInfoViewModel.SetExif(mediaInfo.FilePath);
+
+                IsEnableImageEditButton = true;
                 return true;
             }
             catch (Exception ex)

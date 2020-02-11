@@ -88,11 +88,15 @@
     <Compile Include="Model\MediaInfo.cs" />
     <Compile Include="Model\NaturalSortHelper.cs" />
     <Compile Include="Model\WindowsIconCreator.cs" />
+    <Compile Include="ViewModels\ImageEditToolViewModel.cs" />
     <Compile Include="ViewModels\ExifInfoViewModel.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\LinkageAppViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SettingViewModel.cs" />
+    <Compile Include="Views\ImageEditToolView.xaml.cs">
+      <DependentUpon>ImageEditToolView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ExifInfoView.xaml.cs">
       <DependentUpon>ExifInfoView.xaml</DependentUpon>
     </Compile>
@@ -120,6 +124,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ImageEditToolView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ExifInfoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

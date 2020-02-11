@@ -34,7 +34,7 @@
             <Button Grid.Column="1" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ReloadButtonCommand}" ToolTip="コンテンツリストを再読み込みする...">
                 <Image Source="/Images/reload.png" HorizontalAlignment="Center" Height="20"/>
             </Button>
-            <Button Grid.Column="2" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ExifDeleteButtonCommand}" IsEnabled="{Binding ExifDeleteButtonIsEnable}" ToolTip="表示中の画像のExifを削除して保存する...">
+            <Button Grid.Column="2" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ImageEditButtonCommand}" IsEnabled="{Binding IsEnableImageEditButton}" ToolTip="表示中の画像のExifを削除して保存する...">
                 <Image Source="/Images/ExifCleanIcon.png" HorizontalAlignment="Center" Height="20"/>
             </Button>
             <Button Grid.Column="3" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding SettingButtonCommand}" ToolTip="アプリの設定画面を開く...">

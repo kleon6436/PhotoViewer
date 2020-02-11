@@ -134,6 +134,74 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
+        /// 静止画編集画面用のサムネイル画像を作成する
+        /// </summary>
+        /// <param name="filePath">ファイルパス</param>
+        /// <returns>BitmapSource(生成したサムネイル画像)</returns>
+        public static BitmapSource CreatePictureEditViewThumbnail(string filePath)
+        {
+            using (var ms = new MemoryStream())
+            {
+                // 読み込みファイルをメモリにコピーする
+                using (var fs = new FileStream(filePath, FileMode.Open))
+                {
+                    fs.CopyTo(ms);
+                }
+
+                // ストリーム位置をリセットし、まずはメタデータを取得
+                ms.Seek(0, SeekOrigin.Begin);
+                var bitmapFrame = BitmapFrame.Create(ms);
+                var metaData = bitmapFrame.Metadata as BitmapMetadata;
+                var thumbnailImage = bitmapFrame.Thumbnail;
+
+                int maxScaledWidth = 400;
+                int maxScaledHeight = 300;
+
+                // 回転情報を確認し、縦位置画像の場合は、縦横の最大サイズを入れ替えておく
+                uint rotation = GetRotation(metaData);
+                if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
+                {
+                    int tmp = maxScaledWidth;
+                    maxScaledWidth = maxScaledHeight;
+                    maxScaledHeight = tmp;
+                }
+
+                if (thumbnailImage == null)
+                {
+                    // ストリーム位置をリセットし、画像をデコード
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    var bmpImage = new BitmapImage();
+                    bmpImage.BeginInit();
+                    bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                    bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bmpImage.StreamSource = ms;
+                    bmpImage.EndInit();
+
+                    // 画像の縮小処理
+                    thumbnailImage = ResizeImage(bmpImage, maxScaledWidth, maxScaledHeight);
+                }
+                else
+                {
+                    // サムネイル画像が大きい場合は、画像の縮小処理
+                    if (thumbnailImage.PixelWidth > maxScaledWidth || thumbnailImage.PixelHeight > maxScaledHeight)
+                    {
+                        thumbnailImage = ResizeImage(thumbnailImage, maxScaledWidth, maxScaledHeight);
+                    }
+                }
+
+                // サムネイル画像向けに回転
+                thumbnailImage = RotateImage(metaData, thumbnailImage);
+
+                // 画像を書き出し、変更不可にする
+                thumbnailImage = new WriteableBitmap(thumbnailImage);
+                thumbnailImage.Freeze();
+
+                return thumbnailImage;
+            }
+        }
+
+        /// <summary>
         /// 画像を指定サイズにリサイズする
         /// </summary>
         /// <param name="image">BitmapSource(画像データ)</param>
