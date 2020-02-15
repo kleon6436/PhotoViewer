@@ -31,6 +31,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
+    <ErrorReport>none</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>PhotoExifViewerIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>PhotoExifViewerIcon.ico</ApplicationIcon>
