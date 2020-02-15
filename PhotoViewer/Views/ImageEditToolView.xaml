@@ -11,7 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="80"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="10" Orientation="Vertical">
             <TextBlock Text="■ 画像編集・保存ツール ■" FontSize="24" FontWeight="Medium" Margin="0,0,0,15"/>
@@ -37,20 +37,17 @@
             
             <!-- 左下のレイアウト -->
             <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Visibility="Collapsed">
-                    <CheckBox x:Name="resizeCheckBox" Content="リサイズ" FontSize="16" VerticalAlignment="Bottom" VerticalContentAlignment="Center" IsChecked="{Binding IsResizeImage}" Margin="0,0,10,0"/>
-                    <TextBlock Text="幅: " VerticalAlignment="Center" FontSize="16" IsEnabled="{Binding ElementName=resizeCheckBox, Path=IsChecked}"/>
-                    <TextBox Width="60" Margin="0,0,10,0" VerticalAlignment="Center" Text="{Binding ResizeWidth}" IsEnabled="{Binding ElementName=resizeCheckBox, Path=IsChecked}"/>
-                    <TextBlock Text="高さ: " VerticalAlignment="Center" FontSize="16" IsEnabled="{Binding ElementName=resizeCheckBox, Path=IsChecked}"/>
-                    <TextBox Width="60" Margin="0,0,10,0" VerticalAlignment="Center" Text="{Binding ResizeHeight}" IsEnabled="{Binding ElementName=resizeCheckBox, Path=IsChecked}"/>
-                </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="画質: " VerticalAlignment="Center" FontSize="16"/>
+                    <TextBlock Text="リサイズ: " FontSize="15" VerticalAlignment="Center"/>
+                    <ComboBox Width="100" FontSize="15" ItemsSource="{Binding ResizeCategoryItems}" SelectedItem="{Binding ResizeCategoryItem, Mode=TwoWay}" DisplayMemberPath="Name"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10" IsEnabled="{Binding IsEnableImageSaveQuality, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBlock Text="画質: " VerticalAlignment="Center" FontSize="15"/>
                     <ComboBox Width="80" FontSize="16" ItemsSource="{Binding ImageSaveQualityItems}" SelectedItem="{Binding SelectedQuality, Mode=TwoWay}" DisplayMemberPath="Name"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="保存形式: " VerticalAlignment="Center" FontSize="16"/>
-                    <ComboBox Width="80" FontSize="16" ItemsSource="{Binding ImageFormItems}" SelectedItem="{Binding SelectedForm, Mode=TwoWay}" DisplayMemberPath="Name"/>
+                    <TextBlock Text="保存形式: " VerticalAlignment="Center" FontSize="15"/>
+                    <ComboBox Width="80" FontSize="15" ItemsSource="{Binding ImageFormItems}" SelectedItem="{Binding SelectedForm, Mode=TwoWay}" DisplayMemberPath="Name" SelectionChanged="ComboBox_SelectionChanged"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

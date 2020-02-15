@@ -176,6 +176,7 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void ReloadButtonClicked()
         {
+            IsEnableImageEditButton = false;
             UpdateContents();
         }
 
@@ -198,6 +199,11 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void ImageEditButtonClicked()
         {
+            if (SelectedMedia == null)
+            {
+                return;
+            }
+
             var vm = new ImageEditToolViewModel();
             vm.SetEditFileData(SelectedMedia.FilePath);
 

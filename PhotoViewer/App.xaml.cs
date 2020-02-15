@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace PhotoViewer
@@ -13,6 +8,17 @@ namespace PhotoViewer
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            DispatcherUnhandledException += AppDispatcherUnhandledException;
+        }
+
+        private void AppDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            LogException(e.Exception);
+            ShowErrorMessageBox("ファイルアクセスエラー", "エラー");
+        }
+
         /// <summary>
         /// 例外発生時はコンソールにエラーメッセージを出力する
         /// </summary>
