@@ -81,7 +81,7 @@ namespace PhotoViewer.ViewModels
         public ICommand SaveButtonCommand { get; set; }
         #endregion
 
-        public EventHandler CloseView;
+        public EventHandler CloseView { get; set; }
         // 編集対象のファイルパス
         private string EditFilePath;
 
