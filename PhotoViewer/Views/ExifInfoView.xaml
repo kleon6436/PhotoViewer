@@ -7,11 +7,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
-        <DataGrid Margin="5,5" BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14"
+        <DataGrid Margin="5,5" BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14" Focusable="False"
                   ItemsSource="{Binding ExifDataList}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False"
-                  VerticalGridLinesBrush="LightSlateGray" HorizontalGridLinesBrush="LightSlateGray">
+                  VerticalGridLinesBrush="LightSlateGray" HorizontalGridLinesBrush="LightSlateGray" PreviewMouseDown="DataGrid_PreviewMouseDown">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="パラメータ名" Binding="{Binding ExifParameterText}" Width="auto" MinWidth="100">
                     <DataGridTextColumn.ElementStyle>
