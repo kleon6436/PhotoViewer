@@ -9,7 +9,7 @@
     <Grid>
         <DataGrid Margin="5,5" BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14" Focusable="False"
                   ItemsSource="{Binding ExifDataList}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
-                  CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
+                  CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False"
                   VerticalGridLinesBrush="LightSlateGray" HorizontalGridLinesBrush="LightSlateGray" PreviewMouseDown="DataGrid_PreviewMouseDown">
             <DataGrid.Columns>
