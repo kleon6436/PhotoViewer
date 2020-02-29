@@ -143,8 +143,12 @@ namespace PhotoViewer.ViewModels
                 IsShowContextMenu = true;
             }
 
-            string defaultPicturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
-            ChangeContents(defaultPicturePath);
+            string picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
+            if (!string.IsNullOrEmpty(appConfigManager.configData.PreviousFolderPath))
+            {
+                picturePath = appConfigManager.configData.PreviousFolderPath;
+            }
+            ChangeContents(picturePath);
         }
         
         /// <summary>
@@ -313,6 +317,9 @@ namespace PhotoViewer.ViewModels
             // フォルダパスを更新して、リスト更新
             SelectFolderPath = folderPath;
             UpdateContents();
+
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.configData.PreviousFolderPath = SelectFolderPath;
         }
 
         /// <summary>

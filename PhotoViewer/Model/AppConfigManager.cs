@@ -10,11 +10,13 @@ namespace PhotoViewer.Model
     /// </summary>
     public class ConfigData
     {
+        public string PreviousFolderPath;           // 前回終了時点の表示フォルダ
         public ExtraAppSetting LinkageApp;          // 登録されている連携アプリ
         public WINDOWPLACEMENT WindowPlaceData;     // ウィンドウの表示状態
 
         public ConfigData()
         {
+            PreviousFolderPath = null;
             LinkageApp = null;
         }
     }
@@ -45,11 +47,6 @@ namespace PhotoViewer.Model
 
         public void Import()
         {
-            if (!File.Exists(AppConfigFilePath))
-            {
-                return;
-            }
-
             try
             {
                 var configXmlObject = new ConfigXml(AppConfigFilePath);
@@ -57,8 +54,8 @@ namespace PhotoViewer.Model
             }
             catch (Exception ex)
             {
+                // 読み込み時の例外は無視する
                 App.LogException(ex);
-                throw;
             }
         }
 
@@ -100,6 +97,8 @@ namespace PhotoViewer.Model
     public class ConfigXml
     {
         // XMLの要素名
+        private const string PREVIOUS_FOLDER_ELEM_NAME = "previous_folder";
+        private const string PREVIOUS_PATH_ELEM_NAME = "previous_path";
         private const string LINK_APP_ELEM_NAME = "linkage_app_data";
         private const string LINK_APP_ID_ELEM_NAME = "id";
         private const string LINK_APP_NAME_ELEM_NAME = "name";
@@ -128,6 +127,7 @@ namespace PhotoViewer.Model
         {
             var xdoc = XDocument.Load(appConfigFilePath);
 
+            ParsePreviousPathXml(xdoc, ref configData);
             ParseLinkageAppXml(xdoc, ref configData);
             ParseWindowPlacementXml(xdoc, ref configData);
         }
@@ -137,6 +137,7 @@ namespace PhotoViewer.Model
             var xdoc = new XDocument(new XDeclaration("1.0", "utf-8", null));
             var xdata = new XElement("data");
 
+            xdata.Add(CreatePreviousPathXml(configData));
             xdata.Add(CreateLinkageAppXml(configData));
             xdata.Add(CreateWindowPlacementXml(configData));
             xdoc.Add(xdata);
@@ -145,9 +146,31 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
+        /// PreviousフォルダパスのXMLを生成する
+        /// </summary>
+        private XElement CreatePreviousPathXml(ConfigData configData)
+        {
+            var dataElement = new XElement(PREVIOUS_FOLDER_ELEM_NAME);
+            var previousPath = new XElement(PREVIOUS_PATH_ELEM_NAME, configData.PreviousFolderPath == null ? new XText("") : new XText(configData.PreviousFolderPath));
+
+            dataElement.Add(previousPath);
+            return dataElement;
+        }
+
+        /// <summary>
+        /// PreviousフォルダパスのXMLを解析する
+        /// </summary>
+        private void ParsePreviousPathXml(XDocument xdoc, ref ConfigData configData)
+        {
+            var dataElement = xdoc.Root.Element(PREVIOUS_FOLDER_ELEM_NAME);
+            XElement previousPath = dataElement.Element(PREVIOUS_PATH_ELEM_NAME);
+
+            configData.PreviousFolderPath = previousPath.Value;
+        }
+
+        /// <summary>
         /// 連携アプリのXMLを生成する
         /// </summary>
-        /// <returns>XElement</returns>
         private XElement CreateLinkageAppXml(ConfigData configData)
         {
             var dataElement = new XElement(LINK_APP_ELEM_NAME);
@@ -186,7 +209,6 @@ namespace PhotoViewer.Model
         /// <summary>
         /// Windowのサイズ、位置のXMLを生成する
         /// </summary>
-        /// <returns>XElement</returns>
         private XElement CreateWindowPlacementXml(ConfigData configData)
         {
             var dataElement = new XElement(WINDOW_PLACEMENT_ELEM_NAME);
