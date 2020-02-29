@@ -40,9 +40,9 @@ namespace PhotoViewer.ViewModels
             DeleteLinkAppCommand = new DelegateCommand(DeleteLinkAppButtonClicked);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            if (appConfigManager.LinkageApp != null)
+            if (appConfigManager.configData.LinkageApp != null)
             {
-                LinkAppPath = appConfigManager.LinkageApp.AppPath;
+                LinkAppPath = appConfigManager.configData.LinkageApp.AppPath;
                 IsRegistered = true;
             }
             else

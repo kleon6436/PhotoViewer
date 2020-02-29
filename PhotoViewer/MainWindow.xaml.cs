@@ -53,18 +53,15 @@ namespace PhotoViewer
         }
 
         /// <summary>
-        /// Window初期化時
+        /// ウィンドウロード処理
         /// </summary>
+        /// <param name="sender">Window</param>
         /// <param name="e">引数情報</param>
-        protected override void OnSourceInitialized(EventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            base.OnSourceInitialized(e);
-
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.Import();
-
             var hwnd = new WindowInteropHelper(this).Handle;
-            var windowPlacement = appConfigManager.WindowPlaceData;
+            var windowPlacement = appConfigManager.configData.WindowPlaceData;
             WindowPlacement.SetWindowPlacement(hwnd, ref windowPlacement);
         }
 
@@ -88,7 +85,7 @@ namespace PhotoViewer
             WindowPlacement.GetWindowPlacement(hwnd, out placement);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.WindowPlaceData = placement;
+            appConfigManager.configData.WindowPlaceData = placement;
             appConfigManager.Export();
         }
     }

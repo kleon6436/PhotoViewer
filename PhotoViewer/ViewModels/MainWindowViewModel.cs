@@ -112,6 +112,9 @@ namespace PhotoViewer.ViewModels
             IsShowContextMenu = false;
             IsEnableImageEditButton = false;
 
+            // 設定ファイルの読み込み
+            LoadConfigFile();
+
             // コマンドの設定
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
             ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
@@ -128,22 +131,29 @@ namespace PhotoViewer.ViewModels
 
             // 設定情報の読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.ImportLinkageAppXml();
-
-            if (appConfigManager.LinkageApp != null)
+            if (appConfigManager.configData.LinkageApp != null)
             {
                 // アプリアイコンを読み込み
-                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.LinkageApp.AppPath);
+                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.configData.LinkageApp.AppPath);
                 var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                 // コンテキストメニューの設定
-                var contextMenu = new ContextMenuInfo(appConfigManager.LinkageApp.AppName, iconBitmapSource);
+                var contextMenu = new ContextMenuInfo(appConfigManager.configData.LinkageApp.AppName, iconBitmapSource);
                 ContextMenuCollection.Add(contextMenu);
                 IsShowContextMenu = true;
             }
 
             string defaultPicturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
             ChangeContents(defaultPicturePath);
+        }
+        
+        /// <summary>
+        /// 設定ファイルの読み込み
+        /// </summary>
+        private void LoadConfigFile()
+        {
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.Import();
         }
 
         /// <summary>
@@ -220,22 +230,20 @@ namespace PhotoViewer.ViewModels
         /// <param name="e">引数情報</param>
         private void ReloadContextMenu(object sender, EventArgs e)
         {
-            // 設定情報から連携アプリ関連の情報を再読み込み
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.ImportLinkageAppXml();
-
             // 現在のコンテキストメニューをリセット
             ContextMenuCollection.Clear();
             IsShowContextMenu = false;
 
-            if (appConfigManager.LinkageApp != null)
+            // 設定情報から連携アプリ関連の情報を再読み込み
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            if (appConfigManager.configData.LinkageApp != null)
             { 
                 // アプリアイコンを読み込み
-                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.LinkageApp.AppPath);
+                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.configData.LinkageApp.AppPath);
                 var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                 // コンテキストメニューの設定
-                var contextMenu = new ContextMenuInfo(appConfigManager.LinkageApp.AppName, iconBitmapSource);
+                var contextMenu = new ContextMenuInfo(appConfigManager.configData.LinkageApp.AppName, iconBitmapSource);
                 ContextMenuCollection.Add(contextMenu);
                 IsShowContextMenu = true;
             }
@@ -248,7 +256,7 @@ namespace PhotoViewer.ViewModels
         public void ExecuteContextMenu(string appName)
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            if (appName != appConfigManager.LinkageApp.AppName)
+            if (appName != appConfigManager.configData.LinkageApp.AppName)
             {
                 return;
             }
@@ -256,7 +264,7 @@ namespace PhotoViewer.ViewModels
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                Process.Start(appConfigManager.LinkageApp.AppPath, SelectedMedia.FilePath);
+                Process.Start(appConfigManager.configData.LinkageApp.AppPath, SelectedMedia.FilePath);
             }
             catch (Exception ex)
             {
