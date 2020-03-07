@@ -91,6 +91,7 @@ namespace PhotoViewer.ViewModels
         public ImageEditToolViewModel()
         {
             ResizeCategoryItems.Add(new ResizeImageCategory("リサイズなし", ResizeImageCategory.ResizeCategory.None));
+            ResizeCategoryItems.Add(new ResizeImageCategory("印刷向け", ResizeImageCategory.ResizeCategory.Print));
             ResizeCategoryItems.Add(new ResizeImageCategory("ブログ向け", ResizeImageCategory.ResizeCategory.Blog));
             ResizeCategoryItems.Add(new ResizeImageCategory("Twitter向け", ResizeImageCategory.ResizeCategory.Twitter));
             ResizeCategoryItem = ResizeCategoryItems.First();
@@ -229,6 +230,7 @@ namespace PhotoViewer.ViewModels
         public enum ResizeCategory
         {
             None,    // リサイズしない
+            Print,   // 印刷用
             Blog,    // ブログ用
             Twitter, // Twitter用
         }
@@ -245,6 +247,10 @@ namespace PhotoViewer.ViewModels
             switch (Category)
             {
                 case ResizeCategory.None:
+                    return;
+
+                case ResizeCategory.Print:
+                    ResizelongSideValue = 2500;
                     return;
 
                 case ResizeCategory.Blog:
