@@ -12,7 +12,7 @@ namespace PhotoViewer.Model
     {
         public string PreviousFolderPath;           // 前回終了時点の表示フォルダ
         public ExtraAppSetting LinkageApp;          // 登録されている連携アプリ
-        public WINDOWPLACEMENT WindowPlaceData;     // ウィンドウの表示状態
+        public MainWindow.WINDOWPLACEMENT WindowPlaceData;     // ウィンドウの表示状態
 
         public ConfigData()
         {
@@ -254,100 +254,17 @@ namespace PhotoViewer.Model
             var windowFlag = dataElement.Element(WINDOW_PLACEMENT_FLAG_ELEM_NAME);
             var windowSwElement = dataElement.Element(WINDOW_PLACEMENT_SW_ELEM_NAME);
 
-            WINDOWPLACEMENT windowPlaceData;
-            windowPlaceData.normalPosition.Top = Convert.ToInt32(windowPlaceTopElement.Value);
-            windowPlaceData.normalPosition.Left = Convert.ToInt32(windowPlaceLeftElement.Value);
-            windowPlaceData.normalPosition.Right = Convert.ToInt32(windowPlaceRightElement.Value);
-            windowPlaceData.normalPosition.Bottom = Convert.ToInt32(windowPlaceButtomElement.Value);
-            windowPlaceData.maxPosition.X = Convert.ToInt32(windowMaxPositionX.Value);
-            windowPlaceData.maxPosition.Y = Convert.ToInt32(windowMaxPositionY.Value);
-            windowPlaceData.minPosition.X = Convert.ToInt32(windowMinPositionX.Value);
-            windowPlaceData.minPosition.Y = Convert.ToInt32(windowMinPositionY.Value);
-            windowPlaceData.length = Marshal.SizeOf(typeof(WINDOWPLACEMENT));
-            windowPlaceData.flags = Convert.ToInt32(windowFlag.Value);
-
-            var sw = SW.SHOWNORMAL;
-            try
-            {
-                sw = (SW)Enum.Parse(typeof(SW), windowSwElement.Value);
-            }
-            catch (Exception ex)
-            {
-                // ログだけ取得しておく
-                App.LogException(ex);
-            }
-            windowPlaceData.showCmd = (sw == SW.SHOWMINIMIZED) ? SW.SHOWNORMAL : sw;
-
-            configData.WindowPlaceData = windowPlaceData;
+            configData.WindowPlaceData.normalPosition.Top = Convert.ToInt32(windowPlaceTopElement.Value);
+            configData.WindowPlaceData.normalPosition.Left = Convert.ToInt32(windowPlaceLeftElement.Value);
+            configData.WindowPlaceData.normalPosition.Right = Convert.ToInt32(windowPlaceRightElement.Value);
+            configData.WindowPlaceData.normalPosition.Bottom = Convert.ToInt32(windowPlaceButtomElement.Value);
+            configData.WindowPlaceData.maxPosition.X = Convert.ToInt32(windowMaxPositionX.Value);
+            configData.WindowPlaceData.maxPosition.Y = Convert.ToInt32(windowMaxPositionY.Value);
+            configData.WindowPlaceData.minPosition.X = Convert.ToInt32(windowMinPositionX.Value);
+            configData.WindowPlaceData.minPosition.Y = Convert.ToInt32(windowMinPositionY.Value);
+            configData.WindowPlaceData.length = Marshal.SizeOf(typeof(MainWindow.WINDOWPLACEMENT));
+            configData.WindowPlaceData.flags = Convert.ToInt32(windowFlag.Value);
+            configData.WindowPlaceData.showCmd = (MainWindow.SW)Enum.Parse(typeof(MainWindow.SW), windowSwElement.Value);
         }
     }
-
-    #region WindowPlacement
-    public class WindowPlacement
-    {
-#pragma warning disable CA1401 // P/Invokes should not be visible
-        [DllImport("user32.dll")]
-        public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
-
-        [DllImport("user32.dll")]
-        public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
-#pragma warning restore CA1401 // P/Invokes should not be visible
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct WINDOWPLACEMENT
-    {
-        public int length;
-        public int flags;
-        public SW showCmd;
-        public POINT minPosition;
-        public POINT maxPosition;
-        public RECT normalPosition;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct POINT
-    {
-        public int X;
-        public int Y;
-
-        public POINT(int x, int y)
-        {
-            this.X = x;
-            this.Y = y;
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RECT
-    {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
-
-        public RECT(int left, int top, int right, int bottom)
-        {
-            this.Left = left;
-            this.Top = top;
-            this.Right = right;
-            this.Bottom = bottom;
-        }
-    }
-
-    public enum SW
-    {
-        HIDE = 0,
-        SHOWNORMAL = 1,
-        SHOWMINIMIZED = 2,
-        SHOWMAXIMIZED = 3,
-        SHOWNOACTIVATE = 4,
-        SHOW = 5,
-        MINIMIZE = 6,
-        SHOWMINNOACTIVE = 7,
-        SHOWNA = 8,
-        RESTORE = 9,
-        SHOWDEFAULT = 10,
-    }
-    #endregion
 }
