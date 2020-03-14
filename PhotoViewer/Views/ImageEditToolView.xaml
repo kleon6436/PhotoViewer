@@ -9,9 +9,9 @@
         Title="Kchary Photograph Viewer" Height="400" Width="600">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="90"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="10" Orientation="Vertical">
             <TextBlock Text="■ 画像編集・保存ツール ■" FontSize="24" FontWeight="Medium" Margin="0,0,0,15"/>
