@@ -21,7 +21,7 @@ namespace PhotoViewer.Model
                 var bitmapFrame = BitmapFrame.Create(ms);
                 var metaData = bitmapFrame.Metadata as BitmapMetadata;
 
-                // ストリーム位置をリセットし、画像をでコード
+                // ストリーム位置をリセットし、画像をデコード
                 ms.Seek(0, SeekOrigin.Begin);
 
                 var bmpImage = new BitmapImage();

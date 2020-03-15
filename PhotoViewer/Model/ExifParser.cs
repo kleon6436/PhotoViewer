@@ -1,6 +1,6 @@
-﻿using Microsoft.WindowsAPICodePack.Shell;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace PhotoViewer.Model
 {
@@ -20,21 +20,9 @@ namespace PhotoViewer.Model
         /// <summary>
         /// 撮影日時の情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static ExifInfo GetMediaDate(ShellObject shell)
+        private static ExifInfo GetMediaDate(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
-
-            var property = shell.Properties.System.DateModified;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value.ToString();
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 3);
             string propertyText = "撮影日時";
             return new ExifInfo(propertyText, propertyValue);
         }
@@ -42,21 +30,9 @@ namespace PhotoViewer.Model
         /// <summary>
         /// カメラモデルの情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static ExifInfo GetCameraModel(ShellObject shell)
+        private static ExifInfo GetCameraModel(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
-
-            var property = shell.Properties.System.Photo.CameraModel;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value;
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 30);
             string propertyText = "カメラモデル";
             return new ExifInfo(propertyText, propertyValue);
         }
@@ -64,21 +40,9 @@ namespace PhotoViewer.Model
         /// <summary>
         /// カメラ製造元の情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static ExifInfo GetCameraManufacturer(ShellObject shell)
+        private static ExifInfo GetCameraManufacturer(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
-
-            var property = shell.Properties.System.Photo.CameraManufacturer;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "";
-            }
-            else
-            {
-                propertyValue = property.Value;
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 32);
             string propertyText = "カメラ製造元";
             return new ExifInfo(propertyText, propertyValue);
         }
@@ -86,37 +50,17 @@ namespace PhotoViewer.Model
         /// <summary>
         /// 画像の幅と高さの情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static List<ExifInfo> GetImageWidthAndHeight(ShellObject shell)
+        private static List<ExifInfo> GetImageWidthAndHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
             List<ExifInfo> imageWidthAndHeightInfo = new List<ExifInfo>();
 
             // 幅
-            var property = shell.Properties.System.Image.HorizontalSize;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value.ToString();
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 176);
             string propertyText = "幅";
             imageWidthAndHeightInfo.Add(new ExifInfo(propertyText, propertyValue));
 
             // 高さ
-            property = shell.Properties.System.Image.VerticalSize;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value.ToString();
-            }
-
+            propertyValue = objFolder.GetDetailsOf(folderItem, 178);
             propertyText = "高さ";
             imageWidthAndHeightInfo.Add(new ExifInfo(propertyText, propertyValue));
 
@@ -126,37 +70,17 @@ namespace PhotoViewer.Model
         /// <summary>
         /// 画像の解像度の情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static List<ExifInfo> GetImageResolutionWidthAndHeight(ShellObject shell)
+        private static List<ExifInfo> GetImageResolutionWidthAndHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
             List<ExifInfo> imageResolutionInfo = new List<ExifInfo>();
 
             // 水平解像度
-            var property = shell.Properties.System.Image.HorizontalResolution;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value.ToString();
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 175);
             string propertyText = "水平解像度";
             imageResolutionInfo.Add(new ExifInfo(propertyText, propertyValue));
 
             // 垂直解像度
-            property = shell.Properties.System.Image.VerticalResolution;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value.ToString();
-            }
-
+            propertyValue = objFolder.GetDetailsOf(folderItem, 177);
             propertyText = "垂直解像度";
             imageResolutionInfo.Add(new ExifInfo(propertyText, propertyValue));
 
@@ -166,21 +90,9 @@ namespace PhotoViewer.Model
         /// <summary>
         /// 画像のビットの深さ情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static ExifInfo GetBitDepth(ShellObject shell)
+        private static ExifInfo GetBitDepth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
-
-            var property = shell.Properties.System.Image.BitDepth;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value.ToString();
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 174);
             string propertyText = "ビット深度";
             return new ExifInfo(propertyText, propertyValue);
         }
@@ -188,49 +100,17 @@ namespace PhotoViewer.Model
         /// <summary>
         /// シャッタ―速度と絞り値の情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static List<ExifInfo> GetFnumberAndShutterSpeed(ShellObject shell)
+        private static List<ExifInfo> GetFnumberAndShutterSpeed(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
             List<ExifInfo> shutterSpeedAndApertureInfo = new List<ExifInfo>();
 
             // シャッター速度
-            var denominatorProperty = shell.Properties.System.Photo.ExposureTimeDenominator;
-            var numeratorProperty = shell.Properties.System.Photo.ExposureTimeNumerator;
-            if (denominatorProperty?.ValueAsObject == null || numeratorProperty?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                int _denominator = (int)denominatorProperty.Value.Value;
-                int _numerator = (int)numeratorProperty.Value.Value;
-
-                // 最大公約数を求める
-                int commonFactor = _denominator % _numerator;
-                if (commonFactor == 0)
-                {
-                    commonFactor = _numerator;
-                }
-
-                // 約分したシャッタースピードを表示する
-                propertyValue = (_numerator / commonFactor).ToString() + "/" + (_denominator / commonFactor).ToString();
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 259);
             string propertyText = "シャッター速度";
             shutterSpeedAndApertureInfo.Add(new ExifInfo(propertyText, propertyValue));
 
             // 絞り値
-            var property = shell.Properties.System.Photo.FNumber;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value.ToString();
-            }
-
+            propertyValue = objFolder.GetDetailsOf(folderItem, 260);
             propertyText = "絞り値";
             shutterSpeedAndApertureInfo.Add(new ExifInfo(propertyText, propertyValue));
 
@@ -240,21 +120,9 @@ namespace PhotoViewer.Model
         /// <summary>
         /// ISO情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static ExifInfo GetISO(ShellObject shell)
+        private static ExifInfo GetISO(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
-
-            var property = shell.Properties.System.Photo.ISOSpeed;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value.ToString();
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 264);
             string propertyText = "ISO";
             return new ExifInfo(propertyText, propertyValue);
         }
@@ -262,21 +130,9 @@ namespace PhotoViewer.Model
         /// <summary>
         /// 焦点距離の情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static ExifInfo GetFocusLength(ShellObject shell)
+        private static ExifInfo GetFocusLength(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
-
-            var property = shell.Properties.System.Photo.FocalLength;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = ((uint)property.Value).ToString();
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 262);
             string propertyText = "焦点距離";
             return new ExifInfo(propertyText, propertyValue);
         }
@@ -284,37 +140,17 @@ namespace PhotoViewer.Model
         /// <summary>
         /// 露出プログラムとホワイトバランスの情報を取得する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static List<ExifInfo> GetExposeModeAndWhiteBlance(ShellObject shell)
+        private static List<ExifInfo> GetExposeModeAndWhiteBlance(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
             List<ExifInfo> exposeModeAndWhiteBlanceInfo = new List<ExifInfo>();
 
             // 露出プログラム
-            var property = shell.Properties.System.Photo.ExposureProgramText;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value;
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 258);
             string propertyText = "露出プログラム";
             exposeModeAndWhiteBlanceInfo.Add(new ExifInfo(propertyText, propertyValue));
 
             // ホワイトバランス
-            property = shell.Properties.System.Photo.WhiteBalanceText;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value;
-            }
-
+            propertyValue = objFolder.GetDetailsOf(folderItem, 275);
             propertyText = "ホワイトバランス";
             exposeModeAndWhiteBlanceInfo.Add(new ExifInfo(propertyText, propertyValue));
 
@@ -324,21 +160,9 @@ namespace PhotoViewer.Model
         /// <summary>
         /// 測光モードの情報をピクチャコンテンツの情報に設定する
         /// </summary>
-        /// <param name="shell">ShellObject</param>
-        private static ExifInfo GetMeteringMode(ShellObject shell)
+        private static ExifInfo GetMeteringMode(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = "Null";
-
-            var property = shell.Properties.System.Photo.MeteringModeText;
-            if (property?.ValueAsObject == null)
-            {
-                propertyValue = "Null";
-            }
-            else
-            {
-                propertyValue = property.Value;
-            }
-
+            string propertyValue = objFolder.GetDetailsOf(folderItem, 269);
             string propertyText = "測光モード";
             return new ExifInfo(propertyText, propertyValue);
         }
@@ -348,38 +172,42 @@ namespace PhotoViewer.Model
         /// </summary>
         public static List<ExifInfo> GetExifDataFromFile(string filePath)
         {
-            //  ファイルからプロパティを取得
-            using (var shell = ShellObject.FromParsingName(filePath))
-            {
-                List<ExifInfo> exifInfos = new List<ExifInfo>();
+            // shell32の準備
+            var shellAppType = Type.GetTypeFromProgID("Shell.Application");
+            dynamic shell = Activator.CreateInstance(shellAppType);
 
-                // ファイル名を取得
-                exifInfos.Add(GetFileName(filePath));
-                // 撮影日時を取得
-                exifInfos.Add(GetMediaDate(shell));
-                // カメラモデルの情報を取得
-                exifInfos.Add(GetCameraModel(shell));
-                // カメラ製造元の情報を取得
-                exifInfos.Add(GetCameraManufacturer(shell));
-                // 画像の幅と高さを取得
-                exifInfos.AddRange(GetImageWidthAndHeight(shell));
-                // 画像の解像度を取得
-                exifInfos.AddRange(GetImageResolutionWidthAndHeight(shell));
-                // ビットの深さを取得
-                exifInfos.Add(GetBitDepth(shell));
-                // シャッター速度と絞り値を取得
-                exifInfos.AddRange(GetFnumberAndShutterSpeed(shell));
-                // ISOを取得
-                exifInfos.Add(GetISO(shell));
-                // 焦点距離を取得
-                exifInfos.Add(GetFocusLength(shell));
-                // 測光モードを取得
-                exifInfos.Add(GetMeteringMode(shell));
-                // 露出プログラムとホワイトバランスを取得
-                exifInfos.AddRange(GetExposeModeAndWhiteBlance(shell));
+            FileInfo fileInfo = new FileInfo(filePath);
+            Shell32.Folder objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
+            Shell32.FolderItem folderItem = objFolder.ParseName(Path.GetFileName(filePath));
 
-                return exifInfos;
-            }
+            List<ExifInfo> exifInfos = new List<ExifInfo>();
+
+            // ファイル名を取得
+            exifInfos.Add(GetFileName(filePath));
+            // 撮影日時を取得
+            exifInfos.Add(GetMediaDate(objFolder, folderItem));
+            // カメラモデルの情報を取得
+            exifInfos.Add(GetCameraModel(objFolder, folderItem));
+            // カメラ製造元の情報を取得
+            exifInfos.Add(GetCameraManufacturer(objFolder, folderItem));
+            // 画像の幅と高さを取得
+            exifInfos.AddRange(GetImageWidthAndHeight(objFolder, folderItem));
+            // 画像の解像度を取得
+            exifInfos.AddRange(GetImageResolutionWidthAndHeight(objFolder, folderItem));
+            // ビットの深さを取得
+            exifInfos.Add(GetBitDepth(objFolder, folderItem));
+            // シャッター速度と絞り値を取得
+            exifInfos.AddRange(GetFnumberAndShutterSpeed(objFolder, folderItem));
+            // ISOを取得
+            exifInfos.Add(GetISO(objFolder, folderItem));
+            // 焦点距離を取得
+            exifInfos.Add(GetFocusLength(objFolder, folderItem));
+            // 測光モードを取得
+            exifInfos.Add(GetMeteringMode(objFolder, folderItem));
+            // 露出プログラムとホワイトバランスを取得
+            exifInfos.AddRange(GetExposeModeAndWhiteBlance(objFolder, folderItem));
+
+            return exifInfos;
         }
     }
 }
