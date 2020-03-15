@@ -92,6 +92,7 @@
     <Compile Include="Model\MediaInfo.cs" />
     <Compile Include="Model\NaturalSortHelper.cs" />
     <Compile Include="Model\WindowsIconCreator.cs" />
+    <Compile Include="Model\WrappingStream.cs" />
     <Compile Include="ViewModels\ImageEditToolViewModel.cs" />
     <Compile Include="ViewModels\ExifInfoViewModel.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />

@@ -119,6 +119,9 @@ namespace PhotoViewer.ViewModels
         {
             this.EditFilePath = filePath;
             this.EditImage = ImageControl.CreatePictureEditViewThumbnail(this.EditFilePath);
+
+            // WritableBitmapのメモリ解放
+            App.RunGC();
         }
 
         /// <summary>

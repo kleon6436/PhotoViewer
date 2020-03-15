@@ -15,6 +15,8 @@ using Prism.Commands;
 using PhotoViewer.Model;
 using PhotoViewer.Views;
 using System.Windows;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace PhotoViewer.ViewModels
 {
@@ -461,6 +463,8 @@ namespace PhotoViewer.ViewModels
                     readyFiles.Clear();
                     App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
                 }
+
+                App.RunGC();
             }
 
             if (readyFiles.Count > 0)
@@ -490,7 +494,7 @@ namespace PhotoViewer.ViewModels
             {
                 App.ShowErrorMessageBox("ファイルが存在しません。", "ファイルアクセスエラー");
             }
-            
+
             // Viewに設定されているものをクリア
             PictureImageSource = null;
             IsEnableImageEditButton = false;
@@ -517,13 +521,26 @@ namespace PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                // 表示する画像を作成
+                // 表示画像の作成
                 PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath);
+
+                // WritableBitmapのメモリ解放
+                App.RunGC();
 
                 // Exif情報を設定
                 ExifInfoViewModel.SetExif(mediaInfo.FilePath);
 
-                IsEnableImageEditButton = true;
+                if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(mediaInfo.FilePath).ToLower()))
+                {
+                    // NikonRaw画像以外は、編集可能
+                    IsEnableImageEditButton = true;
+                }
+                else
+                {
+                    // NikonRaw画像は、編集不可
+                    IsEnableImageEditButton = false;
+                }
+
                 return true;
             }
             catch (Exception ex)

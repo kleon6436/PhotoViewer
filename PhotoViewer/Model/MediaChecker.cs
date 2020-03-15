@@ -5,7 +5,7 @@ namespace PhotoViewer.Model
 {
     public static class MediaChecker
     {
-        private static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng" };
+        private static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng", ".nef" };
 
         /// <summary>
         /// アプリがサポートする拡張子リストを取得する

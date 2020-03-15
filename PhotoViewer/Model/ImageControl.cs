@@ -14,27 +14,24 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource(生成した画像)</returns>
         public static BitmapSource CreatePictureViewImage(string filePath)
         {
-            using (var ms = new MemoryStream())
+            using (var ms = new WrappingStream(new FileStream(filePath, FileMode.Open)))
             {
-                // 読み込みファイルをメモリにコピーする
-                using (var fs = new FileStream(filePath, FileMode.Open))
-                {
-                    fs.CopyTo(ms);
-                }
-
                 // ストリーム位置をリセットし、まずはメタデータの取得
                 ms.Seek(0, SeekOrigin.Begin);
-                var metaData = BitmapFrame.Create(ms).Metadata as BitmapMetadata;
+                var bitmapFrame = BitmapFrame.Create(ms);
+                var metaData = bitmapFrame.Metadata as BitmapMetadata;
 
                 // ストリーム位置をリセットし、画像をでコード
                 ms.Seek(0, SeekOrigin.Begin);
 
                 var bmpImage = new BitmapImage();
                 bmpImage.BeginInit();
-                bmpImage.CreateOptions = BitmapCreateOptions.None;
+                bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                 bmpImage.CacheOption = BitmapCacheOption.OnLoad;
                 bmpImage.StreamSource = ms;
                 bmpImage.EndInit();
+
+                BitmapSource viewImage = (BitmapSource)bmpImage;
 
                 int maxViewWidth = 880;
                 int maxViewHeight = 660;
@@ -47,8 +44,6 @@ namespace PhotoViewer.Model
                     maxViewWidth = maxViewHeight;
                     maxViewHeight = tmp;
                 }
-
-                BitmapSource viewImage = (BitmapSource)bmpImage;
 
                 // リサイズ後に回転する
                 if (viewImage.PixelWidth > maxViewWidth || viewImage.PixelHeight > maxViewHeight)
@@ -72,14 +67,8 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource(生成したサムネイル画像)</returns>
         public static BitmapSource CreatePictureThumbnailImage(string filePath)
         {
-            using (var ms = new MemoryStream())
+            using (var ms = new WrappingStream(new FileStream(filePath, FileMode.Open)))
             {
-                // 読み込みファイルをメモリにコピーする
-                using (var fs = new FileStream(filePath, FileMode.Open))
-                {
-                    fs.CopyTo(ms);
-                }
-
                 // ストリーム位置をリセットし、まずはメタデータを取得
                 ms.Seek(0, SeekOrigin.Begin);
                 var bitmapFrame = BitmapFrame.Create(ms);
@@ -140,14 +129,8 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource(生成したサムネイル画像)</returns>
         public static BitmapSource CreatePictureEditViewThumbnail(string filePath)
         {
-            using (var ms = new MemoryStream())
+            using (var ms = new WrappingStream(new FileStream(filePath, FileMode.Open)))
             {
-                // 読み込みファイルをメモリにコピーする
-                using (var fs = new FileStream(filePath, FileMode.Open))
-                {
-                    fs.CopyTo(ms);
-                }
-
                 // ストリーム位置をリセットし、まずはメタデータを取得
                 ms.Seek(0, SeekOrigin.Begin);
                 var bitmapFrame = BitmapFrame.Create(ms);

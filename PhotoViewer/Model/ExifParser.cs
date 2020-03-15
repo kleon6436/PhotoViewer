@@ -214,7 +214,7 @@ namespace PhotoViewer.Model
                 }
 
                 // 約分したシャッタースピードを表示する
-                propertyValue = (numeratorProperty.Value.Value / commonFactor).ToString() + "/" + (denominatorProperty.Value.Value / commonFactor).ToString();
+                propertyValue = (_numerator / commonFactor).ToString() + "/" + (_denominator / commonFactor).ToString();
             }
 
             string propertyText = "シャッター速度";
