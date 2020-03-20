@@ -28,6 +28,7 @@ namespace PhotoViewer.Model
                 bmpImage.BeginInit();
                 bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                 bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                bmpImage.DecodePixelWidth = 880;
                 bmpImage.StreamSource = ms;
                 bmpImage.EndInit();
 
@@ -96,6 +97,7 @@ namespace PhotoViewer.Model
                     bmpImage.BeginInit();
                     bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                     bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bmpImage.DecodePixelWidth = 100;
                     bmpImage.StreamSource = ms;
                     bmpImage.EndInit();
 
