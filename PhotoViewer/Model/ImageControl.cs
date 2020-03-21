@@ -44,7 +44,12 @@ namespace PhotoViewer.Model
                 bmpImage.StreamSource = ms;
                 bmpImage.EndInit();
 
+                // 画像が大きい場合は、画像の縮小処理
                 BitmapSource viewImage = RotateImage(metaData, (BitmapSource)bmpImage);
+                if (bmpImage.PixelWidth > maxViewWidth || bmpImage.PixelHeight > maxViewHeight)
+                {
+                    viewImage = ResizeImage(bmpImage, maxViewWidth, maxViewHeight);
+                }
 
                 // 画像を書き出し、変更不可にする
                 viewImage = new WriteableBitmap(viewImage);
