@@ -303,6 +303,13 @@ namespace PhotoViewer.ViewModels
         private void UpdateExplorerTree()
         {
             ExplorerViewModel.CreateDriveTreeItem();
+
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            string previousFolderPath = appConfigManager.configData.PreviousFolderPath;
+            if (!string.IsNullOrEmpty(previousFolderPath))
+            {
+                ExplorerViewModel.ExpandPreviousPath(appConfigManager.configData.PreviousFolderPath);
+            }
         }
 
         /// <summary>

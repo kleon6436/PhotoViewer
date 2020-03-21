@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace PhotoViewer.Model
 {
@@ -143,6 +144,9 @@ namespace PhotoViewer.Model
         /// <param name="e">引数情報</param>
         private void ExplorerItem_Expanded(object sender, RoutedEventArgs e)
         {
+            // フォーカスを外す
+            Keyboard.ClearFocus();
+
             if (!IsExpand)
             {
                 // 展開先のディレクトリ情報を子要素に設定
