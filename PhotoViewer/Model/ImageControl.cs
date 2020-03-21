@@ -24,16 +24,6 @@ namespace PhotoViewer.Model
                 // ストリーム位置をリセットし、画像をデコード
                 ms.Seek(0, SeekOrigin.Begin);
 
-                var bmpImage = new BitmapImage();
-                bmpImage.BeginInit();
-                bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                bmpImage.CacheOption = BitmapCacheOption.OnLoad;
-                bmpImage.DecodePixelWidth = 880;
-                bmpImage.StreamSource = ms;
-                bmpImage.EndInit();
-
-                BitmapSource viewImage = (BitmapSource)bmpImage;
-
                 int maxViewWidth = 880;
                 int maxViewHeight = 660;
 
@@ -46,12 +36,15 @@ namespace PhotoViewer.Model
                     maxViewHeight = tmp;
                 }
 
-                // リサイズ後に回転する
-                if (viewImage.PixelWidth > maxViewWidth || viewImage.PixelHeight > maxViewHeight)
-                {
-                    viewImage = ResizeImage(viewImage, maxViewWidth, maxViewHeight);
-                }
-                viewImage = RotateImage(metaData, viewImage);
+                var bmpImage = new BitmapImage();
+                bmpImage.BeginInit();
+                bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                bmpImage.DecodePixelWidth = maxViewWidth;
+                bmpImage.StreamSource = ms;
+                bmpImage.EndInit();
+
+                BitmapSource viewImage = RotateImage(metaData, (BitmapSource)bmpImage);
 
                 // 画像を書き出し、変更不可にする
                 viewImage = new WriteableBitmap(viewImage);
@@ -97,12 +90,9 @@ namespace PhotoViewer.Model
                     bmpImage.BeginInit();
                     bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                     bmpImage.CacheOption = BitmapCacheOption.OnLoad;
-                    bmpImage.DecodePixelWidth = 100;
+                    bmpImage.DecodePixelWidth = maxScaledWidth;
                     bmpImage.StreamSource = ms;
                     bmpImage.EndInit();
-
-                    // 画像の縮小処理
-                    thumbnailImage = ResizeImage(bmpImage, maxScaledWidth, maxScaledHeight);
                 }
                 else
                 {
@@ -160,11 +150,9 @@ namespace PhotoViewer.Model
                     bmpImage.BeginInit();
                     bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                     bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bmpImage.DecodePixelWidth = maxScaledWidth;
                     bmpImage.StreamSource = ms;
                     bmpImage.EndInit();
-
-                    // 画像の縮小処理
-                    thumbnailImage = ResizeImage(bmpImage, maxScaledWidth, maxScaledHeight);
                 }
                 else
                 {
