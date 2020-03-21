@@ -59,7 +59,7 @@
                     <view:ExifInfoView DataContext="{Binding ExifInfoViewModel}"/>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Margin="10,5" BorderBrush="LightGray" BorderThickness="1.5" Header="フォルダ選択" FontSize="16" FontWeight="Medium">
-                    <view:ExplorerView DataContext="{Binding ExplorerViewModel}"/>
+                    <view:ExplorerView Margin="0,5,0,0" DataContext="{Binding ExplorerViewModel}"/>
                 </GroupBox>
             </Grid>
             <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="0 0 1 0"/>
