@@ -79,7 +79,7 @@
 
                 <Border Grid.Row="1" BorderBrush="DarkGray" BorderThickness="0,1,0,1">
                     <ListBox x:Name="mediaListBox" ItemsSource="{Binding MediaInfoList}" SelectedItem="{Binding SelectedMedia, Mode=TwoWay}" SelectionChanged="MediaListBox_SelectionChanged"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="NearestNeighbor"
                              ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
                              VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderBrush="{x:Null}">
                         <ListBox.Resources>
@@ -136,7 +136,7 @@
                     </ListBox>
                 </Border>
 
-                <Image Grid.Row="2" x:Name="viewImage" Source="{Binding PictureImageSource}" VerticalAlignment="Center" Margin="5"
+                <Image Grid.Row="2" x:Name="viewImage" Source="{Binding PictureImageSource}" VerticalAlignment="Center" Margin="5" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="NearestNeighbor"
                        Width="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelWidth}"
                        Height="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelHeight}"/>
             </Grid>
