@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Threading;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -14,9 +15,6 @@ using Prism.Mvvm;
 using Prism.Commands;
 using PhotoViewer.Model;
 using PhotoViewer.Views;
-using System.Windows;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace PhotoViewer.ViewModels
 {
@@ -145,6 +143,7 @@ namespace PhotoViewer.ViewModels
                 IsShowContextMenu = true;
             }
 
+            // 画像フォルダの読み込み
             string picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
             if (!string.IsNullOrEmpty(appConfigManager.configData.PreviousFolderPath))
             {
