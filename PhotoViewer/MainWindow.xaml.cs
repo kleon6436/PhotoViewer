@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -53,7 +54,7 @@ namespace PhotoViewer
         }
 
         /// <summary>
-        /// Window初期化時
+        /// ウィンドウ表示時
         /// </summary>
         /// <param name="e">引数情報</param>
         protected override void OnSourceInitialized(EventArgs e)
@@ -61,10 +62,11 @@ namespace PhotoViewer
             base.OnSourceInitialized(e);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.Import();
+
+            var windowPlacement = appConfigManager.configData.WindowPlaceData;
+            windowPlacement.showCmd = (windowPlacement.showCmd == SW.SHOWMINIMIZED) ? SW.SHOWNORMAL : windowPlacement.showCmd;
 
             var hwnd = new WindowInteropHelper(this).Handle;
-            var windowPlacement = appConfigManager.WindowPlaceData;
             WindowPlacement.SetWindowPlacement(hwnd, ref windowPlacement);
         }
 
@@ -88,8 +90,61 @@ namespace PhotoViewer
             WindowPlacement.GetWindowPlacement(hwnd, out placement);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.WindowPlaceData = placement;
+            appConfigManager.configData.WindowPlaceData = placement;
             appConfigManager.Export();
         }
+
+        #region WindowPlacement
+        public class WindowPlacement
+        {
+            [DllImport("user32.dll")]
+            public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
+
+            [DllImport("user32.dll")]
+            public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct WINDOWPLACEMENT
+        {
+            public int length;
+            public int flags;
+            public SW showCmd;
+            public POINT minPosition;
+            public POINT maxPosition;
+            public RECT normalPosition;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        public enum SW
+        {
+            HIDE = 0,
+            SHOWNORMAL = 1,
+            SHOWMINIMIZED = 2,
+            SHOWMAXIMIZED = 3,
+            SHOWNOACTIVATE = 4,
+            SHOW = 5,
+            MINIMIZE = 6,
+            SHOWMINNOACTIVE = 7,
+            SHOWNA = 8,
+            RESTORE = 9,
+            SHOWDEFAULT = 10,
+        }
+        #endregion
     }
 }

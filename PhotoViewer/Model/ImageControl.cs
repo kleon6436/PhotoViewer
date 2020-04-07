@@ -14,27 +14,15 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource(生成した画像)</returns>
         public static BitmapSource CreatePictureViewImage(string filePath)
         {
-            using (var ms = new MemoryStream())
+            using (var ms = new WrappingStream(new FileStream(filePath, FileMode.Open)))
             {
-                // 読み込みファイルをメモリにコピーする
-                using (var fs = new FileStream(filePath, FileMode.Open))
-                {
-                    fs.CopyTo(ms);
-                }
-
                 // ストリーム位置をリセットし、まずはメタデータの取得
                 ms.Seek(0, SeekOrigin.Begin);
-                var metaData = BitmapFrame.Create(ms).Metadata as BitmapMetadata;
+                var bitmapFrame = BitmapFrame.Create(ms);
+                var metaData = bitmapFrame.Metadata as BitmapMetadata;
 
-                // ストリーム位置をリセットし、画像をでコード
+                // ストリーム位置をリセットし、画像をデコード
                 ms.Seek(0, SeekOrigin.Begin);
-
-                var bmpImage = new BitmapImage();
-                bmpImage.BeginInit();
-                bmpImage.CreateOptions = BitmapCreateOptions.None;
-                bmpImage.CacheOption = BitmapCacheOption.OnLoad;
-                bmpImage.StreamSource = ms;
-                bmpImage.EndInit();
 
                 int maxViewWidth = 880;
                 int maxViewHeight = 660;
@@ -48,14 +36,20 @@ namespace PhotoViewer.Model
                     maxViewHeight = tmp;
                 }
 
-                BitmapSource viewImage = (BitmapSource)bmpImage;
+                var bmpImage = new BitmapImage();
+                bmpImage.BeginInit();
+                bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                bmpImage.DecodePixelWidth = maxViewWidth;
+                bmpImage.StreamSource = ms;
+                bmpImage.EndInit();
 
-                // リサイズ後に回転する
-                if (viewImage.PixelWidth > maxViewWidth || viewImage.PixelHeight > maxViewHeight)
+                // 画像が大きい場合は、画像の縮小処理
+                BitmapSource viewImage = RotateImage(metaData, (BitmapSource)bmpImage);
+                if (bmpImage.PixelWidth > maxViewWidth || bmpImage.PixelHeight > maxViewHeight)
                 {
-                    viewImage = ResizeImage(viewImage, maxViewWidth, maxViewHeight);
+                    viewImage = ResizeImage(bmpImage, maxViewWidth, maxViewHeight);
                 }
-                viewImage = RotateImage(metaData, viewImage);
 
                 // 画像を書き出し、変更不可にする
                 viewImage = new WriteableBitmap(viewImage);
@@ -72,14 +66,8 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource(生成したサムネイル画像)</returns>
         public static BitmapSource CreatePictureThumbnailImage(string filePath)
         {
-            using (var ms = new MemoryStream())
+            using (var ms = new WrappingStream(new FileStream(filePath, FileMode.Open)))
             {
-                // 読み込みファイルをメモリにコピーする
-                using (var fs = new FileStream(filePath, FileMode.Open))
-                {
-                    fs.CopyTo(ms);
-                }
-
                 // ストリーム位置をリセットし、まずはメタデータを取得
                 ms.Seek(0, SeekOrigin.Begin);
                 var bitmapFrame = BitmapFrame.Create(ms);
@@ -107,11 +95,9 @@ namespace PhotoViewer.Model
                     bmpImage.BeginInit();
                     bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                     bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bmpImage.DecodePixelWidth = maxScaledWidth;
                     bmpImage.StreamSource = ms;
                     bmpImage.EndInit();
-
-                    // 画像の縮小処理
-                    thumbnailImage = ResizeImage(bmpImage, maxScaledWidth, maxScaledHeight);
                 }
                 else
                 {
@@ -140,14 +126,8 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource(生成したサムネイル画像)</returns>
         public static BitmapSource CreatePictureEditViewThumbnail(string filePath)
         {
-            using (var ms = new MemoryStream())
+            using (var ms = new WrappingStream(new FileStream(filePath, FileMode.Open)))
             {
-                // 読み込みファイルをメモリにコピーする
-                using (var fs = new FileStream(filePath, FileMode.Open))
-                {
-                    fs.CopyTo(ms);
-                }
-
                 // ストリーム位置をリセットし、まずはメタデータを取得
                 ms.Seek(0, SeekOrigin.Begin);
                 var bitmapFrame = BitmapFrame.Create(ms);
@@ -175,11 +155,9 @@ namespace PhotoViewer.Model
                     bmpImage.BeginInit();
                     bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
                     bmpImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bmpImage.DecodePixelWidth = maxScaledWidth;
                     bmpImage.StreamSource = ms;
                     bmpImage.EndInit();
-
-                    // 画像の縮小処理
-                    thumbnailImage = ResizeImage(bmpImage, maxScaledWidth, maxScaledHeight);
                 }
                 else
                 {

@@ -29,6 +29,10 @@ namespace PhotoViewer.Views
             var selectedExplorerItem = treeView.SelectedItem as ExplorerItem;
             if (selectedExplorerItem == null) return;
 
+            // スクロールして、フォーカスを当てる
+            selectedExplorerItem.BringIntoView();
+            selectedExplorerItem.Focus();
+
             var vm = this.DataContext as ExplorerViewModel;
             Debug.Assert(vm != null);
 

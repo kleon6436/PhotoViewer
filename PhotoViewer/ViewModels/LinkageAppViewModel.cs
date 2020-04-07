@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Input;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.Win32;
 using PhotoViewer.Model;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -40,9 +40,9 @@ namespace PhotoViewer.ViewModels
             DeleteLinkAppCommand = new DelegateCommand(DeleteLinkAppButtonClicked);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            if (appConfigManager.LinkageApp != null)
+            if (appConfigManager.configData.LinkageApp != null)
             {
-                LinkAppPath = appConfigManager.LinkageApp.AppPath;
+                LinkAppPath = appConfigManager.configData.LinkageApp.AppPath;
                 IsRegistered = true;
             }
             else
@@ -59,21 +59,20 @@ namespace PhotoViewer.ViewModels
         {
             string previousLinkAppPath = LinkAppPath;
 
-            var dialog = new CommonOpenFileDialog();
+            var dialog = new OpenFileDialog();
             dialog.Title = "連携アプリ選択ダイアログ";
-            dialog.IsFolderPicker = false;
+            dialog.DefaultExt = ".exe";
 
-            dialog.DefaultExtension = ".exe";
             if (Environment.Is64BitProcess)
             {
-                dialog.DefaultDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
+                dialog.InitialDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
             }
             else
             {
-                dialog.DefaultDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFilesX86);
+                dialog.InitialDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFilesX86);
             }
 
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok)
+            if (dialog.ShowDialog() != true)
             {
                 LinkAppPath = previousLinkAppPath;
                 return;

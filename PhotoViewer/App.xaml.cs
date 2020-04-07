@@ -49,5 +49,15 @@ namespace PhotoViewer
         {
             MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        /// <summary>
+        /// ガベージコレクションの明示的な呼び出し
+        /// </summary>
+        public static void RunGC()
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
     }
 }

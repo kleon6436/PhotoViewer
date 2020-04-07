@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Threading;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -14,7 +15,6 @@ using Prism.Mvvm;
 using Prism.Commands;
 using PhotoViewer.Model;
 using PhotoViewer.Views;
-using System.Windows;
 
 namespace PhotoViewer.ViewModels
 {
@@ -112,6 +112,9 @@ namespace PhotoViewer.ViewModels
             IsShowContextMenu = false;
             IsEnableImageEditButton = false;
 
+            // 設定ファイルの読み込み
+            LoadConfigFile();
+
             // コマンドの設定
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
             ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
@@ -128,22 +131,34 @@ namespace PhotoViewer.ViewModels
 
             // 設定情報の読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.ImportLinkageAppXml();
-
-            if (appConfigManager.LinkageApp != null)
+            if (appConfigManager.configData.LinkageApp != null)
             {
                 // アプリアイコンを読み込み
-                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.LinkageApp.AppPath);
+                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.configData.LinkageApp.AppPath);
                 var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                 // コンテキストメニューの設定
-                var contextMenu = new ContextMenuInfo(appConfigManager.LinkageApp.AppName, iconBitmapSource);
+                var contextMenu = new ContextMenuInfo(appConfigManager.configData.LinkageApp.AppName, iconBitmapSource);
                 ContextMenuCollection.Add(contextMenu);
                 IsShowContextMenu = true;
             }
 
-            string defaultPicturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
-            ChangeContents(defaultPicturePath);
+            // 画像フォルダの読み込み
+            string picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
+            if (!string.IsNullOrEmpty(appConfigManager.configData.PreviousFolderPath))
+            {
+                picturePath = appConfigManager.configData.PreviousFolderPath;
+            }
+            ChangeContents(picturePath);
+        }
+        
+        /// <summary>
+        /// 設定ファイルの読み込み
+        /// </summary>
+        private void LoadConfigFile()
+        {
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.Import();
         }
 
         /// <summary>
@@ -220,22 +235,20 @@ namespace PhotoViewer.ViewModels
         /// <param name="e">引数情報</param>
         private void ReloadContextMenu(object sender, EventArgs e)
         {
-            // 設定情報から連携アプリ関連の情報を再読み込み
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.ImportLinkageAppXml();
-
             // 現在のコンテキストメニューをリセット
             ContextMenuCollection.Clear();
             IsShowContextMenu = false;
 
-            if (appConfigManager.LinkageApp != null)
+            // 設定情報から連携アプリ関連の情報を再読み込み
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            if (appConfigManager.configData.LinkageApp != null)
             { 
                 // アプリアイコンを読み込み
-                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.LinkageApp.AppPath);
+                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.configData.LinkageApp.AppPath);
                 var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                 // コンテキストメニューの設定
-                var contextMenu = new ContextMenuInfo(appConfigManager.LinkageApp.AppName, iconBitmapSource);
+                var contextMenu = new ContextMenuInfo(appConfigManager.configData.LinkageApp.AppName, iconBitmapSource);
                 ContextMenuCollection.Add(contextMenu);
                 IsShowContextMenu = true;
             }
@@ -248,7 +261,7 @@ namespace PhotoViewer.ViewModels
         public void ExecuteContextMenu(string appName)
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            if (appName != appConfigManager.LinkageApp.AppName)
+            if (appName != appConfigManager.configData.LinkageApp.AppName)
             {
                 return;
             }
@@ -256,7 +269,7 @@ namespace PhotoViewer.ViewModels
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                Process.Start(appConfigManager.LinkageApp.AppPath, SelectedMedia.FilePath);
+                Process.Start(appConfigManager.configData.LinkageApp.AppPath, SelectedMedia.FilePath);
             }
             catch (Exception ex)
             {
@@ -289,6 +302,13 @@ namespace PhotoViewer.ViewModels
         private void UpdateExplorerTree()
         {
             ExplorerViewModel.CreateDriveTreeItem();
+
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            string previousFolderPath = appConfigManager.configData.PreviousFolderPath;
+            if (!string.IsNullOrEmpty(previousFolderPath))
+            {
+                ExplorerViewModel.ExpandPreviousPath(appConfigManager.configData.PreviousFolderPath);
+            }
         }
 
         /// <summary>
@@ -305,6 +325,9 @@ namespace PhotoViewer.ViewModels
             // フォルダパスを更新して、リスト更新
             SelectFolderPath = folderPath;
             UpdateContents();
+
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.configData.PreviousFolderPath = SelectFolderPath;
         }
 
         /// <summary>
@@ -446,6 +469,8 @@ namespace PhotoViewer.ViewModels
                     readyFiles.Clear();
                     App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
                 }
+
+                App.RunGC();
             }
 
             if (readyFiles.Count > 0)
@@ -475,7 +500,7 @@ namespace PhotoViewer.ViewModels
             {
                 App.ShowErrorMessageBox("ファイルが存在しません。", "ファイルアクセスエラー");
             }
-            
+
             // Viewに設定されているものをクリア
             PictureImageSource = null;
             IsEnableImageEditButton = false;
@@ -502,13 +527,26 @@ namespace PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                // 表示する画像を作成
+                // 表示画像の作成
                 PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath);
+
+                // WritableBitmapのメモリ解放
+                App.RunGC();
 
                 // Exif情報を設定
                 ExifInfoViewModel.SetExif(mediaInfo.FilePath);
 
-                IsEnableImageEditButton = true;
+                if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(mediaInfo.FilePath).ToLower()))
+                {
+                    // NikonRaw画像以外は、編集可能
+                    IsEnableImageEditButton = true;
+                }
+                else
+                {
+                    // NikonRaw画像は、編集不可
+                    IsEnableImageEditButton = false;
+                }
+
                 return true;
             }
             catch (Exception ex)
