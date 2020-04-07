@@ -1,3 +1,5 @@
+# build
 PhotoViewer/obj/
 .vs/
 PhotoViewer/bin/
+packages/
