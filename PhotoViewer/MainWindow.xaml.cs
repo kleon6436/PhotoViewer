@@ -67,7 +67,7 @@ namespace PhotoViewer
             windowPlacement.showCmd = (windowPlacement.showCmd == SW.SHOWMINIMIZED) ? SW.SHOWNORMAL : windowPlacement.showCmd;
 
             var hwnd = new WindowInteropHelper(this).Handle;
-            WindowPlacement.SetWindowPlacement(hwnd, ref windowPlacement);
+            SetWindowPlacement(hwnd, ref windowPlacement);
         }
 
         /// <summary>
@@ -87,21 +87,11 @@ namespace PhotoViewer
             // ウィンドウ情報を保存
             WINDOWPLACEMENT placement;
             var hwnd = new WindowInteropHelper(this).Handle;
-            WindowPlacement.GetWindowPlacement(hwnd, out placement);
+            GetWindowPlacement(hwnd, out placement);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.configData.WindowPlaceData = placement;
             appConfigManager.Export();
-        }
-
-        #region WindowPlacement
-        public class WindowPlacement
-        {
-            [DllImport("user32.dll")]
-            public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
-
-            [DllImport("user32.dll")]
-            public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -145,6 +135,11 @@ namespace PhotoViewer
             RESTORE = 9,
             SHOWDEFAULT = 10,
         }
-        #endregion
+
+        [DllImport("user32.dll")]
+        public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
     }
 }

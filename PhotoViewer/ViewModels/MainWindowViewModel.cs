@@ -407,6 +407,12 @@ namespace PhotoViewer.ViewModels
             else
             {
                 StopContentsWorker();
+
+                // 画像が選択されていない場合は、先頭の画像を選択状態にする
+                if (SelectedMedia == null)
+                {
+                    SelectedMedia = MediaInfoList.First();
+                }
             }
         }
 
