@@ -30,6 +30,8 @@ Exif情報の削除し、ブログ向け、SNS向けにファイルサイズを�
 ## 使用しているテクノロジ
 - Prism
 
+- CommonServiceLocator
+
 
 ## 機能
 - 写真閲覧
