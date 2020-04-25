@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
         xmlns:view="clr-namespace:PhotoViewer.Views"
         mc:Ignorable="d"
         Icon="/Images/PhotoExifViewerIcon.ico"
@@ -17,9 +18,9 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <Rectangle Grid.Row="0" Fill="LightSkyBlue"/>
-        <TextBlock Grid.Row="0" Text="Kchary Photograph Viewer" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="28" FontWeight="Medium"/>
+
+        <Rectangle Grid.Row="0" Fill="LightSkyBlue" IsHitTestVisible="True"/>
+        <TextBlock Grid.Row="0" Text="Kchary Photograph Viewer" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="28" FontWeight="Medium" IsHitTestVisible="True"/>
         <Grid Grid.Row="0" Margin="10,0" VerticalAlignment="Center" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -55,10 +56,10 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" Margin="10,0" BorderBrush="LightGray" BorderThickness="1.5" Header="Exif情報" FontSize="16" FontWeight="Medium">
+                <GroupBox Grid.Row="0" Margin="10,0" BorderBrush="LightGray" BorderThickness="1.5" Header="Exif情報" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
                     <view:ExifInfoView DataContext="{Binding ExifInfoViewModel}"/>
                 </GroupBox>
-                <GroupBox Grid.Row="1" Margin="10,5" BorderBrush="LightGray" BorderThickness="1.5" Header="フォルダ選択" FontSize="16" FontWeight="Medium">
+                <GroupBox Grid.Row="1" Margin="10,5" BorderBrush="LightGray" BorderThickness="1.5" Header="フォルダ選択" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
                     <view:ExplorerView Margin="0,5,0,0" DataContext="{Binding ExplorerViewModel}"/>
                 </GroupBox>
             </Grid>
@@ -73,15 +74,17 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="5,0" Orientation="Horizontal">
-                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="フォルダパス：" FontWeight="Medium"/>
-                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath}"/>
+                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="フォルダパス：" FontWeight="Medium" IsHitTestVisible="True"/>
+                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath}" IsHitTestVisible="True"/>
                 </StackPanel>
 
                 <Border Grid.Row="1" BorderBrush="DarkGray" BorderThickness="0,1,0,1">
                     <ListBox x:Name="mediaListBox" ItemsSource="{Binding MediaInfoList}" SelectedItem="{Binding SelectedMedia, Mode=TwoWay}" SelectionChanged="MediaListBox_SelectionChanged"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
                              ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
-                             VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderBrush="{x:Null}">
+                             VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderBrush="{x:Null}"
+                             VirtualizingPanel.ScrollUnit="Item" VirtualizingPanel.CacheLengthUnit="Page" VirtualizingPanel.CacheLength="2"
+                             VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                         <ListBox.Resources>
                             <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}">
                                 <ContextMenu.ItemContainerStyle>
@@ -99,7 +102,7 @@
                         </ListBox.Resources>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <WrapPanel/>
+                                <wpftk:VirtualizingWrapPanel Orientation="Vertical" />
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                         <ListBox.ItemContainerStyle>

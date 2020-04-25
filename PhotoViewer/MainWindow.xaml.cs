@@ -18,8 +18,8 @@ namespace PhotoViewer
         {
             InitializeComponent();
 
-            var model = new MainWindowViewModel();
-            this.DataContext = model;
+            var vm = new MainWindowViewModel();
+            this.DataContext = vm;
         }
 
         /// <summary>
