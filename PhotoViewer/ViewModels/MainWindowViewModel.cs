@@ -191,6 +191,11 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void ReloadButtonClicked()
         {
+            if (PictureImageSource != null)
+            {
+                PictureImageSource = null;
+            }
+
             IsEnableImageEditButton = false;
             UpdateContents();
         }
