@@ -412,12 +412,6 @@ namespace PhotoViewer.ViewModels
             else
             {
                 StopContentsWorker();
-
-                // 画像が選択されていない場合は、先頭の画像を選択状態にする
-                if (SelectedMedia == null)
-                {
-                    SelectedMedia = MediaInfoList.First();
-                }
             }
         }
 
@@ -479,6 +473,11 @@ namespace PhotoViewer.ViewModels
                     var readyList = readyFiles.ToArray();
                     readyFiles.Clear();
                     App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
+                }
+
+                if (MediaInfoList.Count > 0 && SelectedMedia == null)
+                {
+                    SelectedMedia = MediaInfoList.First();
                 }
 
                 App.RunGC();
