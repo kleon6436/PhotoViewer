@@ -8,12 +8,12 @@
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
         <DataGrid Margin="5,5" BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14" Focusable="False"
-                  ItemsSource="{Binding ExifDataList}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
+                  ItemsSource="{Binding ExifDataList, Mode=OneWay}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="True"
                   VerticalGridLinesBrush="LightSlateGray" HorizontalGridLinesBrush="LightSlateGray" PreviewMouseDown="DataGrid_PreviewMouseDown">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="パラメータ名" Binding="{Binding ExifParameterText}" Width="auto" MinWidth="100">
+                <DataGridTextColumn Header="パラメータ名" Binding="{Binding ExifParameterText, Mode=OneWay}" Width="auto" MinWidth="100">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis"/>
@@ -22,7 +22,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="値" Binding="{Binding ExifParameterValue}" Width="*" MinWidth="100">
+                <DataGridTextColumn Header="値" Binding="{Binding ExifParameterValue, Mode=OneWay}" Width="*" MinWidth="100">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis"/>

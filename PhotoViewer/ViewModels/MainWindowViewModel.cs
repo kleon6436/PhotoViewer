@@ -412,6 +412,10 @@ namespace PhotoViewer.ViewModels
             else
             {
                 StopContentsWorker();
+                if (SelectedMedia == null)
+                {
+                    SelectedMedia = MediaInfoList.First();
+                }
             }
         }
 
@@ -473,11 +477,6 @@ namespace PhotoViewer.ViewModels
                     var readyList = readyFiles.ToArray();
                     readyFiles.Clear();
                     App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
-                }
-
-                if (MediaInfoList.Count > 0 && SelectedMedia == null)
-                {
-                    SelectedMedia = MediaInfoList.First();
                 }
 
                 App.RunGC();

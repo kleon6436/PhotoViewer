@@ -26,12 +26,12 @@
             
             <!-- 右下のレイアウト -->
             <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <Image Source="{Binding EditImage}" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform"
+                <Image Source="{Binding EditImage, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform"
                        Width="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelWidth}" RenderOptions.BitmapScalingMode="NearestNeighbor" UseLayoutRounding="True"
                        Height="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelHeight}" Margin="0,0,0,5"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="編集対象: " FontSize="16"/>
-                    <TextBlock Text="{Binding EditFileName}" FontSize="16"/>
+                    <TextBlock Text="{Binding EditFileName, Mode=OneWay}" FontSize="16"/>
                 </StackPanel>                
             </StackPanel>
             
@@ -39,21 +39,21 @@
             <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                     <TextBlock Text="リサイズ: " FontSize="15" VerticalAlignment="Center"/>
-                    <ComboBox Width="100" FontSize="15" ItemsSource="{Binding ResizeCategoryItems}" SelectedItem="{Binding ResizeCategoryItem, Mode=TwoWay}" DisplayMemberPath="Name"/>
+                    <ComboBox Width="100" FontSize="15" ItemsSource="{Binding ResizeCategoryItems, Mode=OneTime}" SelectedItem="{Binding ResizeCategoryItem, Mode=TwoWay}" DisplayMemberPath="Name"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10" IsEnabled="{Binding IsEnableImageSaveQuality, UpdateSourceTrigger=PropertyChanged}">
                     <TextBlock Text="画質: " VerticalAlignment="Center" FontSize="15"/>
-                    <ComboBox Width="80" FontSize="16" ItemsSource="{Binding ImageSaveQualityItems}" SelectedItem="{Binding SelectedQuality, Mode=TwoWay}" DisplayMemberPath="Name"/>
+                    <ComboBox Width="80" FontSize="16" ItemsSource="{Binding ImageSaveQualityItems, Mode=OneTime}" SelectedItem="{Binding SelectedQuality, Mode=TwoWay}" DisplayMemberPath="Name"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                     <TextBlock Text="保存形式: " VerticalAlignment="Center" FontSize="15"/>
-                    <ComboBox Width="80" FontSize="15" ItemsSource="{Binding ImageFormItems}" SelectedItem="{Binding SelectedForm, Mode=TwoWay}" DisplayMemberPath="Name" SelectionChanged="ComboBox_SelectionChanged"/>
+                    <ComboBox Width="80" FontSize="15" ItemsSource="{Binding ImageFormItems, Mode=OneTime}" SelectedItem="{Binding SelectedForm, Mode=TwoWay}" DisplayMemberPath="Name" SelectionChanged="ComboBox_SelectionChanged"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
 
         <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
-            <Button Content="保存" Command="{Binding SaveButtonCommand}" Width="90" Height="30" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <Button Content="保存" Command="{Binding SaveButtonCommand, Mode=OneTime}" Width="90" Height="30" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right"/>
             <Button Content="キャンセル" Click="CancelButton_Click" Width="90" Height="30" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20,0,0,0"/>
         </StackPanel>
     </Grid>
