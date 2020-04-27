@@ -23,6 +23,41 @@ namespace PhotoViewer
         }
 
         /// <summary>
+        /// ウィンドウロード後の処理
+        /// </summary>
+        /// <param name="sender">Window</param>
+        /// <param name="e">引数情報</param>
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            var vm = this.DataContext as MainWindowViewModel;
+            vm.InitViewFolder();
+        }
+
+        /// <summary>
+        /// ウィンドウクローズ処理
+        /// </summary>
+        /// <param name="sender">Window</param>
+        /// <param name="e">引数情報</param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var vm = this.DataContext as MainWindowViewModel;
+            if (!vm.StopThreadAndTask())
+            {
+                // 少し待ってからクローズ
+                Thread.Sleep(200);
+            }
+
+            // ウィンドウ情報を保存
+            WINDOWPLACEMENT placement;
+            var hwnd = new WindowInteropHelper(this).Handle;
+            GetWindowPlacement(hwnd, out placement);
+
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.configData.WindowPlaceData = placement;
+            appConfigManager.Export();
+        }
+
+        /// <summary>
         /// リストボックスで選択されたアイテムが変更されたとき
         /// </summary>
         /// <param name="sender">mediaListBox</param>
@@ -68,30 +103,6 @@ namespace PhotoViewer
 
             var hwnd = new WindowInteropHelper(this).Handle;
             SetWindowPlacement(hwnd, ref windowPlacement);
-        }
-
-        /// <summary>
-        /// ウィンドウクローズ処理
-        /// </summary>
-        /// <param name="sender">Window</param>
-        /// <param name="e">引数情報</param>
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            var vm = this.DataContext as MainWindowViewModel;
-            if (!vm.StopThreadAndTask())
-            {
-                // 少し待ってからクローズ
-                Thread.Sleep(200);
-            }
-
-            // ウィンドウ情報を保存
-            WINDOWPLACEMENT placement;
-            var hwnd = new WindowInteropHelper(this).Handle;
-            GetWindowPlacement(hwnd, out placement);
-
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.configData.WindowPlaceData = placement;
-            appConfigManager.Export();
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -141,5 +152,6 @@ namespace PhotoViewer
 
         [DllImport("user32.dll")]
         public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+
     }
 }

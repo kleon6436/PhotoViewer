@@ -112,14 +112,14 @@ namespace PhotoViewer.ViewModels
             IsShowContextMenu = false;
             IsEnableImageEditButton = false;
 
-            // 設定ファイルの読み込み
-            LoadConfigFile();
-
             // コマンドの設定
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
             ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
             SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
             ImageEditButtonCommand = new DelegateCommand(ImageEditButtonClicked);
+
+            // 設定ファイルの読み込み
+            LoadConfigFile();
 
             // エクスプローラー部のViewModel設定
             ExplorerViewModel = new ExplorerViewModel();
@@ -128,7 +128,13 @@ namespace PhotoViewer.ViewModels
 
             // Exif表示部のViewModel設定
             ExifInfoViewModel = new ExifInfoViewModel();
+        }
 
+        /// <summary>
+        /// 初期表示のフォルダと設定ファイルの読み込み
+        /// </summary>
+        public void InitViewFolder()
+        {
             // 設定情報の読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             if (appConfigManager.configData.LinkageApp != null)
