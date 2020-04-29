@@ -447,8 +447,7 @@ namespace PhotoViewer.ViewModels
 
                 filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToList());
             }
-
-            
+      
             var readyFiles = new Queue<MediaInfo>();
             foreach (var filePath in filePaths)
             {
@@ -485,6 +484,7 @@ namespace PhotoViewer.ViewModels
                     App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
                 }
 
+                // 不要なメモリの回収
                 App.RunGC();
             }
 
