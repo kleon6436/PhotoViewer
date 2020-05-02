@@ -24,12 +24,12 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding LinkAppPath}" Height="40" Width="350" FontSize="14"/>
-            <Button Content="参照" FontSize="18" Command="{Binding LinkAppReferenceCommand}" VerticalAlignment="Center" Height="40" Width="60" Margin="10,0,0,0"/>
+            <Button Content="参照" FontSize="18" Command="{Binding LinkAppReferenceCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="60" Margin="10,0,0,0"/>
         </StackPanel>
         
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,20,0">
-            <Button Content="登録" Command="{Binding RegisterLinkAppCommand}" Width="85" Height="40" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0"/>
-            <Button Content="削除" Command="{Binding DeleteLinkAppCommand}" Width="85" Height="40" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,20,0"/>
+            <Button Content="登録" Command="{Binding RegisterLinkAppCommand, Mode=OneTime}" Width="85" Height="40" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0"/>
+            <Button Content="削除" Command="{Binding DeleteLinkAppCommand, Mode=OneTime}" Width="85" Height="40" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,20,0"/>
         </StackPanel>
     </Grid>
 </Page>

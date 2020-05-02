@@ -6,7 +6,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
-        <TreeView ItemsSource="{Binding ExplorerItems}" SelectedItemChanged="TreeView_SelectedItemChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <TreeView ItemsSource="{Binding ExplorerItems, Mode=OneWay}" SelectedItemChanged="TreeView_SelectedItemChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="FontSize" Value="12"/>

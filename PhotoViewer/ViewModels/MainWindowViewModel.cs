@@ -112,14 +112,14 @@ namespace PhotoViewer.ViewModels
             IsShowContextMenu = false;
             IsEnableImageEditButton = false;
 
-            // 設定ファイルの読み込み
-            LoadConfigFile();
-
             // コマンドの設定
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
             ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
             SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
             ImageEditButtonCommand = new DelegateCommand(ImageEditButtonClicked);
+
+            // 設定ファイルの読み込み
+            LoadConfigFile();
 
             // エクスプローラー部のViewModel設定
             ExplorerViewModel = new ExplorerViewModel();
@@ -128,7 +128,13 @@ namespace PhotoViewer.ViewModels
 
             // Exif表示部のViewModel設定
             ExifInfoViewModel = new ExifInfoViewModel();
+        }
 
+        /// <summary>
+        /// 初期表示のフォルダと設定ファイルの読み込み
+        /// </summary>
+        public void InitViewFolder()
+        {
             // 設定情報の読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             if (appConfigManager.configData.LinkageApp != null)
@@ -191,6 +197,11 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void ReloadButtonClicked()
         {
+            if (PictureImageSource != null)
+            {
+                PictureImageSource = null;
+            }
+
             IsEnableImageEditButton = false;
             UpdateContents();
         }
@@ -407,8 +418,6 @@ namespace PhotoViewer.ViewModels
             else
             {
                 StopContentsWorker();
-
-                // 画像が選択されていない場合は、先頭の画像を選択状態にする
                 if (SelectedMedia == null)
                 {
                     SelectedMedia = MediaInfoList.First();
@@ -438,8 +447,7 @@ namespace PhotoViewer.ViewModels
 
                 filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToList());
             }
-
-            
+      
             var readyFiles = new Queue<MediaInfo>();
             foreach (var filePath in filePaths)
             {
@@ -476,6 +484,7 @@ namespace PhotoViewer.ViewModels
                     App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
                 }
 
+                // 不要なメモリの回収
                 App.RunGC();
             }
 
