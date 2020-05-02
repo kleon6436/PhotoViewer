@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
@@ -6,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using PhotoViewer.Model;
 using PhotoViewer.ViewModels;
+using PhotoViewer.Views;
 
 namespace PhotoViewer
 {
@@ -14,12 +16,29 @@ namespace PhotoViewer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const int MIN_SPL_TIME = 1000;
+
         public MainWindow()
         {
-            InitializeComponent();
+            // SplashScreenの表示
+            var splashScreen = new SplashScreenView();
+            splashScreen.Show();
 
+            // SplashScreen表示中にViewModelの読み込み
+            var timer = new Stopwatch();
+            timer.Start();
             var vm = new MainWindowViewModel();
             this.DataContext = vm;
+            timer.Stop();
+
+            // 一定時間待機後、SplashScreenを閉じる
+            if (MIN_SPL_TIME - (int)timer.ElapsedMilliseconds > 0)
+            {
+                Thread.Sleep(MIN_SPL_TIME);
+            }
+            splashScreen.Close();
+
+            InitializeComponent();
         }
 
         /// <summary>
