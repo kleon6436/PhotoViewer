@@ -447,7 +447,10 @@ namespace PhotoViewer.ViewModels
 
                 filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToList());
             }
-      
+
+            // 順番を名前順で並べ替え
+            filePaths = filePaths.OrderBy(Path.GetFileName).ToList();
+
             var readyFiles = new Queue<MediaInfo>();
             foreach (var filePath in filePaths)
             {

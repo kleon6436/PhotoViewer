@@ -28,6 +28,7 @@ namespace PhotoViewer
             var timer = new Stopwatch();
             timer.Start();
             var vm = new MainWindowViewModel();
+            vm.InitViewFolder();
             this.DataContext = vm;
             timer.Stop();
 
@@ -39,17 +40,6 @@ namespace PhotoViewer
             splashScreen.Close();
 
             InitializeComponent();
-        }
-
-        /// <summary>
-        /// ウィンドウロード後の処理
-        /// </summary>
-        /// <param name="sender">Window</param>
-        /// <param name="e">引数情報</param>
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            var vm = this.DataContext as MainWindowViewModel;
-            vm.InitViewFolder();
         }
 
         /// <summary>
