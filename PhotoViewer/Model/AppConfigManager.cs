@@ -26,7 +26,7 @@ namespace PhotoViewer.Model
     /// </summary>
     public sealed class AppConfigManager
     {
-        private readonly string AppConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KcharyPhotographViewer\Setting.conf";
+        private readonly string AppConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KcharyPhotoViewer\Setting.conf";
         private static AppConfigManager singleInstance = new AppConfigManager();
 
         // アプリケーション設定情報のデータ
