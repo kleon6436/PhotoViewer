@@ -418,7 +418,7 @@ namespace PhotoViewer.ViewModels
             else
             {
                 StopContentsWorker();
-                if (SelectedMedia == null)
+                if (SelectedMedia == null && MediaInfoList.Count > 0)
                 {
                     SelectedMedia = MediaInfoList.First();
                 }
