@@ -6,15 +6,10 @@ namespace PhotoViewer.ViewModels
 {
     public class ExifInfoViewModel : BindableBase
     {
-        private ObservableCollection<ExifInfo> exifDataList = new ObservableCollection<ExifInfo>();
         /// <summary>
         /// Exif情報のリスト
         /// </summary>
-        public ObservableCollection<ExifInfo> ExifDataList
-        {
-            get { return exifDataList; }
-            set { SetProperty(ref exifDataList, value); }
-        }
+        public ObservableCollection<ExifInfo> ExifDataList { get; } = new ObservableCollection<ExifInfo>();
 
         /// <summary>
         /// コンストラクタ

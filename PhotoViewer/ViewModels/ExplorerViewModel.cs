@@ -12,12 +12,7 @@ namespace PhotoViewer.ViewModels
     {
         public event EventHandler ChangeSelectItemEvent;
 
-        private ObservableCollection<ExplorerItem> explorerItems = new ObservableCollection<ExplorerItem>();
-        public ObservableCollection<ExplorerItem> ExplorerItems
-        {
-            get { return explorerItems; }
-            set { SetProperty(ref explorerItems, value); }
-        }
+        public ObservableCollection<ExplorerItem> ExplorerItems { get; } = new ObservableCollection<ExplorerItem>();
 
         private ExplorerItem selectedItem;
         /// <summary>

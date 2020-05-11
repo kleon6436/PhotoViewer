@@ -27,12 +27,7 @@ namespace PhotoViewer.ViewModels
             get { return Path.GetFileName(this.EditFilePath); }
         }
 
-        private ObservableCollection<ResizeImageCategory> resizeCategoryItems = new ObservableCollection<ResizeImageCategory>();
-        public ObservableCollection<ResizeImageCategory> ResizeCategoryItems
-        {
-            get { return resizeCategoryItems; }
-            set { SetProperty(ref resizeCategoryItems, value); }
-        }
+        public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; } = new ObservableCollection<ResizeImageCategory>();
 
         private ResizeImageCategory resizeCategoryItem;
         public ResizeImageCategory ResizeCategoryItem
@@ -48,12 +43,7 @@ namespace PhotoViewer.ViewModels
             set { SetProperty(ref isEnableImageSaveQuality, value); }
         }
 
-        private ObservableCollection<ImageQuality> imageSaveQualityItems = new ObservableCollection<ImageQuality>();
-        public ObservableCollection<ImageQuality> ImageSaveQualityItems
-        {
-            get { return imageSaveQualityItems; }
-            set { SetProperty(ref imageSaveQualityItems, value); }
-        }
+        public ObservableCollection<ImageQuality> ImageSaveQualityItems { get; } = new ObservableCollection<ImageQuality>();
 
         private ImageQuality selectedQuality;
         public ImageQuality SelectedQuality
@@ -62,12 +52,7 @@ namespace PhotoViewer.ViewModels
             set { SetProperty(ref selectedQuality, value); }
         }
 
-        private ObservableCollection<ImageForm> imageFormItems = new ObservableCollection<ImageForm>();
-        public ObservableCollection<ImageForm> ImageFormItems
-        {
-            get { return imageFormItems; }
-            set { SetProperty(ref imageFormItems, value); }
-        }
+        public ObservableCollection<ImageForm> ImageFormItems { get; } = new ObservableCollection<ImageForm>();
 
         private ImageForm selectedForm;
         public ImageForm SelectedForm

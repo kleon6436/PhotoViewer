@@ -36,15 +36,10 @@ namespace PhotoViewer.ViewModels
             set { SetProperty(ref selectFolderPath, value); }
         }
 
-        private ObservableCollection<MediaInfo> mediaInfoList = new ObservableCollection<MediaInfo>();
         /// <summary>
         /// ListBoxに表示するメディアリスト
         /// </summary>
-        public ObservableCollection<MediaInfo> MediaInfoList
-        {
-            get { return mediaInfoList; }
-            set { SetProperty(ref mediaInfoList, value); }
-        }
+        public ObservableCollection<MediaInfo> MediaInfoList { get; } = new ObservableCollection<MediaInfo>();
 
         private MediaInfo selectedMedia;
         /// <summary>
@@ -66,15 +61,10 @@ namespace PhotoViewer.ViewModels
             set { SetProperty(ref pictureImageSource, value); }
         }
 
-        private ObservableCollection<ContextMenuInfo> contextMenuCollection = new ObservableCollection<ContextMenuInfo>();
         /// <summary>
         /// ContextMenuで表示するメニューアイテムリスト
         /// </summary>
-        public ObservableCollection<ContextMenuInfo> ContextMenuCollection
-        {
-            get { return contextMenuCollection; }
-            set { SetProperty(ref contextMenuCollection, value); }
-        }
+        public ObservableCollection<ContextMenuInfo> ContextMenuCollection { get; } = new ObservableCollection<ContextMenuInfo>();
 
         private bool isShowContextMenu;
         public bool IsShowContextMenu
