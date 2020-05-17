@@ -38,16 +38,19 @@
             <!-- 左下のレイアウト -->
             <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="リサイズ: " FontSize="15" VerticalAlignment="Center"/>
-                    <ComboBox Width="100" FontSize="15" ItemsSource="{Binding ResizeCategoryItems, Mode=OneTime}" SelectedItem="{Binding ResizeCategoryItem, Mode=TwoWay}" DisplayMemberPath="Name"/>
+                    <TextBlock Text="保存形式: " VerticalAlignment="Center" FontSize="15"/>
+                    <ComboBox Width="80" FontSize="15" ItemsSource="{Binding ImageFormItems, Mode=OneTime}" SelectedItem="{Binding SelectedForm, Mode=TwoWay}" DisplayMemberPath="Name" SelectionChanged="ComboBox_SelectionChanged"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10" IsEnabled="{Binding IsEnableImageSaveQuality, UpdateSourceTrigger=PropertyChanged}">
                     <TextBlock Text="画質: " VerticalAlignment="Center" FontSize="15"/>
                     <ComboBox Width="80" FontSize="16" ItemsSource="{Binding ImageSaveQualityItems, Mode=OneTime}" SelectedItem="{Binding SelectedQuality, Mode=TwoWay}" DisplayMemberPath="Name"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="保存形式: " VerticalAlignment="Center" FontSize="15"/>
-                    <ComboBox Width="80" FontSize="15" ItemsSource="{Binding ImageFormItems, Mode=OneTime}" SelectedItem="{Binding SelectedForm, Mode=TwoWay}" DisplayMemberPath="Name" SelectionChanged="ComboBox_SelectionChanged"/>
+                    <TextBlock Text="リサイズ: " FontSize="15" VerticalAlignment="Center"/>
+                    <ComboBox Width="100" FontSize="15" ItemsSource="{Binding ResizeCategoryItems, Mode=OneTime}" SelectedItem="{Binding ResizeCategoryItem, Mode=TwoWay}" DisplayMemberPath="Name"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="{Binding ResizeSizeText}" FontSize="15" VerticalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

@@ -17,7 +17,12 @@ namespace PhotoViewer.Views
                 var vm = this.DataContext as ImageEditToolViewModel;
                 if (vm != null)
                 {
-                    vm.CloseView += (sender, args) => { Close(); };
+                    vm.CloseView += (sender, args) => 
+                    {
+                        // 不要なメモリ解放
+                        App.RunGC();
+                        Close();
+                    };
                 }
             };
         }

@@ -8,6 +8,28 @@ namespace PhotoViewer.Model
     public static class ImageControl
     {
         /// <summary>
+        /// ファイルパスから画像を取得する(幅高さに変更なく、回転情報だけ反映した画像)
+        /// </summary>
+        /// <param name="filePath">ファイルパス</param>
+        /// <returns>BitmapSource(生成した画像)</returns>
+        public static BitmapSource DecodePicture(string filePath)
+        {
+            using (var sourceStream = new WrappingStream(new FileStream(filePath, FileMode.Open)))
+            {
+                // 画像データの取得
+                sourceStream.Seek(0, SeekOrigin.Begin);
+                var bitmapFrame = BitmapFrame.Create(sourceStream);
+                var metaData = bitmapFrame.Metadata as BitmapMetadata;
+                var bitmapSource = bitmapFrame.Clone();
+
+                var decodeBitmapSource = new WriteableBitmap(ImageControl.RotateImage(metaData, bitmapSource));
+                decodeBitmapSource.Freeze();
+
+                return decodeBitmapSource;
+            }
+        }
+
+        /// <summary>
         /// 拡大表示する画像を生成する
         /// </summary>
         /// <param name="filePath">ファイルパス</param>
@@ -203,7 +225,7 @@ namespace PhotoViewer.Model
         /// <param name="metaData">メタデータ</param>
         /// <param name="image">BitmapSource(画像データ)</param>
         /// <returns>BitmapSource(回転後の画像)</returns>
-        private static BitmapSource RotateImage(BitmapMetadata metaData, BitmapSource image)
+        public static BitmapSource RotateImage(BitmapMetadata metaData, BitmapSource image)
         {
             uint rotation = GetRotation(metaData);
 
