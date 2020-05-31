@@ -89,15 +89,12 @@
                                 <ContextMenu.ItemContainerStyle>
                                     <Style TargetType="{x:Type MenuItem}">
                                         <Setter Property="Header" Value="{Binding Path=DisplayName, Mode=OneWay}"/>
-                                        <Setter Property="Icon">
-                                            <Setter.Value>
-                                                <Image Source="{Binding Path=ContextIcon, Mode=OneWay}"/>
-                                            </Setter.Value>
-                                        </Setter>
+                                        <Setter Property="Icon" Value="{DynamicResource Icon}"/>
                                         <EventSetter Event="Click" Handler="MenuItem_Click"/>
                                     </Style>
                                 </ContextMenu.ItemContainerStyle>
                             </ContextMenu>
+                            <Image x:Key="Icon" Source="{Binding Path=ContextIcon, Mode=OneWay}" x:Shared="false"/>
                         </ListBox.Resources>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>

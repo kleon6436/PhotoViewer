@@ -4,8 +4,6 @@ namespace PhotoViewer.Model
 {
     public class ExtraAppSetting : BindableBase
     {
-        public int AppId { get; private set; }
-
         private string appName;
         public string AppName
         {
@@ -20,9 +18,8 @@ namespace PhotoViewer.Model
             set { SetProperty(ref appPath, value); }
         }
 
-        public ExtraAppSetting(int appId, string appName, string appPath)
+        public ExtraAppSetting(string appName, string appPath)
         {
-            this.AppId = appId;
             this.AppName = appName;
             this.AppPath = appPath;
         }

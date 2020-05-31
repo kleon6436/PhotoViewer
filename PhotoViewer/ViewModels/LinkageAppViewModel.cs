@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
 using Microsoft.Win32;
 using PhotoViewer.Model;
@@ -10,13 +12,19 @@ namespace PhotoViewer.ViewModels
 {
     public class LinkageAppViewModel : BindableBase
     {
+        private readonly int MAX_LINK_APP_NUM = 10;
+
         #region UI binding parameter
+        
         private string linkAppPath;
         public string LinkAppPath
         {
             get { return linkAppPath; }
             set { SetProperty(ref linkAppPath, value); }
         }
+
+        public ObservableCollection<ExtraAppSetting> LinkageAppList { get; } = new ObservableCollection<ExtraAppSetting>();
+
         #endregion
 
         #region Command
@@ -27,9 +35,6 @@ namespace PhotoViewer.ViewModels
 
         public event EventHandler ChangeLinkageAppEvent;
 
-        // 登録フラグ
-        public bool IsRegistered { get; private set; }
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -37,18 +42,14 @@ namespace PhotoViewer.ViewModels
         {
             LinkAppReferenceCommand = new DelegateCommand(LinkAppReferenceButtonClicked);
             RegisterLinkAppCommand = new DelegateCommand(RegisterLinkAppButtonClicked);
-            DeleteLinkAppCommand = new DelegateCommand(DeleteLinkAppButtonClicked);
+            DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            if (appConfigManager.configData.LinkageApp != null)
+            var linkageAppList = appConfigManager.configData.LinkageAppList;
+            if (linkageAppList != null && linkageAppList.Count > 0)
             {
-                LinkAppPath = appConfigManager.configData.LinkageApp.AppPath;
-                IsRegistered = true;
-            }
-            else
-            {
-                LinkAppPath = "";
-                IsRegistered = false;
+                LinkageAppList.Clear();
+                LinkageAppList.AddRange(linkageAppList);
             }
         }
 
@@ -86,40 +87,50 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void RegisterLinkAppButtonClicked()
         {
-            var linkageApp = new ExtraAppSetting(1, Path.GetFileNameWithoutExtension(LinkAppPath), LinkAppPath);
+            if (LinkageAppList.Count > MAX_LINK_APP_NUM)
+            {
+                return;
+            }
+
+            var linkageApp = new ExtraAppSetting(Path.GetFileNameWithoutExtension(LinkAppPath), LinkAppPath);
+            if (LinkageAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))
+            {
+                return;
+            }
+
+            LinkageAppList.Add(linkageApp);
 
             // Configファイルに情報を書き出し
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.SetLinkageApp(linkageApp);
+            appConfigManager.SetLinkageApp(LinkageAppList.ToList());
             appConfigManager.Export();
 
-            IsRegistered = true;
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
-
-            App.ShowSuccessMessageBox("連携アプリの登録が完了しました", "登録完了");
+            LinkAppPath = "";
         }
 
         /// <summary>
         /// 削除ボタンを押下時
         /// </summary>
-        private void DeleteLinkAppButtonClicked()
+        private void DeleteLinkAppButtonClicked(ExtraAppSetting deleteAppSetting)
         {
             // 登録済みではない場合は、何もせず終了
-            if (!IsRegistered)
+            if (LinkageAppList == null || LinkageAppList.Count == 0 || deleteAppSetting == null)
             {
                 return;
             }
 
-            // Configファイルに情報を書き出し
-            LinkAppPath = "";
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.RemoveLinkageApp();
-            appConfigManager.Export();
+            if (LinkageAppList.Any(x => x == deleteAppSetting))
+            {
+                LinkageAppList.Remove(deleteAppSetting);
 
-            IsRegistered = false;
-            ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
+                // Configファイルに情報を書き出し
+                AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+                appConfigManager.RemoveLinkageApp(LinkageAppList.ToList());
+                appConfigManager.Export();
 
-            App.ShowSuccessMessageBox("連携アプリの削除が完了しました", "削除完了");
+                ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }

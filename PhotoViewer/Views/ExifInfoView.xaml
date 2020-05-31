@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
-        <DataGrid Margin="5,5" BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14" Focusable="False"
+        <DataGrid Margin="5" BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14" Focusable="False"
                   ItemsSource="{Binding ExifDataList, Mode=OneWay}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="True"
