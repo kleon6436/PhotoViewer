@@ -172,11 +172,8 @@ namespace PhotoViewer.Model
         /// </summary>
         public static List<ExifInfo> GetExifDataFromFile(string filePath)
         {
-            // shell32の準備
-            var shellAppType = Type.GetTypeFromProgID("Shell.Application");
-            dynamic shell = Activator.CreateInstance(shellAppType);
-
             FileInfo fileInfo = new FileInfo(filePath);
+            Shell32.Shell shell = new Shell32.Shell();
             Shell32.Folder objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
             Shell32.FolderItem folderItem = objFolder.ParseName(Path.GetFileName(filePath));
 

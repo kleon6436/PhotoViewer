@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
@@ -11,13 +12,13 @@ namespace PhotoViewer.Model
     public class ConfigData
     {
         public string PreviousFolderPath;           // 前回終了時点の表示フォルダ
-        public ExtraAppSetting LinkageApp;          // 登録されている連携アプリ
+        public List<ExtraAppSetting> LinkageAppList;          // 登録されている連携アプリ
         public MainWindow.WINDOWPLACEMENT WindowPlaceData;     // ウィンドウの表示状態
 
         public ConfigData()
         {
             PreviousFolderPath = null;
-            LinkageApp = null;
+            LinkageAppList = new List<ExtraAppSetting>();
         }
     }
 
@@ -80,14 +81,14 @@ namespace PhotoViewer.Model
             }
         }
 
-        public void SetLinkageApp(ExtraAppSetting linkageApp)
+        public void SetLinkageApp(List<ExtraAppSetting> linkageApplist)
         {
-            this.configData.LinkageApp = linkageApp;
+            this.configData.LinkageAppList = linkageApplist;
         }
 
-        public void RemoveLinkageApp()
+        public void RemoveLinkageApp(List<ExtraAppSetting> linkageApplist)
         {
-            this.configData.LinkageApp = null;
+            this.configData.LinkageAppList = linkageApplist;
         }
     }
 
@@ -99,8 +100,8 @@ namespace PhotoViewer.Model
         // XMLの要素名
         private const string PREVIOUS_FOLDER_ELEM_NAME = "previous_folder";
         private const string PREVIOUS_PATH_ELEM_NAME = "previous_path";
-        private const string LINK_APP_ELEM_NAME = "linkage_app_data";
-        private const string LINK_APP_ID_ELEM_NAME = "id";
+        private const string LINK_APP_ELEM_NAME = "linkage_app";
+        private const string LINK_APP_DATA_NAME = "linkage_app_data";
         private const string LINK_APP_NAME_ELEM_NAME = "name";
         private const string LINK_APP_PATH_ELEM_NAME = "path";
         private const string WINDOW_PLACEMENT_ELEM_NAME = "window_placement";
@@ -173,16 +174,22 @@ namespace PhotoViewer.Model
         /// </summary>
         private XElement CreateLinkageAppXml(ConfigData configData)
         {
-            var dataElement = new XElement(LINK_APP_ELEM_NAME);
-            var appIdElement = new XElement(LINK_APP_ID_ELEM_NAME, configData.LinkageApp == null ? new XText("") : new XText(configData.LinkageApp.AppId.ToString()));
-            var appNameElement = new XElement(LINK_APP_NAME_ELEM_NAME, configData.LinkageApp == null ? new XText("") : new XText(configData.LinkageApp.AppName));
-            var appPathElement = new XElement(LINK_APP_PATH_ELEM_NAME, configData.LinkageApp == null ? new XText("") : new XText(configData.LinkageApp.AppPath));
+            var linkageElement = new XElement(LINK_APP_ELEM_NAME);
 
-            dataElement.Add(appIdElement);
-            dataElement.Add(appNameElement);
-            dataElement.Add(appPathElement);
+            var linkageAppList = configData.LinkageAppList;
+            foreach (var linkageApp in linkageAppList)
+            {
+                var dataElement = new XElement(LINK_APP_DATA_NAME);
+                var appNameElement = new XElement(LINK_APP_NAME_ELEM_NAME, linkageApp == null ? new XText("") : new XText(linkageApp.AppName));
+                var appPathElement = new XElement(LINK_APP_PATH_ELEM_NAME, linkageApp == null ? new XText("") : new XText(linkageApp.AppPath));
 
-            return dataElement;
+                dataElement.Add(appNameElement);
+                dataElement.Add(appPathElement);
+
+                linkageElement.Add(dataElement);
+            }
+
+            return linkageElement;
         }
 
         /// <summary>
@@ -190,19 +197,19 @@ namespace PhotoViewer.Model
         /// </summary>
         private void ParseLinkageAppXml(XDocument xdoc, ref ConfigData configData)
         {
-            var dataElement = xdoc.Root.Element(LINK_APP_ELEM_NAME);
-            XElement appIdElement = dataElement.Element(LINK_APP_ID_ELEM_NAME);
-            XElement appNameElement = dataElement.Element(LINK_APP_NAME_ELEM_NAME);
-            XElement appPathElement = dataElement.Element(LINK_APP_PATH_ELEM_NAME);
+            var linkageElement = xdoc.Root.Element(LINK_APP_ELEM_NAME);
+            var dataElements = linkageElement.Elements(LINK_APP_DATA_NAME);
 
-            if (string.IsNullOrEmpty(appIdElement.Value) || string.IsNullOrEmpty(appNameElement.Value) || string.IsNullOrEmpty(appPathElement.Value))
+            foreach (var dataElement in dataElements)
             {
-                configData.LinkageApp = null;
-            }
-            else
-            {
-                var linkageApp = new ExtraAppSetting(Convert.ToInt32(appIdElement.Value), appNameElement.Value, appPathElement.Value);
-                configData.LinkageApp = linkageApp;
+                XElement appNameElement = dataElement.Element(LINK_APP_NAME_ELEM_NAME);
+                XElement appPathElement = dataElement.Element(LINK_APP_PATH_ELEM_NAME);
+
+                if (!string.IsNullOrEmpty(appNameElement.Value) && !string.IsNullOrEmpty(appPathElement.Value))
+                {
+                    var linkageApp = new ExtraAppSetting(appNameElement.Value, appPathElement.Value);
+                    configData.LinkageAppList.Add(linkageApp);
+                }
             }
         }
 

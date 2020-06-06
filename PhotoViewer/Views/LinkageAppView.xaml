@@ -12,8 +12,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="150"/>
-            <RowDefinition Height="250"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="10" Orientation="Vertical">
             <TextBlock Text="■ 連携アプリ設定 ■" FontSize="24" FontWeight="Medium" Margin="0,0,0,15"/>
@@ -24,12 +24,45 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding LinkAppPath}" Height="40" Width="350" FontSize="14"/>
-            <Button Content="参照" FontSize="18" Command="{Binding LinkAppReferenceCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="60" Margin="10,0,0,0"/>
+            <Button Content="参照" FontSize="18" Command="{Binding LinkAppReferenceCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="60" Margin="10,0,10,0"/>
+            <Button Content="登録" FontSize="18" Command="{Binding RegisterLinkAppCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="60"/>
         </StackPanel>
-        
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,20,0">
-            <Button Content="登録" Command="{Binding RegisterLinkAppCommand, Mode=OneTime}" Width="85" Height="40" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0"/>
-            <Button Content="削除" Command="{Binding DeleteLinkAppCommand, Mode=OneTime}" Width="85" Height="40" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0,20,0"/>
-        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" Margin="10" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <DataGrid BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14" Focusable="False"
+                  ItemsSource="{Binding LinkageAppList, Mode=OneWay}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
+                  CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
+                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="True"
+                  VerticalGridLinesBrush="LightSlateGray" HorizontalGridLinesBrush="LightSlateGray">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="登録アプリ名" Binding="{Binding AppName}" Width="auto" MinWidth="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis"/>
+                                <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+                                <Setter Property="TextBlock.Margin" Value="5,0,0,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="アプリパス" Binding="{Binding AppPath}" Width="*" MinWidth="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style>
+                                <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
+                                <Setter Property="TextBlock.Margin" Value="5,0,0,0"/>
+                                <Setter Property="TextBlock.ToolTip" Value="{Binding AppPath}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Action" Width="70" CanUserResize="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="削除" Command="{Binding Path=DataContext.DeleteLinkAppCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
     </Grid>
 </Page>

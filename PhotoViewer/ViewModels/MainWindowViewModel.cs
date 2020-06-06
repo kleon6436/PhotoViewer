@@ -36,15 +36,10 @@ namespace PhotoViewer.ViewModels
             set { SetProperty(ref selectFolderPath, value); }
         }
 
-        private ObservableCollection<MediaInfo> mediaInfoList = new ObservableCollection<MediaInfo>();
         /// <summary>
         /// ListBoxに表示するメディアリスト
         /// </summary>
-        public ObservableCollection<MediaInfo> MediaInfoList
-        {
-            get { return mediaInfoList; }
-            set { SetProperty(ref mediaInfoList, value); }
-        }
+        public ObservableCollection<MediaInfo> MediaInfoList { get; } = new ObservableCollection<MediaInfo>();
 
         private MediaInfo selectedMedia;
         /// <summary>
@@ -66,15 +61,10 @@ namespace PhotoViewer.ViewModels
             set { SetProperty(ref pictureImageSource, value); }
         }
 
-        private ObservableCollection<ContextMenuInfo> contextMenuCollection = new ObservableCollection<ContextMenuInfo>();
         /// <summary>
         /// ContextMenuで表示するメニューアイテムリスト
         /// </summary>
-        public ObservableCollection<ContextMenuInfo> ContextMenuCollection
-        {
-            get { return contextMenuCollection; }
-            set { SetProperty(ref contextMenuCollection, value); }
-        }
+        public ObservableCollection<ContextMenuInfo> ContextMenuCollection { get; } = new ObservableCollection<ContextMenuInfo>();
 
         private bool isShowContextMenu;
         public bool IsShowContextMenu
@@ -137,16 +127,20 @@ namespace PhotoViewer.ViewModels
         {
             // 設定情報の読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            if (appConfigManager.configData.LinkageApp != null)
+            var linkageAppList = appConfigManager.configData.LinkageAppList;
+            if (linkageAppList != null && linkageAppList.Count > 0)
             {
-                // アプリアイコンを読み込み
-                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.configData.LinkageApp.AppPath);
-                var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                foreach (var linkageApp in linkageAppList)
+                {
+                    // アプリアイコンを読み込み
+                    Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
+                    var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                // コンテキストメニューの設定
-                var contextMenu = new ContextMenuInfo(appConfigManager.configData.LinkageApp.AppName, iconBitmapSource);
-                ContextMenuCollection.Add(contextMenu);
-                IsShowContextMenu = true;
+                    // コンテキストメニューの設定
+                    var contextMenu = new ContextMenuInfo(linkageApp.AppName, iconBitmapSource);
+                    ContextMenuCollection.Add(contextMenu);
+                    IsShowContextMenu = true;
+                }
             }
 
             // 画像フォルダの読み込み
@@ -252,16 +246,20 @@ namespace PhotoViewer.ViewModels
 
             // 設定情報から連携アプリ関連の情報を再読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            if (appConfigManager.configData.LinkageApp != null)
+            var linkageAppList = appConfigManager.configData.LinkageAppList;
+            if (linkageAppList != null && linkageAppList.Count > 0)
             { 
-                // アプリアイコンを読み込み
-                Icon appIcon = Icon.ExtractAssociatedIcon(appConfigManager.configData.LinkageApp.AppPath);
-                var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                foreach (var linkageApp in linkageAppList)
+                {
+                    // アプリアイコンを読み込み
+                    Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
+                    var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                // コンテキストメニューの設定
-                var contextMenu = new ContextMenuInfo(appConfigManager.configData.LinkageApp.AppName, iconBitmapSource);
-                ContextMenuCollection.Add(contextMenu);
-                IsShowContextMenu = true;
+                    // コンテキストメニューの設定
+                    var contextMenu = new ContextMenuInfo(linkageApp.AppName, iconBitmapSource);
+                    ContextMenuCollection.Add(contextMenu);
+                    IsShowContextMenu = true;
+                }
             }
         }
 
@@ -272,7 +270,8 @@ namespace PhotoViewer.ViewModels
         public void ExecuteContextMenu(string appName)
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            if (appName != appConfigManager.configData.LinkageApp.AppName)
+            var linkageAppList = appConfigManager.configData.LinkageAppList;
+            if (!linkageAppList.Any(x => x.AppName == appName))
             {
                 return;
             }
@@ -280,7 +279,9 @@ namespace PhotoViewer.ViewModels
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
-                Process.Start(appConfigManager.configData.LinkageApp.AppPath, SelectedMedia.FilePath);
+
+                string appPath = linkageAppList.Find(x => x.AppName == appName).AppPath;
+                Process.Start(appPath, SelectedMedia.FilePath);
             }
             catch (Exception ex)
             {

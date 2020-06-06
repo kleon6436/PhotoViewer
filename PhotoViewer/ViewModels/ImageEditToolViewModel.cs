@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Windows;
+using System.Windows.Media;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
@@ -8,7 +10,6 @@ using Prism.Mvvm;
 using Prism.Commands;
 using Microsoft.Win32;
 using PhotoViewer.Model;
-using System.Windows.Media;
 
 namespace PhotoViewer.ViewModels
 {
@@ -27,18 +28,39 @@ namespace PhotoViewer.ViewModels
             get { return Path.GetFileName(this.EditFilePath); }
         }
 
-        private ObservableCollection<ResizeImageCategory> resizeCategoryItems = new ObservableCollection<ResizeImageCategory>();
-        public ObservableCollection<ResizeImageCategory> ResizeCategoryItems
-        {
-            get { return resizeCategoryItems; }
-            set { SetProperty(ref resizeCategoryItems, value); }
-        }
+        public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; } = new ObservableCollection<ResizeImageCategory>();
 
         private ResizeImageCategory resizeCategoryItem;
         public ResizeImageCategory ResizeCategoryItem
         {
             get { return resizeCategoryItem; }
-            set { SetProperty(ref resizeCategoryItem, value); }
+            set 
+            { 
+                SetProperty(ref resizeCategoryItem, value);
+                if (resizeCategoryItem != null)
+                {
+                    double scale = 1;
+                    bool isLandscape = true;
+                    if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
+                    {
+                        // 拡大率を計算(縦の方が長い場合は、縦の長さに対して拡大率を計算)
+                        scale = (double)ResizeCategoryItem.ResizelongSideValue / ReadImageSize.Width;
+                        if (ReadImageSize.Width < ReadImageSize.Height)
+                        {
+                            scale = (double)ResizeCategoryItem.ResizelongSideValue / ReadImageSize.Height;
+                        }
+                    }
+
+                    int resizeWidth = (int)(ReadImageSize.Width * scale);
+                    int resizeHeight = (int)(ReadImageSize.Height * scale);
+                    if (!isLandscape)
+                    {
+                        resizeWidth = (int)(ReadImageSize.Height * scale);
+                        resizeHeight = (int)(ReadImageSize.Width * scale);
+                    }
+                    ResizeSizeText = string.Format("(Width: {0}, Height: {1} [pixel])", resizeWidth, resizeHeight);
+                }
+            }
         }
 
         private bool isEnableImageSaveQuality;
@@ -48,12 +70,7 @@ namespace PhotoViewer.ViewModels
             set { SetProperty(ref isEnableImageSaveQuality, value); }
         }
 
-        private ObservableCollection<ImageQuality> imageSaveQualityItems = new ObservableCollection<ImageQuality>();
-        public ObservableCollection<ImageQuality> ImageSaveQualityItems
-        {
-            get { return imageSaveQualityItems; }
-            set { SetProperty(ref imageSaveQualityItems, value); }
-        }
+        public ObservableCollection<ImageQuality> ImageSaveQualityItems { get; } = new ObservableCollection<ImageQuality>();
 
         private ImageQuality selectedQuality;
         public ImageQuality SelectedQuality
@@ -62,18 +79,20 @@ namespace PhotoViewer.ViewModels
             set { SetProperty(ref selectedQuality, value); }
         }
 
-        private ObservableCollection<ImageForm> imageFormItems = new ObservableCollection<ImageForm>();
-        public ObservableCollection<ImageForm> ImageFormItems
-        {
-            get { return imageFormItems; }
-            set { SetProperty(ref imageFormItems, value); }
-        }
+        public ObservableCollection<ImageForm> ImageFormItems { get; } = new ObservableCollection<ImageForm>();
 
         private ImageForm selectedForm;
         public ImageForm SelectedForm
         {
             get { return selectedForm; }
             set { SetProperty(ref selectedForm, value); }
+        }
+
+        private string resizeSizeText;
+        public string ResizeSizeText
+        {
+            get { return resizeSizeText; }
+            set { SetProperty(ref resizeSizeText, value); }
         }
         #endregion
 
@@ -84,6 +103,10 @@ namespace PhotoViewer.ViewModels
         public EventHandler CloseView { get; set; }
         // 編集対象のファイルパス
         private string EditFilePath;
+        // 編集前の画像サイズ
+        private Size ReadImageSize;
+        // 編集前の画像を保持
+        private BitmapSource DecodedPictureSource;
 
         /// <summary>
         /// コンストラクタ
@@ -94,19 +117,15 @@ namespace PhotoViewer.ViewModels
             ResizeCategoryItems.Add(new ResizeImageCategory("印刷向け", ResizeImageCategory.ResizeCategory.Print));
             ResizeCategoryItems.Add(new ResizeImageCategory("ブログ向け", ResizeImageCategory.ResizeCategory.Blog));
             ResizeCategoryItems.Add(new ResizeImageCategory("Twitter向け", ResizeImageCategory.ResizeCategory.Twitter));
-            ResizeCategoryItem = ResizeCategoryItems.First();
 
             ImageSaveQualityItems.Add(new ImageQuality("高画質", 90));
             ImageSaveQualityItems.Add(new ImageQuality("標準", 80));
             ImageSaveQualityItems.Add(new ImageQuality("低画質", 60));
-            SelectedQuality = ImageSaveQualityItems.First();
 
             ImageFormItems.Add(new ImageForm("Jpeg", ImageForm.ImageForms.Jpeg));
             ImageFormItems.Add(new ImageForm("Png", ImageForm.ImageForms.Png));
             ImageFormItems.Add(new ImageForm("Bmp", ImageForm.ImageForms.Bmp));
             ImageFormItems.Add(new ImageForm("Tiff", ImageForm.ImageForms.Tiff));
-            SelectedForm = ImageFormItems.First();
-            IsEnableImageSaveQuality = true;
 
             SaveButtonCommand = new DelegateCommand(SaveButtonClicked);
         }
@@ -122,6 +141,18 @@ namespace PhotoViewer.ViewModels
 
             // WritableBitmapのメモリ解放
             App.RunGC();
+
+            DecodedPictureSource = ImageControl.DecodePicture(this.EditFilePath);
+            ReadImageSize = new Size(DecodedPictureSource.PixelWidth, DecodedPictureSource.PixelHeight);
+
+            // WritableBitmapのメモリ解放
+            App.RunGC();
+
+            // 各初期値を設定
+            ResizeCategoryItem = ResizeCategoryItems.First();
+            SelectedQuality = ImageSaveQualityItems.First();
+            SelectedForm = ImageFormItems.First();
+            IsEnableImageSaveQuality = true;
         }
 
         /// <summary>
@@ -161,69 +192,62 @@ namespace PhotoViewer.ViewModels
 
             string saveFilePath = dialog.FileName;
 
-            using (var sourceStream = File.OpenRead(EditFilePath))
+            // 拡大・縮小されたビットマップを作成
+            double scale = 1; // 拡大縮小なし
+            if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
             {
-                // 画像データの取得
-                var decoder = BitmapDecoder.Create(sourceStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-                var bitmapSource = decoder.Frames[0];
-
-                // 拡大・縮小されたビットマップを作成
-                double scale = 1; // 拡大縮小なし
-                if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
+                // 拡大率を計算(縦の方が長い場合は、縦の長さに対して拡大率を計算)
+                scale = (double)ResizeCategoryItem.ResizelongSideValue / DecodedPictureSource.PixelWidth;
+                if (DecodedPictureSource.PixelWidth < DecodedPictureSource.PixelHeight)
                 {
-                    // 拡大率を計算(縦の方が長い場合は、縦の長さに対して拡大率を計算)
-                    scale = (double)ResizeCategoryItem.ResizelongSideValue / bitmapSource.PixelWidth;
-                    if (bitmapSource.PixelWidth < bitmapSource.PixelHeight)
-                    {
-                        scale = (double)ResizeCategoryItem.ResizelongSideValue / bitmapSource.PixelHeight;
-                    }
+                    scale = (double)ResizeCategoryItem.ResizelongSideValue / DecodedPictureSource.PixelHeight;
                 }
-                var scaledBitmapSource = new TransformedBitmap(bitmapSource, new ScaleTransform(scale, scale));
+            }
+            var scaledBitmapSource = new TransformedBitmap(DecodedPictureSource, new ScaleTransform(scale, scale));
 
-                // 選択されている形式と同じエンコーダを選択
-                BitmapEncoder encoder = null;
-                switch (SelectedForm.Form)
+            // 選択されている形式と同じエンコーダを選択
+            BitmapEncoder encoder = null;
+            switch (selectedForm.Form)
+            {
+                case ImageForm.ImageForms.Bmp:
+                    encoder = new BmpBitmapEncoder();
+                    break;
+
+                case ImageForm.ImageForms.Jpeg:
+                    encoder = new JpegBitmapEncoder() { QualityLevel = SelectedQuality.QualityValue };
+                    break;
+
+                case ImageForm.ImageForms.Png:
+                    encoder = new PngBitmapEncoder();
+                    break;
+
+                case ImageForm.ImageForms.Tiff:
+                    encoder = new TiffBitmapEncoder();
+                    break;
+
+                default:
+                    break;
+            }
+
+            try
+            {
+                // エンコーダにフレームを追加し、ファイルを保存する
+                encoder.Frames.Add(BitmapFrame.Create(scaledBitmapSource));
+                using (var dstStream = File.OpenWrite(saveFilePath))
                 {
-                    case ImageForm.ImageForms.Bmp:
-                        encoder = new BmpBitmapEncoder();
-                        break;
-
-                    case ImageForm.ImageForms.Jpeg:
-                        encoder = new JpegBitmapEncoder() { QualityLevel = SelectedQuality.QualityValue };
-                        break;
-
-                    case ImageForm.ImageForms.Png:
-                        encoder = new PngBitmapEncoder();
-                        break;
-
-                    case ImageForm.ImageForms.Tiff:
-                        encoder = new TiffBitmapEncoder();
-                        break;
-
-                    default:
-                        break;
+                    encoder.Save(dstStream);
                 }
 
-                try
-                {
-                    // エンコーダにフレームを追加し、ファイルを保存する
-                    encoder.Frames.Add(BitmapFrame.Create(scaledBitmapSource));
-                    using (var dstStream = File.OpenWrite(saveFilePath))
-                    {
-                        encoder.Save(dstStream);
-                    }
-
-                    App.ShowSuccessMessageBox("画像の保存に成功しました。", "保存成功");
-                }
-                catch (Exception ex)
-                {
-                    App.LogException(ex);
-                    App.ShowErrorMessageBox("画像の保存に失敗しました。", "保存失敗");
-                }
-                finally
-                {
-                    CloseView?.Invoke(this, EventArgs.Empty);
-                }
+                App.ShowSuccessMessageBox("画像の保存に成功しました。", "保存成功");
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+                App.ShowErrorMessageBox("画像の保存に失敗しました。", "保存失敗");
+            }
+            finally
+            {
+                CloseView?.Invoke(this, EventArgs.Empty);
             }
         }
     }

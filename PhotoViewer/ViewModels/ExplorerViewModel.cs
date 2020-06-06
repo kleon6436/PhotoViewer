@@ -12,12 +12,7 @@ namespace PhotoViewer.ViewModels
     {
         public event EventHandler ChangeSelectItemEvent;
 
-        private ObservableCollection<ExplorerItem> explorerItems = new ObservableCollection<ExplorerItem>();
-        public ObservableCollection<ExplorerItem> ExplorerItems
-        {
-            get { return explorerItems; }
-            set { SetProperty(ref explorerItems, value); }
-        }
+        public ObservableCollection<ExplorerItem> ExplorerItems { get; } = new ObservableCollection<ExplorerItem>();
 
         private ExplorerItem selectedItem;
         /// <summary>
@@ -83,7 +78,7 @@ namespace PhotoViewer.ViewModels
                 {
                     // ドライブ情報を確認し、ツリーを展開
                     string previousDrive = parentPath;
-                    var driveItem = ExplorerItems.Where(item => item.ExplorerItemPath == previousDrive).FirstOrDefault();
+                    var driveItem = ExplorerItems.Where(item => item.ExplorerItemPath == previousDrive).First();
                     if (driveItem == null) return;
                     driveItem.IsExpanded = true;
 
@@ -144,7 +139,7 @@ namespace PhotoViewer.ViewModels
             List<ExplorerItem> explorerItemList = new List<ExplorerItem>();
             explorerItemList.AddRange(previousItem.Items.OfType<ExplorerItem>());
 
-            return explorerItemList.Where(item => item.ExplorerItemPath == previousDirectory).FirstOrDefault();
+            return explorerItemList.Where(item => item.ExplorerItemPath == previousDirectory).First();
         }
     }
 }
