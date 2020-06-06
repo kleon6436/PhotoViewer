@@ -47,9 +47,10 @@
                     <DataGridTextColumn Header="アプリパス" Binding="{Binding AppPath}" Width="*" MinWidth="100">
                         <DataGridTextColumn.ElementStyle>
                             <Style>
-                                <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis"/>
+                                <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
                                 <Setter Property="TextBlock.VerticalAlignment" Value="Center"/>
                                 <Setter Property="TextBlock.Margin" Value="5,0,0,0"/>
+                                <Setter Property="TextBlock.ToolTip" Value="{Binding AppPath}"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
