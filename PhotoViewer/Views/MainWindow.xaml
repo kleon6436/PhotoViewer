@@ -51,7 +51,7 @@
             <!-- 左側のレイアウト -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition MinHeight="350" Height="Auto"/>
+                    <RowDefinition MinHeight="410" Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
