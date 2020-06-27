@@ -135,6 +135,7 @@ namespace PhotoViewer.ViewModels
                     if (!File.Exists(linkageApp.AppPath))
                     {
                         linkageAppList.Remove(linkageApp);
+                        continue;
                     }
 
                     // アプリアイコンを読み込み
