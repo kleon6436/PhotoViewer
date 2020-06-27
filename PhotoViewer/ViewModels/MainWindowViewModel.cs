@@ -132,6 +132,11 @@ namespace PhotoViewer.ViewModels
             {
                 foreach (var linkageApp in linkageAppList)
                 {
+                    if (!File.Exists(linkageApp.AppPath))
+                    {
+                        linkageAppList.Remove(linkageApp);
+                    }
+
                     // アプリアイコンを読み込み
                     Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
                     var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
