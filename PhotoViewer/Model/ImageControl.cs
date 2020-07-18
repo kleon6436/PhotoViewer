@@ -46,8 +46,8 @@ namespace PhotoViewer.Model
                 // ストリーム位置をリセットし、画像をデコード
                 ms.Seek(0, SeekOrigin.Begin);
 
-                int maxViewWidth = 880;
-                int maxViewHeight = 660;
+                int maxViewWidth = 1600;
+                int maxViewHeight = 1200;
 
                 // 回転情報を確認し、縦位置画像の場合は、縦横の最大サイズを入れ替えておく
                 uint rotation = GetRotation(metaData);
