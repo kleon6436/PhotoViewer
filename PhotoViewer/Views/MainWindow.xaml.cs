@@ -161,6 +161,5 @@ namespace PhotoViewer
 
         [DllImport("user32.dll")]
         public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
-
     }
 }

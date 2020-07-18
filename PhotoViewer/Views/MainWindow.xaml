@@ -69,7 +69,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="660"/>
+                    <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="5,0" Orientation="Horizontal">
@@ -138,9 +138,9 @@
                     </ListBox>
                 </Border>
 
-                <Image Grid.Row="2" x:Name="viewImage" Source="{Binding PictureImageSource}" VerticalAlignment="Center" Margin="5" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
-                       Width="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelWidth}"
-                       Height="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelHeight}"/>
+                <Image Grid.Row="2" x:Name="viewImage" Source="{Binding PictureImageSource}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
+                       MaxWidth="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelWidth}"
+                       MaxHeight="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelHeight}"/>
             </Grid>
         </Grid>
     </Grid>
