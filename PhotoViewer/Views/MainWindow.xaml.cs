@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -53,7 +54,11 @@ namespace PhotoViewer
             var vm = this.DataContext as MainWindowViewModel;
             if (vm != null && vm.SelectedMedia == null && vm.MediaInfoList.Count > 0)
             {
-                vm.SelectedMedia = vm.MediaInfoList.First();
+                var firstImageData = vm.MediaInfoList.First();
+                if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(firstImageData.FilePath).ToLower()))
+                {
+                    vm.SelectedMedia = firstImageData;
+                }
             }
         }
 
