@@ -87,6 +87,21 @@ namespace PhotoViewer
         }
 
         /// <summary>
+        /// ウィンドウサイズ切り替え時の処理
+        /// </summary>
+        /// <param name="sender">Window</param>
+        /// <param name="e">引数情報</param>
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // ListBoxのアイテム選択時は、そのアイテムまでスクロールする
+            var selectedItem = mediaListBox.SelectedItem;
+            if (selectedItem != null)
+            {
+                mediaListBox.ScrollIntoView(selectedItem);
+            }
+        }
+
+        /// <summary>
         /// リストボックスで選択されたアイテムが変更されたとき
         /// </summary>
         /// <param name="sender">mediaListBox</param>
@@ -181,6 +196,5 @@ namespace PhotoViewer
 
         [DllImport("user32.dll")]
         public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
-
     }
 }
