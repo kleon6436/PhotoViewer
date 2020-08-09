@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -53,7 +54,11 @@ namespace PhotoViewer
             var vm = this.DataContext as MainWindowViewModel;
             if (vm != null && vm.SelectedMedia == null && vm.MediaInfoList.Count > 0)
             {
-                vm.SelectedMedia = vm.MediaInfoList.First();
+                var firstImageData = vm.MediaInfoList.First();
+                if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(firstImageData.FilePath).ToLower()))
+                {
+                    vm.SelectedMedia = firstImageData;
+                }
             }
         }
 
@@ -79,6 +84,21 @@ namespace PhotoViewer
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.configData.WindowPlaceData = placement;
             appConfigManager.Export();
+        }
+
+        /// <summary>
+        /// ウィンドウサイズ切り替え時の処理
+        /// </summary>
+        /// <param name="sender">Window</param>
+        /// <param name="e">引数情報</param>
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // ListBoxのアイテム選択時は、そのアイテムまでスクロールする
+            var selectedItem = mediaListBox.SelectedItem;
+            if (selectedItem != null)
+            {
+                mediaListBox.ScrollIntoView(selectedItem);
+            }
         }
 
         /// <summary>
@@ -176,6 +196,5 @@ namespace PhotoViewer
 
         [DllImport("user32.dll")]
         public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
-
     }
 }
