@@ -1,6 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using PhotoViewer.Model;
 using Prism.Mvvm;
-using PhotoViewer.Model;
+using System.Collections.ObjectModel;
 
 namespace PhotoViewer.ViewModels
 {
@@ -16,7 +16,6 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         public ExifInfoViewModel()
         {
-
         }
 
         /// <summary>

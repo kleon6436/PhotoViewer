@@ -1,7 +1,7 @@
-﻿using System;
-using System.Windows.Controls;
+﻿using PhotoViewer.Views;
 using Prism.Mvvm;
-using PhotoViewer.Views;
+using System;
+using System.Windows.Controls;
 
 namespace PhotoViewer.ViewModels
 {
@@ -16,16 +16,17 @@ namespace PhotoViewer.ViewModels
         public event EventHandler ReloadContextMenuEvent;
 
         private SelectPage selectPageButtonValue;
+
         /// <summary>
         /// ラジオボタンで選択されているページ
         /// </summary>
         public SelectPage SelectPageButtonValue
         {
             get { return selectPageButtonValue; }
-            set 
+            set
             {
                 SetProperty(ref selectPageButtonValue, value);
-                
+
                 switch (selectPageButtonValue)
                 {
                     case SelectPage.LinkageAppPage:
@@ -48,6 +49,7 @@ namespace PhotoViewer.ViewModels
         }
 
         private Page displayPage;
+
         /// <summary>
         /// 表示するページ情報
         /// </summary>

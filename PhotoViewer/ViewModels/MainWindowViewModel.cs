@@ -1,32 +1,36 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Drawing;
-using System.Diagnostics;
-using System.ComponentModel;
+﻿using PhotoViewer.Model;
+using PhotoViewer.Views;
+using Prism.Commands;
+using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows;
-using System.Windows.Threading;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using Prism.Mvvm;
-using Prism.Commands;
-using PhotoViewer.Model;
-using PhotoViewer.Views;
+using System.Windows.Threading;
 
 namespace PhotoViewer.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
         #region ViewModels
+
         public ExplorerViewModel ExplorerViewModel { get; set; }
         public ExifInfoViewModel ExifInfoViewModel { get; set; }
-        #endregion
+
+        #endregion ViewModels
 
         #region UI binding parameters
+
         private string selectFolderPath;
+
         /// <summary>
         /// 表示中のフォルダパス
         /// </summary>
@@ -42,6 +46,7 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<MediaInfo> MediaInfoList { get; } = new ObservableCollection<MediaInfo>();
 
         private MediaInfo selectedMedia;
+
         /// <summary>
         /// ListBoxで選択されているメディア
         /// </summary>
@@ -52,6 +57,7 @@ namespace PhotoViewer.ViewModels
         }
 
         private BitmapSource pictureImageSource;
+
         /// <summary>
         /// 拡大表示しているメディアの画像
         /// </summary>
@@ -67,6 +73,7 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<ContextMenuInfo> ContextMenuCollection { get; } = new ObservableCollection<ContextMenuInfo>();
 
         private bool isShowContextMenu;
+
         public bool IsShowContextMenu
         {
             get { return isShowContextMenu; }
@@ -74,22 +81,27 @@ namespace PhotoViewer.ViewModels
         }
 
         private bool isEnableImageEditButton;
+
         public bool IsEnableImageEditButton
         {
             get { return isEnableImageEditButton; }
             set { SetProperty(ref isEnableImageEditButton, value); }
         }
-        #endregion
+
+        #endregion UI binding parameters
 
         #region Command
+
         public ICommand OpenFolderButtonCommand { get; private set; }
         public ICommand ReloadButtonCommand { get; private set; }
         public ICommand SettingButtonCommand { get; private set; }
         public ICommand ImageEditButtonCommand { get; private set; }
-        #endregion
+
+        #endregion Command
 
         // メディア情報の読み込みスレッド
         private BackgroundWorker LoadContentsBackgroundWorker;
+
         // メディアリストのリロードフラグ
         private bool IsReloadContents;
 
@@ -157,7 +169,7 @@ namespace PhotoViewer.ViewModels
             }
             ChangeContents(picturePath);
         }
-        
+
         /// <summary>
         /// 設定ファイルの読み込み
         /// </summary>
@@ -254,7 +266,7 @@ namespace PhotoViewer.ViewModels
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             var linkageAppList = appConfigManager.configData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Count > 0)
-            { 
+            {
                 foreach (var linkageApp in linkageAppList)
                 {
                     // アプリアイコンを読み込み
@@ -415,8 +427,8 @@ namespace PhotoViewer.ViewModels
                 if (IsReloadContents)
                 {
                     // 非同期で読み込んでいるコンテンツリストの読み込み完了後にリロード
-                    App.Current.Dispatcher.BeginInvoke((Action)(() => 
-                    { 
+                    App.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    {
                         UpdateContents();
                         IsReloadContents = false;
                     }), DispatcherPriority.Normal);

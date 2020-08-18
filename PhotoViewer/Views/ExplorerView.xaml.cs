@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+﻿using PhotoViewer.Model;
+using PhotoViewer.ViewModels;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using PhotoViewer.Model;
-using PhotoViewer.ViewModels;
 
 namespace PhotoViewer.Views
 {

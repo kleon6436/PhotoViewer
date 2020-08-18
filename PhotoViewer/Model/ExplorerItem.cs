@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Collections.Generic;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace PhotoViewer.Model
 {
@@ -13,10 +13,13 @@ namespace PhotoViewer.Model
     {
         // アイテム情報
         public string ExplorerItemPath { get; private set; }
+
         // 内部ディレクトリ情報
         private DirectoryInfo InnerDirectory;
+
         // アイテムの展開状態
         private bool IsExpand;
+
         // ディレクトリ監視用
         private FileSystemWatcher FileSystemWatcher;
 

@@ -5,6 +5,7 @@ namespace PhotoViewer.Model
     public class ExtraAppSetting : BindableBase
     {
         private string appName;
+
         public string AppName
         {
             get { return appName; }
@@ -12,6 +13,7 @@ namespace PhotoViewer.Model
         }
 
         private string appPath;
+
         public string AppPath
         {
             get { return appPath; }

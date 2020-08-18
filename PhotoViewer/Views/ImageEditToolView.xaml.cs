@@ -1,5 +1,5 @@
-﻿using System.Windows;
-using PhotoViewer.ViewModels;
+﻿using PhotoViewer.ViewModels;
+using System.Windows;
 
 namespace PhotoViewer.Views
 {
@@ -17,7 +17,7 @@ namespace PhotoViewer.Views
                 var vm = this.DataContext as ImageEditToolViewModel;
                 if (vm != null)
                 {
-                    vm.CloseView += (sender, args) => 
+                    vm.CloseView += (sender, args) =>
                     {
                         // 不要なメモリ解放
                         App.RunGC();

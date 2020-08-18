@@ -1,22 +1,24 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using PhotoViewer.Model;
+using Prism.Commands;
+using Prism.Mvvm;
+using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Collections.ObjectModel;
-using Prism.Mvvm;
-using Prism.Commands;
-using Microsoft.Win32;
-using PhotoViewer.Model;
 
 namespace PhotoViewer.ViewModels
 {
     public class ImageEditToolViewModel : BindableBase
     {
         #region UI binding parameter
+
         private BitmapSource editImage;
+
         public BitmapSource EditImage
         {
             get { return editImage; }
@@ -31,11 +33,12 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; } = new ObservableCollection<ResizeImageCategory>();
 
         private ResizeImageCategory resizeCategoryItem;
+
         public ResizeImageCategory ResizeCategoryItem
         {
             get { return resizeCategoryItem; }
-            set 
-            { 
+            set
+            {
                 SetProperty(ref resizeCategoryItem, value);
                 if (resizeCategoryItem != null)
                 {
@@ -64,6 +67,7 @@ namespace PhotoViewer.ViewModels
         }
 
         private bool isEnableImageSaveQuality;
+
         public bool IsEnableImageSaveQuality
         {
             get { return isEnableImageSaveQuality; }
@@ -73,6 +77,7 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<ImageQuality> ImageSaveQualityItems { get; } = new ObservableCollection<ImageQuality>();
 
         private ImageQuality selectedQuality;
+
         public ImageQuality SelectedQuality
         {
             get { return selectedQuality; }
@@ -82,6 +87,7 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<ImageForm> ImageFormItems { get; } = new ObservableCollection<ImageForm>();
 
         private ImageForm selectedForm;
+
         public ImageForm SelectedForm
         {
             get { return selectedForm; }
@@ -89,22 +95,29 @@ namespace PhotoViewer.ViewModels
         }
 
         private string resizeSizeText;
+
         public string ResizeSizeText
         {
             get { return resizeSizeText; }
             set { SetProperty(ref resizeSizeText, value); }
         }
-        #endregion
+
+        #endregion UI binding parameter
 
         #region Command
+
         public ICommand SaveButtonCommand { get; set; }
-        #endregion
+
+        #endregion Command
 
         public EventHandler CloseView { get; set; }
+
         // 編集対象のファイルパス
         private string EditFilePath;
+
         // 編集前の画像サイズ
         private Size ReadImageSize;
+
         // 編集前の画像を保持
         private BitmapSource DecodedPictureSource;
 

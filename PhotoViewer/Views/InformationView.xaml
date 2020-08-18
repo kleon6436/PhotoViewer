@@ -1,10 +1,10 @@
 ﻿<Page x:Class="PhotoViewer.Views.InformationView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:PhotoViewer.Views"
-      mc:Ignorable="d" 
+      mc:Ignorable="d"
       d:DesignHeight="550" d:DesignWidth="600"
       Title="InformationView">
     <Page.Background>
@@ -12,9 +12,9 @@
     </Page.Background>
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Vertical" Margin="0,30,0,0">
-            <TextBlock Margin="0,0,0,20" HorizontalAlignment="Center" FontSize="28" Text="Kchary Photograph Viewer"/>
-            <TextBlock Margin="0,0,0,5" FontSize="16" Text="Version 2.00" HorizontalAlignment="Center"/>
-            <TextBlock Margin="0,0,0,5" FontSize="16" Text="Copyright © 2020 Kchary All Rights Reserved."/>
+            <TextBlock Margin="0,0,0,20" HorizontalAlignment="Center" FontSize="28" Text="Kchary Photograph Viewer" />
+            <TextBlock Margin="0,0,0,5" FontSize="16" Text="Version 2.00" HorizontalAlignment="Center" />
+            <TextBlock Margin="0,0,0,5" FontSize="16" Text="Copyright © 2020 Kchary All Rights Reserved." />
         </StackPanel>
     </Grid>
 </Page>

@@ -242,6 +242,7 @@ namespace PhotoViewer.Model
 
                 case 8:
                     return TransformBitmap(image, new RotateTransform(270));
+
                 case 2:
                     return TransformBitmap(image, new ScaleTransform(-1, 1, 0, 0));
 

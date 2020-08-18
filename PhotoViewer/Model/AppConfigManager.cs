@@ -99,6 +99,7 @@ namespace PhotoViewer.Model
     {
         // XMLの要素名
         private const string PREVIOUS_FOLDER_ELEM_NAME = "previous_folder";
+
         private const string PREVIOUS_PATH_ELEM_NAME = "previous_path";
         private const string LINK_APP_ELEM_NAME = "linkage_app";
         private const string LINK_APP_DATA_NAME = "linkage_app_data";

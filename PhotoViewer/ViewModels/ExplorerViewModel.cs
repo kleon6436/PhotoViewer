@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.IO;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
+﻿using PhotoViewer.Model;
 using Prism.Mvvm;
-using PhotoViewer.Model;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 
 namespace PhotoViewer.ViewModels
 {
@@ -15,10 +15,11 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<ExplorerItem> ExplorerItems { get; } = new ObservableCollection<ExplorerItem>();
 
         private ExplorerItem selectedItem;
+
         /// <summary>
         /// 選択されたアイテム情報
         /// </summary>
-        public ExplorerItem SelectedItem 
+        public ExplorerItem SelectedItem
         {
             get { return selectedItem; }
             set
@@ -64,7 +65,6 @@ namespace PhotoViewer.ViewModels
         public void ExpandPreviousPath(string previousFolderPath)
         {
             List<string> parentPathList = new List<string>();
-
 
             GetAllParentPathList(previousFolderPath, parentPathList);
             parentPathList.Reverse();

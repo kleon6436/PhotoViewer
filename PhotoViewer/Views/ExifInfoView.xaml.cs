@@ -11,7 +11,7 @@ namespace PhotoViewer.Views
         {
             InitializeComponent();
         }
-        
+
         /// <summary>
         /// マウスクリック時のイベント
         /// </summary>

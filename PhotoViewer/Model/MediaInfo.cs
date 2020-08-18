@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.IO;
 using System.Windows.Media.Imaging;
-using Prism.Mvvm;
 
 namespace PhotoViewer.Model
 {
@@ -14,6 +14,7 @@ namespace PhotoViewer.Model
         }
 
         #region Media Parameters
+
         /// <summary>
         /// メディアタイプ
         /// </summary>
@@ -23,6 +24,7 @@ namespace PhotoViewer.Model
         }
 
         private BitmapSource thumbnailImage;
+
         /// <summary>
         /// サムネイルイメージ
         /// </summary>
@@ -33,6 +35,7 @@ namespace PhotoViewer.Model
         }
 
         private string fileName;
+
         /// <summary>
         /// ファイル名
         /// </summary>
@@ -46,14 +49,14 @@ namespace PhotoViewer.Model
         /// ファイルパス
         /// </summary>
         public string FilePath { get; set; }
-        #endregion
+
+        #endregion Media Parameters
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public MediaInfo()
         {
-
         }
 
         /// <summary>
@@ -117,7 +120,6 @@ namespace PhotoViewer.Model
         /// </summary>
         public PictureMediaInfo() : base(null)
         {
-
         }
 
         /// <summary>
@@ -125,7 +127,6 @@ namespace PhotoViewer.Model
         /// </summary>
         public PictureMediaInfo(MediaInfo _mediaFileInfo) : base(_mediaFileInfo)
         {
-
         }
     }
 }

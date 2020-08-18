@@ -8,7 +8,7 @@ namespace PhotoViewer.Model
     /// </summary>
     public class WrappingStream : Stream
     {
-        Stream mStreamBase;
+        private Stream mStreamBase;
 
         public WrappingStream(Stream _streamBase)
         {

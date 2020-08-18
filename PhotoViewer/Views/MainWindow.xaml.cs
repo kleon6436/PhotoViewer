@@ -1,4 +1,7 @@
-﻿using System;
+﻿using PhotoViewer.Model;
+using PhotoViewer.ViewModels;
+using PhotoViewer.Views;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,9 +10,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
-using PhotoViewer.Model;
-using PhotoViewer.ViewModels;
-using PhotoViewer.Views;
 
 namespace PhotoViewer
 {
