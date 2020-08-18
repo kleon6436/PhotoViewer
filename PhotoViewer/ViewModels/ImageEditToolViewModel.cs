@@ -126,19 +126,30 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         public ImageEditToolViewModel()
         {
-            ResizeCategoryItems.Add(new ResizeImageCategory("リサイズなし", ResizeImageCategory.ResizeCategory.None));
-            ResizeCategoryItems.Add(new ResizeImageCategory("印刷向け", ResizeImageCategory.ResizeCategory.Print));
-            ResizeCategoryItems.Add(new ResizeImageCategory("ブログ向け", ResizeImageCategory.ResizeCategory.Blog));
-            ResizeCategoryItems.Add(new ResizeImageCategory("Twitter向け", ResizeImageCategory.ResizeCategory.Twitter));
+            const string NoResize = "リサイズなし";
+            const string PrintResize = "印刷向け";
+            const string BlogResize = "ブログ向け";
+            const string SnsResize = "SNS向け";
+            ResizeCategoryItems.Add(new ResizeImageCategory(NoResize, ResizeImageCategory.ResizeCategory.None));
+            ResizeCategoryItems.Add(new ResizeImageCategory(PrintResize, ResizeImageCategory.ResizeCategory.Print));
+            ResizeCategoryItems.Add(new ResizeImageCategory(BlogResize, ResizeImageCategory.ResizeCategory.Blog));
+            ResizeCategoryItems.Add(new ResizeImageCategory(SnsResize, ResizeImageCategory.ResizeCategory.Twitter));
 
-            ImageSaveQualityItems.Add(new ImageQuality("高画質", 90));
-            ImageSaveQualityItems.Add(new ImageQuality("標準", 80));
-            ImageSaveQualityItems.Add(new ImageQuality("低画質", 60));
+            const string HighQuality = "高画質";
+            const string StandardQuality = "標準";
+            const string LowQuality = "低画質";
+            ImageSaveQualityItems.Add(new ImageQuality(HighQuality, 90));
+            ImageSaveQualityItems.Add(new ImageQuality(StandardQuality, 80));
+            ImageSaveQualityItems.Add(new ImageQuality(LowQuality, 60));
 
-            ImageFormItems.Add(new ImageForm("Jpeg", ImageForm.ImageForms.Jpeg));
-            ImageFormItems.Add(new ImageForm("Png", ImageForm.ImageForms.Png));
-            ImageFormItems.Add(new ImageForm("Bmp", ImageForm.ImageForms.Bmp));
-            ImageFormItems.Add(new ImageForm("Tiff", ImageForm.ImageForms.Tiff));
+            const string Jpeg = "Jpeg";
+            const string Png = "Png";
+            const string Bmp = "Bmp";
+            const string Tiff = "Tiff";
+            ImageFormItems.Add(new ImageForm(Jpeg, ImageForm.ImageForms.Jpeg));
+            ImageFormItems.Add(new ImageForm(Png, ImageForm.ImageForms.Png));
+            ImageFormItems.Add(new ImageForm(Bmp, ImageForm.ImageForms.Bmp));
+            ImageFormItems.Add(new ImageForm(Tiff, ImageForm.ImageForms.Tiff));
 
             SaveButtonCommand = new DelegateCommand(SaveButtonClicked);
         }
@@ -174,24 +185,29 @@ namespace PhotoViewer.ViewModels
         private void SaveButtonClicked()
         {
             var dialog = new SaveFileDialog();
-            dialog.Title = "名前を付けて保存";
+            const string DialogTitle = "名前を付けて保存";
+            dialog.Title = DialogTitle;
 
             switch (SelectedForm.Form)
             {
                 case ImageForm.ImageForms.Bmp:
-                    dialog.Filter = "BMPファイル(*.bmp)|*.bmp";
+                    const string BmpFilter = "BMPファイル(*.bmp)|*.bmp";
+                    dialog.Filter = BmpFilter;
                     break;
 
                 case ImageForm.ImageForms.Jpeg:
-                    dialog.Filter = "Jpegファイル(*.jpg;*.jpeg)|*.jpg;*.jpeg";
+                    const string JpegFilter = "Jpegファイル(*.jpg;*.jpeg)|*.jpg;*.jpeg";
+                    dialog.Filter = JpegFilter;
                     break;
 
                 case ImageForm.ImageForms.Png:
-                    dialog.Filter = "PNGファイル(*.png)|*.png";
+                    const string PngFilter = "PNGファイル(*.png)|*.png";
+                    dialog.Filter = PngFilter;
                     break;
 
                 case ImageForm.ImageForms.Tiff:
-                    dialog.Filter = "TIFFファイル(*.tif)|*.tif";
+                    const string TiffFilter = "TIFFファイル(*.tif)|*.tif";
+                    dialog.Filter = TiffFilter;
                     break;
 
                 default:
@@ -251,12 +267,17 @@ namespace PhotoViewer.ViewModels
                     encoder.Save(dstStream);
                 }
 
-                App.ShowSuccessMessageBox("画像の保存に成功しました。", "保存成功");
+                const string SaveSuccessMessage = "画像の保存に成功しました。";
+                const string SaveSuccessTitle = "保存成功";
+                App.ShowSuccessMessageBox(SaveSuccessMessage, SaveSuccessTitle);
             }
             catch (Exception ex)
             {
                 App.LogException(ex);
-                App.ShowErrorMessageBox("画像の保存に失敗しました。", "保存失敗");
+
+                const string SaveFailedMessage = "画像の保存に失敗しました。";
+                const string SaveFailedTitle = "保存失敗";
+                App.ShowErrorMessageBox(SaveFailedMessage, SaveFailedTitle);
             }
             finally
             {

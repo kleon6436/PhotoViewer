@@ -63,9 +63,12 @@ namespace PhotoViewer.ViewModels
         {
             string previousLinkAppPath = LinkAppPath;
 
+            const string DialogTitle = "連携アプリ選択ダイアログ";
+            const string DialogDefaultExt = ".exe";
+
             var dialog = new OpenFileDialog();
-            dialog.Title = "連携アプリ選択ダイアログ";
-            dialog.DefaultExt = ".exe";
+            dialog.Title = DialogTitle;
+            dialog.DefaultExt = DialogDefaultExt;
 
             if (Environment.Is64BitProcess)
             {

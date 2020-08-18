@@ -191,8 +191,9 @@ namespace PhotoViewer.ViewModels
 
             try
             {
+                const string Explorer = "EXPLORER.EXE";
                 Mouse.OverrideCursor = Cursors.Wait;
-                Process.Start("EXPLORER.EXE", SelectFolderPath);
+                Process.Start(Explorer, SelectFolderPath);
             }
             catch (Exception ex)
             {
@@ -409,7 +410,10 @@ namespace PhotoViewer.ViewModels
             catch (Exception ex)
             {
                 App.LogException(ex);
-                App.ShowErrorMessageBox("メディアの読み込みに失敗しました。", "読み込みエラー");
+
+                const string MediaReadErrorMessage = "メディアの読み込みに失敗しました。";
+                const string MedaiReadErrorTitle = "読み込みエラー";
+                App.ShowErrorMessageBox(MediaReadErrorMessage, MedaiReadErrorTitle);
             }
         }
 
@@ -535,7 +539,9 @@ namespace PhotoViewer.ViewModels
         {
             if (!File.Exists(mediaInfo.FilePath))
             {
-                App.ShowErrorMessageBox("ファイルが存在しません。", "ファイルアクセスエラー");
+                const string FileNotExistErrorMessage = "ファイルが存在しません。";
+                const string FileNotExstErrorTitle = "ファイルアクセスエラー";
+                App.ShowErrorMessageBox(FileNotExistErrorMessage, FileNotExstErrorTitle);
             }
 
             // Viewに設定されているものをクリア
@@ -590,7 +596,10 @@ namespace PhotoViewer.ViewModels
             {
                 App.LogException(ex);
 
-                App.ShowErrorMessageBox("ファイルアクセスでエラーが発生しました。", "ファイルアクセスエラー");
+                const string FileAccessErrorMessage = "ファイルアクセスでエラーが発生しました。";
+                const string FileAccessErrorTitle = "ファイルアクセスエラー";
+                App.ShowErrorMessageBox(FileAccessErrorMessage, FileAccessErrorTitle);
+
                 return false;
             }
             finally
