@@ -28,8 +28,8 @@ namespace PhotoViewer.Model
 
         public ExifInfo(string exifText, string exifValue)
         {
-            this.ExifParameterText = exifText;
-            this.ExifParameterValue = exifValue;
+            ExifParameterText = exifText;
+            ExifParameterValue = exifValue;
         }
     }
 }

@@ -33,8 +33,10 @@ namespace PhotoViewer.ViewModels
                         var vm = new LinkageAppViewModel();
                         vm.ChangeLinkageAppEvent += ChangeLinkageApp;
 
-                        DisplayPage = new LinkageAppView();
-                        DisplayPage.DataContext = vm;
+                        DisplayPage = new LinkageAppView
+                        {
+                            DataContext = vm
+                        };
                         break;
 
                     case SelectPage.InformationPage:
@@ -75,8 +77,10 @@ namespace PhotoViewer.ViewModels
         /// <param name="e">引数情報</param>
         private void ChangeLinkageApp(object sender, EventArgs e)
         {
-            var linkageAppVM = sender as LinkageAppViewModel;
-            if (linkageAppVM == null) return;
+            if (!(sender is LinkageAppViewModel linkageAppVM))
+            {
+                return;
+            }
 
             ReloadContextMenuEvent?.Invoke(this, EventArgs.Empty);
         }

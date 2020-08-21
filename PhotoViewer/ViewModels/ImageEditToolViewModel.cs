@@ -27,7 +27,7 @@ namespace PhotoViewer.ViewModels
 
         public string EditFileName
         {
-            get { return Path.GetFileName(this.EditFilePath); }
+            get { return Path.GetFileName(EditFilePath); }
         }
 
         public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; } = new ObservableCollection<ResizeImageCategory>();
@@ -160,13 +160,13 @@ namespace PhotoViewer.ViewModels
         /// <param name="filePath">選択されている画像ファイルパス</param>
         public void SetEditFileData(string filePath)
         {
-            this.EditFilePath = filePath;
-            this.EditImage = ImageControl.CreatePictureEditViewThumbnail(this.EditFilePath);
+            EditFilePath = filePath;
+            EditImage = ImageControl.CreatePictureEditViewThumbnail(EditFilePath);
 
             // WritableBitmapのメモリ解放
             App.RunGC();
 
-            DecodedPictureSource = ImageControl.DecodePicture(this.EditFilePath);
+            DecodedPictureSource = ImageControl.DecodePicture(EditFilePath);
             ReadImageSize = new Size(DecodedPictureSource.PixelWidth, DecodedPictureSource.PixelHeight);
 
             // WritableBitmapのメモリ解放
@@ -283,85 +283,6 @@ namespace PhotoViewer.ViewModels
             {
                 CloseView?.Invoke(this, EventArgs.Empty);
             }
-        }
-    }
-
-    public class ResizeImageCategory
-    {
-        public enum ResizeCategory
-        {
-            None,    // リサイズしない
-            Print,   // 印刷用
-            Blog,    // ブログ用
-            Twitter, // Twitter用
-        }
-
-        public string Name { get; private set; }
-        public ResizeCategory Category { get; private set; }
-        public int ResizelongSideValue { get; private set; }
-
-        public ResizeImageCategory(string name, ResizeCategory category)
-        {
-            this.Name = name;
-            this.Category = category;
-
-            switch (Category)
-            {
-                case ResizeCategory.None:
-                    return;
-
-                case ResizeCategory.Print:
-                    ResizelongSideValue = 2500;
-                    return;
-
-                case ResizeCategory.Blog:
-                    ResizelongSideValue = 1500;
-                    return;
-
-                case ResizeCategory.Twitter:
-                    ResizelongSideValue = 1000;
-                    return;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-    }
-
-    public class ImageQuality
-    {
-        public string Name { get; private set; }
-        public int QualityValue { get; private set; }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="name">表示名</param>
-        /// <param name="qualityValue">品質値</param>
-        public ImageQuality(string name, int qualityValue)
-        {
-            this.Name = name;
-            this.QualityValue = qualityValue;
-        }
-    }
-
-    public class ImageForm
-    {
-        public enum ImageForms
-        {
-            Jpeg,
-            Png,
-            Bmp,
-            Tiff,
-        }
-
-        public string Name { get; private set; }
-        public ImageForms Form { get; private set; }
-
-        public ImageForm(string name, ImageForms imageForm)
-        {
-            this.Name = name;
-            this.Form = imageForm;
         }
     }
 }

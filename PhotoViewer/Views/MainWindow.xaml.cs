@@ -31,7 +31,7 @@ namespace PhotoViewer
             timer.Start();
             var vm = new MainWindowViewModel();
             vm.InitViewFolder();
-            this.DataContext = vm;
+            DataContext = vm;
             timer.Stop();
 
             // 一定時間待機後、SplashScreenを閉じる
@@ -51,8 +51,7 @@ namespace PhotoViewer
         /// <param name="e">引数情報</param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var vm = this.DataContext as MainWindowViewModel;
-            if (vm != null && vm.SelectedMedia == null && vm.MediaInfoList.Count > 0)
+            if (DataContext is MainWindowViewModel vm && vm.SelectedMedia == null && vm.MediaInfoList.Any())
             {
                 var firstImageData = vm.MediaInfoList.First();
                 if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(firstImageData.FilePath).ToLower()))
@@ -69,7 +68,7 @@ namespace PhotoViewer
         /// <param name="e">引数情報</param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var vm = this.DataContext as MainWindowViewModel;
+            var vm = DataContext as MainWindowViewModel;
             if (!vm.StopThreadAndTask())
             {
                 // 少し待ってからクローズ
@@ -77,12 +76,11 @@ namespace PhotoViewer
             }
 
             // ウィンドウ情報を保存
-            WINDOWPLACEMENT placement;
             var hwnd = new WindowInteropHelper(this).Handle;
-            GetWindowPlacement(hwnd, out placement);
+            GetWindowPlacement(hwnd, out WINDOWPLACEMENT placement);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.configData.WindowPlaceData = placement;
+            appConfigManager.ConfigData.WindowPlaceData = placement;
             appConfigManager.Export();
         }
 
@@ -108,13 +106,17 @@ namespace PhotoViewer
         /// <param name="e">引数情報</param>
         private void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var listBox = sender as ListBox;
-            if (listBox == null) return;
+            if (!(sender is ListBox listBox))
+            {
+                return;
+            }
 
-            var mediaInfo = listBox.SelectedItem as MediaInfo;
-            if (mediaInfo == null) return;
+            if (!(listBox.SelectedItem is MediaInfo mediaInfo))
+            {
+                return;
+            }
 
-            var vm = this.DataContext as MainWindowViewModel;
+            var vm = DataContext as MainWindowViewModel;
             vm.LoadMedia(mediaInfo);
         }
 
@@ -125,10 +127,12 @@ namespace PhotoViewer
         /// <param name="e">引数情報</param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var menuItem = sender as MenuItem;
-            if (menuItem == null) return;
+            if (!(sender is MenuItem menuItem))
+            {
+                return;
+            }
 
-            var vm = this.DataContext as MainWindowViewModel;
+            var vm = DataContext as MainWindowViewModel;
             vm.ExecuteContextMenu(Convert.ToString(menuItem.Header));
         }
 
@@ -142,7 +146,7 @@ namespace PhotoViewer
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
 
-            var windowPlacement = appConfigManager.configData.WindowPlaceData;
+            var windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
             windowPlacement.showCmd = (windowPlacement.showCmd == SW.SHOWMINIMIZED) ? SW.SHOWNORMAL : windowPlacement.showCmd;
 
             var hwnd = new WindowInteropHelper(this).Handle;

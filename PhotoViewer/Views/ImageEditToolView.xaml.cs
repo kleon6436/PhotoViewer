@@ -1,4 +1,5 @@
-﻿using PhotoViewer.ViewModels;
+﻿using PhotoViewer.Model;
+using PhotoViewer.ViewModels;
 using System.Windows;
 
 namespace PhotoViewer.Views
@@ -14,8 +15,7 @@ namespace PhotoViewer.Views
 
             DataContextChanged += (o, e) =>
             {
-                var vm = this.DataContext as ImageEditToolViewModel;
-                if (vm != null)
+                if (DataContext is ImageEditToolViewModel vm)
                 {
                     vm.CloseView += (sender, args) =>
                     {
@@ -34,7 +34,7 @@ namespace PhotoViewer.Views
         /// <param name="e">引数情報</param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         /// <summary>
@@ -44,11 +44,13 @@ namespace PhotoViewer.Views
         /// <param name="e"></param>
         private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            var vm = this.DataContext as ImageEditToolViewModel;
-            if (vm == null) return;
+            if (!(DataContext is ImageEditToolViewModel vm))
+            {
+                return;
+            }
 
             // 保存形式に応じて、品質設定の表示を切り替え
-            vm.IsEnableImageSaveQuality = vm.SelectedForm.Form == ImageForm.ImageForms.Jpeg ? true : false;
+            vm.IsEnableImageSaveQuality = vm.SelectedForm.Form == ImageForm.ImageForms.Jpeg;
         }
     }
 }

@@ -162,12 +162,14 @@ namespace PhotoViewer.Model
             // 大きなアイコンのハンドルを取得
             StockIconFlags flags = StockIconFlags.Large | StockIconFlags.Handle;
 
-            var info = new StockIconInfo();
-            info.cbSize = (uint)Marshal.SizeOf(typeof(StockIconInfo));
+            var info = new StockIconInfo
+            {
+                cbSize = (uint)Marshal.SizeOf(typeof(StockIconInfo))
+            };
 
             // BitmapSourceにアイコンを保存
             BitmapSource source = null;
-            IntPtr result = SHGetStockIconInfo(iconId, flags, ref info);
+            SHGetStockIconInfo(iconId, flags, ref info);
 
             try
             {

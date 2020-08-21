@@ -48,8 +48,8 @@ namespace PhotoViewer.ViewModels
             DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.configData.LinkageAppList;
-            if (linkageAppList != null && linkageAppList.Count > 0)
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            if (linkageAppList != null && linkageAppList.Any())
             {
                 LinkageAppList.Clear();
                 LinkageAppList.AddRange(linkageAppList);
@@ -66,9 +66,11 @@ namespace PhotoViewer.ViewModels
             const string DialogTitle = "連携アプリ選択ダイアログ";
             const string DialogDefaultExt = ".exe";
 
-            var dialog = new OpenFileDialog();
-            dialog.Title = DialogTitle;
-            dialog.DefaultExt = DialogDefaultExt;
+            var dialog = new OpenFileDialog
+            {
+                Title = DialogTitle,
+                DefaultExt = DialogDefaultExt
+            };
 
             if (Environment.Is64BitProcess)
             {

@@ -15,40 +15,40 @@ namespace PhotoViewer.Model
         public string ExplorerItemPath { get; private set; }
 
         // 内部ディレクトリ情報
-        private DirectoryInfo InnerDirectory;
+        private readonly DirectoryInfo innerDirectory;
 
         // アイテムの展開状態
-        private bool IsExpand;
+        private bool isExpand;
 
         // ディレクトリ監視用
-        private FileSystemWatcher FileSystemWatcher;
+        private FileSystemWatcher fileSystemWatcher;
 
         public ExplorerItem(string path, bool isDrive)
         {
             // イベントと初期値の設定
             Expanded += ExplorerItem_Expanded;
-            IsExpand = false;
+            isExpand = false;
             ExplorerItemPath = path;
 
             // Explorerに表示するヘッダー情報の設定
             if (isDrive)
             {
-                this.Header = CreateExplorerItemHeader(ExplorerItemPath, true);
+                Header = CreateExplorerItemHeader(ExplorerItemPath, true);
             }
             else
             {
-                this.Header = CreateExplorerItemHeader(Path.GetFileName(ExplorerItemPath), false);
+                Header = CreateExplorerItemHeader(Path.GetFileName(ExplorerItemPath), false);
             }
 
             // ドライブ内のディレクトリ情報(存在する場合は、空のTreeItemを作成しておく)
             // ※ メモリ消費を抑えるため、中身はツリー展開時に作成する
-            InnerDirectory = new DirectoryInfo(ExplorerItemPath);
+            innerDirectory = new DirectoryInfo(ExplorerItemPath);
 
             try
             {
-                if (InnerDirectory.Exists && InnerDirectory.GetDirectories().Length > 0)
+                if (innerDirectory.Exists && innerDirectory.GetDirectories().Length > 0)
                 {
-                    this.Items.Add(new TreeViewItem());
+                    Items.Add(new TreeViewItem());
                 }
             }
             catch (Exception ex)
@@ -103,7 +103,7 @@ namespace PhotoViewer.Model
             Items.Clear();
 
             // ディレクトリの順番を自然順ソートで並び変えて再生成
-            List<DirectoryInfo> sortDirectoryInfos = InnerDirectory.GetDirectories().ToList();
+            List<DirectoryInfo> sortDirectoryInfos = innerDirectory.GetDirectories().ToList();
             sortDirectoryInfos = new List<DirectoryInfo>(sortDirectoryInfos.OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer()));
 
             foreach (var directory in sortDirectoryInfos)
@@ -150,13 +150,13 @@ namespace PhotoViewer.Model
             // フォーカスを外す
             Keyboard.ClearFocus();
 
-            if (!IsExpand)
+            if (!isExpand)
             {
                 // 展開先のディレクトリ情報を子要素に設定
                 UpdateDirectoryTree();
             }
 
-            IsExpand = true;
+            isExpand = true;
         }
 
         /// <summary>
@@ -166,20 +166,22 @@ namespace PhotoViewer.Model
         private void StartWatcher(string path)
         {
             // ディレクトリ情報ごとに監視を設定
-            FileSystemWatcher = new FileSystemWatcher();
-            FileSystemWatcher.Path = path;
-            FileSystemWatcher.Filter = "*";
-            FileSystemWatcher.IncludeSubdirectories = false;
-            FileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            fileSystemWatcher = new FileSystemWatcher
+            {
+                Path = path,
+                Filter = "*",
+                IncludeSubdirectories = false,
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName
+            };
 
             // ディレクトリ監視で発生するイベントの設定
-            FileSystemWatcher.Changed += FileSystemWatcher_Changed;
-            FileSystemWatcher.Created += FileSystemWatcher_Changed;
-            FileSystemWatcher.Deleted += FileSystemWatcher_Changed;
-            FileSystemWatcher.Renamed += FileSystemWatcher_Changed;
+            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
+            fileSystemWatcher.Created += FileSystemWatcher_Changed;
+            fileSystemWatcher.Deleted += FileSystemWatcher_Changed;
+            fileSystemWatcher.Renamed += FileSystemWatcher_Changed;
 
             // 監視を開始
-            FileSystemWatcher.EnableRaisingEvents = true;
+            fileSystemWatcher.EnableRaisingEvents = true;
         }
 
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
