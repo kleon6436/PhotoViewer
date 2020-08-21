@@ -48,7 +48,7 @@ namespace PhotoViewer.ViewModels
             DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
             if (linkageAppList != null && linkageAppList.Any())
             {
                 LinkageAppList.Clear();

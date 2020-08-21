@@ -139,14 +139,14 @@ namespace PhotoViewer.ViewModels
         {
             // 設定情報の読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
             if (linkageAppList != null && linkageAppList.Any())
             {
                 foreach (var linkageApp in linkageAppList)
                 {
                     if (!File.Exists(linkageApp.AppPath))
                     {
-                        linkageAppList.Remove(linkageApp);
+                        appConfigManager.ConfigData.LinkageAppList.Remove(linkageApp);
                         continue;
                     }
 
@@ -177,7 +177,7 @@ namespace PhotoViewer.ViewModels
         public void ExecuteContextMenu(string appName)
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
             if (!linkageAppList.Any(x => x.AppName == appName))
             {
                 return;
@@ -187,7 +187,7 @@ namespace PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                string appPath = linkageAppList.Find(x => x.AppName == appName).AppPath;
+                string appPath = Array.Find(linkageAppList, x => x.AppName == appName).AppPath;
                 Process.Start(appPath, SelectedMedia.FilePath);
             }
             catch (Exception ex)
@@ -341,7 +341,7 @@ namespace PhotoViewer.ViewModels
 
             // 設定情報から連携アプリ関連の情報を再読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
             if (linkageAppList != null && linkageAppList.Any())
             {
                 foreach (var linkageApp in linkageAppList)
@@ -516,7 +516,7 @@ namespace PhotoViewer.ViewModels
                     return;
                 }
 
-                filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToList());
+                filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToArray());
             }
 
             // 順番を名前順で並べ替え
