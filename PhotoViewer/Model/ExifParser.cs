@@ -24,23 +24,23 @@ namespace PhotoViewer.Model
                 // カメラモデルの情報を取得
                 GetCameraModel(objFolder, folderItem),
                 // カメラ製造元の情報を取得
-                GetCameraManufacturer(objFolder, folderItem)
+                GetCameraManufacturer(objFolder, folderItem),
+                // ビットの深さを取得
+                GetBitDepth(objFolder, folderItem),
+                // ISOを取得
+                GetISO(objFolder, folderItem),
+                // 焦点距離を取得
+                GetFocusLength(objFolder, folderItem),
+                // 測光モードを取得
+                GetMeteringMode(objFolder, folderItem),
             };
 
             // 画像の幅と高さを取得
             exifInfos.AddRange(GetImageWidthAndHeight(objFolder, folderItem));
             // 画像の解像度を取得
             exifInfos.AddRange(GetImageResolutionWidthAndHeight(objFolder, folderItem));
-            // ビットの深さを取得
-            exifInfos.Add(GetBitDepth(objFolder, folderItem));
             // シャッター速度と絞り値を取得
             exifInfos.AddRange(GetFnumberAndShutterSpeed(objFolder, folderItem));
-            // ISOを取得
-            exifInfos.Add(GetISO(objFolder, folderItem));
-            // 焦点距離を取得
-            exifInfos.Add(GetFocusLength(objFolder, folderItem));
-            // 測光モードを取得
-            exifInfos.Add(GetMeteringMode(objFolder, folderItem));
             // 露出プログラムとホワイトバランスを取得
             exifInfos.AddRange(GetExposeModeAndWhiteBlance(objFolder, folderItem));
 
