@@ -5,7 +5,7 @@ namespace PhotoViewer.Model
     /// <summary>
     /// アプリケーション設定情報のデータクラス
     /// </summary>
-    public class ConfigData
+    public class AppConfigData
     {
         /// <summary>
         /// 前回終了時点の表示フォルダ
@@ -22,7 +22,7 @@ namespace PhotoViewer.Model
         /// </summary>
         public MainWindow.WINDOWPLACEMENT WindowPlaceData;
 
-        public ConfigData()
+        public AppConfigData()
         {
             PreviousFolderPath = null;
             LinkageAppList = new List<ExtraAppSetting>();

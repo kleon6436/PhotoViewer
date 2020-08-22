@@ -12,7 +12,7 @@ namespace PhotoViewer.Model
         /// <summary>
         /// アプリケーション設定情報のデータ
         /// </summary>
-        public ConfigData ConfigData { get; set; }
+        public AppConfigData ConfigData { get; set; }
 
         private readonly string appConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KcharyPhotoViewer\Setting.conf";
         private static readonly AppConfigManager singleInstance = new AppConfigManager();
@@ -29,7 +29,7 @@ namespace PhotoViewer.Model
         {
             try
             {
-                var configXmlObject = new ConfigXml(appConfigFilePath);
+                var configXmlObject = new AppConfigXml(appConfigFilePath);
                 configXmlObject.Import(ConfigData);
             }
             catch (Exception ex)
@@ -50,7 +50,7 @@ namespace PhotoViewer.Model
 
             try
             {
-                var configXmlObject = new ConfigXml(appConfigFilePath);
+                var configXmlObject = new AppConfigXml(appConfigFilePath);
                 configXmlObject.Export(ConfigData);
             }
             catch (Exception ex)
@@ -72,7 +72,7 @@ namespace PhotoViewer.Model
 
         private AppConfigManager()
         {
-            ConfigData = new ConfigData();
+            ConfigData = new AppConfigData();
         }
     }
 }
