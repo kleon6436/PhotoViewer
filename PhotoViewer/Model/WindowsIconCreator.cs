@@ -14,7 +14,7 @@ namespace PhotoViewer.Model
         [DllImport("Shell32.dll")]
         public static extern int ExtractIconEx(
         string szFile,          // アイコンを抽出するファイル名
-        int nIconIndex,         // 取り出すアイコンのインデックス 
+        int nIconIndex,         // 取り出すアイコンのインデックス
         out IntPtr phiconLarge, // 大きなアイコンへのポインタ（通常 32x32）
         out IntPtr phiconSmall, // 小さなアイコンへのポインタ（通常 16x16）
         int nIcons              // 取り出すアイコン数
@@ -37,8 +37,9 @@ namespace PhotoViewer.Model
             public IntPtr hIcon;       //（戻り値）アイコンへのハンドル
             public int iSysImageIndex; //（戻り値）システムアイコンキャッシュ内のアイコンのインデックス
             public int iIcon;          //（戻り値）取り出したアイコンのインデックス
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            public string szPath;      //（戻り値）アイコンリソースを保持するファイル名 
+            public string szPath;      //（戻り値）アイコンリソースを保持するファイル名
         }
 
         /// <summary>
@@ -161,12 +162,14 @@ namespace PhotoViewer.Model
             // 大きなアイコンのハンドルを取得
             StockIconFlags flags = StockIconFlags.Large | StockIconFlags.Handle;
 
-            var info = new StockIconInfo();
-            info.cbSize = (uint)Marshal.SizeOf(typeof(StockIconInfo));
+            var info = new StockIconInfo
+            {
+                cbSize = (uint)Marshal.SizeOf(typeof(StockIconInfo))
+            };
 
             // BitmapSourceにアイコンを保存
             BitmapSource source = null;
-            IntPtr result = SHGetStockIconInfo(iconId, flags, ref info);
+            SHGetStockIconInfo(iconId, flags, ref info);
 
             try
             {

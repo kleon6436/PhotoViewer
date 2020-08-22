@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+﻿using PhotoViewer.Model;
+using PhotoViewer.ViewModels;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using PhotoViewer.Model;
-using PhotoViewer.ViewModels;
 
 namespace PhotoViewer.Views
 {
@@ -23,17 +23,21 @@ namespace PhotoViewer.Views
         /// <param name="e">引数情報</param>
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var treeView = sender as TreeView;
-            if (treeView == null) return;
+            if (sender as TreeView == null)
+            {
+                return;
+            }
 
-            var selectedExplorerItem = treeView.SelectedItem as ExplorerItem;
-            if (selectedExplorerItem == null) return;
+            if (!((sender as TreeView).SelectedItem is ExplorerItem selectedExplorerItem))
+            {
+                return;
+            }
 
             // スクロールして、フォーカスを当てる
             selectedExplorerItem.BringIntoView();
             selectedExplorerItem.Focus();
 
-            var vm = this.DataContext as ExplorerViewModel;
+            var vm = DataContext as ExplorerViewModel;
             Debug.Assert(vm != null);
 
             if (vm.SelectedItem != selectedExplorerItem)

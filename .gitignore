@@ -3,3 +3,4 @@ PhotoViewer/obj/
 .vs/
 PhotoViewer/bin/
 packages/
+*.StyleCop

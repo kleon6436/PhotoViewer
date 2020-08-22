@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace PhotoViewer.Model
 {
@@ -33,7 +33,7 @@ namespace PhotoViewer.Model
         /// <returns>NEFファイルの場合: True、それ以外のファイルの場合: False</returns>
         public static bool CheckNikonRawFileExtension(string extension)
         {
-            return (extension == ".nef") ? true : false;
+            return (extension == ".nef");
         }
     }
 }

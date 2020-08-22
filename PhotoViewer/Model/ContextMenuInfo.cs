@@ -1,19 +1,20 @@
-﻿using System;
+﻿using Prism.Mvvm;
 using System.Windows.Media.Imaging;
-using Prism.Mvvm;
 
 namespace PhotoViewer.Model
 {
     public class ContextMenuInfo : BindableBase
     {
         private string displayName;
-        public string DisplayName 
+
+        public string DisplayName
         {
             get { return displayName; }
             set { SetProperty(ref displayName, value); }
         }
 
         private BitmapSource contextIcon;
+
         public BitmapSource ContextIcon
         {
             get { return contextIcon; }

@@ -1,22 +1,24 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using PhotoViewer.Model;
+using Prism.Commands;
+using Prism.Mvvm;
+using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Collections.ObjectModel;
-using Prism.Mvvm;
-using Prism.Commands;
-using Microsoft.Win32;
-using PhotoViewer.Model;
 
 namespace PhotoViewer.ViewModels
 {
     public class ImageEditToolViewModel : BindableBase
     {
         #region UI binding parameter
+
         private BitmapSource editImage;
+
         public BitmapSource EditImage
         {
             get { return editImage; }
@@ -25,17 +27,18 @@ namespace PhotoViewer.ViewModels
 
         public string EditFileName
         {
-            get { return Path.GetFileName(this.EditFilePath); }
+            get { return Path.GetFileName(EditFilePath); }
         }
 
         public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; } = new ObservableCollection<ResizeImageCategory>();
 
         private ResizeImageCategory resizeCategoryItem;
+
         public ResizeImageCategory ResizeCategoryItem
         {
             get { return resizeCategoryItem; }
-            set 
-            { 
+            set
+            {
                 SetProperty(ref resizeCategoryItem, value);
                 if (resizeCategoryItem != null)
                 {
@@ -64,6 +67,7 @@ namespace PhotoViewer.ViewModels
         }
 
         private bool isEnableImageSaveQuality;
+
         public bool IsEnableImageSaveQuality
         {
             get { return isEnableImageSaveQuality; }
@@ -73,6 +77,7 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<ImageQuality> ImageSaveQualityItems { get; } = new ObservableCollection<ImageQuality>();
 
         private ImageQuality selectedQuality;
+
         public ImageQuality SelectedQuality
         {
             get { return selectedQuality; }
@@ -82,6 +87,7 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<ImageForm> ImageFormItems { get; } = new ObservableCollection<ImageForm>();
 
         private ImageForm selectedForm;
+
         public ImageForm SelectedForm
         {
             get { return selectedForm; }
@@ -89,22 +95,29 @@ namespace PhotoViewer.ViewModels
         }
 
         private string resizeSizeText;
+
         public string ResizeSizeText
         {
             get { return resizeSizeText; }
             set { SetProperty(ref resizeSizeText, value); }
         }
-        #endregion
+
+        #endregion UI binding parameter
 
         #region Command
+
         public ICommand SaveButtonCommand { get; set; }
-        #endregion
+
+        #endregion Command
 
         public EventHandler CloseView { get; set; }
+
         // 編集対象のファイルパス
         private string EditFilePath;
+
         // 編集前の画像サイズ
         private Size ReadImageSize;
+
         // 編集前の画像を保持
         private BitmapSource DecodedPictureSource;
 
@@ -113,19 +126,30 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         public ImageEditToolViewModel()
         {
-            ResizeCategoryItems.Add(new ResizeImageCategory("リサイズなし", ResizeImageCategory.ResizeCategory.None));
-            ResizeCategoryItems.Add(new ResizeImageCategory("印刷向け", ResizeImageCategory.ResizeCategory.Print));
-            ResizeCategoryItems.Add(new ResizeImageCategory("ブログ向け", ResizeImageCategory.ResizeCategory.Blog));
-            ResizeCategoryItems.Add(new ResizeImageCategory("Twitter向け", ResizeImageCategory.ResizeCategory.Twitter));
+            const string NoResize = "リサイズなし";
+            const string PrintResize = "印刷向け";
+            const string BlogResize = "ブログ向け";
+            const string SnsResize = "SNS向け";
+            ResizeCategoryItems.Add(new ResizeImageCategory(NoResize, ResizeImageCategory.ResizeCategory.None));
+            ResizeCategoryItems.Add(new ResizeImageCategory(PrintResize, ResizeImageCategory.ResizeCategory.Print));
+            ResizeCategoryItems.Add(new ResizeImageCategory(BlogResize, ResizeImageCategory.ResizeCategory.Blog));
+            ResizeCategoryItems.Add(new ResizeImageCategory(SnsResize, ResizeImageCategory.ResizeCategory.Twitter));
 
-            ImageSaveQualityItems.Add(new ImageQuality("高画質", 90));
-            ImageSaveQualityItems.Add(new ImageQuality("標準", 80));
-            ImageSaveQualityItems.Add(new ImageQuality("低画質", 60));
+            const string HighQuality = "高画質";
+            const string StandardQuality = "標準";
+            const string LowQuality = "低画質";
+            ImageSaveQualityItems.Add(new ImageQuality(HighQuality, 90));
+            ImageSaveQualityItems.Add(new ImageQuality(StandardQuality, 80));
+            ImageSaveQualityItems.Add(new ImageQuality(LowQuality, 60));
 
-            ImageFormItems.Add(new ImageForm("Jpeg", ImageForm.ImageForms.Jpeg));
-            ImageFormItems.Add(new ImageForm("Png", ImageForm.ImageForms.Png));
-            ImageFormItems.Add(new ImageForm("Bmp", ImageForm.ImageForms.Bmp));
-            ImageFormItems.Add(new ImageForm("Tiff", ImageForm.ImageForms.Tiff));
+            const string Jpeg = "Jpeg";
+            const string Png = "Png";
+            const string Bmp = "Bmp";
+            const string Tiff = "Tiff";
+            ImageFormItems.Add(new ImageForm(Jpeg, ImageForm.ImageForms.Jpeg));
+            ImageFormItems.Add(new ImageForm(Png, ImageForm.ImageForms.Png));
+            ImageFormItems.Add(new ImageForm(Bmp, ImageForm.ImageForms.Bmp));
+            ImageFormItems.Add(new ImageForm(Tiff, ImageForm.ImageForms.Tiff));
 
             SaveButtonCommand = new DelegateCommand(SaveButtonClicked);
         }
@@ -136,13 +160,13 @@ namespace PhotoViewer.ViewModels
         /// <param name="filePath">選択されている画像ファイルパス</param>
         public void SetEditFileData(string filePath)
         {
-            this.EditFilePath = filePath;
-            this.EditImage = ImageControl.CreatePictureEditViewThumbnail(this.EditFilePath);
+            EditFilePath = filePath;
+            EditImage = ImageControl.CreatePictureEditViewThumbnail(EditFilePath);
 
             // WritableBitmapのメモリ解放
             App.RunGC();
 
-            DecodedPictureSource = ImageControl.DecodePicture(this.EditFilePath);
+            DecodedPictureSource = ImageControl.DecodePicture(EditFilePath);
             ReadImageSize = new Size(DecodedPictureSource.PixelWidth, DecodedPictureSource.PixelHeight);
 
             // WritableBitmapのメモリ解放
@@ -161,24 +185,29 @@ namespace PhotoViewer.ViewModels
         private void SaveButtonClicked()
         {
             var dialog = new SaveFileDialog();
-            dialog.Title = "名前を付けて保存";
+            const string DialogTitle = "名前を付けて保存";
+            dialog.Title = DialogTitle;
 
             switch (SelectedForm.Form)
             {
                 case ImageForm.ImageForms.Bmp:
-                    dialog.Filter = "BMPファイル(*.bmp)|*.bmp";
+                    const string BmpFilter = "BMPファイル(*.bmp)|*.bmp";
+                    dialog.Filter = BmpFilter;
                     break;
 
                 case ImageForm.ImageForms.Jpeg:
-                    dialog.Filter = "Jpegファイル(*.jpg;*.jpeg)|*.jpg;*.jpeg";
+                    const string JpegFilter = "Jpegファイル(*.jpg;*.jpeg)|*.jpg;*.jpeg";
+                    dialog.Filter = JpegFilter;
                     break;
 
                 case ImageForm.ImageForms.Png:
-                    dialog.Filter = "PNGファイル(*.png)|*.png";
+                    const string PngFilter = "PNGファイル(*.png)|*.png";
+                    dialog.Filter = PngFilter;
                     break;
 
                 case ImageForm.ImageForms.Tiff:
-                    dialog.Filter = "TIFFファイル(*.tif)|*.tif";
+                    const string TiffFilter = "TIFFファイル(*.tif)|*.tif";
+                    dialog.Filter = TiffFilter;
                     break;
 
                 default:
@@ -238,96 +267,22 @@ namespace PhotoViewer.ViewModels
                     encoder.Save(dstStream);
                 }
 
-                App.ShowSuccessMessageBox("画像の保存に成功しました。", "保存成功");
+                const string SaveSuccessMessage = "画像の保存に成功しました。";
+                const string SaveSuccessTitle = "保存成功";
+                App.ShowSuccessMessageBox(SaveSuccessMessage, SaveSuccessTitle);
             }
             catch (Exception ex)
             {
                 App.LogException(ex);
-                App.ShowErrorMessageBox("画像の保存に失敗しました。", "保存失敗");
+
+                const string SaveFailedMessage = "画像の保存に失敗しました。";
+                const string SaveFailedTitle = "保存失敗";
+                App.ShowErrorMessageBox(SaveFailedMessage, SaveFailedTitle);
             }
             finally
             {
                 CloseView?.Invoke(this, EventArgs.Empty);
             }
-        }
-    }
-
-    public class ResizeImageCategory
-    {
-        public enum ResizeCategory
-        {
-            None,    // リサイズしない
-            Print,   // 印刷用
-            Blog,    // ブログ用
-            Twitter, // Twitter用
-        }
-
-        public string Name { get; private set; }
-        public ResizeCategory Category { get; private set; }
-        public int ResizelongSideValue { get; private set; }
-
-        public ResizeImageCategory(string name, ResizeCategory category)
-        {
-            this.Name = name;
-            this.Category = category;
-
-            switch (Category)
-            {
-                case ResizeCategory.None:
-                    return;
-
-                case ResizeCategory.Print:
-                    ResizelongSideValue = 2500;
-                    return;
-
-                case ResizeCategory.Blog:
-                    ResizelongSideValue = 1500;
-                    return;
-
-                case ResizeCategory.Twitter:
-                    ResizelongSideValue = 1000;
-                    return;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-    }
-
-    public class ImageQuality
-    {
-        public string Name { get; private set; }
-        public int QualityValue { get; private set; }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// <param name="name">表示名</param>
-        /// <param name="qualityValue">品質値</param>
-        public ImageQuality(string name, int qualityValue)
-        {
-            this.Name = name;
-            this.QualityValue = qualityValue;
-        }
-    }
-
-    public class ImageForm
-    {
-        public enum ImageForms
-        {
-            Jpeg,
-            Png,
-            Bmp,
-            Tiff,
-        }
-
-        public string Name { get; private set; }
-        public ImageForms Form { get; private set; }
-
-        public ImageForm(string name, ImageForms imageForm)
-        {
-            this.Name = name;
-            this.Form = imageForm;
         }
     }
 }

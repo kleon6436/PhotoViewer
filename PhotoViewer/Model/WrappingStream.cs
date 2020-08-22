@@ -8,31 +8,26 @@ namespace PhotoViewer.Model
     /// </summary>
     public class WrappingStream : Stream
     {
-        Stream mStreamBase;
+        private Stream mStreamBase;
 
         public WrappingStream(Stream _streamBase)
         {
-            if (_streamBase == null)
-            {
-                throw new ArgumentNullException("StreamBase");
-            }
-
-            mStreamBase = _streamBase;
+            mStreamBase = _streamBase ?? throw new ArgumentNullException("StreamBase");
         }
 
         public override bool CanRead
         {
-            get { return mStreamBase == null ? false : mStreamBase.CanRead; }
+            get { return mStreamBase != null && mStreamBase.CanRead; }
         }
 
         public override bool CanSeek
         {
-            get { return mStreamBase == null ? false : mStreamBase.CanSeek; }
+            get { return mStreamBase != null && mStreamBase.CanSeek; }
         }
 
         public override bool CanWrite
         {
-            get { return mStreamBase == null ? false : mStreamBase.CanWrite; }
+            get { return mStreamBase != null && mStreamBase.CanWrite; }
         }
 
         public override long Length

@@ -1,11 +1,52 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Collections.Generic;
 
 namespace PhotoViewer.Model
 {
     public static class ExifParser
     {
+        /// <summary>
+        /// ExifデータをMediaInfoにセットするメソッド
+        /// </summary>
+        public static List<ExifInfo> GetExifDataFromFile(string filePath)
+        {
+            var _ = new FileInfo(filePath);
+            Shell32.Shell shell = new Shell32.Shell();
+            Shell32.Folder objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
+            Shell32.FolderItem folderItem = objFolder.ParseName(Path.GetFileName(filePath));
+
+            var exifInfos = new List<ExifInfo>
+            {
+                // ファイル名を取得
+                GetFileName(filePath),
+                // 撮影日時を取得
+                GetMediaDate(objFolder, folderItem),
+                // カメラモデルの情報を取得
+                GetCameraModel(objFolder, folderItem),
+                // カメラ製造元の情報を取得
+                GetCameraManufacturer(objFolder, folderItem)
+            };
+
+            // 画像の幅と高さを取得
+            exifInfos.AddRange(GetImageWidthAndHeight(objFolder, folderItem));
+            // 画像の解像度を取得
+            exifInfos.AddRange(GetImageResolutionWidthAndHeight(objFolder, folderItem));
+            // ビットの深さを取得
+            exifInfos.Add(GetBitDepth(objFolder, folderItem));
+            // シャッター速度と絞り値を取得
+            exifInfos.AddRange(GetFnumberAndShutterSpeed(objFolder, folderItem));
+            // ISOを取得
+            exifInfos.Add(GetISO(objFolder, folderItem));
+            // 焦点距離を取得
+            exifInfos.Add(GetFocusLength(objFolder, folderItem));
+            // 測光モードを取得
+            exifInfos.Add(GetMeteringMode(objFolder, folderItem));
+            // 露出プログラムとホワイトバランスを取得
+            exifInfos.AddRange(GetExposeModeAndWhiteBlance(objFolder, folderItem));
+
+            return exifInfos;
+        }
+
         /// <summary>
         /// ファイル名を取得する
         /// </summary>
@@ -165,46 +206,6 @@ namespace PhotoViewer.Model
             string propertyValue = objFolder.GetDetailsOf(folderItem, 269);
             string propertyText = "測光モード";
             return new ExifInfo(propertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// ExifデータをMediaInfoにセットするメソッド
-        /// </summary>
-        public static List<ExifInfo> GetExifDataFromFile(string filePath)
-        {
-            FileInfo fileInfo = new FileInfo(filePath);
-            Shell32.Shell shell = new Shell32.Shell();
-            Shell32.Folder objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
-            Shell32.FolderItem folderItem = objFolder.ParseName(Path.GetFileName(filePath));
-
-            List<ExifInfo> exifInfos = new List<ExifInfo>();
-
-            // ファイル名を取得
-            exifInfos.Add(GetFileName(filePath));
-            // 撮影日時を取得
-            exifInfos.Add(GetMediaDate(objFolder, folderItem));
-            // カメラモデルの情報を取得
-            exifInfos.Add(GetCameraModel(objFolder, folderItem));
-            // カメラ製造元の情報を取得
-            exifInfos.Add(GetCameraManufacturer(objFolder, folderItem));
-            // 画像の幅と高さを取得
-            exifInfos.AddRange(GetImageWidthAndHeight(objFolder, folderItem));
-            // 画像の解像度を取得
-            exifInfos.AddRange(GetImageResolutionWidthAndHeight(objFolder, folderItem));
-            // ビットの深さを取得
-            exifInfos.Add(GetBitDepth(objFolder, folderItem));
-            // シャッター速度と絞り値を取得
-            exifInfos.AddRange(GetFnumberAndShutterSpeed(objFolder, folderItem));
-            // ISOを取得
-            exifInfos.Add(GetISO(objFolder, folderItem));
-            // 焦点距離を取得
-            exifInfos.Add(GetFocusLength(objFolder, folderItem));
-            // 測光モードを取得
-            exifInfos.Add(GetMeteringMode(objFolder, folderItem));
-            // 露出プログラムとホワイトバランスを取得
-            exifInfos.AddRange(GetExposeModeAndWhiteBlance(objFolder, folderItem));
-
-            return exifInfos;
         }
     }
 }

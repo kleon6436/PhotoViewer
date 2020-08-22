@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.IO;
 using System.Windows.Media.Imaging;
-using Prism.Mvvm;
 
 namespace PhotoViewer.Model
 {
@@ -14,6 +14,7 @@ namespace PhotoViewer.Model
         }
 
         #region Media Parameters
+
         /// <summary>
         /// メディアタイプ
         /// </summary>
@@ -23,6 +24,7 @@ namespace PhotoViewer.Model
         }
 
         private BitmapSource thumbnailImage;
+
         /// <summary>
         /// サムネイルイメージ
         /// </summary>
@@ -33,6 +35,7 @@ namespace PhotoViewer.Model
         }
 
         private string fileName;
+
         /// <summary>
         /// ファイル名
         /// </summary>
@@ -46,14 +49,14 @@ namespace PhotoViewer.Model
         /// ファイルパス
         /// </summary>
         public string FilePath { get; set; }
-        #endregion
+
+        #endregion Media Parameters
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public MediaInfo()
         {
-
         }
 
         /// <summary>
@@ -62,9 +65,32 @@ namespace PhotoViewer.Model
         /// <param name="_mediaFileInfo">メディアファイルの情報</param>
         public MediaInfo(MediaInfo mediaFileInfo)
         {
-            this.FilePath = mediaFileInfo.FilePath;
-            this.FileName = Path.GetFileName(this.FilePath);
-            this.ThumbnailImage = mediaFileInfo.ThumbnailImage;
+            FilePath = mediaFileInfo.FilePath;
+            FileName = Path.GetFileName(FilePath);
+            ThumbnailImage = mediaFileInfo.ThumbnailImage;
+        }
+
+        /// <summary>
+        /// サムネイル画像の生成
+        /// </summary>
+        /// <returns>サムネイル成功時: True、失敗時: False</returns>
+        public void CreateThumbnailImage()
+        {
+            if (FilePath == null || !File.Exists(FilePath))
+            {
+                throw new FileLoadException();
+            }
+
+            switch (ContentMediaType)
+            {
+                case MediaType.PICTURE:
+                    ThumbnailImage = ImageControl.CreatePictureThumbnailImage(FilePath);
+                    return;
+
+                case MediaType.MOVIE:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         /// <summary>
@@ -84,48 +110,6 @@ namespace PhotoViewer.Model
             {
                 throw new FileFormatException();
             }
-        }
-
-        /// <summary>
-        /// サムネイル画像の生成
-        /// </summary>
-        /// <returns>サムネイル成功時: True、失敗時: False</returns>
-        public void CreateThumbnailImage()
-        {
-            if (this.FilePath == null || !File.Exists(this.FilePath))
-            {
-                throw new FileLoadException();
-            }
-
-            switch (this.ContentMediaType)
-            {
-                case MediaType.PICTURE:
-                    this.ThumbnailImage = ImageControl.CreatePictureThumbnailImage(this.FilePath);
-                    return;
-
-                case MediaType.MOVIE:
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-    }
-
-    public class PictureMediaInfo : MediaInfo
-    {
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public PictureMediaInfo() : base(null)
-        {
-
-        }
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public PictureMediaInfo(MediaInfo _mediaFileInfo) : base(_mediaFileInfo)
-        {
-
         }
     }
 }

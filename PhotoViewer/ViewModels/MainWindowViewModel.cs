@@ -1,32 +1,36 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Drawing;
-using System.Diagnostics;
-using System.ComponentModel;
+﻿using PhotoViewer.Model;
+using PhotoViewer.Views;
+using Prism.Commands;
+using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows;
-using System.Windows.Threading;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using Prism.Mvvm;
-using Prism.Commands;
-using PhotoViewer.Model;
-using PhotoViewer.Views;
+using System.Windows.Threading;
 
 namespace PhotoViewer.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
         #region ViewModels
+
         public ExplorerViewModel ExplorerViewModel { get; set; }
         public ExifInfoViewModel ExifInfoViewModel { get; set; }
-        #endregion
+
+        #endregion ViewModels
 
         #region UI binding parameters
+
         private string selectFolderPath;
+
         /// <summary>
         /// 表示中のフォルダパス
         /// </summary>
@@ -42,6 +46,7 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<MediaInfo> MediaInfoList { get; } = new ObservableCollection<MediaInfo>();
 
         private MediaInfo selectedMedia;
+
         /// <summary>
         /// ListBoxで選択されているメディア
         /// </summary>
@@ -52,6 +57,7 @@ namespace PhotoViewer.ViewModels
         }
 
         private BitmapSource pictureImageSource;
+
         /// <summary>
         /// 拡大表示しているメディアの画像
         /// </summary>
@@ -67,6 +73,7 @@ namespace PhotoViewer.ViewModels
         public ObservableCollection<ContextMenuInfo> ContextMenuCollection { get; } = new ObservableCollection<ContextMenuInfo>();
 
         private bool isShowContextMenu;
+
         public bool IsShowContextMenu
         {
             get { return isShowContextMenu; }
@@ -74,24 +81,29 @@ namespace PhotoViewer.ViewModels
         }
 
         private bool isEnableImageEditButton;
+
         public bool IsEnableImageEditButton
         {
             get { return isEnableImageEditButton; }
             set { SetProperty(ref isEnableImageEditButton, value); }
         }
-        #endregion
+
+        #endregion UI binding parameters
 
         #region Command
+
         public ICommand OpenFolderButtonCommand { get; private set; }
         public ICommand ReloadButtonCommand { get; private set; }
         public ICommand SettingButtonCommand { get; private set; }
         public ICommand ImageEditButtonCommand { get; private set; }
-        #endregion
+
+        #endregion Command
 
         // メディア情報の読み込みスレッド
-        private BackgroundWorker LoadContentsBackgroundWorker;
+        private BackgroundWorker loadContentsBackgroundWorker;
+
         // メディアリストのリロードフラグ
-        private bool IsReloadContents;
+        private bool isReloadContents;
 
         public MainWindowViewModel()
         {
@@ -127,14 +139,14 @@ namespace PhotoViewer.ViewModels
         {
             // 設定情報の読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.configData.LinkageAppList;
-            if (linkageAppList != null && linkageAppList.Count > 0)
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            if (linkageAppList != null && linkageAppList.Any())
             {
                 foreach (var linkageApp in linkageAppList)
                 {
                     if (!File.Exists(linkageApp.AppPath))
                     {
-                        linkageAppList.Remove(linkageApp);
+                        appConfigManager.ConfigData.LinkageAppList.Remove(linkageApp);
                         continue;
                     }
 
@@ -151,13 +163,85 @@ namespace PhotoViewer.ViewModels
 
             // 画像フォルダの読み込み
             string picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
-            if (!string.IsNullOrEmpty(appConfigManager.configData.PreviousFolderPath))
+            if (!string.IsNullOrEmpty(appConfigManager.ConfigData.PreviousFolderPath))
             {
-                picturePath = appConfigManager.configData.PreviousFolderPath;
+                picturePath = appConfigManager.ConfigData.PreviousFolderPath;
             }
             ChangeContents(picturePath);
         }
-        
+
+        /// <summary>
+        /// コンテキストメニューがクリックされたとき
+        /// </summary>
+        /// <param name="appName">アプリ名</param>
+        public void ExecuteContextMenu(string appName)
+        {
+            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            if (!linkageAppList.Any(x => x.AppName == appName))
+            {
+                return;
+            }
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                string appPath = Array.Find(linkageAppList, x => x.AppName == appName).AppPath;
+                Process.Start(appPath, SelectedMedia.FilePath);
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        /// <summary>
+        /// 選択された画像を読み込み、表示用に変換する
+        /// </summary>
+        /// <param name="mediaInfo">選択されたメディア情報</param>
+        public bool LoadMedia(MediaInfo mediaInfo)
+        {
+            if (!File.Exists(mediaInfo.FilePath))
+            {
+                const string FileNotExistErrorMessage = "ファイルが存在しません。";
+                const string FileNotExstErrorTitle = "ファイルアクセスエラー";
+                App.ShowErrorMessageBox(FileNotExistErrorMessage, FileNotExstErrorTitle);
+            }
+
+            // Viewに設定されているものをクリア
+            PictureImageSource = null;
+            IsEnableImageEditButton = false;
+
+            return mediaInfo.ContentMediaType switch
+            {
+                MediaInfo.MediaType.PICTURE => LoadPictureImage(mediaInfo),
+                _ => false,
+            };
+        }
+
+        /// <summary>
+        /// 実行中のスレッドとタスクを停止する
+        /// </summary>
+        /// <returns>Thread実行中の場合: False、それ以外: True</returns>
+        public bool StopThreadAndTask()
+        {
+            bool CanClose = true;
+
+            // コンテンツ読み込みスレッドが動作中の場合、キャンセル通知
+            if (loadContentsBackgroundWorker != null && loadContentsBackgroundWorker.IsBusy)
+            {
+                loadContentsBackgroundWorker.CancelAsync();
+                CanClose = false;
+            }
+
+            return CanClose;
+        }
+
         /// <summary>
         /// 設定ファイルの読み込み
         /// </summary>
@@ -179,8 +263,9 @@ namespace PhotoViewer.ViewModels
 
             try
             {
+                const string Explorer = "EXPLORER.EXE";
                 Mouse.OverrideCursor = Cursors.Wait;
-                Process.Start("EXPLORER.EXE", SelectFolderPath);
+                Process.Start(Explorer, SelectFolderPath);
             }
             catch (Exception ex)
             {
@@ -214,9 +299,11 @@ namespace PhotoViewer.ViewModels
             var vm = new SettingViewModel();
             vm.ReloadContextMenuEvent += ReloadContextMenu;
 
-            var settingDialog = new SettingView();
-            settingDialog.DataContext = vm;
-            settingDialog.Owner = App.Current.MainWindow;
+            var settingDialog = new SettingView
+            {
+                DataContext = vm,
+                Owner = App.Current.MainWindow
+            };
             settingDialog.ShowDialog();
         }
 
@@ -233,9 +320,11 @@ namespace PhotoViewer.ViewModels
             var vm = new ImageEditToolViewModel();
             vm.SetEditFileData(SelectedMedia.FilePath);
 
-            var imageEditToolDialog = new ImageEditToolView();
-            imageEditToolDialog.DataContext = vm;
-            imageEditToolDialog.Owner = App.Current.MainWindow;
+            var imageEditToolDialog = new ImageEditToolView
+            {
+                DataContext = vm,
+                Owner = App.Current.MainWindow
+            };
             imageEditToolDialog.ShowDialog();
         }
 
@@ -252,9 +341,9 @@ namespace PhotoViewer.ViewModels
 
             // 設定情報から連携アプリ関連の情報を再読み込み
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.configData.LinkageAppList;
-            if (linkageAppList != null && linkageAppList.Count > 0)
-            { 
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            if (linkageAppList != null && linkageAppList.Any())
+            {
                 foreach (var linkageApp in linkageAppList)
                 {
                     // アプリアイコンを読み込み
@@ -266,36 +355,6 @@ namespace PhotoViewer.ViewModels
                     ContextMenuCollection.Add(contextMenu);
                     IsShowContextMenu = true;
                 }
-            }
-        }
-
-        /// <summary>
-        /// コンテキストメニューがクリックされたとき
-        /// </summary>
-        /// <param name="appName">アプリ名</param>
-        public void ExecuteContextMenu(string appName)
-        {
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.configData.LinkageAppList;
-            if (!linkageAppList.Any(x => x.AppName == appName))
-            {
-                return;
-            }
-
-            try
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                string appPath = linkageAppList.Find(x => x.AppName == appName).AppPath;
-                Process.Start(appPath, SelectedMedia.FilePath);
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
             }
         }
 
@@ -322,10 +381,10 @@ namespace PhotoViewer.ViewModels
             ExplorerViewModel.CreateDriveTreeItem();
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            string previousFolderPath = appConfigManager.configData.PreviousFolderPath;
+            string previousFolderPath = appConfigManager.ConfigData.PreviousFolderPath;
             if (!string.IsNullOrEmpty(previousFolderPath))
             {
-                ExplorerViewModel.ExpandPreviousPath(appConfigManager.configData.PreviousFolderPath);
+                ExplorerViewModel.ExpandPreviousPath(appConfigManager.ConfigData.PreviousFolderPath);
             }
         }
 
@@ -345,7 +404,7 @@ namespace PhotoViewer.ViewModels
             UpdateContents();
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.configData.PreviousFolderPath = SelectFolderPath;
+            appConfigManager.ConfigData.PreviousFolderPath = SelectFolderPath;
         }
 
         /// <summary>
@@ -353,11 +412,11 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void UpdateContents()
         {
-            if (LoadContentsBackgroundWorker != null && LoadContentsBackgroundWorker.IsBusy)
+            if (loadContentsBackgroundWorker != null && loadContentsBackgroundWorker.IsBusy)
             {
                 // すでにスレッド動作中の場合、一旦スレッド処理をキャンセルし、キャンセル後に再実行する
-                LoadContentsBackgroundWorker.CancelAsync();
-                IsReloadContents = true;
+                loadContentsBackgroundWorker.CancelAsync();
+                isReloadContents = true;
                 return;
             }
 
@@ -373,14 +432,16 @@ namespace PhotoViewer.ViewModels
             MediaInfoList.Clear();
 
             // 時間がかかるため、別スレッドでメディアリストを読み込む
-            var backgroundWorker = new BackgroundWorker();
-            backgroundWorker.WorkerSupportsCancellation = true;
+            var backgroundWorker = new BackgroundWorker
+            {
+                WorkerSupportsCancellation = true
+            };
             backgroundWorker.DoWork += LoadContentsWorker_DoWork;
             backgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
 
             // 読み込みスレッド開始
-            LoadContentsBackgroundWorker = backgroundWorker;
-            LoadContentsBackgroundWorker.RunWorkerAsync();
+            loadContentsBackgroundWorker = backgroundWorker;
+            loadContentsBackgroundWorker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -397,7 +458,10 @@ namespace PhotoViewer.ViewModels
             catch (Exception ex)
             {
                 App.LogException(ex);
-                App.ShowErrorMessageBox("メディアの読み込みに失敗しました。", "読み込みエラー");
+
+                const string MediaReadErrorMessage = "メディアの読み込みに失敗しました。";
+                const string MedaiReadErrorTitle = "読み込みエラー";
+                App.ShowErrorMessageBox(MediaReadErrorMessage, MedaiReadErrorTitle);
             }
         }
 
@@ -412,20 +476,20 @@ namespace PhotoViewer.ViewModels
             {
                 StopContentsWorker();
 
-                if (IsReloadContents)
+                if (isReloadContents)
                 {
                     // 非同期で読み込んでいるコンテンツリストの読み込み完了後にリロード
-                    App.Current.Dispatcher.BeginInvoke((Action)(() => 
-                    { 
+                    App.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    {
                         UpdateContents();
-                        IsReloadContents = false;
+                        isReloadContents = false;
                     }), DispatcherPriority.Normal);
                 }
             }
             else
             {
                 StopContentsWorker();
-                if (SelectedMedia == null && MediaInfoList.Count > 0)
+                if (SelectedMedia == null && MediaInfoList.Any())
                 {
                     SelectedMedia = MediaInfoList.First();
                 }
@@ -452,7 +516,7 @@ namespace PhotoViewer.ViewModels
                     return;
                 }
 
-                filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToList());
+                filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToArray());
             }
 
             // 順番を名前順で並べ替え
@@ -468,9 +532,12 @@ namespace PhotoViewer.ViewModels
                     return;
                 }
 
-                var mediaInfo = new MediaInfo();
-                mediaInfo.FilePath = filePath;
+                var mediaInfo = new MediaInfo
+                {
+                    FilePath = filePath
+                };
                 mediaInfo.FileName = Path.GetFileName(mediaInfo.FilePath);
+
                 try
                 {
                     mediaInfo.CreateThumbnailImage();
@@ -498,7 +565,7 @@ namespace PhotoViewer.ViewModels
                 App.RunGC();
             }
 
-            if (readyFiles.Count > 0)
+            if (readyFiles.Any())
             {
                 App.Current.Dispatcher.Invoke((Action)(() => { foreach (var readyFile in readyFiles) MediaInfoList.Add(readyFile); }));
             }
@@ -509,35 +576,9 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void StopContentsWorker()
         {
-            if (LoadContentsBackgroundWorker != null)
+            if (loadContentsBackgroundWorker != null)
             {
-                LoadContentsBackgroundWorker.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// 選択された画像を読み込み、表示用に変換する
-        /// </summary>
-        /// <param name="mediaInfo">選択されたメディア情報</param>
-        public bool LoadMedia(MediaInfo mediaInfo)
-        {
-            if (!File.Exists(mediaInfo.FilePath))
-            {
-                App.ShowErrorMessageBox("ファイルが存在しません。", "ファイルアクセスエラー");
-            }
-
-            // Viewに設定されているものをクリア
-            PictureImageSource = null;
-            IsEnableImageEditButton = false;
-
-            switch (mediaInfo.ContentMediaType)
-            {
-                case MediaInfo.MediaType.PICTURE:
-                    return LoadPictureImage(mediaInfo);
-
-                case MediaInfo.MediaType.MOVIE:
-                default:
-                    return false;
+                loadContentsBackgroundWorker.Dispose();
             }
         }
 
@@ -578,31 +619,16 @@ namespace PhotoViewer.ViewModels
             {
                 App.LogException(ex);
 
-                App.ShowErrorMessageBox("ファイルアクセスでエラーが発生しました。", "ファイルアクセスエラー");
+                const string FileAccessErrorMessage = "ファイルアクセスでエラーが発生しました。";
+                const string FileAccessErrorTitle = "ファイルアクセスエラー";
+                App.ShowErrorMessageBox(FileAccessErrorMessage, FileAccessErrorTitle);
+
                 return false;
             }
             finally
             {
                 Mouse.OverrideCursor = null;
             }
-        }
-
-        /// <summary>
-        /// 実行中のスレッドとタスクを停止する
-        /// </summary>
-        /// <returns>Thread実行中の場合: False、それ以外: True</returns>
-        public bool StopThreadAndTask()
-        {
-            bool CanClose = true;
-
-            // コンテンツ読み込みスレッドが動作中の場合、キャンセル通知
-            if (LoadContentsBackgroundWorker != null && LoadContentsBackgroundWorker.IsBusy)
-            {
-                LoadContentsBackgroundWorker.CancelAsync();
-                CanClose = false;
-            }
-
-            return CanClose;
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using PhotoViewer.Model;
+using Prism.Commands;
+using Prism.Mvvm;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
-using Microsoft.Win32;
-using PhotoViewer.Model;
-using Prism.Commands;
-using Prism.Mvvm;
 
 namespace PhotoViewer.ViewModels
 {
@@ -15,8 +15,9 @@ namespace PhotoViewer.ViewModels
         private readonly int MAX_LINK_APP_NUM = 10;
 
         #region UI binding parameter
-        
+
         private string linkAppPath;
+
         public string LinkAppPath
         {
             get { return linkAppPath; }
@@ -25,13 +26,15 @@ namespace PhotoViewer.ViewModels
 
         public ObservableCollection<ExtraAppSetting> LinkageAppList { get; } = new ObservableCollection<ExtraAppSetting>();
 
-        #endregion
+        #endregion UI binding parameter
 
         #region Command
+
         public ICommand LinkAppReferenceCommand { get; private set; }
         public ICommand RegisterLinkAppCommand { get; private set; }
         public ICommand DeleteLinkAppCommand { get; private set; }
-        #endregion
+
+        #endregion Command
 
         public event EventHandler ChangeLinkageAppEvent;
 
@@ -45,8 +48,8 @@ namespace PhotoViewer.ViewModels
             DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.configData.LinkageAppList;
-            if (linkageAppList != null && linkageAppList.Count > 0)
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            if (linkageAppList != null && linkageAppList.Any())
             {
                 LinkageAppList.Clear();
                 LinkageAppList.AddRange(linkageAppList);
@@ -60,9 +63,14 @@ namespace PhotoViewer.ViewModels
         {
             string previousLinkAppPath = LinkAppPath;
 
-            var dialog = new OpenFileDialog();
-            dialog.Title = "連携アプリ選択ダイアログ";
-            dialog.DefaultExt = ".exe";
+            const string DialogTitle = "連携アプリ選択ダイアログ";
+            const string DialogDefaultExt = ".exe";
+
+            var dialog = new OpenFileDialog
+            {
+                Title = DialogTitle,
+                DefaultExt = DialogDefaultExt
+            };
 
             if (Environment.Is64BitProcess)
             {
@@ -81,7 +89,7 @@ namespace PhotoViewer.ViewModels
 
             LinkAppPath = dialog.FileName;
         }
-        
+
         /// <summary>
         /// 登録ボタンを押下時
         /// </summary>

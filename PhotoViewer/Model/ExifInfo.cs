@@ -5,6 +5,7 @@ namespace PhotoViewer.Model
     public class ExifInfo : BindableBase
     {
         private string exifParameterText;
+
         /// <summary>
         /// Exifのパラメータ名
         /// </summary>
@@ -15,6 +16,7 @@ namespace PhotoViewer.Model
         }
 
         private string exifParameterValue;
+
         /// <summary>
         /// Exifのパラメータ値
         /// </summary>
@@ -26,8 +28,8 @@ namespace PhotoViewer.Model
 
         public ExifInfo(string exifText, string exifValue)
         {
-            this.ExifParameterText = exifText;
-            this.ExifParameterValue = exifValue;
+            ExifParameterText = exifText;
+            ExifParameterValue = exifValue;
         }
     }
 }
