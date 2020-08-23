@@ -6,7 +6,7 @@ namespace PhotoViewer.Model
     public static class ExifParser
     {
         /// <summary>
-        /// ExifデータをMediaInfoにセットするメソッド
+        /// Set exif data in MediaInfo.
         /// </summary>
         public static List<ExifInfo> GetExifDataFromFile(string filePath)
         {
@@ -17,40 +17,40 @@ namespace PhotoViewer.Model
 
             var exifInfos = new List<ExifInfo>
             {
-                // ファイル名を取得
+                // Get file name.
                 GetFileName(filePath),
-                // 撮影日時を取得
+                // Get shooting date and time.
                 GetMediaDate(objFolder, folderItem),
-                // カメラモデルの情報を取得
+                // Get camera model information.
                 GetCameraModel(objFolder, folderItem),
-                // カメラ製造元の情報を取得
+                // Get camera manufacturer information.
                 GetCameraManufacturer(objFolder, folderItem),
-                // ビットの深さを取得
+                // Get bit depth.
                 GetBitDepth(objFolder, folderItem),
-                // ISOを取得
+                // Get ISO data.
                 GetISO(objFolder, folderItem),
-                // 焦点距離を取得
+                // Get focal length.
                 GetFocusLength(objFolder, folderItem),
-                // 測光モードを取得
+                // Get metering mode.
                 GetMeteringMode(objFolder, folderItem),
             };
 
-            // 画像の幅と高さを取得
+            // Get image width and height.
             exifInfos.AddRange(GetImageWidthAndHeight(objFolder, folderItem));
-            // 画像の解像度を取得
+            // Get image resolution.
             exifInfos.AddRange(GetImageResolutionWidthAndHeight(objFolder, folderItem));
-            // シャッター速度と絞り値を取得
+            // Get shutter speed and aperture value.
             exifInfos.AddRange(GetFnumberAndShutterSpeed(objFolder, folderItem));
-            // 露出プログラムとホワイトバランスを取得
+            // Get exposure program and white balance.
             exifInfos.AddRange(GetExposeModeAndWhiteBlance(objFolder, folderItem));
 
             return exifInfos;
         }
 
         /// <summary>
-        /// ファイル名を取得する
+        /// Get file name.
         /// </summary>
-        /// <param name="filePath">ファイルパス</param>
+        /// <param name="filePath">filePath</param>
         private static ExifInfo GetFileName(string filePath)
         {
             string propertyValue = Path.GetFileName(filePath);
@@ -59,7 +59,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 撮影日時の情報を取得する
+        /// Get shooting date and time.
         /// </summary>
         private static ExifInfo GetMediaDate(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -69,7 +69,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// カメラモデルの情報を取得する
+        /// Get camera model information.
         /// </summary>
         private static ExifInfo GetCameraModel(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -79,7 +79,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// カメラ製造元の情報を取得する
+        /// Get camera manufacturer information.
         /// </summary>
         private static ExifInfo GetCameraManufacturer(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -89,7 +89,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 画像の幅と高さの情報を取得する
+        /// Get image width and height.
         /// </summary>
         private static List<ExifInfo> GetImageWidthAndHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -109,7 +109,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 画像の解像度の情報を取得する
+        /// Get image resolution.
         /// </summary>
         private static List<ExifInfo> GetImageResolutionWidthAndHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -129,7 +129,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 画像のビットの深さ情報を取得する
+        /// Get bit depth.
         /// </summary>
         private static ExifInfo GetBitDepth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -139,7 +139,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// シャッタ―速度と絞り値の情報を取得する
+        /// Get shutter speed and aperture value.
         /// </summary>
         private static List<ExifInfo> GetFnumberAndShutterSpeed(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -159,7 +159,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// ISO情報を取得する
+        /// Get ISO data.
         /// </summary>
         private static ExifInfo GetISO(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -169,7 +169,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 焦点距離の情報を取得する
+        /// Get focal length.
         /// </summary>
         private static ExifInfo GetFocusLength(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -179,7 +179,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 露出プログラムとホワイトバランスの情報を取得する
+        /// Get exposure program and white balance.
         /// </summary>
         private static List<ExifInfo> GetExposeModeAndWhiteBlance(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
@@ -199,7 +199,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 測光モードの情報をピクチャコンテンツの情報に設定する
+        /// Get metering mode.
         /// </summary>
         private static ExifInfo GetMeteringMode(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {

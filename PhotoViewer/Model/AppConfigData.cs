@@ -3,22 +3,22 @@
 namespace PhotoViewer.Model
 {
     /// <summary>
-    /// アプリケーション設定情報のデータクラス
+    /// Data class of application setting information
     /// </summary>
     public class AppConfigData
     {
         /// <summary>
-        /// 前回終了時点の表示フォルダ
+        /// Folder path at the time of the previous end.
         /// </summary>
         public string PreviousFolderPath { get; set; }
 
         /// <summary>
-        /// 登録されている連携アプリ
+        /// Registered linked application.
         /// </summary>
         public List<ExtraAppSetting> LinkageAppList { get; set; }
 
         /// <summary>
-        /// ウィンドウの表示状態
+        /// Window display status
         /// </summary>
         public MainWindow.WINDOWPLACEMENT WindowPlaceData;
 

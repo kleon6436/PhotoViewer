@@ -11,26 +11,26 @@ namespace PhotoViewer.Model
 {
     public class ExplorerItem : TreeViewItem
     {
-        // アイテム情報
+        // Item information
         public string ExplorerItemPath { get; private set; }
 
-        // 内部ディレクトリ情報
+        // Internal directory information
         private readonly DirectoryInfo innerDirectory;
 
-        // アイテムの展開状態
+        // Item expansion status
         private bool isExpand;
 
-        // ディレクトリ監視用
+        // Directory monitoring system watcher
         private FileSystemWatcher fileSystemWatcher;
 
         public ExplorerItem(string path, bool isDrive)
         {
-            // イベントと初期値の設定
+            // Set events and initial values.
             Expanded += ExplorerItem_Expanded;
             isExpand = false;
             ExplorerItemPath = path;
 
-            // Explorerに表示するヘッダー情報の設定
+            // Set header information to be displayed in explorer.
             if (isDrive)
             {
                 Header = CreateExplorerItemHeader(ExplorerItemPath, true);
@@ -40,8 +40,8 @@ namespace PhotoViewer.Model
                 Header = CreateExplorerItemHeader(Path.GetFileName(ExplorerItemPath), false);
             }
 
-            // ドライブ内のディレクトリ情報(存在する場合は、空のTreeItemを作成しておく)
-            // ※ メモリ消費を抑えるため、中身はツリー展開時に作成する
+            // Directory information in the drive(if it exists, create an empty TreeItem)
+            // Note: Create contents when expanding the tree to reduce memory consumption.
             innerDirectory = new DirectoryInfo(ExplorerItemPath);
 
             try
@@ -53,18 +53,18 @@ namespace PhotoViewer.Model
             }
             catch (Exception ex)
             {
-                // アクセス拒否などでエラーが発生した時は、ログ収集を行い、そのフォルダをスキップ
+                // When an error occurs in access denial, logs are collected and the folder is skipped.
                 App.LogException(ex);
             }
 
-            // ディレクトリの監視をスタート
+            // Start monitoring the directory.
             StartWatcher(path);
         }
 
         /// <summary>
-        /// スタックパネルの設定
+        /// Set stack panel.
         /// </summary>
-        /// <returns>TreeViewに見せるスタックパネルの設定</returns>
+        /// <returns>Stack panel settings shown in TreeView.</returns>
         private StackPanel CreateExplorerItemHeader(string path, bool isDrive)
         {
             StackPanel stackpanel = new StackPanel()
@@ -72,7 +72,7 @@ namespace PhotoViewer.Model
                 Orientation = Orientation.Horizontal
             };
 
-            // Iconを生成
+            // Generate Icon.
             BitmapSource iconSource = CreateTreeIcon(isDrive);
 
             stackpanel.Children.Add(new Image()
@@ -94,24 +94,24 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// Directoryの情報をTreeに設定する
+        /// Set Directory information to Tree.
         /// </summary>
-        /// <returns>ディレクトリ情報のリスト</returns>
+        /// <returns>List of directory information</returns>
         private void UpdateDirectoryTree()
         {
-            // 設定していた空のアイテムをクリア
+            // Clear the set empty item.
             Items.Clear();
 
-            // ディレクトリの順番を自然順ソートで並び変えて再生成
+            // Regenerate the directory order by rearranging it in natural order.
             List<DirectoryInfo> sortDirectoryInfos = innerDirectory.GetDirectories().ToList();
             sortDirectoryInfos = new List<DirectoryInfo>(sortDirectoryInfos.OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer()));
 
             foreach (var directory in sortDirectoryInfos)
             {
-                // ファイル名の最初の文字を取得
+                // Get the first character of the file name.
                 string fileNameFirst = Path.GetFileName(directory.FullName).Substring(0, 1);
 
-                // 最初の文字が"$"だった場合や属性が隠し状態だった場合は、Windowsの特殊ファイルのためスキップする
+                // If the first character is "$" or the attribute is hidden, it is skipped because it is a Windows special file.
                 if (fileNameFirst == "$" || (directory.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                 {
                     continue;
@@ -123,9 +123,9 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// TreeViewで表示するアイコンの画像を生成するメソッド
+        /// Generate the image of the icon displayed in TreeView.
         /// </summary>
-        /// <param name="isDrive">ドライブかどうか</param>
+        /// <param name="isDrive">Whether it is a drive</param>
         private BitmapSource CreateTreeIcon(bool isDrive)
         {
             if (isDrive)
@@ -141,18 +141,18 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// Explorerのツリー展開時
+        /// Event when Explorer tree is expanded
         /// </summary>
         /// <param name="sender">TreeView</param>
-        /// <param name="e">引数情報</param>
+        /// <param name="e">Argument information</param>
         private void ExplorerItem_Expanded(object sender, RoutedEventArgs e)
         {
-            // フォーカスを外す
+            // Out of focus.
             Keyboard.ClearFocus();
 
             if (!isExpand)
             {
-                // 展開先のディレクトリ情報を子要素に設定
+                // Set the directory information of the extraction destination in the child element.
                 UpdateDirectoryTree();
             }
 
@@ -160,12 +160,12 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// ドライブ内の情報を監視する
+        /// Monitor information in the drive.
         /// </summary>
-        /// <param name="drive">監視するディレクトリ情報</param>
+        /// <param name="drive">Directory information to monitor</param>
         private void StartWatcher(string path)
         {
-            // ディレクトリ情報ごとに監視を設定
+            // Set monitoring for each directory information.
             fileSystemWatcher = new FileSystemWatcher
             {
                 Path = path,
@@ -174,19 +174,19 @@ namespace PhotoViewer.Model
                 NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName
             };
 
-            // ディレクトリ監視で発生するイベントの設定
+            // Set for events that occur in directory monitoring
             fileSystemWatcher.Changed += FileSystemWatcher_Changed;
             fileSystemWatcher.Created += FileSystemWatcher_Changed;
             fileSystemWatcher.Deleted += FileSystemWatcher_Changed;
             fileSystemWatcher.Renamed += FileSystemWatcher_Changed;
 
-            // 監視を開始
+            // Start monitoring.
             fileSystemWatcher.EnableRaisingEvents = true;
         }
 
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            // 再度読み込み直す
+            // Reload.
             App.Current.Dispatcher.Invoke((Action)(() =>
             {
                 UpdateDirectoryTree();

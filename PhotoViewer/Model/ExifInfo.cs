@@ -7,7 +7,7 @@ namespace PhotoViewer.Model
         private string exifParameterText;
 
         /// <summary>
-        /// Exifのパラメータ名
+        /// Exif parameter name
         /// </summary>
         public string ExifParameterText
         {
@@ -18,7 +18,7 @@ namespace PhotoViewer.Model
         private string exifParameterValue;
 
         /// <summary>
-        /// Exifのパラメータ値
+        /// Exif parameter value
         /// </summary>
         public string ExifParameterValue
         {

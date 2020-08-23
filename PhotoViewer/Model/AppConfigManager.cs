@@ -5,12 +5,12 @@ using System.IO;
 namespace PhotoViewer.Model
 {
     /// <summary>
-    /// アプリケーション設定情報の管理クラス
+    /// Management class of application setting information.
     /// </summary>
     public sealed class AppConfigManager
     {
         /// <summary>
-        /// アプリケーション設定情報のデータ
+        /// Data of application setting information.
         /// </summary>
         public AppConfigData ConfigData { get; set; }
 
@@ -18,13 +18,16 @@ namespace PhotoViewer.Model
         private static readonly AppConfigManager singleInstance = new AppConfigManager();
 
         /// <summary>
-        /// アプリケーション設定情報クラスのインスタンス取得
+        /// Get instance of application setting information class.
         /// </summary>
         public static AppConfigManager GetInstance()
         {
             return singleInstance;
         }
 
+        /// <summary>
+        /// Import application data from app config file.
+        /// </summary>
         public void Import()
         {
             try
@@ -34,14 +37,17 @@ namespace PhotoViewer.Model
             }
             catch (Exception ex)
             {
-                // 読み込み時の例外は無視する
+                // Ignore exceptions when loading.
                 App.LogException(ex);
             }
         }
 
+        /// <summary>
+        /// Export application data to app config file.
+        /// </summary>
         public void Export()
         {
-            // フォルダが存在しない場合は作成
+            // Create folder if it does not exist.
             string appConfigdirectory = Path.GetDirectoryName(appConfigFilePath);
             if (!Directory.Exists(appConfigdirectory))
             {
@@ -60,11 +66,19 @@ namespace PhotoViewer.Model
             }
         }
 
+        /// <summary>
+        /// Set list of linked apps.
+        /// </summary>
+        /// <param name="linkageApplist">List of linked apps</param>
         public void SetLinkageApp(List<ExtraAppSetting> linkageApplist)
         {
             ConfigData.LinkageAppList = linkageApplist;
         }
 
+        /// <summary>
+        /// Remove linked app from linked app list.
+        /// </summary>
+        /// <param name="linkageApplist">List of linked apps</param>
         public void RemoveLinkageApp(List<ExtraAppSetting> linkageApplist)
         {
             ConfigData.LinkageAppList = linkageApplist;

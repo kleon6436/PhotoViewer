@@ -5,11 +5,11 @@ using System.Xml.Linq;
 namespace PhotoViewer.Model
 {
     /// <summary>
-    /// アプリケーション設定情報のXML管理クラス
+    /// XML management class of application setting information.
     /// </summary>
     public class AppConfigXml
     {
-        // XMLの要素名
+        // XML element name
         private const string PREVIOUS_FOLDER_ELEM_NAME = "previous_folder";
         private const string PREVIOUS_PATH_ELEM_NAME = "previous_path";
         private const string LINK_APP_ELEM_NAME = "linkage_app";
@@ -28,7 +28,7 @@ namespace PhotoViewer.Model
         private const string WINDOW_PLACEMENT_FLAG_ELEM_NAME = "windowFlag";
         private const string WINDOW_PLACEMENT_SW_ELEM_NAME = "sw";
 
-        // アプリケーション設定情報のファイルパス
+        // File path of application setting information.
         private readonly string appConfigFilePath;
 
         public AppConfigXml(string filePath)
@@ -59,7 +59,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// PreviousフォルダパスのXMLを生成する
+        /// Generate xml of previous folder path. 
         /// </summary>
         private XElement CreatePreviousPathXml(AppConfigData configData)
         {
@@ -71,7 +71,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// PreviousフォルダパスのXMLを解析する
+        /// Parse xml of previous path.
         /// </summary>
         private void ParsePreviousPathXml(XDocument xdoc, AppConfigData configData)
         {
@@ -82,7 +82,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 連携アプリのXMLを生成する
+        /// Generate XML for linked application.
         /// </summary>
         private XElement CreateLinkageAppXml(AppConfigData configData)
         {
@@ -105,7 +105,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 連携アプリのXMLを解析する
+        /// Parse the XML of the linked application.
         /// </summary>
         private void ParseLinkageAppXml(XDocument xdoc, AppConfigData configData)
         {
@@ -126,7 +126,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// Windowのサイズ、位置のXMLを生成する
+        /// Generate XML of Window size and position.
         /// </summary>
         private XElement CreateWindowPlacementXml(AppConfigData configData)
         {
@@ -157,7 +157,7 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// Windowのサイズ、位置のXMLを解析する
+        /// Parse xml of window size and position.
         /// </summary>
         private void ParseWindowPlacementXml(XDocument xdoc, AppConfigData configData)
         {
