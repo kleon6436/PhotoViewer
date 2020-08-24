@@ -4,7 +4,7 @@ using System.IO;
 namespace PhotoViewer.Model
 {
     /// <summary>
-    /// MemoryStreamのメモリリークに対応したWrappingクラス
+    /// Wrapping class corresponding to memory leak of MemoryStream
     /// </summary>
     public class WrappingStream : Stream
     {

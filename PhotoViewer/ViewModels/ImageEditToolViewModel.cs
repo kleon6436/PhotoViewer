@@ -46,7 +46,7 @@ namespace PhotoViewer.ViewModels
                     bool isLandscape = true;
                     if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
                     {
-                        // 拡大率を計算(縦の方が長い場合は、縦の長さに対して拡大率を計算)
+                        // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
                         scale = (double)ResizeCategoryItem.ResizelongSideValue / ReadImageSize.Width;
                         if (ReadImageSize.Width < ReadImageSize.Height)
                         {
@@ -112,18 +112,15 @@ namespace PhotoViewer.ViewModels
 
         public EventHandler CloseView { get; set; }
 
-        // 編集対象のファイルパス
+        // File path to be edited
         private string EditFilePath;
 
-        // 編集前の画像サイズ
+        // Image size before editing
         private Size ReadImageSize;
 
-        // 編集前の画像を保持
+        // Image before editing
         private BitmapSource DecodedPictureSource;
 
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
         public ImageEditToolViewModel()
         {
             const string NoResize = "リサイズなし";
@@ -155,24 +152,24 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 編集対象の画像ファイル情報を設定
+        /// Set the image file information to be edited.
         /// </summary>
-        /// <param name="filePath">選択されている画像ファイルパス</param>
+        /// <param name="filePath">File path</param>
         public void SetEditFileData(string filePath)
         {
             EditFilePath = filePath;
             EditImage = ImageControl.CreatePictureEditViewThumbnail(EditFilePath);
 
-            // WritableBitmapのメモリ解放
+            // Release memory of Writable Bitmap.
             App.RunGC();
 
             DecodedPictureSource = ImageControl.DecodePicture(EditFilePath);
             ReadImageSize = new Size(DecodedPictureSource.PixelWidth, DecodedPictureSource.PixelHeight);
 
-            // WritableBitmapのメモリ解放
+            // Release memory of Writable Bitmap.
             App.RunGC();
 
-            // 各初期値を設定
+            // Set each initial value.
             ResizeCategoryItem = ResizeCategoryItems.First();
             SelectedQuality = ImageSaveQualityItems.First();
             SelectedForm = ImageFormItems.First();
@@ -180,7 +177,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 保存ボタン押下時の動作
+        /// Event when the save button is pressed.
         /// </summary>
         private void SaveButtonClicked()
         {
@@ -221,11 +218,11 @@ namespace PhotoViewer.ViewModels
 
             string saveFilePath = dialog.FileName;
 
-            // 拡大・縮小されたビットマップを作成
-            double scale = 1; // 拡大縮小なし
+            // Create a scaled bitmap.
+            double scale = 1; // No scaling
             if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
             {
-                // 拡大率を計算(縦の方が長い場合は、縦の長さに対して拡大率を計算)
+                // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
                 scale = (double)ResizeCategoryItem.ResizelongSideValue / DecodedPictureSource.PixelWidth;
                 if (DecodedPictureSource.PixelWidth < DecodedPictureSource.PixelHeight)
                 {
@@ -234,7 +231,7 @@ namespace PhotoViewer.ViewModels
             }
             var scaledBitmapSource = new TransformedBitmap(DecodedPictureSource, new ScaleTransform(scale, scale));
 
-            // 選択されている形式と同じエンコーダを選択
+            // Select the same encoder as the selected format.
             BitmapEncoder encoder = null;
             switch (selectedForm.Form)
             {
@@ -260,7 +257,7 @@ namespace PhotoViewer.ViewModels
 
             try
             {
-                // エンコーダにフレームを追加し、ファイルを保存する
+                // Add a frame to the encoder and save the file.
                 encoder.Frames.Add(BitmapFrame.Create(scaledBitmapSource));
                 using (var dstStream = File.OpenWrite(saveFilePath))
                 {

@@ -7,21 +7,18 @@ namespace PhotoViewer.ViewModels
     public class ExifInfoViewModel : BindableBase
     {
         /// <summary>
-        /// Exif情報のリスト
+        /// List of exif information
         /// </summary>
         public ObservableCollection<ExifInfo> ExifDataList { get; } = new ObservableCollection<ExifInfo>();
 
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
         public ExifInfoViewModel()
         {
         }
 
         /// <summary>
-        /// Exif情報を設定する
+        /// Set exif information.
         /// </summary>
-        /// <param name="filePath">ファイルパス</param>
+        /// <param name="filePath">File path</param>
         public void SetExif(string filePath)
         {
             ExifDataList.Clear();

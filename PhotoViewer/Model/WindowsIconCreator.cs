@@ -7,24 +7,24 @@ using System.Windows.Media.Imaging;
 namespace PhotoViewer.Model
 {
     /// <summary>
-    /// Windows APIを用いて、アイコンを取得するクラス
+    /// Class that acquires an icon using the Windows API.
     /// </summary>
     public static class WindowsIconCreator
     {
         [DllImport("Shell32.dll")]
         public static extern int ExtractIconEx(
-        string szFile,          // アイコンを抽出するファイル名
-        int nIconIndex,         // 取り出すアイコンのインデックス
-        out IntPtr phiconLarge, // 大きなアイコンへのポインタ（通常 32x32）
-        out IntPtr phiconSmall, // 小さなアイコンへのポインタ（通常 16x16）
-        int nIcons              // 取り出すアイコン数
+        string szFile,          // File name to extract icon
+        int nIconIndex,         // Icon index to retrieve
+        out IntPtr phiconLarge, // Pointer to a large icon (typically 32x32)
+        out IntPtr phiconSmall, // Pointer to a small icon (typically 16x16)
+        int nIcons              // Number of icons to retrieve
         );
 
         [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr SHGetStockIconInfo(
-            StockIconId siid,       // 取得するアイコンの IDを指定する StockIconId enum 型
-            StockIconFlags uFlags,  // 取得するアイコンの種類を指定する StockIconFlags enum 型
-            ref StockIconInfo psii  //（戻り値）StockIconInfo 型
+            StockIconId siid,       // StockIconId enum type that specifies the ID of the icon to retrieve
+            StockIconFlags uFlags,  // StockIconFlags enum type that specifies the type of icon to retrieve
+            ref StockIconInfo psii  // (Return value) StockIconInfo type
         );
 
         [DllImport("User32.dll")]
@@ -33,27 +33,27 @@ namespace PhotoViewer.Model
         [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct StockIconInfo
         {
-            public uint cbSize;        // 構造体のサイズ（バイト数）
-            public IntPtr hIcon;       //（戻り値）アイコンへのハンドル
-            public int iSysImageIndex; //（戻り値）システムアイコンキャッシュ内のアイコンのインデックス
-            public int iIcon;          //（戻り値）取り出したアイコンのインデックス
+            public uint cbSize;        // Size of structure (number of bytes)
+            public IntPtr hIcon;       // (Return value) Handle to the icon
+            public int iSysImageIndex; // (Return value) The index of the icon in the system icon cache.
+            public int iIcon;          // (Return value) Index of the retrieved icon
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            public string szPath;      //（戻り値）アイコンリソースを保持するファイル名
+            public string szPath;      // (Return value) File name that holds the icon resource
         }
 
         /// <summary>
-        /// 取得するアイコンの種類
+        /// Type of icon to get
         /// </summary>
         public enum StockIconFlags
         {
-            Large = 0x000000000,       // 大きなアイコン
-            Small = 0x000000001,       // 小さなアイコン
-            Handle = 0x000000100,      // 指定のアイコンのハンドル
+            Large = 0x000000000,       // Big icon
+            Small = 0x000000001,       // Small icon
+            Handle = 0x000000100,      // The handle of the specified icon
         }
 
         /// <summary>
-        /// 取得するアイコンの種類
+        /// Type of icon to get
         /// </summary>
         public enum StockIconId
         {
@@ -153,13 +153,13 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// Windows標準のアイコンを取得するメソッド
+        /// Get the standard Windows icon.
         /// </summary>
-        /// <param name="iconId">取得するアイコンの種類</param>
-        /// <returns>BitmapSourceの画像</returns>
+        /// <param name="iconId">Type of icon to get</param>
+        /// <returns>BitmapSource</returns>
         public static BitmapSource GetWindowsIcon(StockIconId iconId)
         {
-            // 大きなアイコンのハンドルを取得
+            // Get handle of big icon.
             StockIconFlags flags = StockIconFlags.Large | StockIconFlags.Handle;
 
             var info = new StockIconInfo
@@ -167,7 +167,7 @@ namespace PhotoViewer.Model
                 cbSize = (uint)Marshal.SizeOf(typeof(StockIconInfo))
             };
 
-            // BitmapSourceにアイコンを保存
+            // Save bitmap source of icon.
             BitmapSource source = null;
             SHGetStockIconInfo(iconId, flags, ref info);
 
@@ -180,12 +180,10 @@ namespace PhotoViewer.Model
             }
             catch (Exception _ex)
             {
-                // ログだけ出力して終了
                 App.LogException(_ex);
             }
             finally
             {
-                // アイコンを破棄
                 DestroyIcon(info.hIcon);
             }
 

@@ -6,10 +6,10 @@ namespace PhotoViewer.Model
     {
         public enum ResizeCategory
         {
-            None,    // リサイズしない
-            Print,   // 印刷用
-            Blog,    // ブログ用
-            Twitter, // Twitter用
+            None,
+            Print,
+            Blog,
+            Twitter,
         }
 
         public string Name { get; private set; }

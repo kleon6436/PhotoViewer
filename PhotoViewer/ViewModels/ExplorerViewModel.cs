@@ -17,7 +17,7 @@ namespace PhotoViewer.ViewModels
         private ExplorerItem selectedItem;
 
         /// <summary>
-        /// 選択されたアイテム情報
+        /// Selected item information
         /// </summary>
         public ExplorerItem SelectedItem
         {
@@ -37,12 +37,12 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         public ExplorerViewModel()
         {
-            // 初期値設定
+            // Set initial value.
             ExplorerItems.Clear();
         }
 
         /// <summary>
-        /// ドライブのTreeItemを作成する
+        /// Create a TreeItem for drive.
         /// </summary>
         /// <param name="driveList"></param>
         public void CreateDriveTreeItem()
@@ -56,7 +56,7 @@ namespace PhotoViewer.ViewModels
                     continue;
                 }
 
-                // ドライブのTreeItemを作成
+                // Create drive treeitem
                 var driveItem = new ExplorerItem(drive.Name, true);
                 ExplorerItems.Add(driveItem);
             }
@@ -76,7 +76,7 @@ namespace PhotoViewer.ViewModels
             {
                 if (count == 0)
                 {
-                    // ドライブ情報を確認し、ツリーを展開
+                    // Check drive information and expand tree.
                     string previousDrive = parentPath;
                     var driveItem = ExplorerItems.Where(item => item.ExplorerItemPath == previousDrive).First();
                     if (driveItem == null) return;
@@ -86,14 +86,14 @@ namespace PhotoViewer.ViewModels
                 }
                 else if (count == parentPathList.Count - 1)
                 {
-                    // ディレクトリ情報を確認し、アイテムを選択
+                    // Confirm directory information and select item.
                     ExplorerItem directoryItem = GetDirectoryItem(parentPath, previousItem);
                     if (directoryItem == null) return;
                     directoryItem.IsSelected = true;
                 }
                 else
                 {
-                    // ディレクトリ情報を確認し、ツリーを展開
+                    // Confirm directory information and select item
                     ExplorerItem directoryItem = GetDirectoryItem(parentPath, previousItem);
                     if (directoryItem == null) return;
                     directoryItem.IsExpanded = true;
@@ -106,20 +106,20 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 親のディレクトリ名を全て取得する
+        /// Get all parent directory names.
         /// </summary>
         private void GetAllParentPathList(string previousFolderPath, List<string> parentPathList)
         {
-            // 最下層のディレクトリ名を取得
+            // Get the lowest directory name.
             var directoryInfo = new DirectoryInfo(previousFolderPath);
             parentPathList.Add(directoryInfo.FullName);
 
-            // 親ディレクトリを順番に取得し、リストに追加していく
+            // Obtain parent directories in order and add to the list.
             GetParentPathList(previousFolderPath, parentPathList);
         }
 
         /// <summary>
-        /// 親のディレクトリ名のリストを取得する
+        /// Get list of parent directory names.
         /// </summary>
         private void GetParentPathList(string directoryPath, List<string> parentPathList)
         {
@@ -131,7 +131,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// ディレクトリのExplorerItemを取得する
+        /// Get ExplorerItem of directory.
         /// </summary>
         private ExplorerItem GetDirectoryItem(string parentPath, ExplorerItem previousItem)
         {
