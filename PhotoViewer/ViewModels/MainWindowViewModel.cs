@@ -32,7 +32,7 @@ namespace PhotoViewer.ViewModels
         private string selectFolderPath;
 
         /// <summary>
-        /// 表示中のフォルダパス
+        /// older path being displayed
         /// </summary>
         public string SelectFolderPath
         {
@@ -41,14 +41,14 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// ListBoxに表示するメディアリスト
+        /// Media list displayed in ListBox
         /// </summary>
         public ObservableCollection<MediaInfo> MediaInfoList { get; } = new ObservableCollection<MediaInfo>();
 
         private MediaInfo selectedMedia;
 
         /// <summary>
-        /// ListBoxで選択されているメディア
+        /// Media selected in ListBox
         /// </summary>
         public MediaInfo SelectedMedia
         {
@@ -59,7 +59,7 @@ namespace PhotoViewer.ViewModels
         private BitmapSource pictureImageSource;
 
         /// <summary>
-        /// 拡大表示しているメディアの画像
+        /// Image of enlarged media
         /// </summary>
         public BitmapSource PictureImageSource
         {
@@ -68,7 +68,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// ContextMenuで表示するメニューアイテムリスト
+        /// Menu item list displayed by ContextMenu
         /// </summary>
         public ObservableCollection<ContextMenuInfo> ContextMenuCollection { get; } = new ObservableCollection<ContextMenuInfo>();
 
@@ -99,45 +99,44 @@ namespace PhotoViewer.ViewModels
 
         #endregion Command
 
-        // メディア情報の読み込みスレッド
+        // Media information read thread
         private BackgroundWorker loadContentsBackgroundWorker;
 
-        // メディアリストのリロードフラグ
+        // Reload flag of media list
         private bool isReloadContents;
 
         public MainWindowViewModel()
         {
-            // 初期値設定
             MediaInfoList.Clear();
             ContextMenuCollection.Clear();
             PictureImageSource = null;
             IsShowContextMenu = false;
             IsEnableImageEditButton = false;
 
-            // コマンドの設定
+            // Set command.
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
             ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
             SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
             ImageEditButtonCommand = new DelegateCommand(ImageEditButtonClicked);
 
-            // 設定ファイルの読み込み
+            // Read config file.
             LoadConfigFile();
 
-            // エクスプローラー部のViewModel設定
+            // Set view model of explorer view.
             ExplorerViewModel = new ExplorerViewModel();
             ExplorerViewModel.ChangeSelectItemEvent += ExplorerViewModel_ChangeSelectItemEvent;
             UpdateExplorerTree();
 
-            // Exif表示部のViewModel設定
+            // Set view model of exif info view.
             ExifInfoViewModel = new ExifInfoViewModel();
         }
 
         /// <summary>
-        /// 初期表示のフォルダと設定ファイルの読み込み
+        /// Load the initial display folder and setting file.
         /// </summary>
         public void InitViewFolder()
         {
-            // 設定情報の読み込み
+            // Read setting information.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
             if (linkageAppList != null && linkageAppList.Any())
@@ -150,18 +149,18 @@ namespace PhotoViewer.ViewModels
                         continue;
                     }
 
-                    // アプリアイコンを読み込み
+                    // Load app icon.
                     Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
                     var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                    // コンテキストメニューの設定
+                    // Set context menu.
                     var contextMenu = new ContextMenuInfo(linkageApp.AppName, iconBitmapSource);
                     ContextMenuCollection.Add(contextMenu);
                     IsShowContextMenu = true;
                 }
             }
 
-            // 画像フォルダの読み込み
+            // Load image folder.
             string picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
             if (!string.IsNullOrEmpty(appConfigManager.ConfigData.PreviousFolderPath))
             {
@@ -171,9 +170,9 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// コンテキストメニューがクリックされたとき
+        /// Event when context menu is clicked.
         /// </summary>
-        /// <param name="appName">アプリ名</param>
+        /// <param name="appName">App name</param>
         public void ExecuteContextMenu(string appName)
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
@@ -201,9 +200,9 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 選択された画像を読み込み、表示用に変換する
+        /// Load selected image and convert for display.
         /// </summary>
-        /// <param name="mediaInfo">選択されたメディア情報</param>
+        /// <param name="mediaInfo">Selected media info</param>
         public bool LoadMedia(MediaInfo mediaInfo)
         {
             if (!File.Exists(mediaInfo.FilePath))
@@ -213,7 +212,6 @@ namespace PhotoViewer.ViewModels
                 App.ShowErrorMessageBox(FileNotExistErrorMessage, FileNotExstErrorTitle);
             }
 
-            // Viewに設定されているものをクリア
             PictureImageSource = null;
             IsEnableImageEditButton = false;
 
@@ -225,14 +223,14 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 実行中のスレッドとタスクを停止する
+        /// Stop running threads and tasks.
         /// </summary>
-        /// <returns>Thread実行中の場合: False、それ以外: True</returns>
+        /// <returns>Run thread: False, Not run thread: True</returns>
         public bool StopThreadAndTask()
         {
             bool CanClose = true;
 
-            // コンテンツ読み込みスレッドが動作中の場合、キャンセル通知
+            // Cancel notification if content loading thread is running
             if (loadContentsBackgroundWorker != null && loadContentsBackgroundWorker.IsBusy)
             {
                 loadContentsBackgroundWorker.CancelAsync();
@@ -243,7 +241,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 設定ファイルの読み込み
+        /// Read configuration file.
         /// </summary>
         private void LoadConfigFile()
         {
@@ -252,7 +250,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// エクスプローラーで選択されているフォルダを開く
+        /// Open selected folder in Explorer.
         /// </summary>
         private void OpenFolderButtonClicked()
         {
@@ -278,7 +276,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// ListBoxの表示を更新する
+        /// Update ListBox display.
         /// </summary>
         private void ReloadButtonClicked()
         {
@@ -292,7 +290,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 設定画面を開く
+        /// Open the setting screen.
         /// </summary>
         private void SettingButtonClicked()
         {
@@ -308,7 +306,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 画像編集ツールを開く
+        /// Open image editing tool.
         /// </summary>
         private void ImageEditButtonClicked()
         {
@@ -329,28 +327,28 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// コンテキストメニューを読み直す
+        /// Reread context menu
         /// </summary>
         /// <param name="sender">SettingViewModel</param>
-        /// <param name="e">引数情報</param>
+        /// <param name="e">Argument</param>
         private void ReloadContextMenu(object sender, EventArgs e)
         {
-            // 現在のコンテキストメニューをリセット
+            // Reset context menu.
             ContextMenuCollection.Clear();
             IsShowContextMenu = false;
 
-            // 設定情報から連携アプリ関連の情報を再読み込み
+            // Reload the information related to the linked application from the setting information.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
             if (linkageAppList != null && linkageAppList.Any())
             {
                 foreach (var linkageApp in linkageAppList)
                 {
-                    // アプリアイコンを読み込み
+                    // Load app icon.
                     Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
                     var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                    // コンテキストメニューの設定
+                    // Set context menu.
                     var contextMenu = new ContextMenuInfo(linkageApp.AppName, iconBitmapSource);
                     ContextMenuCollection.Add(contextMenu);
                     IsShowContextMenu = true;
@@ -359,10 +357,10 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// ExplorerViewでフォルダ選択変更があった場合
+        /// Event when folder selection is changed in Explorer View.
         /// </summary>
         /// <param name="sender">ExplorerViewModel</param>
-        /// <param name="e">引数情報</param>
+        /// <param name="e">Argument</param>
         private void ExplorerViewModel_ChangeSelectItemEvent(object sender, EventArgs e)
         {
             SelectedMedia = null;
@@ -374,7 +372,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// エクスプローラーのツリー表示を更新
+        /// Update explorer tree view.
         /// </summary>
         private void UpdateExplorerTree()
         {
@@ -389,9 +387,9 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// メディアリストに表示するフォルダを変更
+        /// Change the folder displayed in the media list.
         /// </summary>
-        /// <param name="folderPath">メディアリストを表示するフォルダパス</param>
+        /// <param name="folderPath">Folder path to display media list</param>
         private void ChangeContents(string folderPath)
         {
             if (!Directory.Exists(folderPath) || SelectFolderPath == folderPath)
@@ -399,7 +397,7 @@ namespace PhotoViewer.ViewModels
                 return;
             }
 
-            // フォルダパスを更新して、リスト更新
+            // Update folder path to update list.
             SelectFolderPath = folderPath;
             UpdateContents();
 
@@ -408,13 +406,12 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// コンテンツリストの表示を更新
+        /// Refresh display of content list.
         /// </summary>
         private void UpdateContents()
         {
             if (loadContentsBackgroundWorker != null && loadContentsBackgroundWorker.IsBusy)
             {
-                // すでにスレッド動作中の場合、一旦スレッド処理をキャンセルし、キャンセル後に再実行する
                 loadContentsBackgroundWorker.CancelAsync();
                 isReloadContents = true;
                 return;
@@ -424,14 +421,13 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// コンテンツリストの読み込み
+        /// Load content list.
         /// </summary>
         private void LoadContentsList()
         {
-            // 読み込み前に表示リストをクリア
+            // Clear display list before loading.
             MediaInfoList.Clear();
 
-            // 時間がかかるため、別スレッドでメディアリストを読み込む
             var backgroundWorker = new BackgroundWorker
             {
                 WorkerSupportsCancellation = true
@@ -439,16 +435,15 @@ namespace PhotoViewer.ViewModels
             backgroundWorker.DoWork += LoadContentsWorker_DoWork;
             backgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
 
-            // 読み込みスレッド開始
             loadContentsBackgroundWorker = backgroundWorker;
             loadContentsBackgroundWorker.RunWorkerAsync();
         }
 
         /// <summary>
-        /// 別スレッドで動作する処理
+        /// Process that operates in another thread.
         /// </summary>
         /// <param name="sender">BackgroundWorker</param>
-        /// <param name="e">引数情報</param>
+        /// <param name="e">Argument</param>
         private void LoadContentsWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             try
@@ -466,10 +461,10 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// コンテンツ読み込みスレッドでの処理完了時
+        /// Event when processing is completed in the content loading thread.
         /// </summary>
         /// <param name="sender">LoadContentsWorker</param>
-        /// <param name="e">引数情報</param>
+        /// <param name="e">Argument</param>
         private void LoadContentsWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
@@ -478,7 +473,7 @@ namespace PhotoViewer.ViewModels
 
                 if (isReloadContents)
                 {
-                    // 非同期で読み込んでいるコンテンツリストの読み込み完了後にリロード
+                    // Reload after loading the asynchronously loaded content list.
                     App.Current.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         UpdateContents();
@@ -497,16 +492,16 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// コンテンツリストの読み込みの実処理
+        /// Actual processing of reading the content list
         /// </summary>
         /// <param name="sender">BackgroundWorker</param>
-        /// <param name="e">引数情報</param>
+        /// <param name="e">Argument</param>
         private void LoadContentsWorker(object sender, DoWorkEventArgs e)
         {
             List<string> filePaths = new List<string>();
             int tick = Environment.TickCount;
 
-            // 選択されたフォルダ内のサポートされるファイルを全て取得
+            // Get all supported files in selected folder.
             foreach (string supportExtension in MediaChecker.GetSupportExtentions())
             {
                 var worker = sender as BackgroundWorker;
@@ -519,7 +514,7 @@ namespace PhotoViewer.ViewModels
                 filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToArray());
             }
 
-            // 順番を名前順で並べ替え
+            // Sort the order by name.
             filePaths = filePaths.OrderBy(Path.GetFileName).ToList();
 
             var readyFiles = new Queue<MediaInfo>();
@@ -544,7 +539,7 @@ namespace PhotoViewer.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    // サムネイル画像が作成できないものは、ログ出力して読み込みスキップ
+                    // If thumbnail images cannot be created, log output and skip reading.
                     App.LogException(ex);
                     continue;
                 }
@@ -561,7 +556,7 @@ namespace PhotoViewer.ViewModels
                     App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
                 }
 
-                // 不要なメモリの回収
+                // Collection of unnecessary memory.
                 App.RunGC();
             }
 
@@ -572,7 +567,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// コンテンツ読み込みスレッドの完全停止
+        /// Stop content loading thread.
         /// </summary>
         private void StopContentsWorker()
         {
@@ -583,33 +578,31 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 拡大表示する画像を読み込む
+        /// Load the image to be enlarged.
         /// </summary>
-        /// <param name="mediaInfo">選択されたメディア情報</param>
-        /// <returns>読み込み成功: True、失敗: False</returns>
+        /// <param name="mediaInfo">Selected media information</param>
+        /// <returns>Successful reading: True、Failure: False</returns>
         private bool LoadPictureImage(MediaInfo mediaInfo)
         {
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                // 表示画像の作成
+                // Create display image.
                 PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath);
 
-                // WritableBitmapのメモリ解放
+                // Memory release of Writable Bitmap.
                 App.RunGC();
 
-                // Exif情報を設定
+                // Set exif information.
                 ExifInfoViewModel.SetExif(mediaInfo.FilePath);
 
                 if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(mediaInfo.FilePath).ToLower()))
                 {
-                    // NikonRaw画像以外は、編集可能
                     IsEnableImageEditButton = true;
                 }
                 else
                 {
-                    // NikonRaw画像は、編集不可
                     IsEnableImageEditButton = false;
                 }
 

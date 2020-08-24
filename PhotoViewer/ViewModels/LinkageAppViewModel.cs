@@ -39,7 +39,7 @@ namespace PhotoViewer.ViewModels
         public event EventHandler ChangeLinkageAppEvent;
 
         /// <summary>
-        /// コンストラクタ
+        /// Constructor
         /// </summary>
         public LinkageAppViewModel()
         {
@@ -57,7 +57,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 参照ボタンを押下時
+        /// Event when the reference button is pressed.
         /// </summary>
         private void LinkAppReferenceButtonClicked()
         {
@@ -91,7 +91,7 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 登録ボタンを押下時
+        /// Event when register button is pressed.
         /// </summary>
         private void RegisterLinkAppButtonClicked()
         {
@@ -108,7 +108,7 @@ namespace PhotoViewer.ViewModels
 
             LinkageAppList.Add(linkageApp);
 
-            // Configファイルに情報を書き出し
+            // Export information to Config file.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.SetLinkageApp(LinkageAppList.ToList());
             appConfigManager.Export();
@@ -118,11 +118,10 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 削除ボタンを押下時
+        /// Event when delete button is pressed.
         /// </summary>
         private void DeleteLinkAppButtonClicked(ExtraAppSetting deleteAppSetting)
         {
-            // 登録済みではない場合は、何もせず終了
             if (LinkageAppList == null || LinkageAppList.Count == 0 || deleteAppSetting == null)
             {
                 return;
@@ -132,7 +131,7 @@ namespace PhotoViewer.ViewModels
             {
                 LinkageAppList.Remove(deleteAppSetting);
 
-                // Configファイルに情報を書き出し
+                // Export information to config file.
                 AppConfigManager appConfigManager = AppConfigManager.GetInstance();
                 appConfigManager.RemoveLinkageApp(LinkageAppList.ToList());
                 appConfigManager.Export();

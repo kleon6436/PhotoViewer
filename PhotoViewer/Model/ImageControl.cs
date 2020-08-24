@@ -8,15 +8,15 @@ namespace PhotoViewer.Model
     public static class ImageControl
     {
         /// <summary>
-        /// ファイルパスから画像を取得する(幅高さに変更なく、回転情報だけ反映した画像)
+        /// Get an image from the file path (image that reflects only rotation information without changing width and height).
         /// </summary>
-        /// <param name="filePath">ファイルパス</param>
-        /// <returns>BitmapSource(生成した画像)</returns>
+        /// <param name="filePath">FilePath</param>
+        /// <returns>BitmapSource</returns>
         public static BitmapSource DecodePicture(string filePath)
         {
             using var sourceStream = new WrappingStream(new FileStream(filePath, FileMode.Open));
 
-            // 画像データの取得
+            // Get image data.
             sourceStream.Seek(0, SeekOrigin.Begin);
             var bitmapFrame = BitmapFrame.Create(sourceStream);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
@@ -29,26 +29,26 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 拡大表示する画像を生成する
+        /// Generate an image to be magnified.
         /// </summary>
-        /// <param name="filePath">ファイルパス</param>
-        /// <returns>BitmapSource(生成した画像)</returns>
+        /// <param name="filePath">FilePath</param>
+        /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureViewImage(string filePath)
         {
             using var ms = new WrappingStream(new FileStream(filePath, FileMode.Open));
 
-            // ストリーム位置をリセットし、まずはメタデータの取得
+            // Reset the stream position and first get metadata.
             ms.Seek(0, SeekOrigin.Begin);
             var bitmapFrame = BitmapFrame.Create(ms);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
 
-            // ストリーム位置をリセットし、画像をデコード
+            // Reset stream position and decode image.
             ms.Seek(0, SeekOrigin.Begin);
 
             int maxViewWidth = 2200;
             int maxViewHeight = 1650;
 
-            // 回転情報を確認し、縦位置画像の場合は、縦横の最大サイズを入れ替えておく
+            // Check the rotation information and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
             uint rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
@@ -65,14 +65,14 @@ namespace PhotoViewer.Model
             bmpImage.StreamSource = ms;
             bmpImage.EndInit();
 
-            // 画像が大きい場合は、画像の縮小処理
+            // If the image is large, reduce the image.
             BitmapSource viewImage = RotateImage(metaData, (BitmapSource)bmpImage);
             if (bmpImage.PixelWidth > maxViewWidth || bmpImage.PixelHeight > maxViewHeight)
             {
                 viewImage = ResizeImage(bmpImage, maxViewWidth, maxViewHeight);
             }
 
-            // 画像を書き出し、変更不可にする
+            // Export image and make it unchangeable.
             viewImage = new WriteableBitmap(viewImage);
             viewImage.Freeze();
 
@@ -80,15 +80,15 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 静止画のサムネイル画像を作成する
+        /// Creating thumbnail images of still images.
         /// </summary>
-        /// <param name="filePath">ファイルパス</param>
-        /// <returns>BitmapSource(生成したサムネイル画像)</returns>
+        /// <param name="filePath">File`ath</param>
+        /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureThumbnailImage(string filePath)
         {
             using var ms = new WrappingStream(new FileStream(filePath, FileMode.Open));
 
-            // ストリーム位置をリセットし、まずはメタデータを取得
+            // Reset the stream position and get the metadata.
             ms.Seek(0, SeekOrigin.Begin);
             var bitmapFrame = BitmapFrame.Create(ms);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
@@ -97,7 +97,7 @@ namespace PhotoViewer.Model
             int maxScaledWidth = 100;
             int maxScaledHeight = 75;
 
-            // 回転情報を確認し、縦位置画像の場合は、縦横の最大サイズを入れ替えておく
+            // Check the rotation information, and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
             uint rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
@@ -108,7 +108,7 @@ namespace PhotoViewer.Model
 
             if (thumbnailImage == null)
             {
-                // ストリーム位置をリセットし、画像をデコード
+                // Reset stream position and decode image.
                 ms.Seek(0, SeekOrigin.Begin);
 
                 var bmpImage = new BitmapImage();
@@ -121,17 +121,17 @@ namespace PhotoViewer.Model
             }
             else
             {
-                // サムネイル画像が大きい場合は、画像の縮小処理
+                // If the thumbnail image is large, reduce the image.
                 if (thumbnailImage.PixelWidth > maxScaledWidth || thumbnailImage.PixelHeight > maxScaledHeight)
                 {
                     thumbnailImage = ResizeImage(thumbnailImage, maxScaledWidth, maxScaledHeight);
                 }
             }
 
-            // サムネイル画像向けに回転
+            // Rotate for thumbnail images.
             thumbnailImage = RotateImage(metaData, thumbnailImage);
 
-            // 画像を書き出し、変更不可にする
+            // Export image and make it unchangeable.
             thumbnailImage = new WriteableBitmap(thumbnailImage);
             thumbnailImage.Freeze();
 
@@ -139,15 +139,15 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 静止画編集画面用のサムネイル画像を作成する
+        /// Create thumbnail image for still image edit screen.
         /// </summary>
-        /// <param name="filePath">ファイルパス</param>
-        /// <returns>BitmapSource(生成したサムネイル画像)</returns>
+        /// <param name="filePath">FilePath</param>
+        /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureEditViewThumbnail(string filePath)
         {
             using var ms = new WrappingStream(new FileStream(filePath, FileMode.Open));
 
-            // ストリーム位置をリセットし、まずはメタデータを取得
+            // Reset the stream position and get the metadata.
             ms.Seek(0, SeekOrigin.Begin);
             var bitmapFrame = BitmapFrame.Create(ms);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
@@ -156,7 +156,7 @@ namespace PhotoViewer.Model
             int maxScaledWidth = 400;
             int maxScaledHeight = 300;
 
-            // 回転情報を確認し、縦位置画像の場合は、縦横の最大サイズを入れ替えておく
+            // Check the rotation information, and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
             uint rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
@@ -167,7 +167,7 @@ namespace PhotoViewer.Model
 
             if (thumbnailImage == null)
             {
-                // ストリーム位置をリセットし、画像をデコード
+                // Reset stream position and decode image.
                 ms.Seek(0, SeekOrigin.Begin);
 
                 var bmpImage = new BitmapImage();
@@ -180,17 +180,17 @@ namespace PhotoViewer.Model
             }
             else
             {
-                // サムネイル画像が大きい場合は、画像の縮小処理
+                // If the thumbnail image is large, reduce the image.
                 if (thumbnailImage.PixelWidth > maxScaledWidth || thumbnailImage.PixelHeight > maxScaledHeight)
                 {
                     thumbnailImage = ResizeImage(thumbnailImage, maxScaledWidth, maxScaledHeight);
                 }
             }
 
-            // サムネイル画像向けに回転
+            // Rotate for thumbnail images.
             thumbnailImage = RotateImage(metaData, thumbnailImage);
 
-            // 画像を書き出し、変更不可にする
+            // Export image and make it unchangeable.
             thumbnailImage = new WriteableBitmap(thumbnailImage);
             thumbnailImage.Freeze();
 
@@ -198,11 +198,11 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 画像を回転する
+        /// Rotate image
         /// </summary>
-        /// <param name="metaData">メタデータ</param>
-        /// <param name="image">BitmapSource(画像データ)</param>
-        /// <returns>BitmapSource(回転後の画像)</returns>
+        /// <param name="metaData">Metadata</param>
+        /// <param name="image">BitmapSource</param>
+        /// <returns>BitmapSource</returns>
         public static BitmapSource RotateImage(BitmapMetadata metaData, BitmapSource image)
         {
             uint rotation = GetRotation(metaData);
@@ -222,41 +222,41 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// 画像を指定サイズにリサイズする
+        /// Resize image to specified size.
         /// </summary>
-        /// <param name="image">BitmapSource(画像データ)</param>
-        /// <param name="maxScaledWidth">指定幅</param>
-        /// <param name="maxScaledHeight">指定高さ</param>
-        /// <returns>BitmapSource(リサイズ後の画像)</returns>
+        /// <param name="image">BitmapSource.</param>
+        /// <param name="maxScaledWidth">Width</param>
+        /// <param name="maxScaledHeight">Height</param>
+        /// <returns>BitmapSource</returns>
         private static BitmapSource ResizeImage(BitmapSource image, int maxScaledWidth, int maxScaledHeight)
         {
-            // 拡大/縮小したイメージを生成する
+            // Generate a scaled image.
             double scaleX = (double)maxScaledWidth / image.PixelWidth;
             double scaleY = (double)maxScaledHeight / image.PixelHeight;
             double scale = Math.Min(scaleX, scaleY);
 
-            // 生成したTransformedBitmapから再度WritableBitmapを生成する
+            // Generate WritableBitmap from generated TransformedBitmap.
             return new TransformedBitmap(image, new ScaleTransform(scale, scale));
         }
 
         /// <summary>
-        /// 画像のメタデータから画像の回転情報を取得する
+        /// Get image rotation information from image metadata.
         /// </summary>
-        /// <param name="metaData">メタデータ</param>
-        /// <returns>rotation値</returns>
+        /// <param name="metaData">Metadata</param>
+        /// <returns>rotation value</returns>
         private static uint GetRotation(BitmapMetadata metaData)
         {
             string _query = "/app1/ifd/exif:{uint=274}";
             if (!metaData.ContainsQuery(_query))
             {
-                return 0;   // エラーとして返す
+                return 0;
             }
 
             return Convert.ToUInt32(metaData.GetQuery(_query));
         }
 
         /// <summary>
-        /// 画像を回転するメソッド
+        /// Rotate the image.
         /// </summary>
         private static BitmapSource TransformBitmap(BitmapSource source, Transform transform)
         {

@@ -8,29 +8,29 @@ namespace PhotoViewer.Model
         private static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng", ".nef" };
 
         /// <summary>
-        /// アプリがサポートする拡張子リストを取得する
+        /// Get a list of extensions supported by the app.
         /// </summary>
-        /// <returns>サポートする拡張子リスト</returns>
+        /// <returns>Extension list supported</returns>
         public static List<string> GetSupportExtentions()
         {
             return SupportPictureExtensions.ToList();
         }
 
         /// <summary>
-        /// 静止画のサポートする拡張子であるか確認する
+        /// Check if the extension is a still image supported extension.
         /// </summary>
-        /// <param name="_extension">確認する拡張子</param>
-        /// <returns>サポートする拡張子の場合はTrue, ない場合はFalseを返す</returns>
+        /// <param name="_extension">Extension to check</param>
+        /// <returns>True: the extension is supported, False: the extension is not supported</returns>
         public static bool CheckPictureExtensions(string extension)
         {
             return SupportPictureExtensions.Any(supportExtension => supportExtension == extension);
         }
 
         /// <summary>
-        /// ファイルがNikonRawFile(NEFファイル)であるか確認する
+        /// Check if the file is a Nikon Raw File (NEF file).
         /// </summary>
-        /// <param name="extension">確認するファイルの拡張子</param>
-        /// <returns>NEFファイルの場合: True、それ以外のファイルの場合: False</returns>
+        /// <param name="extension">Extension to check</param>
+        /// <returns>True: the extension is nef, False: the extension is not nef</returns>
         public static bool CheckNikonRawFileExtension(string extension)
         {
             return (extension == ".nef");

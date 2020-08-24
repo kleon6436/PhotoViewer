@@ -18,7 +18,7 @@ namespace PhotoViewer.ViewModels
         private SelectPage selectPageButtonValue;
 
         /// <summary>
-        /// ラジオボタンで選択されているページ
+        /// Page selected by radio button
         /// </summary>
         public SelectPage SelectPageButtonValue
         {
@@ -53,7 +53,7 @@ namespace PhotoViewer.ViewModels
         private Page displayPage;
 
         /// <summary>
-        /// 表示するページ情報
+        /// Page information to display
         /// </summary>
         public Page DisplayPage
         {
@@ -62,19 +62,19 @@ namespace PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// コンストラクタ
+        /// Constructor
         /// </summary>
         public SettingViewModel()
         {
-            // デフォルトのページ設定
+            // Default page setup
             SelectPageButtonValue = SelectPage.LinkageAppPage;
         }
 
         /// <summary>
-        /// 連携アプリの状態が変更されたとき
+        /// Event when the status of the linked application is changed.
         /// </summary>
         /// <param name="sender">LinkageAppViewModel</param>
-        /// <param name="e">引数情報</param>
+        /// <param name="e">Argument</param>
         private void ChangeLinkageApp(object sender, EventArgs e)
         {
             if (!(sender is LinkageAppViewModel linkageAppVM))

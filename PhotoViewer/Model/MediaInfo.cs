@@ -16,7 +16,7 @@ namespace PhotoViewer.Model
         #region Media Parameters
 
         /// <summary>
-        /// メディアタイプ
+        /// Media type
         /// </summary>
         public MediaType ContentMediaType
         {
@@ -26,7 +26,7 @@ namespace PhotoViewer.Model
         private BitmapSource thumbnailImage;
 
         /// <summary>
-        /// サムネイルイメージ
+        /// Image of thumbnail
         /// </summary>
         public BitmapSource ThumbnailImage
         {
@@ -37,7 +37,7 @@ namespace PhotoViewer.Model
         private string fileName;
 
         /// <summary>
-        /// ファイル名
+        /// File name
         /// </summary>
         public string FileName
         {
@@ -46,23 +46,16 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// ファイルパス
+        /// File path
         /// </summary>
         public string FilePath { get; set; }
 
         #endregion Media Parameters
 
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
         public MediaInfo()
         {
         }
 
-        /// <summary>
-        /// コピーコンストラクタ(各コンテンツのコンストラクタで呼ばれる)
-        /// </summary>
-        /// <param name="_mediaFileInfo">メディアファイルの情報</param>
         public MediaInfo(MediaInfo mediaFileInfo)
         {
             FilePath = mediaFileInfo.FilePath;
@@ -71,9 +64,9 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// サムネイル画像の生成
+        /// Create thumbnail image.
         /// </summary>
-        /// <returns>サムネイル成功時: True、失敗時: False</returns>
+        /// <returns>True: Success、False: Failure</returns>
         public void CreateThumbnailImage()
         {
             if (FilePath == null || !File.Exists(FilePath))
@@ -94,10 +87,10 @@ namespace PhotoViewer.Model
         }
 
         /// <summary>
-        /// メディアファイルのタイプを取得する
+        /// Get the type of media file.
         /// </summary>
-        /// <param name="_filePath">確認するファイルパス</param>
-        /// <returns>ファイルのタイプ</returns>
+        /// <param name="_filePath">File path to check</param>
+        /// <returns>File type</returns>
         private MediaType CheckMediaType(string filePath)
         {
             string extension = Path.GetExtension(filePath).ToLower();
