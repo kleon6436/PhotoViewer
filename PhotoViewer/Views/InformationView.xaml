@@ -13,7 +13,7 @@
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Orientation="Vertical" Margin="0,30,0,0">
             <TextBlock Margin="0,0,0,20" HorizontalAlignment="Center" FontSize="28" Text="Kchary Photograph Viewer" />
-            <TextBlock Margin="0,0,0,5" FontSize="16" Text="Version 2.00" HorizontalAlignment="Center" />
+            <TextBlock Margin="0,0,0,5" FontSize="16" Text="Version 2.1" HorizontalAlignment="Center" />
             <TextBlock Margin="0,0,0,5" FontSize="16" Text="Copyright © 2020 Kchary All Rights Reserved." />
         </StackPanel>
     </Grid>

@@ -8,7 +8,7 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
     <ApplicationIcon>PhotoExifViewerIcon.ico</ApplicationIcon>
     <AssemblyName>KcharyPhotoViewer</AssemblyName>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <Authors>Kchary</Authors>
   </PropertyGroup>
 
