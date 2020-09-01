@@ -12,7 +12,7 @@ namespace PhotoViewer.ViewModels
 {
     public class LinkageAppViewModel : BindableBase
     {
-        private readonly int MAX_LINK_APP_NUM = 10;
+        private const int MAX_LINK_APP_NUM = 10;
 
         #region UI binding parameter
 
