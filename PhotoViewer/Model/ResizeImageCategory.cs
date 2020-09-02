@@ -2,7 +2,7 @@
 
 namespace PhotoViewer.Model
 {
-    public class ResizeImageCategory
+    public sealed class ResizeImageCategory
     {
         public enum ResizeCategory
         {

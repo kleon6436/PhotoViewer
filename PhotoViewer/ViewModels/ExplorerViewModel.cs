@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace PhotoViewer.ViewModels
 {
-    public class ExplorerViewModel : BindableBase
+    public sealed class ExplorerViewModel : BindableBase
     {
         public event EventHandler ChangeSelectItemEvent;
 

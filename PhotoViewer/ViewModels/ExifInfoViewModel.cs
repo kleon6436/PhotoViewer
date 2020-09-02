@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace PhotoViewer.ViewModels
 {
-    public class ExifInfoViewModel : BindableBase
+    public sealed class ExifInfoViewModel : BindableBase
     {
         /// <summary>
         /// List of exif information

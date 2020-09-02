@@ -2,7 +2,7 @@
 
 namespace PhotoViewer.Model
 {
-    public class ExifInfo : BindableBase
+    public sealed class ExifInfo : BindableBase
     {
         private string exifParameterText;
 

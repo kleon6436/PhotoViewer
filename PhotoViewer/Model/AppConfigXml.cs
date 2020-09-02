@@ -7,7 +7,7 @@ namespace PhotoViewer.Model
     /// <summary>
     /// XML management class of application setting information.
     /// </summary>
-    public class AppConfigXml
+    public sealed class AppConfigXml
     {
         // XML element name
         private const string PREVIOUS_FOLDER_ELEM_NAME = "previous_folder";
@@ -119,7 +119,7 @@ namespace PhotoViewer.Model
 
                 if (!string.IsNullOrEmpty(appNameElement.Value) && !string.IsNullOrEmpty(appPathElement.Value))
                 {
-                    var linkageApp = new ExtraAppSetting(appNameElement.Value, appPathElement.Value);
+                    var linkageApp = new ExtraAppSetting { AppName = appNameElement.Value, AppPath = appPathElement.Value};
                     configData.LinkageAppList.Add(linkageApp);
                 }
             }

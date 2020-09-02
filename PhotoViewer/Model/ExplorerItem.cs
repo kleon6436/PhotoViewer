@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 
 namespace PhotoViewer.Model
 {
-    public class ExplorerItem : TreeViewItem
+    public sealed class ExplorerItem : TreeViewItem
     {
         // Item information
         public string ExplorerItemPath { get; private set; }

@@ -8,119 +8,114 @@ namespace PhotoViewer.Model
     /// </summary>
     public class WrappingStream : Stream
     {
-        private Stream mStreamBase;
-
         public WrappingStream(Stream _streamBase)
         {
-            mStreamBase = _streamBase ?? throw new ArgumentNullException("StreamBase");
+            WrappedStream = _streamBase ?? throw new ArgumentNullException("StreamBase");
         }
 
         public override bool CanRead
         {
-            get { return mStreamBase != null && mStreamBase.CanRead; }
+            get { return WrappedStream != null && WrappedStream.CanRead; }
         }
 
         public override bool CanSeek
         {
-            get { return mStreamBase != null && mStreamBase.CanSeek; }
+            get { return WrappedStream != null && WrappedStream.CanSeek; }
         }
 
         public override bool CanWrite
         {
-            get { return mStreamBase != null && mStreamBase.CanWrite; }
+            get { return WrappedStream != null && WrappedStream.CanWrite; }
         }
 
         public override long Length
         {
-            get { ThrowIfDisposed(); return mStreamBase.Length; }
+            get { ThrowIfDisposed(); return WrappedStream.Length; }
         }
 
         public override long Position
         {
-            get { ThrowIfDisposed(); return mStreamBase.Position; }
-            set { ThrowIfDisposed(); mStreamBase.Position = value; }
+            get { ThrowIfDisposed(); return WrappedStream.Position; }
+            set { ThrowIfDisposed(); WrappedStream.Position = value; }
         }
 
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             ThrowIfDisposed();
-            return mStreamBase.BeginRead(buffer, offset, count, callback, state);
+            return WrappedStream.BeginRead(buffer, offset, count, callback, state);
         }
 
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             ThrowIfDisposed();
-            return mStreamBase.BeginWrite(buffer, offset, count, callback, state);
+            return WrappedStream.BeginWrite(buffer, offset, count, callback, state);
         }
 
         public override int EndRead(IAsyncResult asyncResult)
         {
             ThrowIfDisposed();
-            return mStreamBase.EndRead(asyncResult);
+            return WrappedStream.EndRead(asyncResult);
         }
 
         public override void EndWrite(IAsyncResult asyncResult)
         {
             ThrowIfDisposed();
-            mStreamBase.EndWrite(asyncResult);
+            WrappedStream.EndWrite(asyncResult);
         }
 
         public override void Flush()
         {
             ThrowIfDisposed();
-            mStreamBase.Flush();
+            WrappedStream.Flush();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
             ThrowIfDisposed();
-            return mStreamBase.Read(buffer, offset, count);
+            return WrappedStream.Read(buffer, offset, count);
         }
 
         public override int ReadByte()
         {
             ThrowIfDisposed();
-            return mStreamBase.ReadByte();
+            return WrappedStream.ReadByte();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
             ThrowIfDisposed();
-            return mStreamBase.Seek(offset, origin);
+            return WrappedStream.Seek(offset, origin);
         }
 
         public override void SetLength(long value)
         {
             ThrowIfDisposed();
-            mStreamBase.SetLength(value);
+            WrappedStream.SetLength(value);
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
             ThrowIfDisposed();
-            mStreamBase.Write(buffer, offset, count);
+            WrappedStream.Write(buffer, offset, count);
         }
 
         public override void WriteByte(byte value)
         {
             ThrowIfDisposed();
-            mStreamBase.WriteByte(value);
+            WrappedStream.WriteByte(value);
         }
 
-        protected Stream WrappedStream
-        {
-            get { return mStreamBase; }
-        }
+        protected Stream WrappedStream { get; private set; }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) mStreamBase = null;
+            if (disposing) WrappedStream = null;
             base.Dispose(disposing);
         }
 
         private void ThrowIfDisposed()
         {
-            if (mStreamBase == null)
+            if (WrappedStream == null)
             {
                 throw new ObjectDisposedException(GetType().Name);
             }

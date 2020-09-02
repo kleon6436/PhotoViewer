@@ -5,7 +5,7 @@ namespace PhotoViewer.Model
     /// <summary>
     /// Data class of application setting information
     /// </summary>
-    public class AppConfigData
+    public sealed class AppConfigData
     {
         /// <summary>
         /// Folder path at the time of the previous end.

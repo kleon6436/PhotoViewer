@@ -1,6 +1,6 @@
 ﻿namespace PhotoViewer.Model
 {
-    public class ImageForm
+    public sealed class ImageForm
     {
         public enum ImageForms
         {
@@ -10,13 +10,7 @@
             Tiff,
         }
 
-        public string Name { get; private set; }
-        public ImageForms Form { get; private set; }
-
-        public ImageForm(string name, ImageForms form)
-        {
-            this.Name = name;
-            this.Form = form;
-        }
+        public string Name { get; set; }
+        public ImageForms Form { get; set; }
     }
 }

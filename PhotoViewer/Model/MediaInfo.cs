@@ -5,7 +5,7 @@ using System.Windows.Media.Imaging;
 
 namespace PhotoViewer.Model
 {
-    public class MediaInfo : BindableBase
+    public sealed class MediaInfo : BindableBase
     {
         public enum MediaType
         {
@@ -54,13 +54,6 @@ namespace PhotoViewer.Model
 
         public MediaInfo()
         {
-        }
-
-        public MediaInfo(MediaInfo mediaFileInfo)
-        {
-            FilePath = mediaFileInfo.FilePath;
-            FileName = Path.GetFileName(FilePath);
-            ThumbnailImage = mediaFileInfo.ThumbnailImage;
         }
 
         /// <summary>

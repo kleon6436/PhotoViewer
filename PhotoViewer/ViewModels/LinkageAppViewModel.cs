@@ -100,7 +100,7 @@ namespace PhotoViewer.ViewModels
                 return;
             }
 
-            var linkageApp = new ExtraAppSetting(Path.GetFileNameWithoutExtension(LinkAppPath), LinkAppPath);
+            var linkageApp = new ExtraAppSetting { AppName = Path.GetFileNameWithoutExtension(LinkAppPath), AppPath = LinkAppPath };
             if (LinkageAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))
             {
                 return;

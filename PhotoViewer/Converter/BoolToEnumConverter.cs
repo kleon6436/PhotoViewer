@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace PhotoViewer.Converter
 {
-    public class BoolToEnumConverter : IValueConverter
+    public sealed class BoolToEnumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

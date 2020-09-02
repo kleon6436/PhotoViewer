@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 
 namespace PhotoViewer.ViewModels
 {
-    public class ImageEditToolViewModel : BindableBase
+    public sealed class ImageEditToolViewModel : BindableBase
     {
         #region UI binding parameter
 
@@ -27,7 +27,7 @@ namespace PhotoViewer.ViewModels
 
         public string EditFileName
         {
-            get { return Path.GetFileName(EditFilePath); }
+            get { return Path.GetFileName(editFilePath); }
         }
 
         public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; } = new ObservableCollection<ResizeImageCategory>();
@@ -47,19 +47,19 @@ namespace PhotoViewer.ViewModels
                     if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
                     {
                         // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
-                        scale = (double)ResizeCategoryItem.ResizelongSideValue / ReadImageSize.Width;
-                        if (ReadImageSize.Width < ReadImageSize.Height)
+                        scale = (double)ResizeCategoryItem.ResizelongSideValue / readImageSize.Width;
+                        if (readImageSize.Width < readImageSize.Height)
                         {
-                            scale = (double)ResizeCategoryItem.ResizelongSideValue / ReadImageSize.Height;
+                            scale = (double)ResizeCategoryItem.ResizelongSideValue / readImageSize.Height;
                         }
                     }
 
-                    int resizeWidth = (int)(ReadImageSize.Width * scale);
-                    int resizeHeight = (int)(ReadImageSize.Height * scale);
+                    int resizeWidth = (int)(readImageSize.Width * scale);
+                    int resizeHeight = (int)(readImageSize.Height * scale);
                     if (!isLandscape)
                     {
-                        resizeWidth = (int)(ReadImageSize.Height * scale);
-                        resizeHeight = (int)(ReadImageSize.Width * scale);
+                        resizeWidth = (int)(readImageSize.Height * scale);
+                        resizeHeight = (int)(readImageSize.Width * scale);
                     }
                     ResizeSizeText = string.Format("(Width: {0}, Height: {1} [pixel])", resizeWidth, resizeHeight);
                 }
@@ -113,40 +113,29 @@ namespace PhotoViewer.ViewModels
         public EventHandler CloseView { get; set; }
 
         // File path to be edited
-        private string EditFilePath;
+        private string editFilePath;
 
         // Image size before editing
-        private Size ReadImageSize;
+        private Size readImageSize;
 
         // Image before editing
-        private BitmapSource DecodedPictureSource;
+        private BitmapSource decodedPictureSource;
 
         public ImageEditToolViewModel()
         {
-            const string NoResize = "リサイズなし";
-            const string PrintResize = "印刷向け";
-            const string BlogResize = "ブログ向け";
-            const string SnsResize = "SNS向け";
-            ResizeCategoryItems.Add(new ResizeImageCategory(NoResize, ResizeImageCategory.ResizeCategory.None));
-            ResizeCategoryItems.Add(new ResizeImageCategory(PrintResize, ResizeImageCategory.ResizeCategory.Print));
-            ResizeCategoryItems.Add(new ResizeImageCategory(BlogResize, ResizeImageCategory.ResizeCategory.Blog));
-            ResizeCategoryItems.Add(new ResizeImageCategory(SnsResize, ResizeImageCategory.ResizeCategory.Twitter));
+            ResizeCategoryItems.Add(new ResizeImageCategory("リサイズなし", ResizeImageCategory.ResizeCategory.None));
+            ResizeCategoryItems.Add(new ResizeImageCategory("印刷向け", ResizeImageCategory.ResizeCategory.Print));
+            ResizeCategoryItems.Add(new ResizeImageCategory("ブログ向け", ResizeImageCategory.ResizeCategory.Blog));
+            ResizeCategoryItems.Add(new ResizeImageCategory("SNS向け", ResizeImageCategory.ResizeCategory.Twitter));
 
-            const string HighQuality = "高画質";
-            const string StandardQuality = "標準";
-            const string LowQuality = "低画質";
-            ImageSaveQualityItems.Add(new ImageQuality(HighQuality, 90));
-            ImageSaveQualityItems.Add(new ImageQuality(StandardQuality, 80));
-            ImageSaveQualityItems.Add(new ImageQuality(LowQuality, 60));
+            ImageSaveQualityItems.Add(new ImageQuality { Name = "高画質", QualityValue = 90 });
+            ImageSaveQualityItems.Add(new ImageQuality { Name = "標準", QualityValue = 80 });
+            ImageSaveQualityItems.Add(new ImageQuality { Name = "低画質", QualityValue = 60 });
 
-            const string Jpeg = "Jpeg";
-            const string Png = "Png";
-            const string Bmp = "Bmp";
-            const string Tiff = "Tiff";
-            ImageFormItems.Add(new ImageForm(Jpeg, ImageForm.ImageForms.Jpeg));
-            ImageFormItems.Add(new ImageForm(Png, ImageForm.ImageForms.Png));
-            ImageFormItems.Add(new ImageForm(Bmp, ImageForm.ImageForms.Bmp));
-            ImageFormItems.Add(new ImageForm(Tiff, ImageForm.ImageForms.Tiff));
+            ImageFormItems.Add(new ImageForm { Name = "Jpeg", Form = ImageForm.ImageForms.Jpeg });
+            ImageFormItems.Add(new ImageForm { Name = "Png", Form = ImageForm.ImageForms.Png });
+            ImageFormItems.Add(new ImageForm { Name = "Bmp", Form = ImageForm.ImageForms.Bmp });
+            ImageFormItems.Add(new ImageForm { Name = "Tiff", Form = ImageForm.ImageForms.Tiff });
 
             SaveButtonCommand = new DelegateCommand(SaveButtonClicked);
         }
@@ -157,14 +146,14 @@ namespace PhotoViewer.ViewModels
         /// <param name="filePath">File path</param>
         public void SetEditFileData(string filePath)
         {
-            EditFilePath = filePath;
-            EditImage = ImageControl.CreatePictureEditViewThumbnail(EditFilePath);
+            editFilePath = filePath;
+            EditImage = ImageControl.CreatePictureEditViewThumbnail(editFilePath);
 
             // Release memory of Writable Bitmap.
             App.RunGC();
 
-            DecodedPictureSource = ImageControl.DecodePicture(EditFilePath);
-            ReadImageSize = new Size(DecodedPictureSource.PixelWidth, DecodedPictureSource.PixelHeight);
+            decodedPictureSource = ImageControl.DecodePicture(editFilePath);
+            readImageSize = new Size(decodedPictureSource.PixelWidth, decodedPictureSource.PixelHeight);
 
             // Release memory of Writable Bitmap.
             App.RunGC();
@@ -223,13 +212,13 @@ namespace PhotoViewer.ViewModels
             if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
             {
                 // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
-                scale = (double)ResizeCategoryItem.ResizelongSideValue / DecodedPictureSource.PixelWidth;
-                if (DecodedPictureSource.PixelWidth < DecodedPictureSource.PixelHeight)
+                scale = (double)ResizeCategoryItem.ResizelongSideValue / decodedPictureSource.PixelWidth;
+                if (decodedPictureSource.PixelWidth < decodedPictureSource.PixelHeight)
                 {
-                    scale = (double)ResizeCategoryItem.ResizelongSideValue / DecodedPictureSource.PixelHeight;
+                    scale = (double)ResizeCategoryItem.ResizelongSideValue / decodedPictureSource.PixelHeight;
                 }
             }
-            var scaledBitmapSource = new TransformedBitmap(DecodedPictureSource, new ScaleTransform(scale, scale));
+            var scaledBitmapSource = new TransformedBitmap(decodedPictureSource, new ScaleTransform(scale, scale));
 
             // Select the same encoder as the selected format.
             BitmapEncoder encoder = null;

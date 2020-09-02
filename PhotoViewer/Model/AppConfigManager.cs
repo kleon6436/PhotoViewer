@@ -12,10 +12,11 @@ namespace PhotoViewer.Model
         /// <summary>
         /// Data of application setting information.
         /// </summary>
-        public AppConfigData ConfigData { get; }
+        public AppConfigData ConfigData { get; private set; }
 
-        private readonly string appConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KcharyPhotoViewer\Setting.conf";
-        private static readonly AppConfigManager singleInstance = new AppConfigManager();
+        private static readonly string appConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KcharyPhotoViewer\Setting.conf";
+        private static readonly AppConfigManager singleInstance = new AppConfigManager { ConfigData = new AppConfigData() };
+        private static readonly AppConfigXml ConfigXmlObject = new AppConfigXml(appConfigFilePath);
 
         /// <summary>
         /// Get instance of application setting information class.
@@ -32,8 +33,7 @@ namespace PhotoViewer.Model
         {
             try
             {
-                var configXmlObject = new AppConfigXml(appConfigFilePath);
-                configXmlObject.Import(ConfigData);
+                ConfigXmlObject.Import(ConfigData);
             }
             catch (Exception ex)
             {
@@ -56,8 +56,7 @@ namespace PhotoViewer.Model
 
             try
             {
-                var configXmlObject = new AppConfigXml(appConfigFilePath);
-                configXmlObject.Export(ConfigData);
+                ConfigXmlObject.Export(ConfigData);
             }
             catch (Exception ex)
             {
@@ -82,11 +81,6 @@ namespace PhotoViewer.Model
         public void RemoveLinkageApp(List<ExtraAppSetting> linkageApplist)
         {
             ConfigData.LinkageAppList = linkageApplist;
-        }
-
-        private AppConfigManager()
-        {
-            ConfigData = new AppConfigData();
         }
     }
 }
