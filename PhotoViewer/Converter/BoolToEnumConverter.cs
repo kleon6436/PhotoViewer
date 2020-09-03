@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace PhotoViewer.Converter
+namespace Kchary.PhotoViewer.Converter
 {
     public sealed class BoolToEnumConverter : IValueConverter
     {

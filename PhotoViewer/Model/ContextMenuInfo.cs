@@ -1,7 +1,7 @@
 ﻿using Prism.Mvvm;
 using System.Windows.Media.Imaging;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     public sealed class ContextMenuInfo : BindableBase
     {

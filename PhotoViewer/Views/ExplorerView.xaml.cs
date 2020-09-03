@@ -1,10 +1,10 @@
-﻿using PhotoViewer.Model;
-using PhotoViewer.ViewModels;
+﻿using Kchary.PhotoViewer.Model;
+using Kchary.PhotoViewer.ViewModels;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace PhotoViewer.Views
+namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for ExplorerView.xaml

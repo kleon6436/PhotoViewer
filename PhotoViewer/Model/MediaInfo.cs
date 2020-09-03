@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     public sealed class MediaInfo : BindableBase
     {

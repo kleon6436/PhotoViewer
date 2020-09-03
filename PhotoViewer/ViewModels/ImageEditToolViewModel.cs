@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using PhotoViewer.Model;
+using Kchary.PhotoViewer.Model;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace PhotoViewer.ViewModels
+namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class ImageEditToolViewModel : BindableBase
     {

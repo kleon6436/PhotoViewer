@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// Management class of application setting information.

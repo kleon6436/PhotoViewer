@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace PhotoViewer.Views
+namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for SplashScreen.xaml

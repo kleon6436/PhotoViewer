@@ -1,5 +1,5 @@
-﻿using PhotoViewer.Model;
-using PhotoViewer.Views;
+﻿using Kchary.PhotoViewer.Model;
+using Kchary.PhotoViewer.Views;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -16,7 +16,7 @@ using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace PhotoViewer.ViewModels
+namespace Kchary.PhotoViewer.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {

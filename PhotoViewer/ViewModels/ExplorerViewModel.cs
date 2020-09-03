@@ -1,4 +1,4 @@
-﻿using PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Model;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
-namespace PhotoViewer.ViewModels
+namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class ExplorerViewModel : BindableBase
     {

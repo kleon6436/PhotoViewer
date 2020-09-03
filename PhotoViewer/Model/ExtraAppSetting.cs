@@ -1,6 +1,6 @@
 ﻿using Prism.Mvvm;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     public sealed class ExtraAppSetting : BindableBase
     {

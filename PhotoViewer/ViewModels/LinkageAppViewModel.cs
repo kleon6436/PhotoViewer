@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using PhotoViewer.Model;
+using Kchary.PhotoViewer.Model;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Input;
 
-namespace PhotoViewer.ViewModels
+namespace Kchary.PhotoViewer.ViewModels
 {
     public class LinkageAppViewModel : BindableBase
     {

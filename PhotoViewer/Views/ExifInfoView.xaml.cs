@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PhotoViewer.Views
+namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for ExifInfoView.xaml

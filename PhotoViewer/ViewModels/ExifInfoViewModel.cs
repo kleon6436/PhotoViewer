@@ -1,8 +1,8 @@
-﻿using PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Model;
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
 
-namespace PhotoViewer.ViewModels
+namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class ExifInfoViewModel : BindableBase
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     public sealed class ResizeImageCategory
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace PhotoViewer
+namespace Kchary.PhotoViewer
 {
     /// <summary>
     /// Interaction logic for App.xaml

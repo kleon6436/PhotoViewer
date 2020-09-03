@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// Wrapping class corresponding to memory leak of MemoryStream

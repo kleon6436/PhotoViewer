@@ -1,6 +1,6 @@
-﻿using PhotoViewer.Model;
-using PhotoViewer.ViewModels;
-using PhotoViewer.Views;
+﻿using Kchary.PhotoViewer.Model;
+using Kchary.PhotoViewer.ViewModels;
+using Kchary.PhotoViewer.Views;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 
-namespace PhotoViewer
+namespace Kchary.PhotoViewer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

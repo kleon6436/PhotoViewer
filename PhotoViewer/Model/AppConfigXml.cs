@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// XML management class of application setting information.

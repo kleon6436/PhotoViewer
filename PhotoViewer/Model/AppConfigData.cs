@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// Data class of application setting information

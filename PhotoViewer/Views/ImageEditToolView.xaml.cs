@@ -1,8 +1,8 @@
-﻿using PhotoViewer.Model;
-using PhotoViewer.ViewModels;
+﻿using Kchary.PhotoViewer.Model;
+using Kchary.PhotoViewer.ViewModels;
 using System.Windows;
 
-namespace PhotoViewer.Views
+namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for ExifDeleteToolView.xaml

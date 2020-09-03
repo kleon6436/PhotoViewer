@@ -10,6 +10,7 @@
     <AssemblyName>KcharyPhotoViewer</AssemblyName>
     <Version>2.2.0</Version>
     <Authors>Kchary</Authors>
+    <RootNamespace>Kchary.PhotoViewer</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -26,6 +27,7 @@
     <ErrorReport>none</ErrorReport>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
