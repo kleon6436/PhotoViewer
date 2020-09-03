@@ -149,9 +149,6 @@ namespace Kchary.PhotoViewer.ViewModels
             editFilePath = filePath;
             EditImage = ImageControl.CreatePictureEditViewThumbnail(editFilePath);
 
-            // Release memory of Writable Bitmap.
-            App.RunGC();
-
             decodedPictureSource = ImageControl.DecodePicture(editFilePath);
             readImageSize = new Size(decodedPictureSource.PixelWidth, decodedPictureSource.PixelHeight);
 
@@ -159,9 +156,9 @@ namespace Kchary.PhotoViewer.ViewModels
             App.RunGC();
 
             // Set each initial value.
-            ResizeCategoryItem = ResizeCategoryItems.First();
-            SelectedQuality = ImageSaveQualityItems.First();
-            SelectedForm = ImageFormItems.First();
+            ResizeCategoryItem = ResizeCategoryItems[0];
+            SelectedQuality = ImageSaveQualityItems[0];
+            SelectedForm = ImageFormItems[0];
             IsEnableImageSaveQuality = true;
         }
 

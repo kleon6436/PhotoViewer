@@ -486,7 +486,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 StopContentsWorker();
                 if (SelectedMedia == null && MediaInfoList.Any())
                 {
-                    SelectedMedia = MediaInfoList.First();
+                    SelectedMedia = MediaInfoList[0];
                 }
             }
         }
@@ -555,15 +555,15 @@ namespace Kchary.PhotoViewer.ViewModels
                     readyFiles.Clear();
                     App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
                 }
-
-                // Collection of unnecessary memory.
-                App.RunGC();
             }
 
             if (readyFiles.Any())
             {
                 App.Current.Dispatcher.Invoke((Action)(() => { foreach (var readyFile in readyFiles) MediaInfoList.Add(readyFile); }));
             }
+
+            // Collection of unnecessary memory.
+            App.RunGC();
         }
 
         /// <summary>
