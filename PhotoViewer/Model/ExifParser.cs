@@ -93,7 +93,7 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static List<ExifInfo> GetImageWidthAndHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            List<ExifInfo> imageWidthAndHeightInfo = new List<ExifInfo>();
+            var imageWidthAndHeightInfo = new List<ExifInfo>();
 
             // 幅
             string propertyValue = objFolder.GetDetailsOf(folderItem, 176);
@@ -113,7 +113,7 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static List<ExifInfo> GetImageResolutionWidthAndHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            List<ExifInfo> imageResolutionInfo = new List<ExifInfo>();
+            var imageResolutionInfo = new List<ExifInfo>();
 
             // 水平解像度
             string propertyValue = objFolder.GetDetailsOf(folderItem, 175);
@@ -143,7 +143,7 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static List<ExifInfo> GetFnumberAndShutterSpeed(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            List<ExifInfo> shutterSpeedAndApertureInfo = new List<ExifInfo>();
+            var shutterSpeedAndApertureInfo = new List<ExifInfo>();
 
             // シャッター速度
             string propertyValue = objFolder.GetDetailsOf(folderItem, 259);
@@ -183,7 +183,7 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static List<ExifInfo> GetExposeModeAndWhiteBlance(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            List<ExifInfo> exposeModeAndWhiteBlanceInfo = new List<ExifInfo>();
+            var exposeModeAndWhiteBlanceInfo = new List<ExifInfo>();
 
             // 露出プログラム
             string propertyValue = objFolder.GetDetailsOf(folderItem, 258);

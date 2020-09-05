@@ -498,7 +498,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="e">Argument</param>
         private void LoadContentsWorker(object sender, DoWorkEventArgs e)
         {
-            List<string> filePaths = new List<string>();
+            var filePaths = new LinkedList<string>();
             int tick = Environment.TickCount;
 
             // Get all supported files in selected folder.
@@ -511,14 +511,18 @@ namespace Kchary.PhotoViewer.ViewModels
                     return;
                 }
 
-                filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToArray());
+                var supportFiles = Directory.GetFiles(SelectFolderPath, "*" + supportExtension);
+                foreach (var supportFile in supportFiles)
+                {
+                    filePaths.AddLast(supportFile);
+                }
             }
 
             // Sort the order by name.
-            filePaths = filePaths.OrderBy(Path.GetFileName).ToList();
+            var sortFilePaths = filePaths.OrderBy(Path.GetFileName);
 
             var readyFiles = new Queue<MediaInfo>();
-            foreach (var filePath in filePaths)
+            foreach (var filePath in sortFilePaths)
             {
                 var worker = sender as BackgroundWorker;
                 if (worker.CancellationPending)

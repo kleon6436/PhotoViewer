@@ -47,7 +47,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="driveList"></param>
         public void CreateDriveTreeItem()
         {
-            List<DriveInfo> allDriveList = DriveInfo.GetDrives().ToList();
+            var allDriveList = DriveInfo.GetDrives();
 
             foreach (var drive in allDriveList)
             {
@@ -64,7 +64,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public void ExpandPreviousPath(string previousFolderPath)
         {
-            List<string> parentPathList = new List<string>();
+            var parentPathList = new List<string>();
 
             GetAllParentPathList(previousFolderPath, parentPathList);
             parentPathList.Reverse();
@@ -136,7 +136,7 @@ namespace Kchary.PhotoViewer.ViewModels
         private ExplorerItem GetDirectoryItem(string parentPath, ExplorerItem previousItem)
         {
             string previousDirectory = parentPath;
-            List<ExplorerItem> explorerItemList = new List<ExplorerItem>();
+            var explorerItemList = new List<ExplorerItem>();
             explorerItemList.AddRange(previousItem.Items.OfType<ExplorerItem>());
 
             return explorerItemList.Where(item => item.ExplorerItemPath == previousDirectory).First();

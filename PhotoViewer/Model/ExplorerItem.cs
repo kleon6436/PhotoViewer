@@ -103,8 +103,7 @@ namespace Kchary.PhotoViewer.Model
             Items.Clear();
 
             // Regenerate the directory order by rearranging it in natural order.
-            List<DirectoryInfo> sortDirectoryInfos = innerDirectory.GetDirectories().ToList();
-            sortDirectoryInfos = new List<DirectoryInfo>(sortDirectoryInfos.OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer()));
+            var sortDirectoryInfos = innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer());
 
             foreach (var directory in sortDirectoryInfos)
             {
