@@ -138,7 +138,7 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             // Read setting information.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 foreach (var linkageApp in linkageAppList)
@@ -176,7 +176,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public void ExecuteContextMenu(string appName)
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (!linkageAppList.Any(x => x.AppName == appName))
             {
                 return;
@@ -186,7 +186,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                string appPath = Array.Find(linkageAppList, x => x.AppName == appName).AppPath;
+                string appPath = linkageAppList.Find(x => x.AppName == appName).AppPath;
                 Process.Start(appPath, SelectedMedia.FilePath);
             }
             catch (Exception ex)
@@ -339,7 +339,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // Reload the information related to the linked application from the setting information.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 foreach (var linkageApp in linkageAppList)

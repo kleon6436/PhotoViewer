@@ -48,7 +48,7 @@ namespace Kchary.PhotoViewer.ViewModels
             DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 LinkageAppList.Clear();
