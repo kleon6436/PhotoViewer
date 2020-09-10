@@ -37,6 +37,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\Bluetooth.png" />
     <None Remove="Images\DeleteIcon.png" />
     <None Remove="Images\ExifCleanIcon.png" />
     <None Remove="Images\Folder_open.png" />
@@ -64,6 +65,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\Bluetooth.png" />
     <Resource Include="Images\PhotoExifViewerIcon.ico">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

@@ -92,6 +92,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
         #region Command
 
+        public ICommand BluetoothButtonCommand { get; private set; }
         public ICommand OpenFolderButtonCommand { get; private set; }
         public ICommand ReloadButtonCommand { get; private set; }
         public ICommand SettingButtonCommand { get; private set; }
@@ -114,6 +115,7 @@ namespace Kchary.PhotoViewer.ViewModels
             IsEnableImageEditButton = false;
 
             // Set command.
+            BluetoothButtonCommand = new DelegateCommand(BluetoothButtonClicked);
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
             ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
             SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
@@ -247,6 +249,23 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.Import();
+        }
+
+        private void BluetoothButtonClicked()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                Process.Start("fsquirt.exe", "-send");
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         /// <summary>
