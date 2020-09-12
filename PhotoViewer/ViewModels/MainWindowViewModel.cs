@@ -280,9 +280,20 @@ namespace Kchary.PhotoViewer.ViewModels
 
             try
             {
-                const string Explorer = "EXPLORER.EXE";
                 Mouse.OverrideCursor = Cursors.Wait;
-                Process.Start(Explorer, SelectFolderPath);
+
+                string selectPath;
+                if ((File.GetAttributes(SelectFolderPath) & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    selectPath = SelectFolderPath;
+                }
+                else
+                {
+                    selectPath = Path.GetDirectoryName(SelectFolderPath);
+                }
+
+                const string Explorer = "EXPLORER.EXE";
+                Process.Start(Explorer, selectPath);
             }
             catch (Exception ex)
             {
@@ -299,12 +310,20 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void ReloadButtonClicked()
         {
+            // Clear picture image view source.
             if (PictureImageSource != null)
             {
                 PictureImageSource = null;
             }
 
+            // Update image edit button status.
             IsEnableImageEditButton = false;
+
+            // If the file path is displayed, change it to the directory path and read it.
+            if ((File.GetAttributes(SelectFolderPath) & FileAttributes.Directory) != FileAttributes.Directory)
+            {
+                SelectFolderPath = Path.GetDirectoryName(SelectFolderPath);
+            }
             UpdateContents();
         }
 
@@ -620,6 +639,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 // Set exif information.
                 ExifInfoViewModel.SetExif(mediaInfo.FilePath);
 
+                // Update image edit button status.
                 if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(mediaInfo.FilePath).ToLower()))
                 {
                     IsEnableImageEditButton = true;
@@ -628,6 +648,9 @@ namespace Kchary.PhotoViewer.ViewModels
                 {
                     IsEnableImageEditButton = false;
                 }
+
+                // Update select path.
+                SelectFolderPath = mediaInfo.FilePath;
 
                 return true;
             }
