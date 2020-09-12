@@ -78,7 +78,7 @@
 
                 <StackPanel Grid.Row="0" Margin="5,0" Orientation="Horizontal">
                     <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="フォルダパス：" FontWeight="Medium" IsHitTestVisible="True" />
-                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath, Mode=OneWay}" IsHitTestVisible="True" />
+                    <TextBox FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath, Mode=OneWay}" IsReadOnly="True" Background="Transparent" BorderThickness="0" IsHitTestVisible="True" />
                 </StackPanel>
 
                 <Border Grid.Row="1" BorderBrush="DarkGray" BorderThickness="0,1,0,1">
