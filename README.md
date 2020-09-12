@@ -9,7 +9,7 @@
 ## アプリ概要
 Windows用のKchary作成PhotoViewerです。技術力が上がってきたので、前回のものをリメイクしています。
 
-Windows 10 1903以降の対応です。RawImageExtensionのインストールが必須になります。
+Windows 10 1903以降の対応で、RawImageExtension、および、NikonのNEF Codecのインストールが必須である。https://downloadcenter.nikonimglib.com/ja/products/170/NEF_Codec.html
 
 Exif情報と写真閲覧、Exif情報の削除などが行えます。
 
