@@ -261,6 +261,7 @@ namespace Kchary.PhotoViewer.ViewModels
             catch (Exception ex)
             {
                 App.LogException(ex);
+                App.ShowErrorMessageBox("Bluetooth送信に対応していません。", "Bluetooth送信エラー");
             }
             finally
             {
