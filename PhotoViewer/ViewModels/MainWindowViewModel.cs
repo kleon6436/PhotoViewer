@@ -655,6 +655,14 @@ namespace Kchary.PhotoViewer.ViewModels
 
                 return true;
             }
+            catch (IOException)
+            {
+                const string FileAccessErrorMessage = "ファイル読み込み中です。少し待ってから再度読み込みしてください。";
+                const string FileAccessErrorTitle = "ファイルアクセスエラー";
+                App.ShowErrorMessageBox(FileAccessErrorMessage, FileAccessErrorTitle);
+
+                return false;
+            }
             catch (Exception ex)
             {
                 App.LogException(ex);
