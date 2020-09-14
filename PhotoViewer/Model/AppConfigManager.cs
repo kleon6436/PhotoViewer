@@ -14,7 +14,7 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         public AppConfigData ConfigData { get; private set; }
 
-        private static readonly string appConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KcharyPhotoViewer\Setting.conf";
+        private static readonly string appConfigFilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KcharyPhotoViewer\\Setting.conf";
         private static readonly AppConfigManager singleInstance = new AppConfigManager { ConfigData = new AppConfigData() };
         private static readonly AppConfigXml ConfigXmlObject = new AppConfigXml(appConfigFilePath);
 

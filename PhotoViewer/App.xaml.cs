@@ -27,7 +27,7 @@ namespace Kchary.PhotoViewer
             [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
         {
-            Console.WriteLine("ERROR -> " + ex.Message + ", LineNumber:" + callerLineNumber + ", FilePath:" + callerFilePath);
+            Console.WriteLine($"ERROR -> {ex.Message}, LineNumber: {callerLineNumber}, FilePath: {callerFilePath}");
         }
 
         /// <summary>

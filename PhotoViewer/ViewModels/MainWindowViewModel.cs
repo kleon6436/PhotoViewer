@@ -550,7 +550,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     return;
                 }
 
-                var supportFiles = Directory.GetFiles(SelectFolderPath, "*" + supportExtension);
+                var supportFiles = Directory.GetFiles(SelectFolderPath, $"*{supportExtension}");
                 foreach (var supportFile in supportFiles)
                 {
                     filePaths.AddLast(supportFile);
