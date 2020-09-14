@@ -76,7 +76,7 @@ namespace Kchary.PhotoViewer.Model
         private void ParsePreviousPathXml(XDocument xdoc, AppConfigData configData)
         {
             var dataElement = xdoc.Root.Element(PREVIOUS_FOLDER_ELEM_NAME);
-            XElement previousPath = dataElement.Element(PREVIOUS_PATH_ELEM_NAME);
+            var previousPath = dataElement.Element(PREVIOUS_PATH_ELEM_NAME);
 
             configData.PreviousFolderPath = previousPath.Value;
         }
@@ -114,8 +114,8 @@ namespace Kchary.PhotoViewer.Model
 
             foreach (var dataElement in dataElements)
             {
-                XElement appNameElement = dataElement.Element(LINK_APP_NAME_ELEM_NAME);
-                XElement appPathElement = dataElement.Element(LINK_APP_PATH_ELEM_NAME);
+                var appNameElement = dataElement.Element(LINK_APP_NAME_ELEM_NAME);
+                var appPathElement = dataElement.Element(LINK_APP_PATH_ELEM_NAME);
 
                 if (!string.IsNullOrEmpty(appNameElement.Value) && !string.IsNullOrEmpty(appPathElement.Value))
                 {

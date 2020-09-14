@@ -67,13 +67,13 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>Stack panel settings shown in TreeView.</returns>
         private StackPanel CreateExplorerItemHeader(string path, bool isDrive)
         {
-            StackPanel stackpanel = new StackPanel()
+            var stackpanel = new StackPanel()
             {
                 Orientation = Orientation.Horizontal
             };
 
             // Generate Icon.
-            BitmapSource iconSource = CreateTreeIcon(isDrive);
+            var iconSource = CreateTreeIcon(isDrive);
 
             stackpanel.Children.Add(new Image()
             {
@@ -129,12 +129,12 @@ namespace Kchary.PhotoViewer.Model
         {
             if (isDrive)
             {
-                BitmapSource iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_DRIVEFIXED);
+                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_DRIVEFIXED);
                 return iconImage;
             }
             else
             {
-                BitmapSource iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_FOLDER);
+                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_FOLDER);
                 return iconImage;
             }
         }

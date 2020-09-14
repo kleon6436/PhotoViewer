@@ -202,10 +202,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            string saveFilePath = dialog.FileName;
+            var saveFilePath = dialog.FileName;
 
             // Create a scaled bitmap.
-            double scale = 1; // No scaling
+            var scale = 1.0; // No scaling
             if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
             {
                 // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).

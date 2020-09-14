@@ -45,14 +45,14 @@ namespace Kchary.PhotoViewer.Model
             // Reset stream position and decode image.
             ms.Seek(0, SeekOrigin.Begin);
 
-            int maxViewWidth = 2200;
-            int maxViewHeight = 1650;
+            var maxViewWidth = 2200;
+            var maxViewHeight = 1650;
 
             // Check the rotation information and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
-            uint rotation = GetRotation(metaData);
+            var rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
-                int tmp = maxViewWidth;
+                var tmp = maxViewWidth;
                 maxViewWidth = maxViewHeight;
                 maxViewHeight = tmp;
             }
@@ -94,14 +94,14 @@ namespace Kchary.PhotoViewer.Model
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
             var thumbnailImage = bitmapFrame.Thumbnail;
 
-            int maxScaledWidth = 100;
-            int maxScaledHeight = 75;
+            var maxScaledWidth = 100;
+            var maxScaledHeight = 75;
 
             // Check the rotation information, and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
-            uint rotation = GetRotation(metaData);
+            var rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
-                int tmp = maxScaledWidth;
+                var tmp = maxScaledWidth;
                 maxScaledWidth = maxScaledHeight;
                 maxScaledHeight = tmp;
             }
@@ -153,14 +153,14 @@ namespace Kchary.PhotoViewer.Model
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
             var thumbnailImage = bitmapFrame.Thumbnail;
 
-            int maxScaledWidth = 400;
-            int maxScaledHeight = 300;
+            var maxScaledWidth = 400;
+            var maxScaledHeight = 300;
 
             // Check the rotation information, and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
-            uint rotation = GetRotation(metaData);
+            var rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
-                int tmp = maxScaledWidth;
+                var tmp = maxScaledWidth;
                 maxScaledWidth = maxScaledHeight;
                 maxScaledHeight = tmp;
             }
@@ -205,7 +205,7 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>BitmapSource</returns>
         public static BitmapSource RotateImage(BitmapMetadata metaData, BitmapSource image)
         {
-            uint rotation = GetRotation(metaData);
+            var rotation = GetRotation(metaData);
 
             return rotation switch
             {

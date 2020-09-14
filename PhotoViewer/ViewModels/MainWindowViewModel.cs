@@ -22,8 +22,8 @@ namespace Kchary.PhotoViewer.ViewModels
     {
         #region ViewModels
 
-        public ExplorerViewModel ExplorerViewModel { get; set; }
-        public ExifInfoViewModel ExifInfoViewModel { get; set; }
+        public ExplorerViewModel ExplorerViewModel { get; }
+        public ExifInfoViewModel ExifInfoViewModel { get; }
 
         #endregion ViewModels
 
@@ -538,7 +538,7 @@ namespace Kchary.PhotoViewer.ViewModels
         private void LoadContentsWorker(object sender, DoWorkEventArgs e)
         {
             var filePaths = new LinkedList<string>();
-            int tick = Environment.TickCount;
+            var tick = Environment.TickCount;
 
             // Get all supported files in selected folder.
             foreach (string supportExtension in MediaChecker.GetSupportExtentions())
@@ -587,11 +587,11 @@ namespace Kchary.PhotoViewer.ViewModels
                     continue;
                 }
 
-                int count = 0;
+                var count = 0;
                 readyFiles.Enqueue(mediaInfo);
                 count++;
 
-                int duration = Environment.TickCount - tick;
+                var duration = Environment.TickCount - tick;
                 if ((count <= 100 && duration > 500) || duration > 1000)
                 {
                     var readyList = readyFiles.ToArray();

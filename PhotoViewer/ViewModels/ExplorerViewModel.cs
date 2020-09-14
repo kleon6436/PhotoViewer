@@ -69,7 +69,7 @@ namespace Kchary.PhotoViewer.ViewModels
             GetAllParentPathList(previousFolderPath, parentPathList);
             parentPathList.Reverse();
 
-            int count = 0;
+            var count = 0;
             ExplorerItem previousItem = null;
 
             foreach (var parentPath in parentPathList)

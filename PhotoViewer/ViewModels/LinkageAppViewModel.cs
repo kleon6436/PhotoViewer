@@ -61,7 +61,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void LinkAppReferenceButtonClicked()
         {
-            string previousLinkAppPath = LinkAppPath;
+            var previousLinkAppPath = LinkAppPath;
 
             const string DialogTitle = "連携アプリ選択ダイアログ";
             const string DialogDefaultExt = ".exe";

@@ -11,9 +11,9 @@ namespace Kchary.PhotoViewer.Model
         public static List<ExifInfo> GetExifDataFromFile(string filePath)
         {
             var _ = new FileInfo(filePath);
-            Shell32.Shell shell = new Shell32.Shell();
-            Shell32.Folder objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
-            Shell32.FolderItem folderItem = objFolder.ParseName(Path.GetFileName(filePath));
+            var shell = new Shell32.Shell();
+            var objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
+            var folderItem = objFolder.ParseName(Path.GetFileName(filePath));
 
             var exifInfos = new List<ExifInfo>
             {
@@ -53,8 +53,8 @@ namespace Kchary.PhotoViewer.Model
         /// <param name="filePath">filePath</param>
         private static ExifInfo GetFileName(string filePath)
         {
-            string propertyValue = Path.GetFileName(filePath);
-            string propertyText = "ファイル名";
+            var propertyValue = Path.GetFileName(filePath);
+            var propertyText = "ファイル名";
             return new ExifInfo(propertyText, propertyValue);
         }
 
@@ -63,8 +63,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static ExifInfo GetMediaDate(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 3);
-            string propertyText = "撮影日時";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 3);
+            var propertyText = "撮影日時";
             return new ExifInfo(propertyText, propertyValue);
         }
 
@@ -73,8 +73,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static ExifInfo GetCameraModel(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 30);
-            string propertyText = "カメラモデル";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 30);
+            var propertyText = "カメラモデル";
             return new ExifInfo(propertyText, propertyValue);
         }
 
@@ -83,8 +83,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static ExifInfo GetCameraManufacturer(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 32);
-            string propertyText = "カメラ製造元";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 32);
+            var propertyText = "カメラ製造元";
             return new ExifInfo(propertyText, propertyValue);
         }
 
@@ -96,8 +96,8 @@ namespace Kchary.PhotoViewer.Model
             var imageWidthAndHeightInfo = new List<ExifInfo>();
 
             // 幅
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 176);
-            string propertyText = "幅";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 176);
+            var propertyText = "幅";
             imageWidthAndHeightInfo.Add(new ExifInfo(propertyText, propertyValue));
 
             // 高さ
@@ -116,8 +116,8 @@ namespace Kchary.PhotoViewer.Model
             var imageResolutionInfo = new List<ExifInfo>();
 
             // 水平解像度
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 175);
-            string propertyText = "水平解像度";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 175);
+            var propertyText = "水平解像度";
             imageResolutionInfo.Add(new ExifInfo(propertyText, propertyValue));
 
             // 垂直解像度
@@ -133,8 +133,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static ExifInfo GetBitDepth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 174);
-            string propertyText = "ビット深度";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 174);
+            var propertyText = "ビット深度";
             return new ExifInfo(propertyText, propertyValue);
         }
 
@@ -146,8 +146,8 @@ namespace Kchary.PhotoViewer.Model
             var shutterSpeedAndApertureInfo = new List<ExifInfo>();
 
             // シャッター速度
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 259);
-            string propertyText = "シャッター速度";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 259);
+            var propertyText = "シャッター速度";
             shutterSpeedAndApertureInfo.Add(new ExifInfo(propertyText, propertyValue));
 
             // 絞り値
@@ -163,8 +163,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static ExifInfo GetISO(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 264);
-            string propertyText = "ISO";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 264);
+            var propertyText = "ISO";
             return new ExifInfo(propertyText, propertyValue);
         }
 
@@ -173,8 +173,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static ExifInfo GetFocusLength(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 262);
-            string propertyText = "焦点距離";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 262);
+            var propertyText = "焦点距離";
             return new ExifInfo(propertyText, propertyValue);
         }
 
@@ -186,8 +186,8 @@ namespace Kchary.PhotoViewer.Model
             var exposeModeAndWhiteBlanceInfo = new List<ExifInfo>();
 
             // 露出プログラム
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 258);
-            string propertyText = "露出プログラム";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 258);
+            var propertyText = "露出プログラム";
             exposeModeAndWhiteBlanceInfo.Add(new ExifInfo(propertyText, propertyValue));
 
             // ホワイトバランス
@@ -203,8 +203,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private static ExifInfo GetMeteringMode(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            string propertyValue = objFolder.GetDetailsOf(folderItem, 269);
-            string propertyText = "測光モード";
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 269);
+            var propertyText = "測光モード";
             return new ExifInfo(propertyText, propertyValue);
         }
     }
