@@ -1,5 +1,5 @@
-﻿using Microsoft.Win32;
-using Kchary.PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Model;
+using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -12,7 +12,7 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public class LinkageAppViewModel : BindableBase
     {
-        private const int MAX_LINK_APP_NUM = 10;
+        private const int MaxLinkAppNum = 10;
 
         #region UI binding parameter
 
@@ -95,7 +95,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void RegisterLinkAppButtonClicked()
         {
-            if (LinkageAppList.Count > MAX_LINK_APP_NUM)
+            if (LinkageAppList.Count > MaxLinkAppNum)
             {
                 return;
             }
@@ -110,7 +110,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // Export information to Config file.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.SetLinkageApp(LinkageAppList.ToList());
+            appConfigManager.SetLinkageApp(LinkageAppList);
             appConfigManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
@@ -122,7 +122,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void DeleteLinkAppButtonClicked(ExtraAppSetting deleteAppSetting)
         {
-            if (LinkageAppList == null || LinkageAppList.Count == 0 || deleteAppSetting == null)
+            if (LinkageAppList == null || !LinkageAppList.Any() || deleteAppSetting == null)
             {
                 return;
             }
@@ -133,7 +133,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
                 // Export information to config file.
                 AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-                appConfigManager.RemoveLinkageApp(LinkageAppList.ToList());
+                appConfigManager.RemoveLinkageApp(LinkageAppList);
                 appConfigManager.Export();
 
                 ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);

@@ -230,16 +230,14 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <returns>Run thread: False, Not run thread: True</returns>
         public bool StopThreadAndTask()
         {
-            bool CanClose = true;
-
             // Cancel notification if content loading thread is running
             if (loadContentsBackgroundWorker != null && loadContentsBackgroundWorker.IsBusy)
             {
                 loadContentsBackgroundWorker.CancelAsync();
-                CanClose = false;
+                return false;
             }
 
-            return CanClose;
+            return true;
         }
 
         /// <summary>

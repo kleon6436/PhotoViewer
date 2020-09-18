@@ -1,11 +1,10 @@
-﻿using Microsoft.Win32;
-using Kchary.PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Model;
+using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -30,7 +29,7 @@ namespace Kchary.PhotoViewer.ViewModels
             get { return Path.GetFileName(editFilePath); }
         }
 
-        public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; } = new ObservableCollection<ResizeImageCategory>();
+        public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; }
 
         private ResizeImageCategory resizeCategoryItem;
 
@@ -74,7 +73,7 @@ namespace Kchary.PhotoViewer.ViewModels
             set { SetProperty(ref isEnableImageSaveQuality, value); }
         }
 
-        public ObservableCollection<ImageQuality> ImageSaveQualityItems { get; } = new ObservableCollection<ImageQuality>();
+        public ObservableCollection<ImageQuality> ImageSaveQualityItems { get; }
 
         private ImageQuality selectedQuality;
 
@@ -84,7 +83,7 @@ namespace Kchary.PhotoViewer.ViewModels
             set { SetProperty(ref selectedQuality, value); }
         }
 
-        public ObservableCollection<ImageForm> ImageFormItems { get; } = new ObservableCollection<ImageForm>();
+        public ObservableCollection<ImageForm> ImageFormItems { get; }
 
         private ImageForm selectedForm;
 
@@ -123,19 +122,28 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public ImageEditToolViewModel()
         {
-            ResizeCategoryItems.Add(new ResizeImageCategory("リサイズなし", ResizeImageCategory.ResizeCategory.None));
-            ResizeCategoryItems.Add(new ResizeImageCategory("印刷向け", ResizeImageCategory.ResizeCategory.Print));
-            ResizeCategoryItems.Add(new ResizeImageCategory("ブログ向け", ResizeImageCategory.ResizeCategory.Blog));
-            ResizeCategoryItems.Add(new ResizeImageCategory("SNS向け", ResizeImageCategory.ResizeCategory.Twitter));
+            ResizeCategoryItems = new ObservableCollection<ResizeImageCategory>
+            {
+                new ResizeImageCategory("リサイズなし", ResizeImageCategory.ResizeCategory.None),
+                new ResizeImageCategory("印刷向け", ResizeImageCategory.ResizeCategory.Print),
+                new ResizeImageCategory("ブログ向け", ResizeImageCategory.ResizeCategory.Blog),
+                new ResizeImageCategory("SNS向け", ResizeImageCategory.ResizeCategory.Twitter)
+            };
 
-            ImageSaveQualityItems.Add(new ImageQuality { Name = "高画質", QualityValue = 90 });
-            ImageSaveQualityItems.Add(new ImageQuality { Name = "標準", QualityValue = 80 });
-            ImageSaveQualityItems.Add(new ImageQuality { Name = "低画質", QualityValue = 60 });
+            ImageSaveQualityItems = new ObservableCollection<ImageQuality>
+            {
+                new ImageQuality { Name = "高画質", QualityValue = 90 },
+                new ImageQuality { Name = "標準", QualityValue = 80 },
+                new ImageQuality { Name = "低画質", QualityValue = 60 }
+            };
 
-            ImageFormItems.Add(new ImageForm { Name = "Jpeg", Form = ImageForm.ImageForms.Jpeg });
-            ImageFormItems.Add(new ImageForm { Name = "Png", Form = ImageForm.ImageForms.Png });
-            ImageFormItems.Add(new ImageForm { Name = "Bmp", Form = ImageForm.ImageForms.Bmp });
-            ImageFormItems.Add(new ImageForm { Name = "Tiff", Form = ImageForm.ImageForms.Tiff });
+            ImageFormItems = new ObservableCollection<ImageForm>
+            {
+                new ImageForm { Name = "Jpeg", Form = ImageForm.ImageForms.Jpeg },
+                new ImageForm { Name = "Png", Form = ImageForm.ImageForms.Png },
+                new ImageForm { Name = "Bmp", Form = ImageForm.ImageForms.Bmp },
+                new ImageForm { Name = "Tiff", Form = ImageForm.ImageForms.Tiff }
+            };
 
             SaveButtonCommand = new DelegateCommand(SaveButtonClicked);
         }
