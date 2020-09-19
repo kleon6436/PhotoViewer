@@ -124,10 +124,10 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ResizeCategoryItems = new ObservableCollection<ResizeImageCategory>
             {
-                new ResizeImageCategory("リサイズなし", ResizeImageCategory.ResizeCategory.None),
-                new ResizeImageCategory("印刷向け", ResizeImageCategory.ResizeCategory.Print),
-                new ResizeImageCategory("ブログ向け", ResizeImageCategory.ResizeCategory.Blog),
-                new ResizeImageCategory("SNS向け", ResizeImageCategory.ResizeCategory.Twitter)
+                new ResizeImageCategory{ Name = "リサイズなし", Category = ResizeImageCategory.ResizeCategory.None },
+                new ResizeImageCategory{ Name = "印刷向け", Category = ResizeImageCategory.ResizeCategory.Print, ResizelongSideValue = 2500 },
+                new ResizeImageCategory{ Name = "ブログ向け", Category = ResizeImageCategory.ResizeCategory.Blog, ResizelongSideValue = 1500 },
+                new ResizeImageCategory{ Name = "SNS向け", Category = ResizeImageCategory.ResizeCategory.Twitter, ResizelongSideValue = 1000 }
             };
 
             ImageSaveQualityItems = new ObservableCollection<ImageQuality>

@@ -108,12 +108,6 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public MainWindowViewModel()
         {
-            MediaInfoList.Clear();
-            ContextMenuCollection.Clear();
-            PictureImageSource = null;
-            IsShowContextMenu = false;
-            IsEnableImageEditButton = false;
-
             // Set command.
             BluetoothButtonCommand = new DelegateCommand(BluetoothButtonClicked);
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
