@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <PackageIcon>PhotoExifViewerIcon.ico</PackageIcon>
     <Platforms>AnyCPU;x64;x86</Platforms>
@@ -21,6 +21,7 @@
     <ErrorReport>none</ErrorReport>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -34,6 +35,7 @@
     <ErrorReport>none</ErrorReport>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
