@@ -97,6 +97,9 @@ namespace Kchary.PhotoViewer
             {
                 mediaListBox.ScrollIntoView(selectedItem);
             }
+
+            // Run GC.
+            App.RunGC();
         }
 
         /// <summary>

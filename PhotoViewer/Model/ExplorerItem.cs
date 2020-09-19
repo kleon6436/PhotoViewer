@@ -186,7 +186,7 @@ namespace Kchary.PhotoViewer.Model
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             // Reload.
-            App.Current.Dispatcher.Invoke((Action)(() =>
+            Application.Current.Dispatcher.Invoke((Action)(() =>
             {
                 UpdateDirectoryTree();
             }));

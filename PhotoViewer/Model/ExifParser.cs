@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.IO;
 
 namespace Kchary.PhotoViewer.Model
@@ -8,6 +9,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Set exif data in MediaInfo.
         /// </summary>
+        [STAThread]
         public static List<ExifInfo> GetExifDataFromFile(string filePath)
         {
             var _ = new FileInfo(filePath);

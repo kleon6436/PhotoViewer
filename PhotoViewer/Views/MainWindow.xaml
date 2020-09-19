@@ -85,7 +85,7 @@
                     <ListView x:Name="mediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneWay}" SelectedItem="{Binding SelectedMedia, Mode=TwoWay}" SelectionChanged="MediaListBox_SelectionChanged"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
                              ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
-                             VerticalContentAlignment="Center" HorizontalContentAlignment="Center" BorderBrush="{x:Null}"
+                             BorderBrush="{x:Null}"
                              VirtualizingPanel.ScrollUnit="Item" VirtualizingPanel.CacheLengthUnit="Page" VirtualizingPanel.CacheLength="2"
                              VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                         <ListView.Resources>

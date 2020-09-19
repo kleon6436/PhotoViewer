@@ -337,7 +337,7 @@ namespace Kchary.PhotoViewer.ViewModels
             var settingDialog = new SettingView
             {
                 DataContext = vm,
-                Owner = App.Current.MainWindow
+                Owner = Application.Current.MainWindow
             };
             settingDialog.ShowDialog();
         }
@@ -358,7 +358,7 @@ namespace Kchary.PhotoViewer.ViewModels
             var imageEditToolDialog = new ImageEditToolView
             {
                 DataContext = vm,
-                Owner = App.Current.MainWindow
+                Owner = Application.Current.MainWindow
             };
             imageEditToolDialog.ShowDialog();
         }
@@ -511,7 +511,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 if (isReloadContents)
                 {
                     // Reload after loading the asynchronously loaded content list.
-                    App.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    Application.Current.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         UpdateContents();
                         isReloadContents = false;
@@ -555,11 +555,8 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
             }
 
-            // Sort the order by name.
-            var sortFilePaths = filePaths.OrderBy(Path.GetFileName);
-
             var readyFiles = new Queue<MediaInfo>();
-            foreach (var filePath in sortFilePaths)
+            foreach (var filePath in filePaths.OrderBy(Path.GetFileName))
             {
                 var worker = sender as BackgroundWorker;
                 if (worker.CancellationPending)
@@ -594,13 +591,13 @@ namespace Kchary.PhotoViewer.ViewModels
                 {
                     var readyList = readyFiles.ToArray();
                     readyFiles.Clear();
-                    App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
+                    Application.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
                 }
             }
 
             if (readyFiles.Any())
             {
-                App.Current.Dispatcher.Invoke((Action)(() => { foreach (var readyFile in readyFiles) MediaInfoList.Add(readyFile); }));
+                Application.Current.Dispatcher.Invoke((Action)(() => { foreach (var readyFile in readyFiles) MediaInfoList.Add(readyFile); }));
             }
 
             // Collection of unnecessary memory.
@@ -632,9 +629,6 @@ namespace Kchary.PhotoViewer.ViewModels
                 // Create display image.
                 PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath);
 
-                // Memory release of Writable Bitmap.
-                App.RunGC();
-
                 // Set exif information.
                 ExifInfoViewModel.SetExif(mediaInfo.FilePath);
 
@@ -650,6 +644,9 @@ namespace Kchary.PhotoViewer.ViewModels
 
                 // Update select path.
                 SelectFolderPath = mediaInfo.FilePath;
+
+                // Memory release of Writable Bitmap.
+                App.RunGC();
 
                 return true;
             }
