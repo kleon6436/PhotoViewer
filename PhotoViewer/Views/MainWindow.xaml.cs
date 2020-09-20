@@ -1,6 +1,6 @@
-﻿using PhotoViewer.Model;
-using PhotoViewer.ViewModels;
-using PhotoViewer.Views;
+﻿using Kchary.PhotoViewer.Model;
+using Kchary.PhotoViewer.ViewModels;
+using Kchary.PhotoViewer.Views;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 
-namespace PhotoViewer
+namespace Kchary.PhotoViewer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -35,7 +35,7 @@ namespace PhotoViewer
             timer.Stop();
 
             // 一定時間待機後、SplashScreenを閉じる
-            if (MIN_SPL_TIME - (int)timer.ElapsedMilliseconds > 0)
+            if (MIN_SPL_TIME - timer.ElapsedMilliseconds > 0)
             {
                 Thread.Sleep(MIN_SPL_TIME);
             }
@@ -97,6 +97,9 @@ namespace PhotoViewer
             {
                 mediaListBox.ScrollIntoView(selectedItem);
             }
+
+            // Run GC.
+            App.RunGC();
         }
 
         /// <summary>

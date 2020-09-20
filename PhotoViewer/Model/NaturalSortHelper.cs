@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     internal static class SafeNativeMethods
     {

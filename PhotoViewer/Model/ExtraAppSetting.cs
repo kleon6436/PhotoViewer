@@ -1,8 +1,8 @@
 ﻿using Prism.Mvvm;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
-    public class ExtraAppSetting : BindableBase
+    public sealed class ExtraAppSetting : BindableBase
     {
         private string appName;
 
@@ -18,12 +18,6 @@ namespace PhotoViewer.Model
         {
             get { return appPath; }
             set { SetProperty(ref appPath, value); }
-        }
-
-        public ExtraAppSetting(string appName, string appPath)
-        {
-            this.AppName = appName;
-            this.AppPath = appPath;
         }
     }
 }

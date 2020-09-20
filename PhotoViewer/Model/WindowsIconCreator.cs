@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// Class that acquires an icon using the Windows API.

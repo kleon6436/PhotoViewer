@@ -1,8 +1,8 @@
 ﻿using Prism.Mvvm;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
-    public class ExifInfo : BindableBase
+    public sealed class ExifInfo : BindableBase
     {
         private string exifParameterText;
 

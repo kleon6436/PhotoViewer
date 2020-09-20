@@ -1,4 +1,4 @@
-﻿<Window x:Class="PhotoViewer.Views.SplashScreenView"
+﻿<Window x:Class="Kchary.PhotoViewer.Views.SplashScreenView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,6 +8,6 @@
         Title="SplashScreen" Width="400" Height="200">
     <Grid>
         <Image Source="/Images/SplashScreen.png" Width="400" Height="200" />
-        <TextBlock Margin="20, 75" HorizontalAlignment="Right" FontSize="16" Text="Version 2.1" />
+        <TextBlock Margin="20, 75" HorizontalAlignment="Right" FontSize="16" Text="Version 2.2" />
     </Grid>
 </Window>

@@ -3,9 +3,9 @@ using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
-    public class MediaInfo : BindableBase
+    public sealed class MediaInfo : BindableBase
     {
         public enum MediaType
         {
@@ -56,13 +56,6 @@ namespace PhotoViewer.Model
         {
         }
 
-        public MediaInfo(MediaInfo mediaFileInfo)
-        {
-            FilePath = mediaFileInfo.FilePath;
-            FileName = Path.GetFileName(FilePath);
-            ThumbnailImage = mediaFileInfo.ThumbnailImage;
-        }
-
         /// <summary>
         /// Create thumbnail image.
         /// </summary>
@@ -93,7 +86,7 @@ namespace PhotoViewer.Model
         /// <returns>File type</returns>
         private MediaType CheckMediaType(string filePath)
         {
-            string extension = Path.GetExtension(filePath).ToLower();
+            var extension = Path.GetExtension(filePath).ToLower();
 
             if (MediaChecker.CheckPictureExtensions(extension))
             {

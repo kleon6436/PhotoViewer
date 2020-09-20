@@ -2,12 +2,12 @@
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// XML management class of application setting information.
     /// </summary>
-    public class AppConfigXml
+    public sealed class AppConfigXml
     {
         // XML element name
         private const string PREVIOUS_FOLDER_ELEM_NAME = "previous_folder";
@@ -76,7 +76,7 @@ namespace PhotoViewer.Model
         private void ParsePreviousPathXml(XDocument xdoc, AppConfigData configData)
         {
             var dataElement = xdoc.Root.Element(PREVIOUS_FOLDER_ELEM_NAME);
-            XElement previousPath = dataElement.Element(PREVIOUS_PATH_ELEM_NAME);
+            var previousPath = dataElement.Element(PREVIOUS_PATH_ELEM_NAME);
 
             configData.PreviousFolderPath = previousPath.Value;
         }
@@ -114,12 +114,12 @@ namespace PhotoViewer.Model
 
             foreach (var dataElement in dataElements)
             {
-                XElement appNameElement = dataElement.Element(LINK_APP_NAME_ELEM_NAME);
-                XElement appPathElement = dataElement.Element(LINK_APP_PATH_ELEM_NAME);
+                var appNameElement = dataElement.Element(LINK_APP_NAME_ELEM_NAME);
+                var appPathElement = dataElement.Element(LINK_APP_PATH_ELEM_NAME);
 
                 if (!string.IsNullOrEmpty(appNameElement.Value) && !string.IsNullOrEmpty(appPathElement.Value))
                 {
-                    var linkageApp = new ExtraAppSetting(appNameElement.Value, appPathElement.Value);
+                    var linkageApp = new ExtraAppSetting { AppName = appNameElement.Value, AppPath = appPathElement.Value};
                     configData.LinkageAppList.Add(linkageApp);
                 }
             }

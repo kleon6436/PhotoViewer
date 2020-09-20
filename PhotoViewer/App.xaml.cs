@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace PhotoViewer
+namespace Kchary.PhotoViewer
 {
     /// <summary>
     /// Interaction logic for App.xaml
@@ -27,7 +27,7 @@ namespace PhotoViewer
             [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
         {
-            Console.WriteLine("ERROR -> " + ex.Message + ", LineNumber:" + callerLineNumber + ", FilePath:" + callerFilePath);
+            Console.WriteLine($"ERROR -> {ex.Message}, LineNumber: {callerLineNumber}, FilePath: {callerFilePath}");
         }
 
         /// <summary>

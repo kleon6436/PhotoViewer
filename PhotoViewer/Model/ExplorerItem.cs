@@ -7,9 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
-    public class ExplorerItem : TreeViewItem
+    public sealed class ExplorerItem : TreeViewItem
     {
         // Item information
         public string ExplorerItemPath { get; private set; }
@@ -67,13 +67,13 @@ namespace PhotoViewer.Model
         /// <returns>Stack panel settings shown in TreeView.</returns>
         private StackPanel CreateExplorerItemHeader(string path, bool isDrive)
         {
-            StackPanel stackpanel = new StackPanel()
+            var stackpanel = new StackPanel()
             {
                 Orientation = Orientation.Horizontal
             };
 
             // Generate Icon.
-            BitmapSource iconSource = CreateTreeIcon(isDrive);
+            var iconSource = CreateTreeIcon(isDrive);
 
             stackpanel.Children.Add(new Image()
             {
@@ -103,8 +103,7 @@ namespace PhotoViewer.Model
             Items.Clear();
 
             // Regenerate the directory order by rearranging it in natural order.
-            List<DirectoryInfo> sortDirectoryInfos = innerDirectory.GetDirectories().ToList();
-            sortDirectoryInfos = new List<DirectoryInfo>(sortDirectoryInfos.OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer()));
+            var sortDirectoryInfos = innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer());
 
             foreach (var directory in sortDirectoryInfos)
             {
@@ -130,12 +129,12 @@ namespace PhotoViewer.Model
         {
             if (isDrive)
             {
-                BitmapSource iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_DRIVEFIXED);
+                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_DRIVEFIXED);
                 return iconImage;
             }
             else
             {
-                BitmapSource iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_FOLDER);
+                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_FOLDER);
                 return iconImage;
             }
         }
@@ -187,7 +186,7 @@ namespace PhotoViewer.Model
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             // Reload.
-            App.Current.Dispatcher.Invoke((Action)(() =>
+            Application.Current.Dispatcher.Invoke((Action)(() =>
             {
                 UpdateDirectoryTree();
             }));

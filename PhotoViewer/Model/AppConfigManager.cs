@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// Management class of application setting information.
@@ -12,10 +13,11 @@ namespace PhotoViewer.Model
         /// <summary>
         /// Data of application setting information.
         /// </summary>
-        public AppConfigData ConfigData { get; set; }
+        public AppConfigData ConfigData { get; private set; }
 
-        private readonly string appConfigFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\KcharyPhotoViewer\Setting.conf";
-        private static readonly AppConfigManager singleInstance = new AppConfigManager();
+        private static readonly string appConfigFilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KcharyPhotoViewer\\Setting.conf";
+        private static readonly AppConfigManager singleInstance = new AppConfigManager { ConfigData = new AppConfigData() };
+        private static readonly AppConfigXml ConfigXmlObject = new AppConfigXml(appConfigFilePath);
 
         /// <summary>
         /// Get instance of application setting information class.
@@ -32,8 +34,7 @@ namespace PhotoViewer.Model
         {
             try
             {
-                var configXmlObject = new AppConfigXml(appConfigFilePath);
-                configXmlObject.Import(ConfigData);
+                ConfigXmlObject.Import(ConfigData);
             }
             catch (Exception ex)
             {
@@ -56,8 +57,7 @@ namespace PhotoViewer.Model
 
             try
             {
-                var configXmlObject = new AppConfigXml(appConfigFilePath);
-                configXmlObject.Export(ConfigData);
+                ConfigXmlObject.Export(ConfigData);
             }
             catch (Exception ex)
             {
@@ -70,23 +70,18 @@ namespace PhotoViewer.Model
         /// Set list of linked apps.
         /// </summary>
         /// <param name="linkageApplist">List of linked apps</param>
-        public void SetLinkageApp(List<ExtraAppSetting> linkageApplist)
+        public void SetLinkageApp(IEnumerable<ExtraAppSetting> linkageApplist)
         {
-            ConfigData.LinkageAppList = linkageApplist;
+            ConfigData.LinkageAppList = linkageApplist.ToList();
         }
 
         /// <summary>
         /// Remove linked app from linked app list.
         /// </summary>
         /// <param name="linkageApplist">List of linked apps</param>
-        public void RemoveLinkageApp(List<ExtraAppSetting> linkageApplist)
+        public void RemoveLinkageApp(IEnumerable<ExtraAppSetting> linkageApplist)
         {
-            ConfigData.LinkageAppList = linkageApplist;
-        }
-
-        private AppConfigManager()
-        {
-            ConfigData = new AppConfigData();
+            ConfigData.LinkageAppList = linkageApplist.ToList();
         }
     }
 }

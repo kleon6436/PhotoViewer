@@ -1,5 +1,5 @@
-﻿using PhotoViewer.Model;
-using PhotoViewer.Views;
+﻿using Kchary.PhotoViewer.Model;
+using Kchary.PhotoViewer.Views;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -16,14 +16,14 @@ using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace PhotoViewer.ViewModels
+namespace Kchary.PhotoViewer.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
         #region ViewModels
 
-        public ExplorerViewModel ExplorerViewModel { get; set; }
-        public ExifInfoViewModel ExifInfoViewModel { get; set; }
+        public ExplorerViewModel ExplorerViewModel { get; }
+        public ExifInfoViewModel ExifInfoViewModel { get; }
 
         #endregion ViewModels
 
@@ -92,6 +92,7 @@ namespace PhotoViewer.ViewModels
 
         #region Command
 
+        public ICommand BluetoothButtonCommand { get; private set; }
         public ICommand OpenFolderButtonCommand { get; private set; }
         public ICommand ReloadButtonCommand { get; private set; }
         public ICommand SettingButtonCommand { get; private set; }
@@ -107,13 +108,8 @@ namespace PhotoViewer.ViewModels
 
         public MainWindowViewModel()
         {
-            MediaInfoList.Clear();
-            ContextMenuCollection.Clear();
-            PictureImageSource = null;
-            IsShowContextMenu = false;
-            IsEnableImageEditButton = false;
-
             // Set command.
+            BluetoothButtonCommand = new DelegateCommand(BluetoothButtonClicked);
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
             ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
             SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
@@ -138,7 +134,7 @@ namespace PhotoViewer.ViewModels
         {
             // Read setting information.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 foreach (var linkageApp in linkageAppList)
@@ -154,7 +150,7 @@ namespace PhotoViewer.ViewModels
                     var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     // Set context menu.
-                    var contextMenu = new ContextMenuInfo(linkageApp.AppName, iconBitmapSource);
+                    var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
                     ContextMenuCollection.Add(contextMenu);
                     IsShowContextMenu = true;
                 }
@@ -176,7 +172,7 @@ namespace PhotoViewer.ViewModels
         public void ExecuteContextMenu(string appName)
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (!linkageAppList.Any(x => x.AppName == appName))
             {
                 return;
@@ -186,7 +182,7 @@ namespace PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                string appPath = Array.Find(linkageAppList, x => x.AppName == appName).AppPath;
+                string appPath = linkageAppList.Find(x => x.AppName == appName).AppPath;
                 Process.Start(appPath, SelectedMedia.FilePath);
             }
             catch (Exception ex)
@@ -228,16 +224,14 @@ namespace PhotoViewer.ViewModels
         /// <returns>Run thread: False, Not run thread: True</returns>
         public bool StopThreadAndTask()
         {
-            bool CanClose = true;
-
             // Cancel notification if content loading thread is running
             if (loadContentsBackgroundWorker != null && loadContentsBackgroundWorker.IsBusy)
             {
                 loadContentsBackgroundWorker.CancelAsync();
-                CanClose = false;
+                return false;
             }
 
-            return CanClose;
+            return true;
         }
 
         /// <summary>
@@ -247,6 +241,24 @@ namespace PhotoViewer.ViewModels
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.Import();
+        }
+
+        private void BluetoothButtonClicked()
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                Process.Start("fsquirt.exe", "-send");
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+                App.ShowErrorMessageBox("Bluetooth送信に対応していません。", "Bluetooth送信エラー");
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         /// <summary>
@@ -261,9 +273,20 @@ namespace PhotoViewer.ViewModels
 
             try
             {
-                const string Explorer = "EXPLORER.EXE";
                 Mouse.OverrideCursor = Cursors.Wait;
-                Process.Start(Explorer, SelectFolderPath);
+
+                string selectPath;
+                if ((File.GetAttributes(SelectFolderPath) & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    selectPath = SelectFolderPath;
+                }
+                else
+                {
+                    selectPath = Path.GetDirectoryName(SelectFolderPath);
+                }
+
+                const string Explorer = "EXPLORER.EXE";
+                Process.Start(Explorer, selectPath);
             }
             catch (Exception ex)
             {
@@ -280,12 +303,20 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void ReloadButtonClicked()
         {
+            // Clear picture image view source.
             if (PictureImageSource != null)
             {
                 PictureImageSource = null;
             }
 
+            // Update image edit button status.
             IsEnableImageEditButton = false;
+
+            // If the file path is displayed, change it to the directory path and read it.
+            if ((File.GetAttributes(SelectFolderPath) & FileAttributes.Directory) != FileAttributes.Directory)
+            {
+                SelectFolderPath = Path.GetDirectoryName(SelectFolderPath);
+            }
             UpdateContents();
         }
 
@@ -300,7 +331,7 @@ namespace PhotoViewer.ViewModels
             var settingDialog = new SettingView
             {
                 DataContext = vm,
-                Owner = App.Current.MainWindow
+                Owner = Application.Current.MainWindow
             };
             settingDialog.ShowDialog();
         }
@@ -321,7 +352,7 @@ namespace PhotoViewer.ViewModels
             var imageEditToolDialog = new ImageEditToolView
             {
                 DataContext = vm,
-                Owner = App.Current.MainWindow
+                Owner = Application.Current.MainWindow
             };
             imageEditToolDialog.ShowDialog();
         }
@@ -339,7 +370,7 @@ namespace PhotoViewer.ViewModels
 
             // Reload the information related to the linked application from the setting information.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 foreach (var linkageApp in linkageAppList)
@@ -349,7 +380,7 @@ namespace PhotoViewer.ViewModels
                     var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     // Set context menu.
-                    var contextMenu = new ContextMenuInfo(linkageApp.AppName, iconBitmapSource);
+                    var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
                     ContextMenuCollection.Add(contextMenu);
                     IsShowContextMenu = true;
                 }
@@ -474,7 +505,7 @@ namespace PhotoViewer.ViewModels
                 if (isReloadContents)
                 {
                     // Reload after loading the asynchronously loaded content list.
-                    App.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    Application.Current.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         UpdateContents();
                         isReloadContents = false;
@@ -486,7 +517,7 @@ namespace PhotoViewer.ViewModels
                 StopContentsWorker();
                 if (SelectedMedia == null && MediaInfoList.Any())
                 {
-                    SelectedMedia = MediaInfoList.First();
+                    SelectedMedia = MediaInfoList[0];
                 }
             }
         }
@@ -498,8 +529,8 @@ namespace PhotoViewer.ViewModels
         /// <param name="e">Argument</param>
         private void LoadContentsWorker(object sender, DoWorkEventArgs e)
         {
-            List<string> filePaths = new List<string>();
-            int tick = Environment.TickCount;
+            var filePaths = new LinkedList<string>();
+            var tick = Environment.TickCount;
 
             // Get all supported files in selected folder.
             foreach (string supportExtension in MediaChecker.GetSupportExtentions())
@@ -511,14 +542,15 @@ namespace PhotoViewer.ViewModels
                     return;
                 }
 
-                filePaths.AddRange(Directory.GetFiles(SelectFolderPath, "*" + supportExtension).ToArray());
+                var supportFiles = Directory.GetFiles(SelectFolderPath, $"*{supportExtension}");
+                foreach (var supportFile in supportFiles)
+                {
+                    filePaths.AddLast(supportFile);
+                }
             }
 
-            // Sort the order by name.
-            filePaths = filePaths.OrderBy(Path.GetFileName).ToList();
-
             var readyFiles = new Queue<MediaInfo>();
-            foreach (var filePath in filePaths)
+            foreach (var filePath in filePaths.OrderBy(Path.GetFileName))
             {
                 var worker = sender as BackgroundWorker;
                 if (worker.CancellationPending)
@@ -544,26 +576,26 @@ namespace PhotoViewer.ViewModels
                     continue;
                 }
 
-                int count = 0;
+                var count = 0;
                 readyFiles.Enqueue(mediaInfo);
                 count++;
 
-                int duration = Environment.TickCount - tick;
+                var duration = Environment.TickCount - tick;
                 if ((count <= 100 && duration > 500) || duration > 1000)
                 {
                     var readyList = readyFiles.ToArray();
                     readyFiles.Clear();
-                    App.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
+                    Application.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
                 }
-
-                // Collection of unnecessary memory.
-                App.RunGC();
             }
 
             if (readyFiles.Any())
             {
-                App.Current.Dispatcher.Invoke((Action)(() => { foreach (var readyFile in readyFiles) MediaInfoList.Add(readyFile); }));
+                Application.Current.Dispatcher.Invoke((Action)(() => { foreach (var readyFile in readyFiles) MediaInfoList.Add(readyFile); }));
             }
+
+            // Collection of unnecessary memory.
+            App.RunGC();
         }
 
         /// <summary>
@@ -591,12 +623,10 @@ namespace PhotoViewer.ViewModels
                 // Create display image.
                 PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath);
 
-                // Memory release of Writable Bitmap.
-                App.RunGC();
-
                 // Set exif information.
                 ExifInfoViewModel.SetExif(mediaInfo.FilePath);
 
+                // Update image edit button status.
                 if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(mediaInfo.FilePath).ToLower()))
                 {
                     IsEnableImageEditButton = true;
@@ -606,7 +636,21 @@ namespace PhotoViewer.ViewModels
                     IsEnableImageEditButton = false;
                 }
 
+                // Update select path.
+                SelectFolderPath = mediaInfo.FilePath;
+
+                // Memory release of Writable Bitmap.
+                App.RunGC();
+
                 return true;
+            }
+            catch (IOException)
+            {
+                const string FileAccessErrorMessage = "ファイル読み込み中です。少し待ってから再度読み込みしてください。";
+                const string FileAccessErrorTitle = "ファイルアクセスエラー";
+                App.ShowErrorMessageBox(FileAccessErrorMessage, FileAccessErrorTitle);
+
+                return false;
             }
             catch (Exception ex)
             {

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// Data class of application setting information
     /// </summary>
-    public class AppConfigData
+    public sealed class AppConfigData
     {
         /// <summary>
         /// Folder path at the time of the previous end.
@@ -15,7 +15,7 @@ namespace PhotoViewer.Model
         /// <summary>
         /// Registered linked application.
         /// </summary>
-        public List<ExtraAppSetting> LinkageAppList { get; set; }
+        public List<ExtraAppSetting> LinkageAppList { get; set; } = new List<ExtraAppSetting>();
 
         /// <summary>
         /// Window display status
@@ -24,8 +24,6 @@ namespace PhotoViewer.Model
 
         public AppConfigData()
         {
-            PreviousFolderPath = null;
-            LinkageAppList = new List<ExtraAppSetting>();
         }
     }
 }

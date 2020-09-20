@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     public static class ImageControl
     {
@@ -14,7 +14,7 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource</returns>
         public static BitmapSource DecodePicture(string filePath)
         {
-            using var sourceStream = new WrappingStream(new FileStream(filePath, FileMode.Open));
+            using var sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
             // Get image data.
             sourceStream.Seek(0, SeekOrigin.Begin);
@@ -22,7 +22,7 @@ namespace PhotoViewer.Model
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
             var bitmapSource = bitmapFrame.Clone();
 
-            var decodeBitmapSource = new WriteableBitmap(ImageControl.RotateImage(metaData, bitmapSource));
+            var decodeBitmapSource = new WriteableBitmap(RotateImage(metaData, bitmapSource));
             decodeBitmapSource.Freeze();
 
             return decodeBitmapSource;
@@ -35,48 +35,42 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureViewImage(string filePath)
         {
-            using var ms = new WrappingStream(new FileStream(filePath, FileMode.Open));
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
             // Reset the stream position and first get metadata.
-            ms.Seek(0, SeekOrigin.Begin);
-            var bitmapFrame = BitmapFrame.Create(ms);
+            fs.Seek(0, SeekOrigin.Begin);
+
+            var bitmapFrame = BitmapFrame.Create(fs);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
 
-            // Reset stream position and decode image.
-            ms.Seek(0, SeekOrigin.Begin);
+            var maxViewWidth = 2200;
+            var maxViewHeight = 1650;
 
-            int maxViewWidth = 2200;
-            int maxViewHeight = 1650;
-
-            // Check the rotation information and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
-            uint rotation = GetRotation(metaData);
+            // Check the rotation information, and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
+            var rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
-                int tmp = maxViewWidth;
+                var tmp = maxViewWidth;
                 maxViewWidth = maxViewHeight;
                 maxViewHeight = tmp;
             }
 
-            var bmpImage = new BitmapImage();
-            bmpImage.BeginInit();
-            bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-            bmpImage.CacheOption = BitmapCacheOption.OnLoad;
-            bmpImage.DecodePixelWidth = maxViewWidth;
-            bmpImage.StreamSource = ms;
-            bmpImage.EndInit();
+            // Decode picture.
+            var viewImage = bitmapFrame.Clone();
 
-            // If the image is large, reduce the image.
-            BitmapSource viewImage = RotateImage(metaData, (BitmapSource)bmpImage);
-            if (bmpImage.PixelWidth > maxViewWidth || bmpImage.PixelHeight > maxViewHeight)
+            //// If the image is large, reduce the image.
+            if (viewImage.PixelWidth > maxViewWidth || viewImage.PixelHeight > maxViewHeight)
             {
-                viewImage = ResizeImage(bmpImage, maxViewWidth, maxViewHeight);
+                viewImage = ResizeImage(viewImage, maxViewWidth, maxViewHeight);
             }
 
-            // Export image and make it unchangeable.
-            viewImage = new WriteableBitmap(viewImage);
-            viewImage.Freeze();
+            // Rotate image.
+            viewImage = RotateImage(metaData, viewImage);
 
-            return viewImage;
+            var returnImage = new WriteableBitmap(viewImage);
+            returnImage.Freeze();
+
+            return returnImage;
         }
 
         /// <summary>
@@ -86,22 +80,22 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureThumbnailImage(string filePath)
         {
-            using var ms = new WrappingStream(new FileStream(filePath, FileMode.Open));
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
             // Reset the stream position and get the metadata.
-            ms.Seek(0, SeekOrigin.Begin);
-            var bitmapFrame = BitmapFrame.Create(ms);
+            fs.Seek(0, SeekOrigin.Begin);
+            var bitmapFrame = BitmapFrame.Create(fs);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
             var thumbnailImage = bitmapFrame.Thumbnail;
 
-            int maxScaledWidth = 100;
-            int maxScaledHeight = 75;
+            var maxScaledWidth = 100;
+            var maxScaledHeight = 75;
 
             // Check the rotation information, and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
-            uint rotation = GetRotation(metaData);
+            var rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
-                int tmp = maxScaledWidth;
+                var tmp = maxScaledWidth;
                 maxScaledWidth = maxScaledHeight;
                 maxScaledHeight = tmp;
             }
@@ -109,23 +103,13 @@ namespace PhotoViewer.Model
             if (thumbnailImage == null)
             {
                 // Reset stream position and decode image.
-                ms.Seek(0, SeekOrigin.Begin);
-
-                var bmpImage = new BitmapImage();
-                bmpImage.BeginInit();
-                bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                bmpImage.CacheOption = BitmapCacheOption.OnLoad;
-                bmpImage.DecodePixelWidth = maxScaledWidth;
-                bmpImage.StreamSource = ms;
-                bmpImage.EndInit();
+                thumbnailImage = bitmapFrame.Clone();
             }
-            else
+
+            // If the thumbnail image is large, reduce the image.
+            if (thumbnailImage.PixelWidth > maxScaledWidth || thumbnailImage.PixelHeight > maxScaledHeight)
             {
-                // If the thumbnail image is large, reduce the image.
-                if (thumbnailImage.PixelWidth > maxScaledWidth || thumbnailImage.PixelHeight > maxScaledHeight)
-                {
-                    thumbnailImage = ResizeImage(thumbnailImage, maxScaledWidth, maxScaledHeight);
-                }
+                thumbnailImage = ResizeImage(thumbnailImage, maxScaledWidth, maxScaledHeight);
             }
 
             // Rotate for thumbnail images.
@@ -145,38 +129,29 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureEditViewThumbnail(string filePath)
         {
-            using var ms = new WrappingStream(new FileStream(filePath, FileMode.Open));
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
             // Reset the stream position and get the metadata.
-            ms.Seek(0, SeekOrigin.Begin);
-            var bitmapFrame = BitmapFrame.Create(ms);
+            fs.Seek(0, SeekOrigin.Begin);
+            var bitmapFrame = BitmapFrame.Create(fs);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
             var thumbnailImage = bitmapFrame.Thumbnail;
 
-            int maxScaledWidth = 400;
-            int maxScaledHeight = 300;
+            var maxScaledWidth = 400;
+            var maxScaledHeight = 300;
 
             // Check the rotation information, and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
-            uint rotation = GetRotation(metaData);
+            var rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
-                int tmp = maxScaledWidth;
+                var tmp = maxScaledWidth;
                 maxScaledWidth = maxScaledHeight;
                 maxScaledHeight = tmp;
             }
 
             if (thumbnailImage == null)
             {
-                // Reset stream position and decode image.
-                ms.Seek(0, SeekOrigin.Begin);
-
-                var bmpImage = new BitmapImage();
-                bmpImage.BeginInit();
-                bmpImage.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-                bmpImage.CacheOption = BitmapCacheOption.OnLoad;
-                bmpImage.DecodePixelWidth = maxScaledWidth;
-                bmpImage.StreamSource = ms;
-                bmpImage.EndInit();
+                thumbnailImage = bitmapFrame.Clone();
             }
             else
             {
@@ -205,7 +180,7 @@ namespace PhotoViewer.Model
         /// <returns>BitmapSource</returns>
         public static BitmapSource RotateImage(BitmapMetadata metaData, BitmapSource image)
         {
-            uint rotation = GetRotation(metaData);
+            var rotation = GetRotation(metaData);
 
             return rotation switch
             {

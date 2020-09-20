@@ -1,5 +1,5 @@
-﻿using Microsoft.Win32;
-using PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Model;
+using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -8,11 +8,11 @@ using System.IO;
 using System.Linq;
 using System.Windows.Input;
 
-namespace PhotoViewer.ViewModels
+namespace Kchary.PhotoViewer.ViewModels
 {
     public class LinkageAppViewModel : BindableBase
     {
-        private readonly int MAX_LINK_APP_NUM = 10;
+        private const int MaxLinkAppNum = 10;
 
         #region UI binding parameter
 
@@ -48,7 +48,7 @@ namespace PhotoViewer.ViewModels
             DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList.ToArray();
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 LinkageAppList.Clear();
@@ -61,7 +61,7 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void LinkAppReferenceButtonClicked()
         {
-            string previousLinkAppPath = LinkAppPath;
+            var previousLinkAppPath = LinkAppPath;
 
             const string DialogTitle = "連携アプリ選択ダイアログ";
             const string DialogDefaultExt = ".exe";
@@ -95,12 +95,12 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void RegisterLinkAppButtonClicked()
         {
-            if (LinkageAppList.Count > MAX_LINK_APP_NUM)
+            if (LinkageAppList.Count > MaxLinkAppNum)
             {
                 return;
             }
 
-            var linkageApp = new ExtraAppSetting(Path.GetFileNameWithoutExtension(LinkAppPath), LinkAppPath);
+            var linkageApp = new ExtraAppSetting { AppName = Path.GetFileNameWithoutExtension(LinkAppPath), AppPath = LinkAppPath };
             if (LinkageAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))
             {
                 return;
@@ -110,7 +110,7 @@ namespace PhotoViewer.ViewModels
 
             // Export information to Config file.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.SetLinkageApp(LinkageAppList.ToList());
+            appConfigManager.SetLinkageApp(LinkageAppList);
             appConfigManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
@@ -122,7 +122,7 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         private void DeleteLinkAppButtonClicked(ExtraAppSetting deleteAppSetting)
         {
-            if (LinkageAppList == null || LinkageAppList.Count == 0 || deleteAppSetting == null)
+            if (LinkageAppList == null || !LinkageAppList.Any() || deleteAppSetting == null)
             {
                 return;
             }
@@ -133,7 +133,7 @@ namespace PhotoViewer.ViewModels
 
                 // Export information to config file.
                 AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-                appConfigManager.RemoveLinkageApp(LinkageAppList.ToList());
+                appConfigManager.RemoveLinkageApp(LinkageAppList);
                 appConfigManager.Export();
 
                 ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);

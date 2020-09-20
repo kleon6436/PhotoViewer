@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace PhotoViewer.Model
+namespace Kchary.PhotoViewer.Model
 {
     public static class MediaChecker
     {

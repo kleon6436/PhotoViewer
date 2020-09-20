@@ -1,9 +1,9 @@
-﻿using PhotoViewer.Views;
+﻿using Kchary.PhotoViewer.Views;
 using Prism.Mvvm;
 using System;
 using System.Windows.Controls;
 
-namespace PhotoViewer.ViewModels
+namespace Kchary.PhotoViewer.ViewModels
 {
     public class SettingViewModel : BindableBase
     {

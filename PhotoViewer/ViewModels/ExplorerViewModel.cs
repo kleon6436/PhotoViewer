@@ -1,4 +1,4 @@
-﻿using PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Model;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -6,9 +6,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
-namespace PhotoViewer.ViewModels
+namespace Kchary.PhotoViewer.ViewModels
 {
-    public class ExplorerViewModel : BindableBase
+    public sealed class ExplorerViewModel : BindableBase
     {
         public event EventHandler ChangeSelectItemEvent;
 
@@ -37,8 +37,6 @@ namespace PhotoViewer.ViewModels
         /// </summary>
         public ExplorerViewModel()
         {
-            // Set initial value.
-            ExplorerItems.Clear();
         }
 
         /// <summary>
@@ -47,7 +45,7 @@ namespace PhotoViewer.ViewModels
         /// <param name="driveList"></param>
         public void CreateDriveTreeItem()
         {
-            List<DriveInfo> allDriveList = DriveInfo.GetDrives().ToList();
+            var allDriveList = DriveInfo.GetDrives();
 
             foreach (var drive in allDriveList)
             {
@@ -64,12 +62,12 @@ namespace PhotoViewer.ViewModels
 
         public void ExpandPreviousPath(string previousFolderPath)
         {
-            List<string> parentPathList = new List<string>();
+            var parentPathList = new List<string>();
 
             GetAllParentPathList(previousFolderPath, parentPathList);
             parentPathList.Reverse();
 
-            int count = 0;
+            var count = 0;
             ExplorerItem previousItem = null;
 
             foreach (var parentPath in parentPathList)
@@ -136,7 +134,7 @@ namespace PhotoViewer.ViewModels
         private ExplorerItem GetDirectoryItem(string parentPath, ExplorerItem previousItem)
         {
             string previousDirectory = parentPath;
-            List<ExplorerItem> explorerItemList = new List<ExplorerItem>();
+            var explorerItemList = new List<ExplorerItem>();
             explorerItemList.AddRange(previousItem.Items.OfType<ExplorerItem>());
 
             return explorerItemList.Where(item => item.ExplorerItemPath == previousDirectory).First();
