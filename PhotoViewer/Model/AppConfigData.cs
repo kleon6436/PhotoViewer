@@ -15,7 +15,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Registered linked application.
         /// </summary>
-        public List<ExtraAppSetting> LinkageAppList { get; set; }
+        public List<ExtraAppSetting> LinkageAppList { get; set; } = new List<ExtraAppSetting>();
 
         /// <summary>
         /// Window display status
@@ -24,8 +24,6 @@ namespace Kchary.PhotoViewer.Model
 
         public AppConfigData()
         {
-            PreviousFolderPath = null;
-            LinkageAppList = new List<ExtraAppSetting>();
         }
     }
 }

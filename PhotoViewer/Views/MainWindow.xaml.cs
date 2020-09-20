@@ -35,7 +35,7 @@ namespace Kchary.PhotoViewer
             timer.Stop();
 
             // 一定時間待機後、SplashScreenを閉じる
-            if (MIN_SPL_TIME - (int)timer.ElapsedMilliseconds > 0)
+            if (MIN_SPL_TIME - timer.ElapsedMilliseconds > 0)
             {
                 Thread.Sleep(MIN_SPL_TIME);
             }

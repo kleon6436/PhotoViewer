@@ -37,8 +37,6 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public ExplorerViewModel()
         {
-            // Set initial value.
-            ExplorerItems.Clear();
         }
 
         /// <summary>
