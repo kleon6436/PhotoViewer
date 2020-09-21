@@ -137,8 +137,9 @@ namespace Kchary.PhotoViewer.ViewModels
             var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
-                foreach (var linkageApp in linkageAppList)
+                for (var count = 0; count < linkageAppList.Count; count++)
                 {
+                    var linkageApp = linkageAppList[count];
                     if (!File.Exists(linkageApp.AppPath))
                     {
                         appConfigManager.ConfigData.LinkageAppList.Remove(linkageApp);
@@ -593,9 +594,6 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 Application.Current.Dispatcher.Invoke((Action)(() => { foreach (var readyFile in readyFiles) MediaInfoList.Add(readyFile); }));
             }
-
-            // Collection of unnecessary memory.
-            App.RunGC();
         }
 
         /// <summary>
