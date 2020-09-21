@@ -19,7 +19,7 @@ namespace Kchary.PhotoViewer.Views
                 {
                     vm.CloseView += (sender, args) =>
                     {
-                        // 不要なメモリ解放
+                        // Release memory.
                         App.RunGC();
                         Close();
                     };
@@ -34,6 +34,8 @@ namespace Kchary.PhotoViewer.Views
         /// <param name="e">引数情報</param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            // Release memory.
+            App.RunGC();
             Close();
         }
 
