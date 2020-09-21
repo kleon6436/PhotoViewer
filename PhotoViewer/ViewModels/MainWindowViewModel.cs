@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -534,7 +535,7 @@ namespace Kchary.PhotoViewer.ViewModels
             var tick = Environment.TickCount;
 
             // Get all supported files in selected folder.
-            foreach (string supportExtension in MediaChecker.GetSupportExtentions())
+            Parallel.ForEach(MediaChecker.GetSupportExtentions(), supportExtension =>
             {
                 var worker = sender as BackgroundWorker;
                 if (worker.CancellationPending)
@@ -548,7 +549,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 {
                     filePaths.AddLast(supportFile);
                 }
-            }
+            });
 
             var readyFiles = new Queue<MediaInfo>();
             foreach (var filePath in filePaths.OrderBy(Path.GetFileName))
