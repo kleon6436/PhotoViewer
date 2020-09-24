@@ -23,11 +23,11 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="filePath">File path</param>
         public void SetExif(string filePath)
         {
-            Application.Current.Dispatcher.Invoke((Action)(() => 
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 ExifDataList.Clear();
                 ExifDataList.AddRange(ExifParser.GetExifDataFromFile(filePath));
-            }));
+            });
         }
     }
 }

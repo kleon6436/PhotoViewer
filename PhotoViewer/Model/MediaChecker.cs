@@ -11,9 +11,9 @@ namespace Kchary.PhotoViewer.Model
         /// Get a list of extensions supported by the app.
         /// </summary>
         /// <returns>Extension list supported</returns>
-        public static List<string> GetSupportExtentions()
+        public static string[] GetSupportExtentions()
         {
-            return SupportPictureExtensions.ToList();
+            return SupportPictureExtensions;
         }
 
         /// <summary>

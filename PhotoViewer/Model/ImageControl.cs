@@ -84,6 +84,7 @@ namespace Kchary.PhotoViewer.Model
 
             // Reset the stream position and get the metadata.
             fs.Seek(0, SeekOrigin.Begin);
+
             var bitmapFrame = BitmapFrame.Create(fs);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
             var thumbnailImage = bitmapFrame.Thumbnail;
