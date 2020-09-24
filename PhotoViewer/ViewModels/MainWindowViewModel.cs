@@ -201,7 +201,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// Load selected image and convert for display.
         /// </summary>
         /// <param name="mediaInfo">Selected media info</param>
-        public bool LoadMedia(MediaInfo mediaInfo)
+        public async Task<bool> LoadMediaAsync(MediaInfo mediaInfo)
         {
             if (!File.Exists(mediaInfo.FilePath))
             {
@@ -215,7 +215,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             return mediaInfo.ContentMediaType switch
             {
-                MediaInfo.MediaType.PICTURE => LoadPictureImage(mediaInfo),
+                MediaInfo.MediaType.PICTURE => await LoadPictureImageAsync(mediaInfo),
                 _ => false,
             };
         }
@@ -613,17 +613,20 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">Selected media information</param>
         /// <returns>Successful reading: True、Failure: False</returns>
-        private bool LoadPictureImage(MediaInfo mediaInfo)
+        private async Task<bool> LoadPictureImageAsync(MediaInfo mediaInfo)
         {
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                // Create display image.
-                PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath);
+                // Create display image task.
+                var loadPictureTask = Task.Run(() => { PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath); });
 
-                // Set exif information.
-                ExifInfoViewModel.SetExif(mediaInfo.FilePath);
+                // Set exif information task.
+                var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
+
+                // Do task
+                await Task.WhenAll(loadPictureTask, setExifInfoTask);
 
                 // Update image edit button status.
                 if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(mediaInfo.FilePath).ToLower()))

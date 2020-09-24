@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -107,7 +108,7 @@ namespace Kchary.PhotoViewer
         /// </summary>
         /// <param name="sender">mediaListBox</param>
         /// <param name="e">引数情報</param>
-        private void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!(sender is ListBox listBox))
             {
@@ -120,7 +121,7 @@ namespace Kchary.PhotoViewer
             }
 
             var vm = DataContext as MainWindowViewModel;
-            vm.LoadMedia(mediaInfo);
+            await vm.LoadMediaAsync(mediaInfo);
         }
 
         /// <summary>
