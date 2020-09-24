@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -200,7 +201,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// Load selected image and convert for display.
         /// </summary>
         /// <param name="mediaInfo">Selected media info</param>
-        public bool LoadMedia(MediaInfo mediaInfo)
+        public async Task<bool> LoadMediaAsync(MediaInfo mediaInfo)
         {
             if (!File.Exists(mediaInfo.FilePath))
             {
@@ -214,7 +215,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             return mediaInfo.ContentMediaType switch
             {
-                MediaInfo.MediaType.PICTURE => LoadPictureImage(mediaInfo),
+                MediaInfo.MediaType.PICTURE => await LoadPictureImageAsync(mediaInfo),
                 _ => false,
             };
         }
@@ -490,6 +491,8 @@ namespace Kchary.PhotoViewer.ViewModels
                 const string MedaiReadErrorTitle = "読み込みエラー";
                 App.ShowErrorMessageBox(MediaReadErrorMessage, MedaiReadErrorTitle);
             }
+
+            App.RunGC();
         }
 
         /// <summary>
@@ -530,69 +533,60 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="e">Argument</param>
         private void LoadContentsWorker(object sender, DoWorkEventArgs e)
         {
-            var filePaths = new LinkedList<string>();
+            var queue = new LinkedList<MediaInfo>();
             var tick = Environment.TickCount;
+            var count = 0;
 
             // Get all supported files in selected folder.
-            foreach (string supportExtension in MediaChecker.GetSupportExtentions())
+            foreach (var supportExtension in MediaChecker.GetSupportExtentions())
             {
-                var worker = sender as BackgroundWorker;
-                if (worker.CancellationPending)
+                // If the file path is displayed, change it to the directory path and read it.
+                var selectFolderPath = SelectFolderPath;
+                if ((File.GetAttributes(selectFolderPath) & FileAttributes.Directory) != FileAttributes.Directory)
                 {
-                    e.Cancel = true;
-                    return;
+                    selectFolderPath = Path.GetDirectoryName(selectFolderPath);
                 }
 
-                var supportFiles = Directory.GetFiles(SelectFolderPath, $"*{supportExtension}");
-                foreach (var supportFile in supportFiles)
+                // Read all support image file.
+                foreach (var supportFile in Directory.EnumerateFiles(selectFolderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
                 {
-                    filePaths.AddLast(supportFile);
+                    var worker = sender as BackgroundWorker;
+                    if (worker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                    var mediaInfo = new MediaInfo
+                    {
+                        FilePath = supportFile
+                    };
+                    mediaInfo.FileName = Path.GetFileName(mediaInfo.FilePath);
+
+                    if (!mediaInfo.CreateThumbnailImage())
+                    {
+                        continue;
+                    }
+
+                    queue.AddLast(mediaInfo);
+                    count++;
+
+                    if (queue.Any())
+                    {
+                        var duration = Environment.TickCount - tick;
+                        if ((count <= 100 && duration > 500) || duration > 1000)
+                        {
+                            Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
+                            queue.Clear();
+                            tick = Environment.TickCount;
+                        }
+                    }
                 }
             }
 
-            var readyFiles = new Queue<MediaInfo>();
-            foreach (var filePath in filePaths.OrderBy(Path.GetFileName))
+            if (queue.Any())
             {
-                var worker = sender as BackgroundWorker;
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-
-                var mediaInfo = new MediaInfo
-                {
-                    FilePath = filePath
-                };
-                mediaInfo.FileName = Path.GetFileName(mediaInfo.FilePath);
-
-                try
-                {
-                    mediaInfo.CreateThumbnailImage();
-                }
-                catch (Exception ex)
-                {
-                    // If thumbnail images cannot be created, log output and skip reading.
-                    App.LogException(ex);
-                    continue;
-                }
-
-                var count = 0;
-                readyFiles.Enqueue(mediaInfo);
-                count++;
-
-                var duration = Environment.TickCount - tick;
-                if ((count <= 100 && duration > 500) || duration > 1000)
-                {
-                    var readyList = readyFiles.ToArray();
-                    readyFiles.Clear();
-                    Application.Current.Dispatcher.BeginInvoke((Action)(() => { MediaInfoList.AddRange(readyList); }));
-                }
-            }
-
-            if (readyFiles.Any())
-            {
-                Application.Current.Dispatcher.Invoke((Action)(() => { foreach (var readyFile in readyFiles) MediaInfoList.Add(readyFile); }));
+                Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
             }
         }
 
@@ -612,17 +606,20 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">Selected media information</param>
         /// <returns>Successful reading: True、Failure: False</returns>
-        private bool LoadPictureImage(MediaInfo mediaInfo)
+        private async Task<bool> LoadPictureImageAsync(MediaInfo mediaInfo)
         {
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                // Create display image.
-                PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath);
+                // Create display image task.
+                var loadPictureTask = Task.Run(() => { PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath); });
 
-                // Set exif information.
-                ExifInfoViewModel.SetExif(mediaInfo.FilePath);
+                // Set exif information task.
+                var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
+
+                // Do task
+                await Task.WhenAll(loadPictureTask, setExifInfoTask);
 
                 // Update image edit button status.
                 if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(mediaInfo.FilePath).ToLower()))

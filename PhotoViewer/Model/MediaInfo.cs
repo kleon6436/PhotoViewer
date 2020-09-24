@@ -60,22 +60,26 @@ namespace Kchary.PhotoViewer.Model
         /// Create thumbnail image.
         /// </summary>
         /// <returns>True: Success、False: Failure</returns>
-        public void CreateThumbnailImage()
+        public bool CreateThumbnailImage()
         {
-            if (FilePath == null || !File.Exists(FilePath))
+            try
             {
-                throw new FileLoadException();
+                if (FilePath == null || !File.Exists(FilePath))
+                {
+                    return false;
+                }
+
+                ThumbnailImage = ContentMediaType switch
+                {
+                    MediaType.PICTURE => ImageControl.CreatePictureThumbnailImage(FilePath),
+                    _ => throw new ArgumentOutOfRangeException(),
+                };
+
+                return true;
             }
-
-            switch (ContentMediaType)
+            catch (Exception)
             {
-                case MediaType.PICTURE:
-                    ThumbnailImage = ImageControl.CreatePictureThumbnailImage(FilePath);
-                    return;
-
-                case MediaType.MOVIE:
-                default:
-                    throw new ArgumentOutOfRangeException();
+                return false;
             }
         }
 
