@@ -132,8 +132,8 @@ namespace Kchary.PhotoViewer.Model
         /// Decode image from filePath.(If you set max width and max height, Image is resized.)
         /// </summary>
         /// <param name="filePath">FilePath</param>
-        /// <param name="maxWidth">Max</param>
-        /// <param name="maxHeight"></param>
+        /// <param name="maxWidth">Max picture width</param>
+        /// <param name="maxHeight">Max picture height</param>
         /// <returns>BitmapSource</returns>
         private static BitmapSource DecodePicture(BitmapFrame bitmapFrame, int maxWidth, int maxHeight)
         {
