@@ -210,7 +210,6 @@ namespace Kchary.PhotoViewer.ViewModels
                 App.ShowErrorMessageBox(FileNotExistErrorMessage, FileNotExstErrorTitle);
             }
 
-            PictureImageSource = null;
             IsEnableImageEditButton = false;
 
             return mediaInfo.ContentMediaType switch
@@ -305,11 +304,9 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void ReloadButtonClicked()
         {
-            // Clear picture image view source.
-            if (PictureImageSource != null)
-            {
-                PictureImageSource = null;
-            }
+            // Clear picture image view source and exif info data.
+            PictureImageSource = null;
+            ExifInfoViewModel.ExifDataList.Clear();
 
             // Update image edit button status.
             IsEnableImageEditButton = false;
@@ -398,6 +395,7 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             SelectedMedia = null;
             PictureImageSource = null;
+            ExifInfoViewModel.ExifDataList.Clear();
             IsEnableImageEditButton = false;
 
             var selectedExplorerItem = ExplorerViewModel.SelectedItem;
