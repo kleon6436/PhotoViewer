@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -110,12 +109,12 @@ namespace Kchary.PhotoViewer
         /// <param name="e">引数情報</param>
         private async void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!(sender is ListBox listBox))
+            if (sender is not ListBox listBox)
             {
                 return;
             }
 
-            if (!(listBox.SelectedItem is MediaInfo mediaInfo))
+            if (listBox.SelectedItem is not MediaInfo mediaInfo)
             {
                 return;
             }
@@ -131,7 +130,7 @@ namespace Kchary.PhotoViewer
         /// <param name="e">引数情報</param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is MenuItem menuItem))
+            if (sender is not MenuItem menuItem)
             {
                 return;
             }
