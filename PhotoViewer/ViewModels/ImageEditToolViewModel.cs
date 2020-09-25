@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.ViewModels
@@ -117,9 +116,6 @@ namespace Kchary.PhotoViewer.ViewModels
         // Image size before editing
         private Size readImageSize;
 
-        // Image before editing
-        private BitmapSource decodedPictureSource;
-
         public ImageEditToolViewModel()
         {
             ResizeCategoryItems = new ObservableCollection<ResizeImageCategory>
@@ -155,10 +151,15 @@ namespace Kchary.PhotoViewer.ViewModels
         public void SetEditFileData(string filePath)
         {
             editFilePath = filePath;
-            EditImage = ImageControl.CreatePictureEditViewThumbnail(editFilePath);
-
-            decodedPictureSource = ImageControl.DecodePicture(editFilePath);
-            readImageSize = new Size { Width = decodedPictureSource.PixelWidth, Height = decodedPictureSource.PixelHeight };
+            EditImage = ImageControl.CreatePictureEditViewThumbnail(editFilePath, out int defaultPictureWidth, out int defaultPictureHeight, out uint rotation);
+            if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
+            {
+                readImageSize = new Size { Width = defaultPictureHeight, Height = defaultPictureWidth };
+            }
+            else
+            {
+                readImageSize = new Size { Width = defaultPictureWidth, Height = defaultPictureHeight };
+            }
 
             // Set each initial value.
             ResizeCategoryItem = ResizeCategoryItems[0];
@@ -212,18 +213,18 @@ namespace Kchary.PhotoViewer.ViewModels
 
             var saveFilePath = dialog.FileName;
 
-            // Create a scaled bitmap.
+            // Create a save image.
             var scale = 1.0; // No scaling
             if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
             {
                 // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
-                scale = (double)ResizeCategoryItem.ResizelongSideValue / decodedPictureSource.PixelWidth;
-                if (decodedPictureSource.PixelWidth < decodedPictureSource.PixelHeight)
+                scale = (double)ResizeCategoryItem.ResizelongSideValue / readImageSize.Width;
+                if (readImageSize.Width < readImageSize.Height)
                 {
-                    scale = (double)ResizeCategoryItem.ResizelongSideValue / decodedPictureSource.PixelHeight;
+                    scale = (double)ResizeCategoryItem.ResizelongSideValue / readImageSize.Height;
                 }
             }
-            var scaledBitmapSource = new TransformedBitmap(decodedPictureSource, new ScaleTransform(scale, scale));
+            var saveImageSource = ImageControl.CreateSavePicture(editFilePath, scale);
 
             // Select the same encoder as the selected format.
             BitmapEncoder encoder = null;
@@ -252,7 +253,7 @@ namespace Kchary.PhotoViewer.ViewModels
             try
             {
                 // Add a frame to the encoder and save the file.
-                encoder.Frames.Add(BitmapFrame.Create(scaledBitmapSource));
+                encoder.Frames.Add(BitmapFrame.Create(saveImageSource));
                 using (var dstStream = File.OpenWrite(saveFilePath))
                 {
                     encoder.Save(dstStream);
