@@ -19,14 +19,11 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public BitmapSource EditImage
         {
-            get { return editImage; }
-            set { SetProperty(ref editImage, value); }
+            get => editImage;
+            set => SetProperty(ref editImage, value);
         }
 
-        public string EditFileName
-        {
-            get { return Path.GetFileName(editFilePath); }
-        }
+        public string EditFileName => Path.GetFileName(editFilePath);
 
         public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; }
 
@@ -34,26 +31,26 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public ResizeImageCategory ResizeCategoryItem
         {
-            get { return resizeCategoryItem; }
+            get => resizeCategoryItem;
             set
             {
                 SetProperty(ref resizeCategoryItem, value);
                 if (resizeCategoryItem != null)
                 {
                     double scale = 1;
-                    bool isLandscape = true;
+                    var isLandscape = true;
                     if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
                     {
                         // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
-                        scale = (double)ResizeCategoryItem.ResizelongSideValue / readImageSize.Width;
+                        scale = ResizeCategoryItem.ResizelongSideValue / readImageSize.Width;
                         if (readImageSize.Width < readImageSize.Height)
                         {
-                            scale = (double)ResizeCategoryItem.ResizelongSideValue / readImageSize.Height;
+                            scale = ResizeCategoryItem.ResizelongSideValue / readImageSize.Height;
                         }
                     }
 
-                    int resizeWidth = (int)(readImageSize.Width * scale);
-                    int resizeHeight = (int)(readImageSize.Height * scale);
+                    var resizeWidth = (int)(readImageSize.Width * scale);
+                    var resizeHeight = (int)(readImageSize.Height * scale);
                     if (!isLandscape)
                     {
                         resizeWidth = (int)(readImageSize.Height * scale);
@@ -68,8 +65,8 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public bool IsEnableImageSaveQuality
         {
-            get { return isEnableImageSaveQuality; }
-            set { SetProperty(ref isEnableImageSaveQuality, value); }
+            get => isEnableImageSaveQuality;
+            set => SetProperty(ref isEnableImageSaveQuality, value);
         }
 
         public ObservableCollection<ImageQuality> ImageSaveQualityItems { get; }
@@ -78,8 +75,8 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public ImageQuality SelectedQuality
         {
-            get { return selectedQuality; }
-            set { SetProperty(ref selectedQuality, value); }
+            get => selectedQuality;
+            set => SetProperty(ref selectedQuality, value);
         }
 
         public ObservableCollection<ImageForm> ImageFormItems { get; }
@@ -88,16 +85,16 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public ImageForm SelectedForm
         {
-            get { return selectedForm; }
-            set { SetProperty(ref selectedForm, value); }
+            get => selectedForm;
+            set => SetProperty(ref selectedForm, value);
         }
 
         private string resizeSizeText;
 
         public string ResizeSizeText
         {
-            get { return resizeSizeText; }
-            set { SetProperty(ref resizeSizeText, value); }
+            get => resizeSizeText;
+            set => SetProperty(ref resizeSizeText, value);
         }
 
         #endregion UI binding parameter
@@ -151,7 +148,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public void SetEditFileData(string filePath)
         {
             editFilePath = filePath;
-            EditImage = ImageControl.CreatePictureEditViewThumbnail(editFilePath, out int defaultPictureWidth, out int defaultPictureHeight, out uint rotation);
+            EditImage = ImageControl.CreatePictureEditViewThumbnail(editFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
                 readImageSize = new Size { Width = defaultPictureHeight, Height = defaultPictureWidth };
@@ -218,13 +215,13 @@ namespace Kchary.PhotoViewer.ViewModels
             if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
             {
                 // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
-                scale = (double)ResizeCategoryItem.ResizelongSideValue / readImageSize.Width;
+                scale = ResizeCategoryItem.ResizelongSideValue / readImageSize.Width;
                 if (readImageSize.Width < readImageSize.Height)
                 {
-                    scale = (double)ResizeCategoryItem.ResizelongSideValue / readImageSize.Height;
+                    scale = ResizeCategoryItem.ResizelongSideValue / readImageSize.Height;
                 }
             }
-            var saveImageSource = ImageControl.CreateSavePicture(editFilePath, scale);
+            BitmapSource saveImageSource = ImageControl.CreateSavePicture(editFilePath, scale);
 
             // Select the same encoder as the selected format.
             BitmapEncoder encoder = null;
@@ -254,7 +251,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 // Add a frame to the encoder and save the file.
                 encoder.Frames.Add(BitmapFrame.Create(saveImageSource));
-                using (var dstStream = File.OpenWrite(saveFilePath))
+                using (FileStream dstStream = File.OpenWrite(saveFilePath))
                 {
                     encoder.Save(dstStream);
                 }

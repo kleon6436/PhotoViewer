@@ -39,7 +39,7 @@ namespace Kchary.PhotoViewer.Model
 
             var bitmapFrame = BitmapFrame.Create(fs);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
-            var thumbnailImage = bitmapFrame.Thumbnail;
+            BitmapSource thumbnailImage = bitmapFrame.Thumbnail;
 
             var maxScaledWidth = 100;
             var maxScaledHeight = 75;
@@ -114,7 +114,7 @@ namespace Kchary.PhotoViewer.Model
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
 
             // Decode picture.
-            var saveImage = bitmapFrame.Clone();
+            BitmapSource saveImage = bitmapFrame.Clone();
 
             // Resize image.
             saveImage = new TransformedBitmap(saveImage, new ScaleTransform(scale, scale));
@@ -149,7 +149,7 @@ namespace Kchary.PhotoViewer.Model
             }
 
             // Decode picture.
-            var viewImage = bitmapFrame.Clone();
+            BitmapSource viewImage = bitmapFrame.Clone();
 
             //// If the image is large, reduce the image.
             if (viewImage.PixelWidth > maxWidth || viewImage.PixelHeight > maxHeight)
@@ -200,9 +200,9 @@ namespace Kchary.PhotoViewer.Model
         private static BitmapSource ResizeImage(BitmapSource image, int maxScaledWidth, int maxScaledHeight)
         {
             // Generate a scaled image.
-            double scaleX = (double)maxScaledWidth / image.PixelWidth;
-            double scaleY = (double)maxScaledHeight / image.PixelHeight;
-            double scale = Math.Min(scaleX, scaleY);
+            var scaleX = (double)maxScaledWidth / image.PixelWidth;
+            var scaleY = (double)maxScaledHeight / image.PixelHeight;
+            var scale = Math.Min(scaleX, scaleY);
 
             // Generate WritableBitmap from generated TransformedBitmap.
             return new TransformedBitmap(image, new ScaleTransform(scale, scale));
@@ -215,7 +215,7 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>rotation value</returns>
         private static uint GetRotation(BitmapMetadata metaData)
         {
-            string _query = "/app1/ifd/exif:{uint=274}";
+            var _query = "/app1/ifd/exif:{uint=274}";
             if (!metaData.ContainsQuery(_query))
             {
                 return 0;

@@ -8,16 +8,16 @@ namespace Kchary.PhotoViewer.Model
 
         public string AppName
         {
-            get { return appName; }
-            set { SetProperty(ref appName, value); }
+            get => appName;
+            set => SetProperty(ref appName, value);
         }
 
         private string appPath;
 
         public string AppPath
         {
-            get { return appPath; }
-            set { SetProperty(ref appPath, value); }
+            get => appPath;
+            set => SetProperty(ref appPath, value);
         }
     }
 }

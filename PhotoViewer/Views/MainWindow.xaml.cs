@@ -53,7 +53,7 @@ namespace Kchary.PhotoViewer
         {
             if (DataContext is MainWindowViewModel vm && vm.SelectedMedia == null && vm.MediaInfoList.Any())
             {
-                var firstImageData = vm.MediaInfoList.First();
+                MediaInfo firstImageData = vm.MediaInfoList.First();
                 if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(firstImageData.FilePath).ToLower()))
                 {
                     vm.SelectedMedia = firstImageData;
@@ -76,10 +76,10 @@ namespace Kchary.PhotoViewer
             }
 
             // ウィンドウ情報を保存
-            var hwnd = new WindowInteropHelper(this).Handle;
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
             GetWindowPlacement(hwnd, out WINDOWPLACEMENT placement);
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.ConfigData.WindowPlaceData = placement;
             appConfigManager.Export();
         }
@@ -147,12 +147,12 @@ namespace Kchary.PhotoViewer
         {
             base.OnSourceInitialized(e);
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
 
-            var windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
+            WINDOWPLACEMENT windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
             windowPlacement.showCmd = (windowPlacement.showCmd == SW.SHOWMINIMIZED) ? SW.SHOWNORMAL : windowPlacement.showCmd;
 
-            var hwnd = new WindowInteropHelper(this).Handle;
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
             SetWindowPlacement(hwnd, ref windowPlacement);
         }
 

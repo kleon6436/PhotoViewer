@@ -22,7 +22,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public SelectPage SelectPageButtonValue
         {
-            get { return selectPageButtonValue; }
+            get => selectPageButtonValue;
             set
             {
                 SetProperty(ref selectPageButtonValue, value);
@@ -57,8 +57,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public Page DisplayPage
         {
-            get { return displayPage; }
-            set { SetProperty(ref displayPage, value); }
+            get => displayPage;
+            set => SetProperty(ref displayPage, value);
         }
 
         /// <summary>

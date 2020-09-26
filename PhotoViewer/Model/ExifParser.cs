@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Kchary.PhotoViewer.Model
@@ -14,8 +14,8 @@ namespace Kchary.PhotoViewer.Model
         {
             var _ = new FileInfo(filePath);
             var shell = new Shell32.Shell();
-            var objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
-            var folderItem = objFolder.ParseName(Path.GetFileName(filePath));
+            Shell32.Folder objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
+            Shell32.FolderItem folderItem = objFolder.ParseName(Path.GetFileName(filePath));
 
             var exifInfos = new List<ExifInfo>
             {

@@ -18,10 +18,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Media type
         /// </summary>
-        public MediaType ContentMediaType
-        {
-            get { return CheckMediaType(FilePath); }
-        }
+        public MediaType ContentMediaType => CheckMediaType(FilePath);
 
         private BitmapSource thumbnailImage;
 
@@ -30,8 +27,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         public BitmapSource ThumbnailImage
         {
-            get { return thumbnailImage; }
-            set { SetProperty(ref thumbnailImage, value); }
+            get => thumbnailImage;
+            set => SetProperty(ref thumbnailImage, value);
         }
 
         private string fileName;
@@ -41,8 +38,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         public string FileName
         {
-            get { return fileName; }
-            set { SetProperty(ref fileName, value); }
+            get => fileName;
+            set => SetProperty(ref fileName, value);
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
@@ -9,7 +10,6 @@ namespace Kchary.PhotoViewer.Model
     /// </summary>
     public sealed class AppConfigXml
     {
-        // XML element name
         private const string PreviousFolderElemName = "previous_folder";
         private const string PreviousPathElemName = "previous_path";
         private const string LinkAppElemName = "linkage_app";
@@ -59,7 +59,7 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Generate xml of previous folder path. 
+        /// Generate xml of previous folder path.
         /// </summary>
         private XElement CreatePreviousPathXml(AppConfigData configData)
         {
@@ -75,8 +75,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private void ParsePreviousPathXml(XDocument xdoc, AppConfigData configData)
         {
-            var dataElement = xdoc.Root.Element(PreviousFolderElemName);
-            var previousPath = dataElement.Element(PreviousPathElemName);
+            XElement dataElement = xdoc.Root.Element(PreviousFolderElemName);
+            XElement previousPath = dataElement.Element(PreviousPathElemName);
 
             configData.PreviousFolderPath = previousPath.Value;
         }
@@ -88,8 +88,8 @@ namespace Kchary.PhotoViewer.Model
         {
             var linkageElement = new XElement(LinkAppElemName);
 
-            var linkageAppList = configData.LinkageAppList;
-            foreach (var linkageApp in linkageAppList)
+            List<ExtraAppSetting> linkageAppList = configData.LinkageAppList;
+            foreach (ExtraAppSetting linkageApp in linkageAppList)
             {
                 var dataElement = new XElement(LinkAppDataName);
                 var appNameElement = new XElement(LinkAppNameElemName, linkageApp == null ? new XText("") : new XText(linkageApp.AppName));
@@ -109,17 +109,17 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private void ParseLinkageAppXml(XDocument xdoc, AppConfigData configData)
         {
-            var linkageElement = xdoc.Root.Element(LinkAppElemName);
-            var dataElements = linkageElement.Elements(LinkAppDataName);
+            XElement linkageElement = xdoc.Root.Element(LinkAppElemName);
+            IEnumerable<XElement> dataElements = linkageElement.Elements(LinkAppDataName);
 
-            foreach (var dataElement in dataElements)
+            foreach (XElement dataElement in dataElements)
             {
-                var appNameElement = dataElement.Element(LinkAppNameElemName);
-                var appPathElement = dataElement.Element(LinkAppPathElemName);
+                XElement appNameElement = dataElement.Element(LinkAppNameElemName);
+                XElement appPathElement = dataElement.Element(LinkAppPathElemName);
 
                 if (!string.IsNullOrEmpty(appNameElement.Value) && !string.IsNullOrEmpty(appPathElement.Value))
                 {
-                    var linkageApp = new ExtraAppSetting { AppName = appNameElement.Value, AppPath = appPathElement.Value};
+                    var linkageApp = new ExtraAppSetting { AppName = appNameElement.Value, AppPath = appPathElement.Value };
                     configData.LinkageAppList.Add(linkageApp);
                 }
             }
@@ -161,17 +161,17 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         private void ParseWindowPlacementXml(XDocument xdoc, AppConfigData configData)
         {
-            var dataElement = xdoc.Root.Element(WindowPlacementElemName);
-            var windowPlaceTopElement = dataElement.Element(WindowPlacementTopElemName);
-            var windowPlaceLeftElement = dataElement.Element(WindowPlacementLeftElemName);
-            var windowPlaceRightElement = dataElement.Element(WindowPlacementRightElemName);
-            var windowPlaceButtomElement = dataElement.Element(WindowsPlacementButtomElemName);
-            var windowMaxPositionX = dataElement.Element(WindowPlacementMaxPosXElemName);
-            var windowMaxPositionY = dataElement.Element(WindowPlacementMaxPosYElemName);
-            var windowMinPositionX = dataElement.Element(WindowPlacementMinPosXElemName);
-            var windowMinPositionY = dataElement.Element(WindowPlacementMinPosYElemName);
-            var windowFlag = dataElement.Element(WindowPlacementFlagElemName);
-            var windowSwElement = dataElement.Element(WindowPlacementSwElemName);
+            XElement dataElement = xdoc.Root.Element(WindowPlacementElemName);
+            XElement windowPlaceTopElement = dataElement.Element(WindowPlacementTopElemName);
+            XElement windowPlaceLeftElement = dataElement.Element(WindowPlacementLeftElemName);
+            XElement windowPlaceRightElement = dataElement.Element(WindowPlacementRightElemName);
+            XElement windowPlaceButtomElement = dataElement.Element(WindowsPlacementButtomElemName);
+            XElement windowMaxPositionX = dataElement.Element(WindowPlacementMaxPosXElemName);
+            XElement windowMaxPositionY = dataElement.Element(WindowPlacementMaxPosYElemName);
+            XElement windowMinPositionX = dataElement.Element(WindowPlacementMinPosXElemName);
+            XElement windowMinPositionY = dataElement.Element(WindowPlacementMinPosYElemName);
+            XElement windowFlag = dataElement.Element(WindowPlacementFlagElemName);
+            XElement windowSwElement = dataElement.Element(WindowPlacementSwElemName);
 
             configData.WindowPlaceData.normalPosition.Top = Convert.ToInt32(windowPlaceTopElement.Value);
             configData.WindowPlaceData.normalPosition.Left = Convert.ToInt32(windowPlaceLeftElement.Value);

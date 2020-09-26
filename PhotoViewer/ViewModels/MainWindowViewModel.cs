@@ -37,8 +37,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public string SelectFolderPath
         {
-            get { return selectFolderPath; }
-            set { SetProperty(ref selectFolderPath, value); }
+            get => selectFolderPath;
+            set => SetProperty(ref selectFolderPath, value);
         }
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public MediaInfo SelectedMedia
         {
-            get { return selectedMedia; }
-            set { SetProperty(ref selectedMedia, value); }
+            get => selectedMedia;
+            set => SetProperty(ref selectedMedia, value);
         }
 
         private BitmapSource pictureImageSource;
@@ -64,8 +64,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public BitmapSource PictureImageSource
         {
-            get { return pictureImageSource; }
-            set { SetProperty(ref pictureImageSource, value); }
+            get => pictureImageSource;
+            set => SetProperty(ref pictureImageSource, value);
         }
 
         /// <summary>
@@ -77,16 +77,16 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public bool IsShowContextMenu
         {
-            get { return isShowContextMenu; }
-            set { SetProperty(ref isShowContextMenu, value); }
+            get => isShowContextMenu;
+            set => SetProperty(ref isShowContextMenu, value);
         }
 
         private bool isEnableImageEditButton;
 
         public bool IsEnableImageEditButton
         {
-            get { return isEnableImageEditButton; }
-            set { SetProperty(ref isEnableImageEditButton, value); }
+            get => isEnableImageEditButton;
+            set => SetProperty(ref isEnableImageEditButton, value);
         }
 
         #endregion UI binding parameters
@@ -134,13 +134,13 @@ namespace Kchary.PhotoViewer.ViewModels
         public void InitViewFolder()
         {
             // Read setting information.
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var appConfigManager = AppConfigManager.GetInstance();
+            List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 for (var count = 0; count < linkageAppList.Count; count++)
                 {
-                    var linkageApp = linkageAppList[count];
+                    ExtraAppSetting linkageApp = linkageAppList[count];
                     if (!File.Exists(linkageApp.AppPath))
                     {
                         appConfigManager.ConfigData.LinkageAppList.Remove(linkageApp);
@@ -148,8 +148,8 @@ namespace Kchary.PhotoViewer.ViewModels
                     }
 
                     // Load app icon.
-                    Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                    var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
+                    BitmapSource iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     // Set context menu.
                     var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
@@ -159,7 +159,7 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             // Load image folder.
-            string picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
+            var picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
             if (!string.IsNullOrEmpty(appConfigManager.ConfigData.PreviousFolderPath))
             {
                 picturePath = appConfigManager.ConfigData.PreviousFolderPath;
@@ -173,8 +173,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="appName">App name</param>
         public void ExecuteContextMenu(string appName)
         {
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var appConfigManager = AppConfigManager.GetInstance();
+            List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (!linkageAppList.Any(x => x.AppName == appName))
             {
                 return;
@@ -184,7 +184,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                string appPath = linkageAppList.Find(x => x.AppName == appName).AppPath;
+                var appPath = linkageAppList.Find(x => x.AppName == appName).AppPath;
                 Process.Start(appPath, SelectedMedia.FilePath);
             }
             catch (Exception ex)
@@ -210,7 +210,6 @@ namespace Kchary.PhotoViewer.ViewModels
                 App.ShowErrorMessageBox(FileNotExistErrorMessage, FileNotExstErrorTitle);
             }
 
-            PictureImageSource = null;
             IsEnableImageEditButton = false;
 
             return mediaInfo.ContentMediaType switch
@@ -241,7 +240,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void LoadConfigFile()
         {
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.Import();
         }
 
@@ -305,11 +304,9 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void ReloadButtonClicked()
         {
-            // Clear picture image view source.
-            if (PictureImageSource != null)
-            {
-                PictureImageSource = null;
-            }
+            // Clear picture image view source and exif info data.
+            PictureImageSource = null;
+            ExifInfoViewModel.ExifDataList.Clear();
 
             // Update image edit button status.
             IsEnableImageEditButton = false;
@@ -371,15 +368,15 @@ namespace Kchary.PhotoViewer.ViewModels
             IsShowContextMenu = false;
 
             // Reload the information related to the linked application from the setting information.
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var appConfigManager = AppConfigManager.GetInstance();
+            List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
-                foreach (var linkageApp in linkageAppList)
+                foreach (ExtraAppSetting linkageApp in linkageAppList)
                 {
                     // Load app icon.
-                    Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                    var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
+                    BitmapSource iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     // Set context menu.
                     var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
@@ -398,9 +395,10 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             SelectedMedia = null;
             PictureImageSource = null;
+            ExifInfoViewModel.ExifDataList.Clear();
             IsEnableImageEditButton = false;
 
-            var selectedExplorerItem = ExplorerViewModel.SelectedItem;
+            ExplorerItem selectedExplorerItem = ExplorerViewModel.SelectedItem;
             ChangeContents(selectedExplorerItem.ExplorerItemPath);
         }
 
@@ -411,8 +409,8 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ExplorerViewModel.CreateDriveTreeItem();
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            string previousFolderPath = appConfigManager.ConfigData.PreviousFolderPath;
+            var appConfigManager = AppConfigManager.GetInstance();
+            var previousFolderPath = appConfigManager.ConfigData.PreviousFolderPath;
             if (!string.IsNullOrEmpty(previousFolderPath))
             {
                 ExplorerViewModel.ExpandPreviousPath(appConfigManager.ConfigData.PreviousFolderPath);
@@ -434,7 +432,7 @@ namespace Kchary.PhotoViewer.ViewModels
             SelectFolderPath = folderPath;
             UpdateContents();
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.ConfigData.PreviousFolderPath = SelectFolderPath;
         }
 
