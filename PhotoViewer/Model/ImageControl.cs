@@ -56,7 +56,7 @@ namespace Kchary.PhotoViewer.Model
             if (thumbnailImage == null)
             {
                 // Reset stream position and decode image.
-                thumbnailImage = bitmapFrame.Clone();
+                thumbnailImage = bitmapFrame;
             }
 
             // If the thumbnail image is large, reduce the image.
@@ -114,7 +114,7 @@ namespace Kchary.PhotoViewer.Model
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
 
             // Decode picture.
-            BitmapSource saveImage = bitmapFrame.Clone();
+            BitmapSource saveImage = bitmapFrame;
 
             // Resize image.
             saveImage = new TransformedBitmap(saveImage, new ScaleTransform(scale, scale));
@@ -149,7 +149,7 @@ namespace Kchary.PhotoViewer.Model
             }
 
             // Decode picture.
-            BitmapSource viewImage = bitmapFrame.Clone();
+            BitmapSource viewImage = bitmapFrame;
 
             //// If the image is large, reduce the image.
             if (viewImage.PixelWidth > maxWidth || viewImage.PixelHeight > maxHeight)
