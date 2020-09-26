@@ -37,7 +37,7 @@ namespace Kchary.PhotoViewer.Views
             selectedExplorerItem.BringIntoView();
             selectedExplorerItem.Focus();
 
-            ExplorerViewModel vm = DataContext as ExplorerViewModel;
+            var vm = DataContext as ExplorerViewModel;
             Debug.Assert(vm != null);
 
             if (vm.SelectedItem != selectedExplorerItem)

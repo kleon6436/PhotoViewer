@@ -38,7 +38,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 if (resizeCategoryItem != null)
                 {
                     double scale = 1;
-                    bool isLandscape = true;
+                    var isLandscape = true;
                     if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
                     {
                         // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
@@ -49,8 +49,8 @@ namespace Kchary.PhotoViewer.ViewModels
                         }
                     }
 
-                    int resizeWidth = (int)(readImageSize.Width * scale);
-                    int resizeHeight = (int)(readImageSize.Height * scale);
+                    var resizeWidth = (int)(readImageSize.Width * scale);
+                    var resizeHeight = (int)(readImageSize.Height * scale);
                     if (!isLandscape)
                     {
                         resizeWidth = (int)(readImageSize.Height * scale);
@@ -148,7 +148,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public void SetEditFileData(string filePath)
         {
             editFilePath = filePath;
-            EditImage = ImageControl.CreatePictureEditViewThumbnail(editFilePath, out int defaultPictureWidth, out int defaultPictureHeight, out uint rotation);
+            EditImage = ImageControl.CreatePictureEditViewThumbnail(editFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
                 readImageSize = new Size { Width = defaultPictureHeight, Height = defaultPictureWidth };
@@ -173,7 +173,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void SaveButtonClicked()
         {
-            SaveFileDialog dialog = new SaveFileDialog();
+            var dialog = new SaveFileDialog();
             const string DialogTitle = "名前を付けて保存";
             dialog.Title = DialogTitle;
 
@@ -208,10 +208,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            string saveFilePath = dialog.FileName;
+            var saveFilePath = dialog.FileName;
 
             // Create a save image.
-            double scale = 1.0; // No scaling
+            var scale = 1.0; // No scaling
             if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
             {
                 // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).

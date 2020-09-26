@@ -66,7 +66,7 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>Stack panel settings shown in TreeView.</returns>
         private StackPanel CreateExplorerItemHeader(string path, bool isDrive)
         {
-            StackPanel stackpanel = new StackPanel()
+            var stackpanel = new StackPanel()
             {
                 Orientation = Orientation.Horizontal
             };
@@ -107,7 +107,7 @@ namespace Kchary.PhotoViewer.Model
             foreach (DirectoryInfo directory in sortDirectoryInfos)
             {
                 // Get the first character of the file name.
-                string fileNameFirst = Path.GetFileName(directory.FullName).Substring(0, 1);
+                var fileNameFirst = Path.GetFileName(directory.FullName).Substring(0, 1);
 
                 // If the first character is "$" or the attribute is hidden, it is skipped because it is a Windows special file.
                 if (fileNameFirst == "$" || (directory.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
@@ -115,7 +115,7 @@ namespace Kchary.PhotoViewer.Model
                     continue;
                 }
 
-                ExplorerItem node = new ExplorerItem(directory.FullName, false);
+                var node = new ExplorerItem(directory.FullName, false);
                 Items.Add(node);
             }
         }

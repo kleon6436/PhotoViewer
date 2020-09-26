@@ -87,7 +87,7 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>File type</returns>
         private MediaType CheckMediaType(string filePath)
         {
-            string extension = Path.GetExtension(filePath).ToLower();
+            var extension = Path.GetExtension(filePath).ToLower();
 
             if (MediaChecker.CheckPictureExtensions(extension))
             {

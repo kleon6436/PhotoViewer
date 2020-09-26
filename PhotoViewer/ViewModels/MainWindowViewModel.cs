@@ -134,11 +134,11 @@ namespace Kchary.PhotoViewer.ViewModels
         public void InitViewFolder()
         {
             // Read setting information.
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
-                for (int count = 0; count < linkageAppList.Count; count++)
+                for (var count = 0; count < linkageAppList.Count; count++)
                 {
                     ExtraAppSetting linkageApp = linkageAppList[count];
                     if (!File.Exists(linkageApp.AppPath))
@@ -148,18 +148,18 @@ namespace Kchary.PhotoViewer.ViewModels
                     }
 
                     // Load app icon.
-                    Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
+                    var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
                     BitmapSource iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     // Set context menu.
-                    ContextMenuInfo contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
+                    var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
                     ContextMenuCollection.Add(contextMenu);
                     IsShowContextMenu = true;
                 }
             }
 
             // Load image folder.
-            string picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
+            var picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
             if (!string.IsNullOrEmpty(appConfigManager.ConfigData.PreviousFolderPath))
             {
                 picturePath = appConfigManager.ConfigData.PreviousFolderPath;
@@ -173,7 +173,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="appName">App name</param>
         public void ExecuteContextMenu(string appName)
         {
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (!linkageAppList.Any(x => x.AppName == appName))
             {
@@ -184,7 +184,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                string appPath = linkageAppList.Find(x => x.AppName == appName).AppPath;
+                var appPath = linkageAppList.Find(x => x.AppName == appName).AppPath;
                 Process.Start(appPath, SelectedMedia.FilePath);
             }
             catch (Exception ex)
@@ -240,7 +240,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void LoadConfigFile()
         {
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.Import();
         }
 
@@ -324,10 +324,10 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void SettingButtonClicked()
         {
-            SettingViewModel vm = new SettingViewModel();
+            var vm = new SettingViewModel();
             vm.ReloadContextMenuEvent += ReloadContextMenu;
 
-            SettingView settingDialog = new SettingView
+            var settingDialog = new SettingView
             {
                 DataContext = vm,
                 Owner = Application.Current.MainWindow
@@ -345,10 +345,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            ImageEditToolViewModel vm = new ImageEditToolViewModel();
+            var vm = new ImageEditToolViewModel();
             vm.SetEditFileData(SelectedMedia.FilePath);
 
-            ImageEditToolView imageEditToolDialog = new ImageEditToolView
+            var imageEditToolDialog = new ImageEditToolView
             {
                 DataContext = vm,
                 Owner = Application.Current.MainWindow
@@ -368,18 +368,18 @@ namespace Kchary.PhotoViewer.ViewModels
             IsShowContextMenu = false;
 
             // Reload the information related to the linked application from the setting information.
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 foreach (ExtraAppSetting linkageApp in linkageAppList)
                 {
                     // Load app icon.
-                    Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
+                    var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
                     BitmapSource iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     // Set context menu.
-                    ContextMenuInfo contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
+                    var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
                     ContextMenuCollection.Add(contextMenu);
                     IsShowContextMenu = true;
                 }
@@ -409,8 +409,8 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ExplorerViewModel.CreateDriveTreeItem();
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            string previousFolderPath = appConfigManager.ConfigData.PreviousFolderPath;
+            var appConfigManager = AppConfigManager.GetInstance();
+            var previousFolderPath = appConfigManager.ConfigData.PreviousFolderPath;
             if (!string.IsNullOrEmpty(previousFolderPath))
             {
                 ExplorerViewModel.ExpandPreviousPath(appConfigManager.ConfigData.PreviousFolderPath);
@@ -432,7 +432,7 @@ namespace Kchary.PhotoViewer.ViewModels
             SelectFolderPath = folderPath;
             UpdateContents();
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.ConfigData.PreviousFolderPath = SelectFolderPath;
         }
 
@@ -459,7 +459,7 @@ namespace Kchary.PhotoViewer.ViewModels
             // Clear display list before loading.
             MediaInfoList.Clear();
 
-            BackgroundWorker backgroundWorker = new BackgroundWorker
+            var backgroundWorker = new BackgroundWorker
             {
                 WorkerSupportsCancellation = true
             };
@@ -531,31 +531,31 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="e">Argument</param>
         private void LoadContentsWorker(object sender, DoWorkEventArgs e)
         {
-            LinkedList<MediaInfo> queue = new LinkedList<MediaInfo>();
-            int tick = Environment.TickCount;
-            int count = 0;
+            var queue = new LinkedList<MediaInfo>();
+            var tick = Environment.TickCount;
+            var count = 0;
 
             // Get all supported files in selected folder.
-            foreach (string supportExtension in MediaChecker.GetSupportExtentions())
+            foreach (var supportExtension in MediaChecker.GetSupportExtentions())
             {
                 // If the file path is displayed, change it to the directory path and read it.
-                string selectFolderPath = SelectFolderPath;
+                var selectFolderPath = SelectFolderPath;
                 if ((File.GetAttributes(selectFolderPath) & FileAttributes.Directory) != FileAttributes.Directory)
                 {
                     selectFolderPath = Path.GetDirectoryName(selectFolderPath);
                 }
 
                 // Read all support image file.
-                foreach (string supportFile in Directory.EnumerateFiles(selectFolderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
+                foreach (var supportFile in Directory.EnumerateFiles(selectFolderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
                 {
-                    BackgroundWorker worker = sender as BackgroundWorker;
+                    var worker = sender as BackgroundWorker;
                     if (worker.CancellationPending)
                     {
                         e.Cancel = true;
                         return;
                     }
 
-                    MediaInfo mediaInfo = new MediaInfo
+                    var mediaInfo = new MediaInfo
                     {
                         FilePath = supportFile
                     };
@@ -571,7 +571,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     if (queue.Any())
                     {
-                        int duration = Environment.TickCount - tick;
+                        var duration = Environment.TickCount - tick;
                         if ((count <= 100 && duration > 500) || duration > 1000)
                         {
                             Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
@@ -611,10 +611,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 Mouse.OverrideCursor = Cursors.Wait;
 
                 // Create display image task.
-                Task loadPictureTask = Task.Run(() => { PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath); });
+                var loadPictureTask = Task.Run(() => { PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath); });
 
                 // Set exif information task.
-                Task setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
+                var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
 
                 // Do task
                 await Task.WhenAll(loadPictureTask, setExifInfoTask);

@@ -49,7 +49,7 @@ namespace Kchary.PhotoViewer.Model
         public void Export()
         {
             // Create folder if it does not exist.
-            string appConfigdirectory = Path.GetDirectoryName(appConfigFilePath);
+            var appConfigdirectory = Path.GetDirectoryName(appConfigFilePath);
             if (!Directory.Exists(appConfigdirectory))
             {
                 Directory.CreateDirectory(appConfigdirectory);

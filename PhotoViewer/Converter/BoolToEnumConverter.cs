@@ -18,7 +18,7 @@ namespace Kchary.PhotoViewer.Converter
                 return System.Windows.DependencyProperty.UnsetValue;
             }
 
-            object paramvalue = Enum.Parse(value.GetType(), ParameterString);
+            var paramvalue = Enum.Parse(value.GetType(), ParameterString);
 
             return (int)paramvalue == (int)value;
         }

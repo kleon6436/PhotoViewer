@@ -55,27 +55,27 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
 
                 // Create drive treeitem
-                ExplorerItem driveItem = new ExplorerItem(drive.Name, true);
+                var driveItem = new ExplorerItem(drive.Name, true);
                 ExplorerItems.Add(driveItem);
             }
         }
 
         public void ExpandPreviousPath(string previousFolderPath)
         {
-            List<string> parentPathList = new List<string>();
+            var parentPathList = new List<string>();
 
             GetAllParentPathList(previousFolderPath, parentPathList);
             parentPathList.Reverse();
 
-            int count = 0;
+            var count = 0;
             ExplorerItem previousItem = null;
 
-            foreach (string parentPath in parentPathList)
+            foreach (var parentPath in parentPathList)
             {
                 if (count == 0)
                 {
                     // Check drive information and expand tree.
-                    string previousDrive = parentPath;
+                    var previousDrive = parentPath;
                     ExplorerItem driveItem = ExplorerItems.Where(item => item.ExplorerItemPath == previousDrive).First();
                     if (driveItem == null)
                     {
@@ -121,7 +121,7 @@ namespace Kchary.PhotoViewer.ViewModels
         private void GetAllParentPathList(string previousFolderPath, List<string> parentPathList)
         {
             // Get the lowest directory name.
-            DirectoryInfo directoryInfo = new DirectoryInfo(previousFolderPath);
+            var directoryInfo = new DirectoryInfo(previousFolderPath);
             parentPathList.Add(directoryInfo.FullName);
 
             // Obtain parent directories in order and add to the list.
@@ -149,8 +149,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private ExplorerItem GetDirectoryItem(string parentPath, ExplorerItem previousItem)
         {
-            string previousDirectory = parentPath;
-            List<ExplorerItem> explorerItemList = new List<ExplorerItem>();
+            var previousDirectory = parentPath;
+            var explorerItemList = new List<ExplorerItem>();
             explorerItemList.AddRange(previousItem.Items.OfType<ExplorerItem>());
 
             return explorerItemList.Where(item => item.ExplorerItemPath == previousDirectory).First();

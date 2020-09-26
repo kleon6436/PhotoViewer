@@ -23,13 +23,13 @@ namespace Kchary.PhotoViewer
         public MainWindow()
         {
             // SplashScreenの表示
-            SplashScreenView splashScreen = new SplashScreenView();
+            var splashScreen = new SplashScreenView();
             splashScreen.Show();
 
             // SplashScreen表示中にViewModelの読み込み
-            Stopwatch timer = new Stopwatch();
+            var timer = new Stopwatch();
             timer.Start();
-            MainWindowViewModel vm = new MainWindowViewModel();
+            var vm = new MainWindowViewModel();
             vm.InitViewFolder();
             DataContext = vm;
             timer.Stop();
@@ -68,7 +68,7 @@ namespace Kchary.PhotoViewer
         /// <param name="e">引数情報</param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            MainWindowViewModel vm = DataContext as MainWindowViewModel;
+            var vm = DataContext as MainWindowViewModel;
             if (!vm.StopThreadAndTask())
             {
                 // 少し待ってからクローズ
@@ -79,7 +79,7 @@ namespace Kchary.PhotoViewer
             IntPtr hwnd = new WindowInteropHelper(this).Handle;
             GetWindowPlacement(hwnd, out WINDOWPLACEMENT placement);
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.ConfigData.WindowPlaceData = placement;
             appConfigManager.Export();
         }
@@ -92,7 +92,7 @@ namespace Kchary.PhotoViewer
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             // ListBoxのアイテム選択時は、そのアイテムまでスクロールする
-            object selectedItem = mediaListBox.SelectedItem;
+            var selectedItem = mediaListBox.SelectedItem;
             if (selectedItem != null)
             {
                 mediaListBox.ScrollIntoView(selectedItem);
@@ -119,7 +119,7 @@ namespace Kchary.PhotoViewer
                 return;
             }
 
-            MainWindowViewModel vm = DataContext as MainWindowViewModel;
+            var vm = DataContext as MainWindowViewModel;
             await vm.LoadMediaAsync(mediaInfo);
         }
 
@@ -135,7 +135,7 @@ namespace Kchary.PhotoViewer
                 return;
             }
 
-            MainWindowViewModel vm = DataContext as MainWindowViewModel;
+            var vm = DataContext as MainWindowViewModel;
             vm.ExecuteContextMenu(Convert.ToString(menuItem.Header));
         }
 
@@ -147,7 +147,7 @@ namespace Kchary.PhotoViewer
         {
             base.OnSourceInitialized(e);
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
 
             WINDOWPLACEMENT windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
             windowPlacement.showCmd = (windowPlacement.showCmd == SW.SHOWMINIMIZED) ? SW.SHOWNORMAL : windowPlacement.showCmd;

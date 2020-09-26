@@ -48,7 +48,7 @@ namespace Kchary.PhotoViewer.ViewModels
             RegisterLinkAppCommand = new DelegateCommand(RegisterLinkAppButtonClicked);
             DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
@@ -62,12 +62,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void LinkAppReferenceButtonClicked()
         {
-            string previousLinkAppPath = LinkAppPath;
+            var previousLinkAppPath = LinkAppPath;
 
             const string DialogTitle = "連携アプリ選択ダイアログ";
             const string DialogDefaultExt = ".exe";
 
-            OpenFileDialog dialog = new OpenFileDialog
+            var dialog = new OpenFileDialog
             {
                 Title = DialogTitle,
                 DefaultExt = DialogDefaultExt
@@ -101,7 +101,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            ExtraAppSetting linkageApp = new ExtraAppSetting { AppName = Path.GetFileNameWithoutExtension(LinkAppPath), AppPath = LinkAppPath };
+            var linkageApp = new ExtraAppSetting { AppName = Path.GetFileNameWithoutExtension(LinkAppPath), AppPath = LinkAppPath };
             if (LinkageAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))
             {
                 return;
@@ -110,7 +110,7 @@ namespace Kchary.PhotoViewer.ViewModels
             LinkageAppList.Add(linkageApp);
 
             // Export information to Config file.
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.SetLinkageApp(LinkageAppList);
             appConfigManager.Export();
 
@@ -133,7 +133,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 LinkageAppList.Remove(deleteAppSetting);
 
                 // Export information to config file.
-                AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+                var appConfigManager = AppConfigManager.GetInstance();
                 appConfigManager.RemoveLinkageApp(LinkageAppList);
                 appConfigManager.Export();
 

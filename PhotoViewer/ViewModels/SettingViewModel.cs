@@ -30,7 +30,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 switch (selectPageButtonValue)
                 {
                     case SelectPage.LinkageAppPage:
-                        LinkageAppViewModel vm = new LinkageAppViewModel();
+                        var vm = new LinkageAppViewModel();
                         vm.ChangeLinkageAppEvent += ChangeLinkageApp;
 
                         DisplayPage = new LinkageAppView
