@@ -151,7 +151,7 @@ namespace Kchary.PhotoViewer.Model
             // Decode picture.
             BitmapSource viewImage = bitmapFrame;
 
-            //// If the image is large, reduce the image.
+            // If the image is large, reduce the image.
             if (viewImage.PixelWidth > maxWidth || viewImage.PixelHeight > maxHeight)
             {
                 viewImage = ResizeImage(viewImage, maxWidth, maxHeight);
