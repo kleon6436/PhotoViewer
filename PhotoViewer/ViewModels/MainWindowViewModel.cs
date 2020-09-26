@@ -238,7 +238,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// Read configuration file.
         /// </summary>
-        private void LoadConfigFile()
+        private static void LoadConfigFile()
         {
             var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.Import();
