@@ -162,7 +162,7 @@ namespace Kchary.PhotoViewer.Model
             // Get handle of big icon.
             StockIconFlags flags = StockIconFlags.Large | StockIconFlags.Handle;
 
-            var info = new StockIconInfo
+            StockIconInfo info = new StockIconInfo
             {
                 cbSize = (uint)Marshal.SizeOf(typeof(StockIconInfo))
             };

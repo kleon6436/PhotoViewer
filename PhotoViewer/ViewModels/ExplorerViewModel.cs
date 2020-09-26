@@ -21,7 +21,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public ExplorerItem SelectedItem
         {
-            get { return selectedItem; }
+            get => selectedItem;
             set
             {
                 if (selectedItem != value)
@@ -45,9 +45,9 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="driveList"></param>
         public void CreateDriveTreeItem()
         {
-            var allDriveList = DriveInfo.GetDrives();
+            DriveInfo[] allDriveList = DriveInfo.GetDrives();
 
-            foreach (var drive in allDriveList)
+            foreach (DriveInfo drive in allDriveList)
             {
                 if (!drive.IsReady)
                 {
@@ -55,29 +55,33 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
 
                 // Create drive treeitem
-                var driveItem = new ExplorerItem(drive.Name, true);
+                ExplorerItem driveItem = new ExplorerItem(drive.Name, true);
                 ExplorerItems.Add(driveItem);
             }
         }
 
         public void ExpandPreviousPath(string previousFolderPath)
         {
-            var parentPathList = new List<string>();
+            List<string> parentPathList = new List<string>();
 
             GetAllParentPathList(previousFolderPath, parentPathList);
             parentPathList.Reverse();
 
-            var count = 0;
+            int count = 0;
             ExplorerItem previousItem = null;
 
-            foreach (var parentPath in parentPathList)
+            foreach (string parentPath in parentPathList)
             {
                 if (count == 0)
                 {
                     // Check drive information and expand tree.
                     string previousDrive = parentPath;
-                    var driveItem = ExplorerItems.Where(item => item.ExplorerItemPath == previousDrive).First();
-                    if (driveItem == null) return;
+                    ExplorerItem driveItem = ExplorerItems.Where(item => item.ExplorerItemPath == previousDrive).First();
+                    if (driveItem == null)
+                    {
+                        return;
+                    }
+
                     driveItem.IsExpanded = true;
 
                     previousItem = driveItem;
@@ -86,14 +90,22 @@ namespace Kchary.PhotoViewer.ViewModels
                 {
                     // Confirm directory information and select item.
                     ExplorerItem directoryItem = GetDirectoryItem(parentPath, previousItem);
-                    if (directoryItem == null) return;
+                    if (directoryItem == null)
+                    {
+                        return;
+                    }
+
                     directoryItem.IsSelected = true;
                 }
                 else
                 {
                     // Confirm directory information and select item
                     ExplorerItem directoryItem = GetDirectoryItem(parentPath, previousItem);
-                    if (directoryItem == null) return;
+                    if (directoryItem == null)
+                    {
+                        return;
+                    }
+
                     directoryItem.IsExpanded = true;
 
                     previousItem = directoryItem;
@@ -109,7 +121,7 @@ namespace Kchary.PhotoViewer.ViewModels
         private void GetAllParentPathList(string previousFolderPath, List<string> parentPathList)
         {
             // Get the lowest directory name.
-            var directoryInfo = new DirectoryInfo(previousFolderPath);
+            DirectoryInfo directoryInfo = new DirectoryInfo(previousFolderPath);
             parentPathList.Add(directoryInfo.FullName);
 
             // Obtain parent directories in order and add to the list.
@@ -121,8 +133,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void GetParentPathList(string directoryPath, List<string> parentPathList)
         {
-            var parentDirectory = Directory.GetParent(directoryPath);
-            if (parentDirectory == null) return;
+            DirectoryInfo parentDirectory = Directory.GetParent(directoryPath);
+            if (parentDirectory == null)
+            {
+                return;
+            }
+
             parentPathList.Add(parentDirectory.FullName);
 
             GetParentPathList(parentDirectory.FullName, parentPathList);
@@ -134,7 +150,7 @@ namespace Kchary.PhotoViewer.ViewModels
         private ExplorerItem GetDirectoryItem(string parentPath, ExplorerItem previousItem)
         {
             string previousDirectory = parentPath;
-            var explorerItemList = new List<ExplorerItem>();
+            List<ExplorerItem> explorerItemList = new List<ExplorerItem>();
             explorerItemList.AddRange(previousItem.Items.OfType<ExplorerItem>());
 
             return explorerItemList.Where(item => item.ExplorerItemPath == previousDirectory).First();

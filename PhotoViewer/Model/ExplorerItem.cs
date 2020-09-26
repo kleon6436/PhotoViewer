@@ -66,13 +66,13 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>Stack panel settings shown in TreeView.</returns>
         private StackPanel CreateExplorerItemHeader(string path, bool isDrive)
         {
-            var stackpanel = new StackPanel()
+            StackPanel stackpanel = new StackPanel()
             {
                 Orientation = Orientation.Horizontal
             };
 
             // Generate Icon.
-            var iconSource = CreateTreeIcon(isDrive);
+            BitmapSource iconSource = CreateTreeIcon(isDrive);
 
             stackpanel.Children.Add(new Image()
             {
@@ -102,9 +102,9 @@ namespace Kchary.PhotoViewer.Model
             Items.Clear();
 
             // Regenerate the directory order by rearranging it in natural order.
-            var sortDirectoryInfos = innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer());
+            IOrderedEnumerable<DirectoryInfo> sortDirectoryInfos = innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer());
 
-            foreach (var directory in sortDirectoryInfos)
+            foreach (DirectoryInfo directory in sortDirectoryInfos)
             {
                 // Get the first character of the file name.
                 string fileNameFirst = Path.GetFileName(directory.FullName).Substring(0, 1);
@@ -115,7 +115,7 @@ namespace Kchary.PhotoViewer.Model
                     continue;
                 }
 
-                var node = new ExplorerItem(directory.FullName, false);
+                ExplorerItem node = new ExplorerItem(directory.FullName, false);
                 Items.Add(node);
             }
         }
@@ -128,12 +128,12 @@ namespace Kchary.PhotoViewer.Model
         {
             if (isDrive)
             {
-                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_DRIVEFIXED);
+                BitmapSource iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_DRIVEFIXED);
                 return iconImage;
             }
             else
             {
-                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_FOLDER);
+                BitmapSource iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_FOLDER);
                 return iconImage;
             }
         }
@@ -185,10 +185,10 @@ namespace Kchary.PhotoViewer.Model
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             // Reload.
-            Application.Current.Dispatcher.Invoke((Action)(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
                 UpdateDirectoryTree();
-            }));
+            });
         }
     }
 }

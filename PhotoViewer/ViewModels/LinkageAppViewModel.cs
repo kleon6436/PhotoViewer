@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -20,8 +21,8 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public string LinkAppPath
         {
-            get { return linkAppPath; }
-            set { SetProperty(ref linkAppPath, value); }
+            get => linkAppPath;
+            set => SetProperty(ref linkAppPath, value);
         }
 
         public ObservableCollection<ExtraAppSetting> LinkageAppList { get; } = new ObservableCollection<ExtraAppSetting>();
@@ -48,7 +49,7 @@ namespace Kchary.PhotoViewer.ViewModels
             DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 LinkageAppList.Clear();
@@ -61,12 +62,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void LinkAppReferenceButtonClicked()
         {
-            var previousLinkAppPath = LinkAppPath;
+            string previousLinkAppPath = LinkAppPath;
 
             const string DialogTitle = "連携アプリ選択ダイアログ";
             const string DialogDefaultExt = ".exe";
 
-            var dialog = new OpenFileDialog
+            OpenFileDialog dialog = new OpenFileDialog
             {
                 Title = DialogTitle,
                 DefaultExt = DialogDefaultExt
@@ -100,7 +101,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            var linkageApp = new ExtraAppSetting { AppName = Path.GetFileNameWithoutExtension(LinkAppPath), AppPath = LinkAppPath };
+            ExtraAppSetting linkageApp = new ExtraAppSetting { AppName = Path.GetFileNameWithoutExtension(LinkAppPath), AppPath = LinkAppPath };
             if (LinkageAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))
             {
                 return;

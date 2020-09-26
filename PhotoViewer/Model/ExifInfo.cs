@@ -11,8 +11,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         public string ExifParameterText
         {
-            get { return exifParameterText; }
-            set { SetProperty(ref exifParameterText, value); }
+            get => exifParameterText;
+            set => SetProperty(ref exifParameterText, value);
         }
 
         private string exifParameterValue;
@@ -22,8 +22,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         public string ExifParameterValue
         {
-            get { return exifParameterValue; }
-            set { SetProperty(ref exifParameterValue, value); }
+            get => exifParameterValue;
+            set => SetProperty(ref exifParameterValue, value);
         }
 
         public ExifInfo(string exifText, string exifValue)

@@ -37,8 +37,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public string SelectFolderPath
         {
-            get { return selectFolderPath; }
-            set { SetProperty(ref selectFolderPath, value); }
+            get => selectFolderPath;
+            set => SetProperty(ref selectFolderPath, value);
         }
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public MediaInfo SelectedMedia
         {
-            get { return selectedMedia; }
-            set { SetProperty(ref selectedMedia, value); }
+            get => selectedMedia;
+            set => SetProperty(ref selectedMedia, value);
         }
 
         private BitmapSource pictureImageSource;
@@ -64,8 +64,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public BitmapSource PictureImageSource
         {
-            get { return pictureImageSource; }
-            set { SetProperty(ref pictureImageSource, value); }
+            get => pictureImageSource;
+            set => SetProperty(ref pictureImageSource, value);
         }
 
         /// <summary>
@@ -77,16 +77,16 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public bool IsShowContextMenu
         {
-            get { return isShowContextMenu; }
-            set { SetProperty(ref isShowContextMenu, value); }
+            get => isShowContextMenu;
+            set => SetProperty(ref isShowContextMenu, value);
         }
 
         private bool isEnableImageEditButton;
 
         public bool IsEnableImageEditButton
         {
-            get { return isEnableImageEditButton; }
-            set { SetProperty(ref isEnableImageEditButton, value); }
+            get => isEnableImageEditButton;
+            set => SetProperty(ref isEnableImageEditButton, value);
         }
 
         #endregion UI binding parameters
@@ -135,12 +135,12 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             // Read setting information.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
-                for (var count = 0; count < linkageAppList.Count; count++)
+                for (int count = 0; count < linkageAppList.Count; count++)
                 {
-                    var linkageApp = linkageAppList[count];
+                    ExtraAppSetting linkageApp = linkageAppList[count];
                     if (!File.Exists(linkageApp.AppPath))
                     {
                         appConfigManager.ConfigData.LinkageAppList.Remove(linkageApp);
@@ -149,10 +149,10 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     // Load app icon.
                     Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                    var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    BitmapSource iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     // Set context menu.
-                    var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
+                    ContextMenuInfo contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
                     ContextMenuCollection.Add(contextMenu);
                     IsShowContextMenu = true;
                 }
@@ -174,7 +174,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public void ExecuteContextMenu(string appName)
         {
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (!linkageAppList.Any(x => x.AppName == appName))
             {
                 return;
@@ -324,10 +324,10 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void SettingButtonClicked()
         {
-            var vm = new SettingViewModel();
+            SettingViewModel vm = new SettingViewModel();
             vm.ReloadContextMenuEvent += ReloadContextMenu;
 
-            var settingDialog = new SettingView
+            SettingView settingDialog = new SettingView
             {
                 DataContext = vm,
                 Owner = Application.Current.MainWindow
@@ -345,10 +345,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            var vm = new ImageEditToolViewModel();
+            ImageEditToolViewModel vm = new ImageEditToolViewModel();
             vm.SetEditFileData(SelectedMedia.FilePath);
 
-            var imageEditToolDialog = new ImageEditToolView
+            ImageEditToolView imageEditToolDialog = new ImageEditToolView
             {
                 DataContext = vm,
                 Owner = Application.Current.MainWindow
@@ -369,17 +369,17 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // Reload the information related to the linked application from the setting information.
             AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
-                foreach (var linkageApp in linkageAppList)
+                foreach (ExtraAppSetting linkageApp in linkageAppList)
                 {
                     // Load app icon.
                     Icon appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                    var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    BitmapSource iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     // Set context menu.
-                    var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
+                    ContextMenuInfo contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
                     ContextMenuCollection.Add(contextMenu);
                     IsShowContextMenu = true;
                 }
@@ -398,7 +398,7 @@ namespace Kchary.PhotoViewer.ViewModels
             ExifInfoViewModel.ExifDataList.Clear();
             IsEnableImageEditButton = false;
 
-            var selectedExplorerItem = ExplorerViewModel.SelectedItem;
+            ExplorerItem selectedExplorerItem = ExplorerViewModel.SelectedItem;
             ChangeContents(selectedExplorerItem.ExplorerItemPath);
         }
 
@@ -459,7 +459,7 @@ namespace Kchary.PhotoViewer.ViewModels
             // Clear display list before loading.
             MediaInfoList.Clear();
 
-            var backgroundWorker = new BackgroundWorker
+            BackgroundWorker backgroundWorker = new BackgroundWorker
             {
                 WorkerSupportsCancellation = true
             };
@@ -531,31 +531,31 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="e">Argument</param>
         private void LoadContentsWorker(object sender, DoWorkEventArgs e)
         {
-            var queue = new LinkedList<MediaInfo>();
-            var tick = Environment.TickCount;
-            var count = 0;
+            LinkedList<MediaInfo> queue = new LinkedList<MediaInfo>();
+            int tick = Environment.TickCount;
+            int count = 0;
 
             // Get all supported files in selected folder.
-            foreach (var supportExtension in MediaChecker.GetSupportExtentions())
+            foreach (string supportExtension in MediaChecker.GetSupportExtentions())
             {
                 // If the file path is displayed, change it to the directory path and read it.
-                var selectFolderPath = SelectFolderPath;
+                string selectFolderPath = SelectFolderPath;
                 if ((File.GetAttributes(selectFolderPath) & FileAttributes.Directory) != FileAttributes.Directory)
                 {
                     selectFolderPath = Path.GetDirectoryName(selectFolderPath);
                 }
 
                 // Read all support image file.
-                foreach (var supportFile in Directory.EnumerateFiles(selectFolderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
+                foreach (string supportFile in Directory.EnumerateFiles(selectFolderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
                 {
-                    var worker = sender as BackgroundWorker;
+                    BackgroundWorker worker = sender as BackgroundWorker;
                     if (worker.CancellationPending)
                     {
                         e.Cancel = true;
                         return;
                     }
 
-                    var mediaInfo = new MediaInfo
+                    MediaInfo mediaInfo = new MediaInfo
                     {
                         FilePath = supportFile
                     };
@@ -571,7 +571,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     if (queue.Any())
                     {
-                        var duration = Environment.TickCount - tick;
+                        int duration = Environment.TickCount - tick;
                         if ((count <= 100 && duration > 500) || duration > 1000)
                         {
                             Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
@@ -611,10 +611,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 Mouse.OverrideCursor = Cursors.Wait;
 
                 // Create display image task.
-                var loadPictureTask = Task.Run(() => { PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath); });
+                Task loadPictureTask = Task.Run(() => { PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath); });
 
                 // Set exif information task.
-                var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
+                Task setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
 
                 // Do task
                 await Task.WhenAll(loadPictureTask, setExifInfoTask);
