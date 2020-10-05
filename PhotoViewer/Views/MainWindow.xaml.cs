@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -108,6 +109,16 @@ namespace Kchary.PhotoViewer
         /// <param name="sender">mediaListBox</param>
         /// <param name="e">引数情報</param>
         private async void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await MediaListBox_LoadMediaAsync(sender);
+        }
+
+        /// <summary>
+        /// リストボックスで選択されたアイテムのロード処理(非同期)
+        /// </summary>
+        /// <param name="sender">mediaListBox</param>
+        /// <returns>タスク</returns>
+        private async Task MediaListBox_LoadMediaAsync(object sender)
         {
             if (!(sender is ListBox listBox))
             {
