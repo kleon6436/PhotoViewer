@@ -46,7 +46,7 @@ namespace Kchary.PhotoViewer.Views
         /// <param name="e"></param>
         private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (!(DataContext is ImageEditToolViewModel vm))
+            if (DataContext is not ImageEditToolViewModel vm)
             {
                 return;
             }

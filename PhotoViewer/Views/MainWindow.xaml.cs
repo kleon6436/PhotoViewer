@@ -110,22 +110,12 @@ namespace Kchary.PhotoViewer
         /// <param name="e">引数情報</param>
         private async void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await MediaListBox_LoadMediaAsync(sender);
-        }
-
-        /// <summary>
-        /// リストボックスで選択されたアイテムのロード処理(非同期)
-        /// </summary>
-        /// <param name="sender">mediaListBox</param>
-        /// <returns>タスク</returns>
-        private async Task MediaListBox_LoadMediaAsync(object sender)
-        {
-            if (!(sender is ListBox listBox))
+            if (sender is not ListBox listBox)
             {
                 return;
             }
 
-            if (!(listBox.SelectedItem is MediaInfo mediaInfo))
+            if (listBox.SelectedItem is not MediaInfo mediaInfo)
             {
                 return;
             }
@@ -141,7 +131,7 @@ namespace Kchary.PhotoViewer
         /// <param name="e">引数情報</param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is MenuItem menuItem))
+            if (sender is not MenuItem menuItem)
             {
                 return;
             }
@@ -210,9 +200,9 @@ namespace Kchary.PhotoViewer
         }
 
         [DllImport("user32.dll")]
-        public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
+        private static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
 
         [DllImport("user32.dll")]
-        public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+        private static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
     }
 }
