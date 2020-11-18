@@ -9,16 +9,16 @@ namespace Kchary.PhotoViewer.Model
 
         public string DisplayName
         {
-            get { return displayName; }
-            set { SetProperty(ref displayName, value); }
+            get => displayName;
+            set => SetProperty(ref displayName, value);
         }
 
         private BitmapSource contextIcon;
 
         public BitmapSource ContextIcon
         {
-            get { return contextIcon; }
-            set { SetProperty(ref contextIcon, value); }
+            get => contextIcon;
+            set => SetProperty(ref contextIcon, value);
         }
     }
 }

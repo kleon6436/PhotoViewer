@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -20,8 +21,8 @@ namespace Kchary.PhotoViewer.ViewModels
 
         public string LinkAppPath
         {
-            get { return linkAppPath; }
-            set { SetProperty(ref linkAppPath, value); }
+            get => linkAppPath;
+            set => SetProperty(ref linkAppPath, value);
         }
 
         public ObservableCollection<ExtraAppSetting> LinkageAppList { get; } = new ObservableCollection<ExtraAppSetting>();
@@ -47,8 +48,8 @@ namespace Kchary.PhotoViewer.ViewModels
             RegisterLinkAppCommand = new DelegateCommand(RegisterLinkAppButtonClicked);
             DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var appConfigManager = AppConfigManager.GetInstance();
+            List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
                 LinkageAppList.Clear();
@@ -109,7 +110,7 @@ namespace Kchary.PhotoViewer.ViewModels
             LinkageAppList.Add(linkageApp);
 
             // Export information to Config file.
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.SetLinkageApp(LinkageAppList);
             appConfigManager.Export();
 
@@ -132,7 +133,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 LinkageAppList.Remove(deleteAppSetting);
 
                 // Export information to config file.
-                AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+                var appConfigManager = AppConfigManager.GetInstance();
                 appConfigManager.RemoveLinkageApp(LinkageAppList);
                 appConfigManager.Export();
 

@@ -8,69 +8,21 @@ namespace Kchary.PhotoViewer.Model
     public static class ImageControl
     {
         /// <summary>
-        /// Get an image from the file path (image that reflects only rotation information without changing width and height).
-        /// </summary>
-        /// <param name="filePath">FilePath</param>
-        /// <returns>BitmapSource</returns>
-        public static BitmapSource DecodePicture(string filePath)
-        {
-            using var sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-
-            // Get image data.
-            sourceStream.Seek(0, SeekOrigin.Begin);
-            var bitmapFrame = BitmapFrame.Create(sourceStream);
-            var metaData = bitmapFrame.Metadata as BitmapMetadata;
-            var bitmapSource = bitmapFrame.Clone();
-
-            var decodeBitmapSource = new WriteableBitmap(RotateImage(metaData, bitmapSource));
-            decodeBitmapSource.Freeze();
-
-            return decodeBitmapSource;
-        }
-
-        /// <summary>
         /// Generate an image to be magnified.
         /// </summary>
         /// <param name="filePath">FilePath</param>
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureViewImage(string filePath)
         {
-            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            using var sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
-            // Reset the stream position and first get metadata.
-            fs.Seek(0, SeekOrigin.Begin);
+            sourceStream.Seek(0, SeekOrigin.Begin);
+            var bitmapFrame = BitmapFrame.Create(sourceStream);
 
-            var bitmapFrame = BitmapFrame.Create(fs);
-            var metaData = bitmapFrame.Metadata as BitmapMetadata;
+            const int maxViewWidth = 2200;
+            const int maxViewHeight = 1650;
 
-            var maxViewWidth = 2200;
-            var maxViewHeight = 1650;
-
-            // Check the rotation information, and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
-            var rotation = GetRotation(metaData);
-            if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
-            {
-                var tmp = maxViewWidth;
-                maxViewWidth = maxViewHeight;
-                maxViewHeight = tmp;
-            }
-
-            // Decode picture.
-            var viewImage = bitmapFrame.Clone();
-
-            //// If the image is large, reduce the image.
-            if (viewImage.PixelWidth > maxViewWidth || viewImage.PixelHeight > maxViewHeight)
-            {
-                viewImage = ResizeImage(viewImage, maxViewWidth, maxViewHeight);
-            }
-
-            // Rotate image.
-            viewImage = RotateImage(metaData, viewImage);
-
-            var returnImage = new WriteableBitmap(viewImage);
-            returnImage.Freeze();
-
-            return returnImage;
+            return DecodePicture(bitmapFrame, maxViewWidth, maxViewHeight);
         }
 
         /// <summary>
@@ -84,9 +36,10 @@ namespace Kchary.PhotoViewer.Model
 
             // Reset the stream position and get the metadata.
             fs.Seek(0, SeekOrigin.Begin);
+
             var bitmapFrame = BitmapFrame.Create(fs);
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
-            var thumbnailImage = bitmapFrame.Thumbnail;
+            BitmapSource thumbnailImage = bitmapFrame.Thumbnail;
 
             var maxScaledWidth = 100;
             var maxScaledHeight = 75;
@@ -103,7 +56,7 @@ namespace Kchary.PhotoViewer.Model
             if (thumbnailImage == null)
             {
                 // Reset stream position and decode image.
-                thumbnailImage = bitmapFrame.Clone();
+                thumbnailImage = bitmapFrame;
             }
 
             // If the thumbnail image is large, reduce the image.
@@ -127,49 +80,90 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         /// <param name="filePath">FilePath</param>
         /// <returns>BitmapSource</returns>
-        public static BitmapSource CreatePictureEditViewThumbnail(string filePath)
+        public static BitmapSource CreatePictureEditViewThumbnail(string filePath, out int defaultPictureWidth, out int defaultPictureHeight, out uint rotation)
         {
-            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            using var sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
-            // Reset the stream position and get the metadata.
-            fs.Seek(0, SeekOrigin.Begin);
-            var bitmapFrame = BitmapFrame.Create(fs);
+            sourceStream.Seek(0, SeekOrigin.Begin);
+            var bitmapFrame = BitmapFrame.Create(sourceStream);
+
+            defaultPictureWidth = bitmapFrame.PixelWidth;
+            defaultPictureHeight = bitmapFrame.PixelHeight;
+            rotation = GetRotation(bitmapFrame.Metadata as BitmapMetadata);
+
+            const int maxScaledWidth = 240;
+            const int maxScaledHeight = 180;
+
+            return DecodePicture(bitmapFrame, maxScaledWidth, maxScaledHeight);
+        }
+
+        /// <summary>
+        /// Create save image.
+        /// </summary>
+        /// <param name="filePath"><FilePath/param>
+        /// <param name="scale">scale</param>
+        /// <returns>BitmapSOurce</returns>
+        public static BitmapSource CreateSavePicture(string filePath, double scale)
+        {
+            using var sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+            sourceStream.Seek(0, SeekOrigin.Begin);
+            var bitmapFrame = BitmapFrame.Create(sourceStream);
+
+            // Check the rotation information.
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
-            var thumbnailImage = bitmapFrame.Thumbnail;
 
-            var maxScaledWidth = 400;
-            var maxScaledHeight = 300;
+            // Decode picture.
+            BitmapSource saveImage = bitmapFrame;
+
+            // Resize image.
+            saveImage = new TransformedBitmap(saveImage, new ScaleTransform(scale, scale));
+
+            // Rotate image.
+            saveImage = RotateImage(metaData, saveImage);
+
+            var decodeImage = new WriteableBitmap(saveImage);
+            decodeImage.Freeze();
+
+            return decodeImage;
+        }
+
+        /// <summary>
+        /// Decode image from filePath.(If you set max width and max height, Image is resized.)
+        /// </summary>
+        /// <param name="filePath">FilePath</param>
+        /// <param name="maxWidth">Max picture width</param>
+        /// <param name="maxHeight">Max picture height</param>
+        /// <returns>BitmapSource</returns>
+        private static BitmapSource DecodePicture(BitmapFrame bitmapFrame, int maxWidth, int maxHeight)
+        {
+            var metaData = bitmapFrame.Metadata as BitmapMetadata;
 
             // Check the rotation information, and in the case of vertical position images, swap the maximum vertical and horizontal sizes.
             var rotation = GetRotation(metaData);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
-                var tmp = maxScaledWidth;
-                maxScaledWidth = maxScaledHeight;
-                maxScaledHeight = tmp;
+                var tmp = maxWidth;
+                maxWidth = maxHeight;
+                maxHeight = tmp;
             }
 
-            if (thumbnailImage == null)
+            // Decode picture.
+            BitmapSource viewImage = bitmapFrame;
+
+            // If the image is large, reduce the image.
+            if (viewImage.PixelWidth > maxWidth || viewImage.PixelHeight > maxHeight)
             {
-                thumbnailImage = bitmapFrame.Clone();
-            }
-            else
-            {
-                // If the thumbnail image is large, reduce the image.
-                if (thumbnailImage.PixelWidth > maxScaledWidth || thumbnailImage.PixelHeight > maxScaledHeight)
-                {
-                    thumbnailImage = ResizeImage(thumbnailImage, maxScaledWidth, maxScaledHeight);
-                }
+                viewImage = ResizeImage(viewImage, maxWidth, maxHeight);
             }
 
-            // Rotate for thumbnail images.
-            thumbnailImage = RotateImage(metaData, thumbnailImage);
+            // Rotate image.
+            viewImage = RotateImage(metaData, viewImage);
 
-            // Export image and make it unchangeable.
-            thumbnailImage = new WriteableBitmap(thumbnailImage);
-            thumbnailImage.Freeze();
+            var decodeImage = new WriteableBitmap(viewImage);
+            decodeImage.Freeze();
 
-            return thumbnailImage;
+            return decodeImage;
         }
 
         /// <summary>
@@ -206,9 +200,9 @@ namespace Kchary.PhotoViewer.Model
         private static BitmapSource ResizeImage(BitmapSource image, int maxScaledWidth, int maxScaledHeight)
         {
             // Generate a scaled image.
-            double scaleX = (double)maxScaledWidth / image.PixelWidth;
-            double scaleY = (double)maxScaledHeight / image.PixelHeight;
-            double scale = Math.Min(scaleX, scaleY);
+            var scaleX = (double)maxScaledWidth / image.PixelWidth;
+            var scaleY = (double)maxScaledHeight / image.PixelHeight;
+            var scale = Math.Min(scaleX, scaleY);
 
             // Generate WritableBitmap from generated TransformedBitmap.
             return new TransformedBitmap(image, new ScaleTransform(scale, scale));
@@ -221,7 +215,7 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>rotation value</returns>
         private static uint GetRotation(BitmapMetadata metaData)
         {
-            string _query = "/app1/ifd/exif:{uint=274}";
+            var _query = "/app1/ifd/exif:{uint=274}";
             if (!metaData.ContainsQuery(_query))
             {
                 return 0;

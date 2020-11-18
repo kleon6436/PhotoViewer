@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -53,7 +54,7 @@ namespace Kchary.PhotoViewer
         {
             if (DataContext is MainWindowViewModel vm && vm.SelectedMedia == null && vm.MediaInfoList.Any())
             {
-                var firstImageData = vm.MediaInfoList.First();
+                MediaInfo firstImageData = vm.MediaInfoList.First();
                 if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(firstImageData.FilePath).ToLower()))
                 {
                     vm.SelectedMedia = firstImageData;
@@ -76,10 +77,10 @@ namespace Kchary.PhotoViewer
             }
 
             // ウィンドウ情報を保存
-            var hwnd = new WindowInteropHelper(this).Handle;
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
             GetWindowPlacement(hwnd, out WINDOWPLACEMENT placement);
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.ConfigData.WindowPlaceData = placement;
             appConfigManager.Export();
         }
@@ -107,20 +108,20 @@ namespace Kchary.PhotoViewer
         /// </summary>
         /// <param name="sender">mediaListBox</param>
         /// <param name="e">引数情報</param>
-        private void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!(sender is ListBox listBox))
+            if (sender is not ListBox listBox)
             {
                 return;
             }
 
-            if (!(listBox.SelectedItem is MediaInfo mediaInfo))
+            if (listBox.SelectedItem is not MediaInfo mediaInfo)
             {
                 return;
             }
 
             var vm = DataContext as MainWindowViewModel;
-            vm.LoadMedia(mediaInfo);
+            await vm.LoadMediaAsync(mediaInfo);
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace Kchary.PhotoViewer
         /// <param name="e">引数情報</param>
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is MenuItem menuItem))
+            if (sender is not MenuItem menuItem)
             {
                 return;
             }
@@ -147,12 +148,12 @@ namespace Kchary.PhotoViewer
         {
             base.OnSourceInitialized(e);
 
-            AppConfigManager appConfigManager = AppConfigManager.GetInstance();
+            var appConfigManager = AppConfigManager.GetInstance();
 
-            var windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
+            WINDOWPLACEMENT windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
             windowPlacement.showCmd = (windowPlacement.showCmd == SW.SHOWMINIMIZED) ? SW.SHOWNORMAL : windowPlacement.showCmd;
 
-            var hwnd = new WindowInteropHelper(this).Handle;
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
             SetWindowPlacement(hwnd, ref windowPlacement);
         }
 
@@ -199,9 +200,9 @@ namespace Kchary.PhotoViewer
         }
 
         [DllImport("user32.dll")]
-        public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
+        private static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
 
         [DllImport("user32.dll")]
-        public static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+        private static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
     }
 }

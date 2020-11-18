@@ -1,6 +1,7 @@
 ﻿using Kchary.PhotoViewer.Model;
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
@@ -21,8 +22,11 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="filePath">File path</param>
         public void SetExif(string filePath)
         {
-            ExifDataList.Clear();
-            ExifDataList.AddRange(ExifParser.GetExifDataFromFile(filePath));
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ExifDataList.Clear();
+                ExifDataList.AddRange(ExifParser.GetExifDataFromFile(filePath));
+            });
         }
     }
 }

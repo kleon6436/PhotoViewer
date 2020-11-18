@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 
 namespace Kchary.PhotoViewer
@@ -27,7 +28,7 @@ namespace Kchary.PhotoViewer
             [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
         {
-            Console.WriteLine($"ERROR -> {ex.Message}, LineNumber: {callerLineNumber}, FilePath: {callerFilePath}");
+            Debug.WriteLine($"ERROR -> {ex.Message}, LineNumber: {callerLineNumber}, FilePath: {callerFilePath}");
         }
 
         /// <summary>

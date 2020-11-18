@@ -18,10 +18,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Media type
         /// </summary>
-        public MediaType ContentMediaType
-        {
-            get { return CheckMediaType(FilePath); }
-        }
+        public MediaType ContentMediaType => CheckMediaType(FilePath);
 
         private BitmapSource thumbnailImage;
 
@@ -30,8 +27,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         public BitmapSource ThumbnailImage
         {
-            get { return thumbnailImage; }
-            set { SetProperty(ref thumbnailImage, value); }
+            get => thumbnailImage;
+            set => SetProperty(ref thumbnailImage, value);
         }
 
         private string fileName;
@@ -41,8 +38,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         public string FileName
         {
-            get { return fileName; }
-            set { SetProperty(ref fileName, value); }
+            get => fileName;
+            set => SetProperty(ref fileName, value);
         }
 
         /// <summary>
@@ -60,22 +57,26 @@ namespace Kchary.PhotoViewer.Model
         /// Create thumbnail image.
         /// </summary>
         /// <returns>True: Success、False: Failure</returns>
-        public void CreateThumbnailImage()
+        public bool CreateThumbnailImage()
         {
-            if (FilePath == null || !File.Exists(FilePath))
+            try
             {
-                throw new FileLoadException();
+                if (FilePath == null || !File.Exists(FilePath))
+                {
+                    return false;
+                }
+
+                ThumbnailImage = ContentMediaType switch
+                {
+                    MediaType.PICTURE => ImageControl.CreatePictureThumbnailImage(FilePath),
+                    _ => throw new ArgumentOutOfRangeException(),
+                };
+
+                return true;
             }
-
-            switch (ContentMediaType)
+            catch (Exception)
             {
-                case MediaType.PICTURE:
-                    ThumbnailImage = ImageControl.CreatePictureThumbnailImage(FilePath);
-                    return;
-
-                case MediaType.MOVIE:
-                default:
-                    throw new ArgumentOutOfRangeException();
+                return false;
             }
         }
 
