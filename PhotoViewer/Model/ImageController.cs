@@ -28,7 +28,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Creating thumbnail images of still images.
         /// </summary>
-        /// <param name="filePath">File`ath</param>
+        /// <param name="filePath">FilePath</param>
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureThumbnailImage(string filePath)
         {
