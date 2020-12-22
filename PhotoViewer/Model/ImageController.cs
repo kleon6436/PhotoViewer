@@ -5,7 +5,7 @@ using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Model
 {
-    public static class ImageControl
+    public static class ImageController
     {
         /// <summary>
         /// Generate an image to be magnified.

@@ -10,18 +10,31 @@ namespace Kchary.PhotoViewer.Model
 {
     public sealed class ExplorerItem : TreeViewItem
     {
-        // Item information
+        /// <summary>
+        /// Item information
+        /// </summary>
         public string ExplorerItemPath { get; private set; }
 
-        // Internal directory information
+        /// <summary>
+        /// Internal directory information
+        /// </summary>
         private readonly DirectoryInfo innerDirectory;
 
-        // Item expansion status
+        /// <summary>
+        /// Item expansion status
+        /// </summary>
         private bool isExpand;
 
-        // Directory monitoring system watcher
+        /// <summary>
+        /// Directory monitoring system watcher
+        /// </summary>
         private FileSystemWatcher fileSystemWatcher;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="path">Path</param>
+        /// <param name="isDrive">Drive flag</param>
         public ExplorerItem(string path, bool isDrive)
         {
             // Set events and initial values.
@@ -64,7 +77,7 @@ namespace Kchary.PhotoViewer.Model
         /// Set stack panel.
         /// </summary>
         /// <returns>Stack panel settings shown in TreeView.</returns>
-        private StackPanel CreateExplorerItemHeader(string path, bool isDrive)
+        private static StackPanel CreateExplorerItemHeader(string path, bool isDrive)
         {
             var stackpanel = new StackPanel()
             {
@@ -124,7 +137,7 @@ namespace Kchary.PhotoViewer.Model
         /// Generate the image of the icon displayed in TreeView.
         /// </summary>
         /// <param name="isDrive">Whether it is a drive</param>
-        private BitmapSource CreateTreeIcon(bool isDrive)
+        private static BitmapSource CreateTreeIcon(bool isDrive)
         {
             if (isDrive)
             {

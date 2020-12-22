@@ -148,7 +148,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public void SetEditFileData(string filePath)
         {
             editFilePath = filePath;
-            EditImage = ImageControl.CreatePictureEditViewThumbnail(editFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
+            EditImage = ImageController.CreatePictureEditViewThumbnail(editFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
                 readImageSize = new Size { Width = defaultPictureHeight, Height = defaultPictureWidth };
@@ -221,7 +221,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     scale = ResizeCategoryItem.ResizelongSideValue / readImageSize.Height;
                 }
             }
-            BitmapSource saveImageSource = ImageControl.CreateSavePicture(editFilePath, scale);
+            BitmapSource saveImageSource = ImageController.CreateSavePicture(editFilePath, scale);
 
             // Select the same encoder as the selected format.
             BitmapEncoder encoder = null;

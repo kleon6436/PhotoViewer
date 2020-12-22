@@ -13,6 +13,9 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public class LinkageAppViewModel : BindableBase
     {
+        /// <summary>
+        /// Maximum number of link application.
+        /// </summary>
         private const int MaxLinkAppNum = 10;
 
         #region UI binding parameter
@@ -109,7 +112,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             LinkageAppList.Add(linkageApp);
 
-            // Export information to Config file.
+            // Export information to Configure file.
             var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.SetLinkageApp(LinkageAppList);
             appConfigManager.Export();
@@ -132,7 +135,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 LinkageAppList.Remove(deleteAppSetting);
 
-                // Export information to config file.
+                // Export information to configure file.
                 var appConfigManager = AppConfigManager.GetInstance();
                 appConfigManager.RemoveLinkageApp(LinkageAppList);
                 appConfigManager.Export();

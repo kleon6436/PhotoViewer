@@ -4,6 +4,9 @@ namespace Kchary.PhotoViewer.Model
 {
     public static class MediaChecker
     {
+        /// <summary>
+        /// Support extensions
+        /// </summary>
         private static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng", ".nef" };
 
         /// <summary>

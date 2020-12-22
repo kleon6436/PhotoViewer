@@ -21,9 +21,5 @@ namespace Kchary.PhotoViewer.Model
         /// Window display status
         /// </summary>
         public MainWindow.WINDOWPLACEMENT WindowPlaceData;
-
-        public AppConfigData()
-        {
-        }
     }
 }

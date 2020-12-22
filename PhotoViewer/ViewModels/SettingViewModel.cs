@@ -45,7 +45,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     default:
                         DisplayPage = null;
-                        throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException(nameof(selectPageButtonValue), "Invalid name");
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="e">Argument</param>
         private void ChangeLinkageApp(object sender, EventArgs e)
         {
-            if (!(sender is LinkageAppViewModel linkageAppVM))
+            if (sender is not LinkageAppViewModel linkageAppVM)
             {
                 return;
             }

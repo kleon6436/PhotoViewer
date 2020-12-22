@@ -7,6 +7,9 @@ namespace Kchary.PhotoViewer.Model
     {
         private string displayName;
 
+        /// <summary>
+        /// Display name
+        /// </summary>
         public string DisplayName
         {
             get => displayName;
@@ -15,6 +18,9 @@ namespace Kchary.PhotoViewer.Model
 
         private BitmapSource contextIcon;
 
+        /// <summary>
+        /// Context icon
+        /// </summary>
         public BitmapSource ContextIcon
         {
             get => contextIcon;

@@ -2,6 +2,9 @@
 {
     public sealed class ResizeImageCategory
     {
+        /// <summary>
+        /// Resize category enum
+        /// </summary>
         public enum ResizeCategory
         {
             None,
@@ -10,8 +13,19 @@
             Twitter,
         }
 
-        public string Name { get; set; }
-        public ResizeCategory Category { get; set; }
-        public int ResizelongSideValue { get; set; }
+        /// <summary>
+        /// Resize category name
+        /// </summary>
+        public string Name { get; init; }
+
+        /// <summary>
+        /// Resize category
+        /// </summary>
+        public ResizeCategory Category { get; init; }
+
+        /// <summary>
+        /// Resize long side value
+        /// </summary>
+        public int ResizelongSideValue { get; init; }
     }
 }

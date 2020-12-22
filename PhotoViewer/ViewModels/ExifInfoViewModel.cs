@@ -12,10 +12,6 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public ObservableCollection<ExifInfo> ExifDataList { get; } = new ObservableCollection<ExifInfo>();
 
-        public ExifInfoViewModel()
-        {
-        }
-
         /// <summary>
         /// Set exif information.
         /// </summary>

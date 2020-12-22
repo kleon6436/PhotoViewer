@@ -22,8 +22,15 @@ namespace Kchary.PhotoViewer.ViewModels
     public class MainWindowViewModel : BindableBase
     {
         #region ViewModels
-
+        
+        /// <summary>
+        /// Explorer view model
+        /// </summary>
         public ExplorerViewModel ExplorerViewModel { get; }
+        
+        /// <summary>
+        /// Exif info view model
+        /// </summary>
         public ExifInfoViewModel ExifInfoViewModel { get; }
 
         #endregion ViewModels
@@ -101,10 +108,14 @@ namespace Kchary.PhotoViewer.ViewModels
 
         #endregion Command
 
-        // Media information read thread
+        /// <summary>
+        /// Media information read thread
+        /// </summary>
         private BackgroundWorker loadContentsBackgroundWorker;
 
-        // Reload flag of media list
+        /// <summary>
+        /// Reload flag of media list
+        /// </summary>
         private bool isReloadContents;
 
         public MainWindowViewModel()
@@ -116,7 +127,7 @@ namespace Kchary.PhotoViewer.ViewModels
             SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
             ImageEditButtonCommand = new DelegateCommand(ImageEditButtonClicked);
 
-            // Read config file.
+            // Read configure file.
             LoadConfigFile();
 
             // Set view model of explorer view.
@@ -611,7 +622,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 Mouse.OverrideCursor = Cursors.Wait;
 
                 // Create display image task.
-                var loadPictureTask = Task.Run(() => { PictureImageSource = ImageControl.CreatePictureViewImage(mediaInfo.FilePath); });
+                var loadPictureTask = Task.Run(() => { PictureImageSource = ImageController.CreatePictureViewImage(mediaInfo.FilePath); });
 
                 // Set exif information task.
                 var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });

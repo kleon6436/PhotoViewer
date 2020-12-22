@@ -11,8 +11,8 @@ namespace Kchary.PhotoViewer.Model
     /// </summary>
     public static class WindowsIconCreator
     {
-        [DllImport("Shell32.dll")]
-        public static extern int ExtractIconEx(
+        [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
+        private static extern int ExtractIconEx(
         string szFile,          // File name to extract icon
         int nIconIndex,         // Icon index to retrieve
         out IntPtr phiconLarge, // Pointer to a large icon (typically 32x32)
@@ -21,14 +21,14 @@ namespace Kchary.PhotoViewer.Model
         );
 
         [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr SHGetStockIconInfo(
+        private static extern IntPtr SHGetStockIconInfo(
             StockIconId siid,       // StockIconId enum type that specifies the ID of the icon to retrieve
             StockIconFlags uFlags,  // StockIconFlags enum type that specifies the type of icon to retrieve
             ref StockIconInfo psii  // (Return value) StockIconInfo type
         );
 
         [DllImport("User32.dll")]
-        public static extern bool DestroyIcon(IntPtr hIcon);
+        private static extern bool DestroyIcon(IntPtr hIcon);
 
         [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct StockIconInfo

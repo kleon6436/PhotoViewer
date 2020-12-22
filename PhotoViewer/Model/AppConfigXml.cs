@@ -61,7 +61,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Generate xml of previous folder path.
         /// </summary>
-        private XElement CreatePreviousPathXml(AppConfigData configData)
+        private static XElement CreatePreviousPathXml(AppConfigData configData)
         {
             var dataElement = new XElement(PreviousFolderElemName);
             var previousPath = new XElement(PreviousPathElemName, configData.PreviousFolderPath == null ? new XText("") : new XText(configData.PreviousFolderPath));
@@ -73,7 +73,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Parse xml of previous path.
         /// </summary>
-        private void ParsePreviousPathXml(XDocument xdoc, AppConfigData configData)
+        private static void ParsePreviousPathXml(XDocument xdoc, AppConfigData configData)
         {
             XElement dataElement = xdoc.Root.Element(PreviousFolderElemName);
             XElement previousPath = dataElement.Element(PreviousPathElemName);
@@ -84,7 +84,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Generate XML for linked application.
         /// </summary>
-        private XElement CreateLinkageAppXml(AppConfigData configData)
+        private static XElement CreateLinkageAppXml(AppConfigData configData)
         {
             var linkageElement = new XElement(LinkAppElemName);
 
@@ -107,7 +107,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Parse the XML of the linked application.
         /// </summary>
-        private void ParseLinkageAppXml(XDocument xdoc, AppConfigData configData)
+        private static void ParseLinkageAppXml(XDocument xdoc, AppConfigData configData)
         {
             XElement linkageElement = xdoc.Root.Element(LinkAppElemName);
             IEnumerable<XElement> dataElements = linkageElement.Elements(LinkAppDataName);
@@ -128,7 +128,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Generate XML of Window size and position.
         /// </summary>
-        private XElement CreateWindowPlacementXml(AppConfigData configData)
+        private static XElement CreateWindowPlacementXml(AppConfigData configData)
         {
             var dataElement = new XElement(WindowPlacementElemName);
             var windowPlaceTopElement = new XElement(WindowPlacementTopElemName, new XText(configData.WindowPlaceData.normalPosition.Top.ToString()));
@@ -159,7 +159,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Parse xml of window size and position.
         /// </summary>
-        private void ParseWindowPlacementXml(XDocument xdoc, AppConfigData configData)
+        private static void ParseWindowPlacementXml(XDocument xdoc, AppConfigData configData)
         {
             XElement dataElement = xdoc.Root.Element(WindowPlacementElemName);
             XElement windowPlaceTopElement = dataElement.Element(WindowPlacementTopElemName);

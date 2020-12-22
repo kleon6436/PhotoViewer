@@ -8,7 +8,7 @@ namespace Kchary.PhotoViewer.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(parameter is string ParameterString))
+            if (parameter is not string ParameterString)
             {
                 return System.Windows.DependencyProperty.UnsetValue;
             }
@@ -25,7 +25,7 @@ namespace Kchary.PhotoViewer.Converter
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return !(parameter is string ParameterString) ? System.Windows.DependencyProperty.UnsetValue : Enum.Parse(targetType, ParameterString);
+            return parameter is not string ParameterString ? System.Windows.DependencyProperty.UnsetValue : Enum.Parse(targetType, ParameterString);
         }
     }
 }

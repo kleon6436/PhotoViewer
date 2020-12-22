@@ -7,6 +7,9 @@ namespace Kchary.PhotoViewer.Model
 {
     public sealed class MediaInfo : BindableBase
     {
+        /// <summary>
+        /// Media type
+        /// </summary>
         public enum MediaType
         {
             PICTURE,
@@ -49,10 +52,6 @@ namespace Kchary.PhotoViewer.Model
 
         #endregion Media Parameters
 
-        public MediaInfo()
-        {
-        }
-
         /// <summary>
         /// Create thumbnail image.
         /// </summary>
@@ -68,7 +67,7 @@ namespace Kchary.PhotoViewer.Model
 
                 ThumbnailImage = ContentMediaType switch
                 {
-                    MediaType.PICTURE => ImageControl.CreatePictureThumbnailImage(FilePath),
+                    MediaType.PICTURE => ImageController.CreatePictureThumbnailImage(FilePath),
                     _ => throw new ArgumentOutOfRangeException(),
                 };
 
@@ -85,7 +84,7 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         /// <param name="_filePath">File path to check</param>
         /// <returns>File type</returns>
-        private MediaType CheckMediaType(string filePath)
+        private static MediaType CheckMediaType(string filePath)
         {
             var extension = Path.GetExtension(filePath).ToLower();
 

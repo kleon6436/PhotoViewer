@@ -2,6 +2,9 @@
 {
     public sealed class ImageForm
     {
+        /// <summary>
+        /// Image type enum
+        /// </summary>
         public enum ImageForms
         {
             Jpeg,
@@ -10,7 +13,14 @@
             Tiff,
         }
 
-        public string Name { get; set; }
-        public ImageForms Form { get; set; }
+        /// <summary>
+        /// Image type name
+        /// </summary>
+        public string Name { get; init; }
+
+        /// <summary>
+        /// Image type
+        /// </summary>
+        public ImageForms Form { get; init; }
     }
 }

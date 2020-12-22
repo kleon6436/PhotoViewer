@@ -2,7 +2,14 @@
 {
     public sealed class ImageQuality
     {
-        public string Name { get; set; }
-        public int QualityValue { get; set; }
+        /// <summary>
+        /// Image quality name
+        /// </summary>
+        public string Name { get; init; }
+
+        /// <summary>
+        /// Image quality value
+        /// </summary>
+        public int QualityValue { get; init; }
     }
 }

@@ -6,6 +6,9 @@ namespace Kchary.PhotoViewer.Model
     {
         private string appName;
 
+        /// <summary>
+        /// Application name
+        /// </summary>
         public string AppName
         {
             get => appName;
@@ -14,6 +17,9 @@ namespace Kchary.PhotoViewer.Model
 
         private string appPath;
 
+        /// <summary>
+        /// Application path
+        /// </summary>
         public string AppPath
         {
             get => appPath;

@@ -62,7 +62,6 @@ namespace Kchary.PhotoViewer.Model
             catch (Exception ex)
             {
                 App.LogException(ex);
-                throw;
             }
         }
 

@@ -33,13 +33,6 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// Constractor
-        /// </summary>
-        public ExplorerViewModel()
-        {
-        }
-
-        /// <summary>
         /// Create a TreeItem for drive.
         /// </summary>
         /// <param name="driveList"></param>
@@ -147,7 +140,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// Get ExplorerItem of directory.
         /// </summary>
-        private ExplorerItem GetDirectoryItem(string parentPath, ExplorerItem previousItem)
+        private static ExplorerItem GetDirectoryItem(string parentPath, ExplorerItem previousItem)
         {
             var previousDirectory = parentPath;
             var explorerItemList = new List<ExplorerItem>();
