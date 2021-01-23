@@ -4,3 +4,9 @@ PhotoViewer/obj/
 PhotoViewer/bin/
 packages/
 *.StyleCop
+x64
+x86
+Release
+Debug
+obj
+bin

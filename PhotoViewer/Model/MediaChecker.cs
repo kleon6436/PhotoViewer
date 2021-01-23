@@ -10,6 +10,11 @@ namespace Kchary.PhotoViewer.Model
         private static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng", ".nef" };
 
         /// <summary>
+        /// Support raw extensions
+        /// </summary>
+        private static readonly string[] SupportRawPictureExtensions = { ".dng", ".nef" };
+
+        /// <summary>
         /// Get a list of extensions supported by the app.
         /// </summary>
         /// <returns>Extension list supported</returns>
@@ -29,13 +34,13 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Check if the file is a Nikon Raw File (NEF file).
+        /// Check if the file is a Raw File.
         /// </summary>
         /// <param name="extension">Extension to check</param>
         /// <returns>True: the extension is nef, False: the extension is not nef</returns>
-        public static bool CheckNikonRawFileExtension(string extension)
+        public static bool CheckRawFileExtension(string extension)
         {
-            return (extension == ".nef");
+            return SupportRawPictureExtensions.Any(x => x == extension);
         }
     }
 }

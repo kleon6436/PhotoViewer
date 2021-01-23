@@ -631,7 +631,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 await Task.WhenAll(loadPictureTask, setExifInfoTask);
 
                 // Update image edit button status.
-                if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(mediaInfo.FilePath).ToLower()))
+                if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(mediaInfo.FilePath).ToLower()))
                 {
                     IsEnableImageEditButton = true;
                 }

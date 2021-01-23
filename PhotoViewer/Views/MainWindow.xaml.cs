@@ -54,7 +54,7 @@ namespace Kchary.PhotoViewer
             if (DataContext is MainWindowViewModel vm && vm.SelectedMedia == null && vm.MediaInfoList.Any())
             {
                 MediaInfo firstImageData = vm.MediaInfoList.First();
-                if (!MediaChecker.CheckNikonRawFileExtension(Path.GetExtension(firstImageData.FilePath).ToLower()))
+                if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(firstImageData.FilePath).ToLower()))
                 {
                     vm.SelectedMedia = firstImageData;
                 }
