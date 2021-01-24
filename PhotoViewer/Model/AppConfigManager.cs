@@ -28,7 +28,7 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Import application data from app config file.
+        /// Import application data from application configure file.
         /// </summary>
         public void Import()
         {
@@ -44,7 +44,7 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Export application data to app config file.
+        /// Export application data to application configure file.
         /// </summary>
         public void Export()
         {
@@ -66,18 +66,18 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Set list of linked apps.
+        /// Set list of linked applications.
         /// </summary>
-        /// <param name="linkageApplist">List of linked apps</param>
+        /// <param name="linkageApplist">List of linked applications</param>
         public void SetLinkageApp(IEnumerable<ExtraAppSetting> linkageApplist)
         {
             ConfigData.LinkageAppList = linkageApplist.ToList();
         }
 
         /// <summary>
-        /// Remove linked app from linked app list.
+        /// Remove linked application from linked application list.
         /// </summary>
-        /// <param name="linkageApplist">List of linked apps</param>
+        /// <param name="linkageApplist">List of linked applications</param>
         public void RemoveLinkageApp(IEnumerable<ExtraAppSetting> linkageApplist)
         {
             ConfigData.LinkageAppList = linkageApplist.ToList();

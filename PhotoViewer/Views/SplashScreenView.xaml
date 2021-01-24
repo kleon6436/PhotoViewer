@@ -8,6 +8,6 @@
         Title="SplashScreen" Width="400" Height="200">
     <Grid>
         <Image Source="/Images/SplashScreen.png" Width="400" Height="200" />
-        <TextBlock Margin="20, 75" HorizontalAlignment="Right" FontSize="16" Text="Version 3.0" />
+        <TextBlock Margin="20, 75" HorizontalAlignment="Right" FontSize="16" Text="Version 3.1" />
     </Grid>
 </Window>

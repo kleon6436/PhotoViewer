@@ -68,9 +68,9 @@ namespace Kchary.PhotoViewer.Model
                 ThumbnailImage = ContentMediaType switch
                 {
                     MediaType.PICTURE => ImageController.CreatePictureThumbnailImage(FilePath),
+                    MediaType.MOVIE => throw new ArgumentOutOfRangeException(),
                     _ => throw new ArgumentOutOfRangeException(),
                 };
-
                 return true;
             }
             catch (Exception)

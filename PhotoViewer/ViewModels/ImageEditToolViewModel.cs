@@ -117,17 +117,17 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ResizeCategoryItems = new ObservableCollection<ResizeImageCategory>
             {
-                new ResizeImageCategory{ Name = "リサイズなし", Category = ResizeImageCategory.ResizeCategory.None },
-                new ResizeImageCategory{ Name = "印刷向け", Category = ResizeImageCategory.ResizeCategory.Print, ResizelongSideValue = 2500 },
-                new ResizeImageCategory{ Name = "ブログ向け", Category = ResizeImageCategory.ResizeCategory.Blog, ResizelongSideValue = 1500 },
-                new ResizeImageCategory{ Name = "SNS向け", Category = ResizeImageCategory.ResizeCategory.Twitter, ResizelongSideValue = 1000 }
+                new ResizeImageCategory{ Name = "No resize", Category = ResizeImageCategory.ResizeCategory.None },
+                new ResizeImageCategory{ Name = "Print size", Category = ResizeImageCategory.ResizeCategory.Print, ResizelongSideValue = 2500 },
+                new ResizeImageCategory{ Name = "Blog size", Category = ResizeImageCategory.ResizeCategory.Blog, ResizelongSideValue = 1500 },
+                new ResizeImageCategory{ Name = "SNS size", Category = ResizeImageCategory.ResizeCategory.Twitter, ResizelongSideValue = 1000 }
             };
 
             ImageSaveQualityItems = new ObservableCollection<ImageQuality>
             {
-                new ImageQuality { Name = "高画質", QualityValue = 90 },
-                new ImageQuality { Name = "標準", QualityValue = 80 },
-                new ImageQuality { Name = "低画質", QualityValue = 60 }
+                new ImageQuality { Name = "High", QualityValue = 90 },
+                new ImageQuality { Name = "standard", QualityValue = 80 },
+                new ImageQuality { Name = "Low", QualityValue = 60 }
             };
 
             ImageFormItems = new ObservableCollection<ImageForm>
@@ -148,7 +148,9 @@ namespace Kchary.PhotoViewer.ViewModels
         public void SetEditFileData(string filePath)
         {
             editFilePath = filePath;
-            EditImage = ImageController.CreatePictureEditViewThumbnail(editFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
+            
+            EditImage = ImageController.CreatePictureEditViewThumbnail(editFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation); ;
+
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
                 readImageSize = new Size { Width = defaultPictureHeight, Height = defaultPictureWidth };
@@ -174,28 +176,28 @@ namespace Kchary.PhotoViewer.ViewModels
         private void SaveButtonClicked()
         {
             var dialog = new SaveFileDialog();
-            const string DialogTitle = "名前を付けて保存";
+            const string DialogTitle = "Save as...";
             dialog.Title = DialogTitle;
 
             switch (SelectedForm.Form)
             {
                 case ImageForm.ImageForms.Bmp:
-                    const string BmpFilter = "BMPファイル(*.bmp)|*.bmp";
+                    const string BmpFilter = "Bmp file(*.bmp)|*.bmp";
                     dialog.Filter = BmpFilter;
                     break;
 
                 case ImageForm.ImageForms.Jpeg:
-                    const string JpegFilter = "Jpegファイル(*.jpg;*.jpeg)|*.jpg;*.jpeg";
+                    const string JpegFilter = "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg";
                     dialog.Filter = JpegFilter;
                     break;
 
                 case ImageForm.ImageForms.Png:
-                    const string PngFilter = "PNGファイル(*.png)|*.png";
+                    const string PngFilter = "Png file(*.png)|*.png";
                     dialog.Filter = PngFilter;
                     break;
 
                 case ImageForm.ImageForms.Tiff:
-                    const string TiffFilter = "TIFFファイル(*.tif)|*.tif";
+                    const string TiffFilter = "Tiff file(*.tif)|*.tif";
                     dialog.Filter = TiffFilter;
                     break;
 
@@ -256,16 +258,16 @@ namespace Kchary.PhotoViewer.ViewModels
                     encoder.Save(dstStream);
                 }
 
-                const string SaveSuccessMessage = "画像の保存に成功しました。";
-                const string SaveSuccessTitle = "保存成功";
+                const string SaveSuccessMessage = "Success to save image file.";
+                const string SaveSuccessTitle = "Successful save";
                 App.ShowSuccessMessageBox(SaveSuccessMessage, SaveSuccessTitle);
             }
             catch (Exception ex)
             {
                 App.LogException(ex);
 
-                const string SaveFailedMessage = "画像の保存に失敗しました。";
-                const string SaveFailedTitle = "保存失敗";
+                const string SaveFailedMessage = "Failed to save the image.";
+                const string SaveFailedTitle = "Save failure";
                 App.ShowErrorMessageBox(SaveFailedMessage, SaveFailedTitle);
             }
             finally

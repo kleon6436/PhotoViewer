@@ -29,19 +29,19 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding BluetoothButtonCommand, Mode=OneTime}" ToolTip="Bluetoothデバイスに送る...">
+            <Button Grid.Column="0" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding BluetoothButtonCommand, Mode=OneTime}" ToolTip="Send to Bluetooth device.">
                 <Image Source="/Images/Bluetooth.png" HorizontalAlignment="Center" Height="20" />
             </Button>
-            <Button Grid.Column="1" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding OpenFolderButtonCommand, Mode=OneTime}" ToolTip="エクスプローラーでフォルダを開く...">
+            <Button Grid.Column="1" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding OpenFolderButtonCommand, Mode=OneTime}" ToolTip="Open the folder in Explorer.">
                 <Image Source="/Images/Folder_small.png" HorizontalAlignment="Center" Height="20" />
             </Button>
-            <Button Grid.Column="2" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ReloadButtonCommand, Mode=OneTime}" ToolTip="コンテンツリストを再読み込みする...">
+            <Button Grid.Column="2" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ReloadButtonCommand, Mode=OneTime}" ToolTip="Reload the content list.">
                 <Image Source="/Images/reload.png" HorizontalAlignment="Center" Height="20" />
             </Button>
-            <Button Grid.Column="3" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ImageEditButtonCommand, Mode=OneTime}" IsEnabled="{Binding IsEnableImageEditButton}" ToolTip="表示中の画像のExifを削除して保存する...">
+            <Button Grid.Column="3" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding ImageEditButtonCommand, Mode=OneTime}" IsEnabled="{Binding IsEnableImageEditButton}" ToolTip="Delete and save the Exif of the displayed image">
                 <Image Source="/Images/ExifCleanIcon.png" HorizontalAlignment="Center" Height="20" />
             </Button>
-            <Button Grid.Column="4" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding SettingButtonCommand, Mode=OneTime}" ToolTip="アプリの設定画面を開く...">
+            <Button Grid.Column="4" Margin="2.5,0,2.5,0" Padding="10,2" FontSize="16" Command="{Binding SettingButtonCommand, Mode=OneTime}" ToolTip="Open the setting dialog of the application">
                 <Image Source="/Images/Gear_small.png" HorizontalAlignment="Center" Height="20" />
             </Button>
         </Grid>
@@ -52,23 +52,23 @@
                 <ColumnDefinition Width="0.7*" />
             </Grid.ColumnDefinitions>
 
-            <!-- 左側のレイアウト -->
+            <!-- Left side layout -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition MinHeight="360" Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" Margin="10,0" BorderBrush="LightGray" BorderThickness="1.5" Header="Exif情報" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
+                <GroupBox Grid.Row="0" Margin="10,0" BorderBrush="LightGray" BorderThickness="1.5" Header="Exif information" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
                     <view:ExifInfoView DataContext="{Binding ExifInfoViewModel, Mode=OneTime}" />
                 </GroupBox>
-                <GroupBox Grid.Row="1" Margin="10,5" BorderBrush="LightGray" BorderThickness="1.5" Header="フォルダ選択" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
+                <GroupBox Grid.Row="1" Margin="10,5" BorderBrush="LightGray" BorderThickness="1.5" Header="Folder selection" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
                     <view:ExplorerView Margin="0,5,0,0" DataContext="{Binding ExplorerViewModel, Mode=OneTime}" />
                 </GroupBox>
             </Grid>
             <Border Grid.Column="0" BorderBrush="Gray" BorderThickness="0 0 1 0" />
 
-            <!-- 左側のレイアウト -->
+            <!-- Right side layout -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30" />
@@ -77,7 +77,7 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Margin="5,0" Orientation="Horizontal">
-                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="フォルダパス：" FontWeight="Medium" IsHitTestVisible="True" />
+                    <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Folder path: " FontWeight="Medium" IsHitTestVisible="True" />
                     <TextBox FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath, Mode=OneWay}" IsReadOnly="True" Background="Transparent" BorderThickness="0" IsHitTestVisible="True" />
                 </StackPanel>
 

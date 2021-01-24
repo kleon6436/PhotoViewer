@@ -124,8 +124,8 @@ namespace Kchary.PhotoViewer.Model
 
                 var bitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgr24, null);
                 bitmap.WritePixels(new Int32Rect(0, 0, width, height), imgData, stride, 0, 0);
-
                 bitmap.Freeze();
+                
                 return bitmap;
             }
             else
@@ -141,8 +141,8 @@ namespace Kchary.PhotoViewer.Model
 
                 var bitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgr24, null);
                 bitmap.WritePixels(new Int32Rect(0, 0, width, height), imgData, stride, 0, 0);
-
                 bitmap.Freeze();
+
                 return bitmap;
             }
         }

@@ -158,7 +158,7 @@ namespace Kchary.PhotoViewer.ViewModels
                         continue;
                     }
 
-                    // Load app icon.
+                    // Load application icon.
                     var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
                     BitmapSource iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
@@ -181,7 +181,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// Event when context menu is clicked.
         /// </summary>
-        /// <param name="appName">App name</param>
+        /// <param name="appName">Application name</param>
         public void ExecuteContextMenu(string appName)
         {
             var appConfigManager = AppConfigManager.GetInstance();
@@ -216,8 +216,8 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             if (!File.Exists(mediaInfo.FilePath))
             {
-                const string FileNotExistErrorMessage = "ファイルが存在しません。";
-                const string FileNotExstErrorTitle = "ファイルアクセスエラー";
+                const string FileNotExistErrorMessage = "File not exist.";
+                const string FileNotExstErrorTitle = "File access error";
                 App.ShowErrorMessageBox(FileNotExistErrorMessage, FileNotExstErrorTitle);
             }
 
@@ -265,7 +265,7 @@ namespace Kchary.PhotoViewer.ViewModels
             catch (Exception ex)
             {
                 App.LogException(ex);
-                App.ShowErrorMessageBox("Bluetooth送信に対応していません。", "Bluetooth送信エラー");
+                App.ShowErrorMessageBox("Not support Bluetooth transmission.", "Bluetooth transmission error");
             }
             finally
             {
@@ -385,7 +385,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 foreach (ExtraAppSetting linkageApp in linkageAppList)
                 {
-                    // Load app icon.
+                    // Load application icon.
                     var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
                     BitmapSource iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
@@ -496,8 +496,8 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 App.LogException(ex);
 
-                const string MediaReadErrorMessage = "メディアの読み込みに失敗しました。";
-                const string MedaiReadErrorTitle = "読み込みエラー";
+                const string MediaReadErrorMessage = "Failed to load media file.";
+                const string MedaiReadErrorTitle = "File read error";
                 App.ShowErrorMessageBox(MediaReadErrorMessage, MedaiReadErrorTitle);
             }
 
@@ -652,8 +652,8 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 App.LogException(ex);
 
-                const string FileAccessErrorMessage = "ファイルアクセスでエラーが発生しました。";
-                const string FileAccessErrorTitle = "ファイルアクセスエラー";
+                const string FileAccessErrorMessage = "File access error occurred";
+                const string FileAccessErrorTitle = "File access error";
                 App.ShowErrorMessageBox(FileAccessErrorMessage, FileAccessErrorTitle);
 
                 return false;

@@ -17,13 +17,13 @@ namespace Kchary.PhotoViewer
         private void AppDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             LogException(e.Exception);
-            ShowErrorMessageBox("ファイルアクセスエラー", "エラー");
+            ShowErrorMessageBox("File access error occurred", "File access error");
         }
 
         /// <summary>
-        /// 例外発生時はコンソールにエラーメッセージを出力する
+        /// Output an error message to the console when an exception occurs.
         /// </summary>
-        /// <param name="ex">例外時のメッセージ</param>
+        /// <param name="ex">The message of exception.</param>
         public static void LogException(Exception ex,
             [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
@@ -32,27 +32,27 @@ namespace Kchary.PhotoViewer
         }
 
         /// <summary>
-        /// エラーメッセージボックスを表示する
+        /// Display an error message box.
         /// </summary>
-        /// <param name="message">メッセージ</param>
-        /// <param name="caption">タイトル</param>
+        /// <param name="message">Message</param>
+        /// <param name="caption">Title</param>
         public static void ShowErrorMessageBox(string message, string caption)
         {
             MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         /// <summary>
-        /// 成功メッセージボックスを表示する
+        /// Display am success message box.
         /// </summary>
-        /// <param name="message">メッセージ</param>
-        /// <param name="caption">タイトル</param>
+        /// <param name="message">Message</param>
+        /// <param name="caption">Title</param>
         public static void ShowSuccessMessageBox(string message, string caption)
         {
             MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         /// <summary>
-        /// ガベージコレクションの明示的な呼び出し
+        /// Explicit call to garbage collection.
         /// </summary>
         public static void RunGC()
         {

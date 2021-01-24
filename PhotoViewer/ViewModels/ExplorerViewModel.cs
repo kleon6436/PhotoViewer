@@ -47,7 +47,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     continue;
                 }
 
-                // Create drive treeitem
+                // Create drive tree item
                 var driveItem = new ExplorerItem(drive.Name, true);
                 ExplorerItems.Add(driveItem);
             }
