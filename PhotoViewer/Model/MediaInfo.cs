@@ -60,7 +60,7 @@ namespace Kchary.PhotoViewer.Model
         {
             try
             {
-                if (FilePath == null || !File.Exists(FilePath))
+                if (string.IsNullOrEmpty(FilePath) || !File.Exists(FilePath))
                 {
                     return false;
                 }
