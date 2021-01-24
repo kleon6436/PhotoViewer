@@ -10,43 +10,45 @@ namespace Kchary.PhotoViewer.Model
         /// Set exif data in MediaInfo.
         /// </summary>
         [STAThread]
-        public static List<ExifInfo> GetExifDataFromFile(string filePath)
+        public static IEnumerable<ExifInfo> GetExifDataFromFile(string filePath)
         {
             var _ = new FileInfo(filePath);
             var shell = new Shell32.Shell();
             Shell32.Folder objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
             Shell32.FolderItem folderItem = objFolder.ParseName(Path.GetFileName(filePath));
 
-            var exifInfos = new List<ExifInfo>
-            {
-                // Get file name.
-                GetFileName(filePath),
-                // Get shooting date and time.
-                GetMediaDate(objFolder, folderItem),
-                // Get camera model information.
-                GetCameraModel(objFolder, folderItem),
-                // Get camera manufacturer information.
-                GetCameraManufacturer(objFolder, folderItem),
-                // Get bit depth.
-                GetBitDepth(objFolder, folderItem),
-                // Get ISO data.
-                GetISO(objFolder, folderItem),
-                // Get focal length.
-                GetFocusLength(objFolder, folderItem),
-                // Get metering mode.
-                GetMeteringMode(objFolder, folderItem),
-            };
-
-            // Get image width and height.
-            exifInfos.AddRange(GetImageWidthAndHeight(objFolder, folderItem));
-            // Get image resolution.
-            exifInfos.AddRange(GetImageResolutionWidthAndHeight(objFolder, folderItem));
-            // Get shutter speed and aperture value.
-            exifInfos.AddRange(GetFnumberAndShutterSpeed(objFolder, folderItem));
-            // Get exposure program and white balance.
-            exifInfos.AddRange(GetExposeModeAndWhiteBlance(objFolder, folderItem));
-
-            return exifInfos;
+            // Get file name.
+            yield return GetFileName(filePath);
+            // Get shooting date and time.
+            yield return GetMediaDate(objFolder, folderItem);
+            // Get camera model information.
+            yield return GetCameraModel(objFolder, folderItem);
+            // Get camera manufacturer information.
+            yield return GetCameraManufacturer(objFolder, folderItem);
+            // Get bit depth.
+            yield return GetBitDepth(objFolder, folderItem);
+            // Get ISO data.
+            yield return GetISO(objFolder, folderItem);
+            // Get focal length.
+            yield return GetFocusLength(objFolder, folderItem);
+            // Get metering mode.
+            yield return GetMeteringMode(objFolder, folderItem);
+            // Get image width.
+            yield return GetImageWidth(objFolder, folderItem);
+            // Get image height.
+            yield return GetImageHeight(objFolder, folderItem);
+            // Get image width resolution.
+            yield return GetImageResolutionWidth(objFolder, folderItem);
+            // Get image height resolution.
+            yield return GetImageResolutionHeight(objFolder, folderItem);
+            // Get aperture value.
+            yield return GetFnumber(objFolder, folderItem);
+            // Get shutter speed value.
+            yield return GetShutterSpeed(objFolder, folderItem);
+            // Get exposure program.
+            yield return GetExposeMode(objFolder, folderItem);
+            // Get white balance.
+            yield return GetWhiteBlance(objFolder, folderItem);
         }
 
         /// <summary>
@@ -91,43 +93,47 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get image width and height.
+        /// Get image width.
         /// </summary>
-        private static List<ExifInfo> GetImageWidthAndHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        private static ExifInfo GetImageWidth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            var imageWidthAndHeightInfo = new List<ExifInfo>();
-
             // Width
             var propertyValue = objFolder.GetDetailsOf(folderItem, 176);
             var propertyText = "Width";
-            imageWidthAndHeightInfo.Add(new ExifInfo(propertyText, propertyValue));
-
-            // Height
-            propertyValue = objFolder.GetDetailsOf(folderItem, 178);
-            propertyText = "Height";
-            imageWidthAndHeightInfo.Add(new ExifInfo(propertyText, propertyValue));
-
-            return imageWidthAndHeightInfo;
+            return new ExifInfo(propertyText, propertyValue);
         }
 
         /// <summary>
-        /// Get image resolution.
+        /// Get image height.
         /// </summary>
-        private static List<ExifInfo> GetImageResolutionWidthAndHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        private static ExifInfo GetImageHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            var imageResolutionInfo = new List<ExifInfo>();
+            // Height
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 178);
+            var propertyText = "Height";
+            return new ExifInfo(propertyText, propertyValue);
+        }
 
+        /// <summary>
+        /// Get image width resolution.
+        /// </summary>
+        private static ExifInfo GetImageResolutionWidth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        {
             // Horizon resolution
             var propertyValue = objFolder.GetDetailsOf(folderItem, 175);
             var propertyText = "Horizon resolution";
-            imageResolutionInfo.Add(new ExifInfo(propertyText, propertyValue));
+            return new ExifInfo(propertyText, propertyValue);
+        }
 
+        /// <summary>
+        /// Get image height resolution.
+        /// </summary>
+        private static ExifInfo GetImageResolutionHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        {
             // Vertical resolution
-            propertyValue = objFolder.GetDetailsOf(folderItem, 177);
-            propertyText = "Vertical resolution";
-            imageResolutionInfo.Add(new ExifInfo(propertyText, propertyValue));
-
-            return imageResolutionInfo;
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 177);
+            var propertyText = "Vertical resolution";
+            return new ExifInfo(propertyText, propertyValue);
         }
 
         /// <summary>
@@ -143,21 +149,23 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Get shutter speed and aperture value.
         /// </summary>
-        private static List<ExifInfo> GetFnumberAndShutterSpeed(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        private static ExifInfo GetShutterSpeed(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            var shutterSpeedAndApertureInfo = new List<ExifInfo>();
-
             // Shutter speed
             var propertyValue = objFolder.GetDetailsOf(folderItem, 259);
             var propertyText = "Shutter speed";
-            shutterSpeedAndApertureInfo.Add(new ExifInfo(propertyText, propertyValue));
+            return new ExifInfo(propertyText, propertyValue);
+        }
 
+        /// <summary>
+        /// Get aperture value.
+        /// </summary>
+        private static ExifInfo GetFnumber(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        {
             // F number
-            propertyValue = objFolder.GetDetailsOf(folderItem, 260);
-            propertyText = "F number";
-            shutterSpeedAndApertureInfo.Add(new ExifInfo(propertyText, propertyValue));
-
-            return shutterSpeedAndApertureInfo;
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 260);
+            var propertyText = "F number";
+            return new ExifInfo(propertyText, propertyValue);
         }
 
         /// <summary>
@@ -183,21 +191,23 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Get exposure program and white balance.
         /// </summary>
-        private static List<ExifInfo> GetExposeModeAndWhiteBlance(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        private static ExifInfo GetExposeMode(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            var exposeModeAndWhiteBlanceInfo = new List<ExifInfo>();
-
             // Exposure program
             var propertyValue = objFolder.GetDetailsOf(folderItem, 258);
             var propertyText = "Exposure program";
-            exposeModeAndWhiteBlanceInfo.Add(new ExifInfo(propertyText, propertyValue));
+            return new ExifInfo(propertyText, propertyValue);
+        }
 
+        /// <summary>
+        /// Get  white balance.
+        /// </summary>
+        private static ExifInfo GetWhiteBlance(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        {
             // White balance
-            propertyValue = objFolder.GetDetailsOf(folderItem, 275);
-            propertyText = "White balance";
-            exposeModeAndWhiteBlanceInfo.Add(new ExifInfo(propertyText, propertyValue));
-
-            return exposeModeAndWhiteBlanceInfo;
+            var propertyValue = objFolder.GetDetailsOf(folderItem, 275);
+            var propertyText = "White balance";
+            return new ExifInfo(propertyText, propertyValue);
         }
 
         /// <summary>
