@@ -8,7 +8,7 @@ namespace Kchary::ImageController::RawImageControl
 {
     int RawImageController::GetImageData(const char* path, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
     {
-        unique_ptr<LibRaw> rawProcessor = make_unique<LibRaw>();
+        const unique_ptr<LibRaw> rawProcessor = make_unique<LibRaw>();
 
         // Read raw image using libraw.
         if (rawProcessor->open_file(path) != LIBRAW_SUCCESS)
@@ -65,7 +65,7 @@ namespace Kchary::ImageController::RawImageControl
 
     int RawImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
     {
-        unique_ptr<LibRaw> rawProcessor = make_unique<LibRaw>();
+        const unique_ptr<LibRaw> rawProcessor = make_unique<LibRaw>();
 
         // Read raw image using libraw.
         if (rawProcessor->open_file(path) != LIBRAW_SUCCESS)
