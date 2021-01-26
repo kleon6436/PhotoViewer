@@ -27,7 +27,7 @@ namespace Kchary::ImageController::NormalImageControl
 		 *
 		 * @return	Success: 0, Failure: 1
 		 */
-		int GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
+		int GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const override;
 
 		/**
 		 * @brief	This function is getting thumbnail image data.
@@ -42,10 +42,18 @@ namespace Kchary::ImageController::NormalImageControl
 		 * 
 		 * @return	Success: 0, Failure: 1
 		 */
-		int GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
+		int GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const override;
 
 	private:
-		cv::ImreadModes GetImreadMode(int resizeLongSideLength);
+		/**
+		 * @brief	This function is getting thumbnail image data.
+		 *
+		 * @param	libraw_thumbnail_t: Thumbnail image data structure.
+		 * @param	int resizeLongSideLength: Long side length of a resize image.
+		 *
+		 * @return	ImreadModes
+		 */
+		cv::ImreadModes GetImreadMode(int resizeLongSideLength) const;
 	};
 }
 

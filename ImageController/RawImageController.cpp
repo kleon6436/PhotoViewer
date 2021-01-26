@@ -10,7 +10,7 @@
 
 namespace Kchary::ImageController::RawImageControl
 {
-    int RawImageController::GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+    int RawImageController::GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const
     {
         const std::unique_ptr<LibRaw> rawProcessor = std::make_unique<LibRaw>();
 
@@ -67,7 +67,7 @@ namespace Kchary::ImageController::RawImageControl
         return 0;
     }
 
-    int RawImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+    int RawImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const
     {
         const std::unique_ptr<LibRaw> rawProcessor = std::make_unique<LibRaw>();
 
@@ -127,7 +127,7 @@ namespace Kchary::ImageController::RawImageControl
         return 0;
     }
 
-    cv::ImreadModes RawImageController::GetImreadMode(libraw_thumbnail_t thumbnail, int resizeLongSideLength)
+    cv::ImreadModes RawImageController::GetImreadMode(libraw_thumbnail_t thumbnail, int resizeLongSideLength) const
     {
         const ushort thumbLongSideLength = thumbnail.twidth > thumbnail.theight ? thumbnail.twidth : thumbnail.theight;
 

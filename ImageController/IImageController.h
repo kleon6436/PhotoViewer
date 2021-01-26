@@ -25,7 +25,7 @@ public:
 	 *
 	 * @return	Success: 0, Failure: 1
 	 */
-	virtual int GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) = 0;
+	virtual int GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const = 0;
 
 	/**
 	 * @brief	This function is getting thumbnail image data.
@@ -40,7 +40,7 @@ public:
 	 *
 	 * @return	Success: 0, Failure: 1
 	 */
-	virtual int GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) = 0;
+	virtual int GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const = 0;
 };
 
 #endif // IIMAGECONTROLLER_H_

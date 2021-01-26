@@ -9,7 +9,7 @@
 
 namespace Kchary::ImageController::NormalImageControl
 {
-    int NormalImageController::GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+    int NormalImageController::GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const
     {
         // Read image data to mat.
         cv::Mat img = cv::imread(path, cv::ImreadModes::IMREAD_COLOR);
@@ -29,7 +29,7 @@ namespace Kchary::ImageController::NormalImageControl
         return 0;
     }
 
-    int NormalImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+    int NormalImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const
     {
         // Read image data to mat.
         const auto imreadMode = GetImreadMode(resizeLongSideLength);
@@ -57,7 +57,7 @@ namespace Kchary::ImageController::NormalImageControl
         return 0;
     }
 
-    cv::ImreadModes NormalImageController::GetImreadMode(int resizeLongSideLength)
+    cv::ImreadModes NormalImageController::GetImreadMode(int resizeLongSideLength) const
     {
         auto imreadMode = cv::ImreadModes::IMREAD_COLOR;
         if (resizeLongSideLength <= 800)
