@@ -169,6 +169,7 @@ copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x64\Debug\net5.0-w
       <LanguageStandard>stdcpp17</LanguageStandard>
       <CallingConvention>StdCall</CallingConvention>
       <Optimization>Full</Optimization>
+      <DisableSpecificWarnings>26451;26495;26812;4819;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

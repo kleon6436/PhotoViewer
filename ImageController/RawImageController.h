@@ -1,11 +1,15 @@
-#pragma once
+/**
+ * @file	RawImageController.h
+ * @author	kchary6436
+ */
+
+#ifndef RAWIMAGECONTROLLER_H_
+#define RAWIMAGECONTROLLER_H_
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <libraw/libraw_types.h>
 #include "IImageController.h"
-
-using namespace std;
 
 namespace Kchary::ImageController::RawImageControl
 {
@@ -25,7 +29,7 @@ namespace Kchary::ImageController::RawImageControl
 		 *
 		 * @return	Success: 0, Failure: 1
 		 */
-		int GetImageData(const char* path, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
+		int GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
 
 		/**
 		 * @brief	This function is getting thumbnail image data.
@@ -40,9 +44,11 @@ namespace Kchary::ImageController::RawImageControl
 		 * 
 		 * @return	Success: 0, Failure: 1
 		 */
-		int GetThumbnailImageData(const char* path, int resizeLongSideLength, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
+		int GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
 
 	private:
 		cv::ImreadModes GetImreadMode(libraw_thumbnail_t thumbnail, int resizeLongSideLength);
 	};
 }
+
+#endif // RAWIMAGECONTROLLER_H_

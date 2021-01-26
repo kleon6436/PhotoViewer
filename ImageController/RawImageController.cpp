@@ -1,4 +1,8 @@
 #include "pch.h"
+/**
+ * @file	RawImageController.cpp
+ * @author	kchary6436
+ */
 
 #include <memory>
 #include <libraw/libraw.h>
@@ -6,9 +10,9 @@
 
 namespace Kchary::ImageController::RawImageControl
 {
-    int RawImageController::GetImageData(const char* path, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+    int RawImageController::GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
     {
-        const unique_ptr<LibRaw> rawProcessor = make_unique<LibRaw>();
+        const std::unique_ptr<LibRaw> rawProcessor = std::make_unique<LibRaw>();
 
         // Read raw image using libraw.
         if (rawProcessor->open_file(path) != LIBRAW_SUCCESS)
@@ -40,9 +44,9 @@ namespace Kchary::ImageController::RawImageControl
         if (image->bits == 16 || image->bits == 8)
         {
             const auto dataSize = image->data_size;
-            const auto rawData = (uint8_t*)image->data;
+            const auto rawData = (std::uint8_t*)image->data;
 
-            *buffer = new uint8_t[dataSize];
+            *buffer = new std::uint8_t[dataSize];
             memcpy(*buffer, rawData, dataSize);
 
             *size = dataSize;
@@ -63,9 +67,9 @@ namespace Kchary::ImageController::RawImageControl
         return 0;
     }
 
-    int RawImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+    int RawImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
     {
-        const unique_ptr<LibRaw> rawProcessor = make_unique<LibRaw>();
+        const std::unique_ptr<LibRaw> rawProcessor = std::make_unique<LibRaw>();
 
         // Read raw image using libraw.
         if (rawProcessor->open_file(path) != LIBRAW_SUCCESS)
@@ -91,10 +95,10 @@ namespace Kchary::ImageController::RawImageControl
         // Read thumbnail jpeg image data using opencv.
         // (Raw image's thumbnail data is jpeg.)
         const auto thumbnailDataSize = thumbnail->data_size;
-        const auto thumbnailData = (uint8_t*)thumbnail->data;
+        const auto thumbnailData = (std::uint8_t*)thumbnail->data;
 
         const auto imreadMode = GetImreadMode(rawProcessor->imgdata.thumbnail, resizeLongSideLength);
-        const vector<uint8_t> jpegData(thumbnailData, thumbnailData + thumbnailDataSize);
+        const std::vector<std::uint8_t> jpegData(thumbnailData, thumbnailData + thumbnailDataSize);
         cv::Mat img = cv::imdecode(jpegData, imreadMode);
 
         // Resize image data.
@@ -104,8 +108,8 @@ namespace Kchary::ImageController::RawImageControl
         cv::resize(img, resizeImg, cv::Size(), ratio, ratio, cv::INTER_AREA);
 
         const auto imgDataSize = resizeImg.total() * resizeImg.elemSize();
-        *buffer = new uint8_t[imgDataSize];
-        memcpy(*buffer, resizeImg.data, imgDataSize * sizeof(uint8_t));
+        *buffer = new std::uint8_t[imgDataSize];
+        memcpy(*buffer, resizeImg.data, imgDataSize * sizeof(std::uint8_t));
 
         // Translate data to C#
         *size = (unsigned int)imgDataSize;

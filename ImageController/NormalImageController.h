@@ -1,10 +1,14 @@
-#pragma once
+/**
+ * @file	NormalImageController.h
+ * @author	kchary6436
+ */
+
+#ifndef NORMALIMAGECONTROLLER_H_
+#define NORMALIMAGECONTROLLER_H_
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "IImageController.h"
-
-using namespace std;
 
 namespace Kchary::ImageController::NormalImageControl
 {
@@ -23,7 +27,7 @@ namespace Kchary::ImageController::NormalImageControl
 		 *
 		 * @return	Success: 0, Failure: 1
 		 */
-		int GetImageData(const char* path, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
+		int GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
 
 		/**
 		 * @brief	This function is getting thumbnail image data.
@@ -38,9 +42,11 @@ namespace Kchary::ImageController::NormalImageControl
 		 * 
 		 * @return	Success: 0, Failure: 1
 		 */
-		int GetThumbnailImageData(const char* path, int resizeLongSideLength, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
+		int GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) override;
 
 	private:
 		cv::ImreadModes GetImreadMode(int resizeLongSideLength);
 	};
 }
+
+#endif // NORMALIMAGECONTROLLER_H_

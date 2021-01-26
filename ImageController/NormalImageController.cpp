@@ -1,18 +1,22 @@
 #include "pch.h"
+/**
+ * @file	NormalImageController.cpp
+ * @author	kchary6436
+ */
 
 #include <memory>
 #include "NormalImageController.h"
 
 namespace Kchary::ImageController::NormalImageControl
 {
-    int NormalImageController::GetImageData(const char* path, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+    int NormalImageController::GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
     {
         // Read image data to mat.
         cv::Mat img = cv::imread(path, cv::ImreadModes::IMREAD_COLOR);
         
         const auto dataSize = img.total() * img.elemSize();
-        *buffer = new uint8_t[dataSize];
-        memcpy(*buffer, img.data, dataSize * sizeof(uint8_t));
+        *buffer = new std::uint8_t[dataSize];
+        memcpy(*buffer, img.data, dataSize * sizeof(std::uint8_t));
 
         // Translate data to C#
         *size = (unsigned int)dataSize;
@@ -25,7 +29,7 @@ namespace Kchary::ImageController::NormalImageControl
         return 0;
     }
 
-    int NormalImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+    int NormalImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
     {
         // Read image data to mat.
         const auto imreadMode = GetImreadMode(resizeLongSideLength);
@@ -38,8 +42,8 @@ namespace Kchary::ImageController::NormalImageControl
         cv::resize(img, resizeImg, cv::Size(), ratio, ratio, cv::INTER_AREA);
 
         const auto dataSize = resizeImg.total() * resizeImg.elemSize();
-        *buffer = new uint8_t[dataSize];
-        memcpy(*buffer, resizeImg.data, dataSize * sizeof(uint8_t));
+        *buffer = new std::uint8_t[dataSize];
+        memcpy(*buffer, resizeImg.data, dataSize * sizeof(std::uint8_t));
 
         // Translate data to C#
         *size = (unsigned int)dataSize;
