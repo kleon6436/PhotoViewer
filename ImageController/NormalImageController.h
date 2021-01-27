@@ -25,7 +25,7 @@ namespace Kchary::ImageController::NormalImageControl
 		 * @param   int* width: Image width (out)
 		 * @param   int* height: Image height (out)
 		 *
-		 * @return	Success: 0, Failure: 1
+		 * @return	Success: 0, Failure: -1
 		 */
 		int GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const override;
 
@@ -40,7 +40,7 @@ namespace Kchary::ImageController::NormalImageControl
 		 * @param   int* width: Image width (out)
 		 * @param   int* height: Image height (out)
 		 * 
-		 * @return	Success: 0, Failure: 1
+		 * @return	Success: 0, Failure: -1
 		 */
 		int GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const override;
 
