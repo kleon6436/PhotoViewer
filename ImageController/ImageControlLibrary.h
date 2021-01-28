@@ -60,9 +60,9 @@ namespace Kchary::ImageController::Library
 	DllExport int GetNormalThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData);
 
 	/**
-	 * @brief	This function is free buffer.
+	 * @brief	Release the memory acquired on the DLL side.
 	 *
-	 * @param	uint8_t* buffer: buffer data
+	 * @param	uint8_t* buffer: Memory pointer you want to release.
 	 */
 	DllExport void FreeBuffer(std::uint8_t* buffer);
 }
