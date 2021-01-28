@@ -6,7 +6,6 @@
 #ifndef RAWIMAGECONTROLLER_H_
 #define RAWIMAGECONTROLLER_H_
 
-#include <iostream>
 #include <opencv2/opencv.hpp>
 #include <libraw/libraw_types.h>
 #include "IImageController.h"

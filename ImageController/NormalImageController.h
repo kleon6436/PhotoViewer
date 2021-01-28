@@ -6,7 +6,6 @@
 #ifndef NORMALIMAGECONTROLLER_H_
 #define NORMALIMAGECONTROLLER_H_
 
-#include <iostream>
 #include <opencv2/opencv.hpp>
 #include "IImageController.h"
 
