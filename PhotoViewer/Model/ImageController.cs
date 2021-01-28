@@ -15,19 +15,29 @@ namespace Kchary.PhotoViewer.Model
         private static class NativeMethods
         {
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int GetRawImageData(string path, out IntPtr buffer, out uint size, out int stride, out int width, out int height);
+            internal static extern int GetRawImageData(string path, ref ImageData imageData);
 
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int GetRawThumbnailImageData(string path, int longSideLength, out IntPtr buffer, out uint size, out int stride, out int width, out int height);
+            internal static extern int GetRawThumbnailImageData(string path, int longSideLength, ref ImageData imageData);
 
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int GetNormalImageData(string path, out IntPtr buffer, out uint size, out int stride, out int width, out int height);
+            internal static extern int GetNormalImageData(string path, ref ImageData imageData);
 
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int GetNormalThumbnailImageData(string path, int longSideLength, out IntPtr buffer, out uint size, out int stride, out int width, out int height);
+            internal static extern int GetNormalThumbnailImageData(string path, int longSideLength, ref ImageData imageData);
 
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
             internal static extern void FreeBuffer(IntPtr buffer);
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal struct ImageData
+            {
+                public IntPtr buffer;
+                public uint size;
+                public int stride;
+                public int width;
+                public int height;
+            }
         }
 
         /// <summary>
@@ -113,34 +123,36 @@ namespace Kchary.PhotoViewer.Model
         {
             if (MediaChecker.CheckRawFileExtension(Path.GetExtension(filePath).ToLower()))
             {
-                if (NativeMethods.GetRawThumbnailImageData(filePath, longSideLength, out IntPtr buffer, out uint bufferSize, out int stride, out int width, out int height) != 0)
+                var imageData = new NativeMethods.ImageData();
+                if (NativeMethods.GetRawThumbnailImageData(filePath, longSideLength, ref imageData) != 0)
                 {
                     throw new FileFormatException("File format is wrong.");
                 }
 
-                var imgData = new byte[bufferSize];
-                Marshal.Copy(buffer, imgData, 0, (int)bufferSize);
-                NativeMethods.FreeBuffer(buffer);
+                var imgData = new byte[imageData.size];
+                Marshal.Copy(imageData.buffer, imgData, 0, (int)imageData.size);
+                NativeMethods.FreeBuffer(imageData.buffer);
 
-                var bitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgr24, null);
-                bitmap.WritePixels(new Int32Rect(0, 0, width, height), imgData, stride, 0, 0);
+                var bitmap = new WriteableBitmap(imageData.width, imageData.height, 96, 96, PixelFormats.Bgr24, null);
+                bitmap.WritePixels(new Int32Rect(0, 0, imageData.width, imageData.height), imgData, imageData.stride, 0, 0);
                 bitmap.Freeze();
                 
                 return bitmap;
             }
             else
             {
-                if (NativeMethods.GetNormalThumbnailImageData(filePath, longSideLength, out IntPtr buffer, out uint bufferSize, out int stride, out int width, out int height) != 0)
+                var imageData = new NativeMethods.ImageData();
+                if (NativeMethods.GetNormalThumbnailImageData(filePath, longSideLength, ref imageData) != 0)
                 {
                     throw new FileFormatException("File format is wrong.");
                 }
 
-                var imgData = new byte[bufferSize];
-                Marshal.Copy(buffer, imgData, 0, (int)bufferSize);
-                NativeMethods.FreeBuffer(buffer);
+                var imgData = new byte[imageData.size];
+                Marshal.Copy(imageData.buffer, imgData, 0, (int)imageData.size);
+                NativeMethods.FreeBuffer(imageData.buffer);
 
-                var bitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgr24, null);
-                bitmap.WritePixels(new Int32Rect(0, 0, width, height), imgData, stride, 0, 0);
+                var bitmap = new WriteableBitmap(imageData.width, imageData.height, 96, 96, PixelFormats.Bgr24, null);
+                bitmap.WritePixels(new Int32Rect(0, 0, imageData.width, imageData.height), imgData, imageData.stride, 0, 0);
                 bitmap.Freeze();
 
                 return bitmap;

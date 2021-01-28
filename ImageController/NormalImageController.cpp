@@ -9,27 +9,27 @@
 
 namespace Kchary::ImageController::NormalImageControl
 {
-    int NormalImageController::GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const
+    int NormalImageController::GetImageData(const char* path, ImageData* imageData) const
     {
         // Read image data to mat.
         cv::Mat img = cv::imread(path, cv::ImreadModes::IMREAD_COLOR);
         
         const auto dataSize = img.total() * img.elemSize();
-        *buffer = new std::uint8_t[dataSize];
-        memcpy(*buffer, img.data, dataSize * sizeof(std::uint8_t));
+        imageData->buffer = new std::uint8_t[dataSize];
+        memcpy(imageData->buffer, img.data, dataSize * sizeof(std::uint8_t));
 
         // Translate data to C#
-        *size = (unsigned int)dataSize;
-        *stride = (int)img.step;
-        *width = img.cols;
-        *height = img.rows;
+        imageData->size = (unsigned int)dataSize;
+        imageData->stride = (int)img.step;
+        imageData->width = img.cols;
+        imageData->height = img.rows;
 
         img.release();
 
         return 0;
     }
 
-    int NormalImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const
+    int NormalImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData) const
     {
         // Read image data to mat.
         const auto imreadMode = GetImreadMode(resizeLongSideLength);
@@ -42,14 +42,14 @@ namespace Kchary::ImageController::NormalImageControl
         cv::resize(img, resizeImg, cv::Size(), ratio, ratio, cv::INTER_AREA);
 
         const auto dataSize = resizeImg.total() * resizeImg.elemSize();
-        *buffer = new std::uint8_t[dataSize];
-        memcpy(*buffer, resizeImg.data, dataSize * sizeof(std::uint8_t));
+        imageData->buffer = new std::uint8_t[dataSize];
+        memcpy(imageData->buffer, resizeImg.data, dataSize * sizeof(std::uint8_t));
 
         // Translate data to C#
-        *size = (unsigned int)dataSize;
-        *stride = (int)resizeImg.step;
-        *width = resizeImg.cols;
-        *height = resizeImg.rows;
+        imageData->size = (unsigned int)dataSize;
+        imageData->stride = (int)resizeImg.step;
+        imageData->width = resizeImg.cols;
+        imageData->height = resizeImg.rows;
 
         img.release();
         resizeImg.release();

@@ -19,30 +19,22 @@ namespace Kchary::ImageController::NormalImageControl
 		 * @brief	This function is getting image data using libraw library.
 		 * 
 		 * @param	const char* path: Raw image file path.
-		 * @param	uint8_t** buffer: byte buffer data (out)
-		 * @param	unsigned int* size: buffer size (out)
-		 * @param   int* stride: Stride data (out)
-		 * @param   int* width: Image width (out)
-		 * @param   int* height: Image height (out)
+		 * @param	ImageData* imageData: Image data
 		 *
 		 * @return	Success: 0, Failure: -1
 		 */
-		int GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const override;
+		int GetImageData(const char* path, ImageData* imageData) const override;
 
 		/**
 		 * @brief	This function is getting thumbnail image data.
 		 * 
 		 * @param	const char* path: Raw image file path.
 		 * @param	int resizeLongSideLength: Long side length of a resize image.
-		 * @param	uint8_t** buffer: byte buffer data (out)
-		 * @param	unsigned int* size: buffer size (out)
-		 * @param   int* stride: Stride data (out)
-		 * @param   int* width: Image width (out)
-		 * @param   int* height: Image height (out)
+		 * @param	ImageData* imageData: Image data
 		 * 
 		 * @return	Success: 0, Failure: -1
 		 */
-		int GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const override;
+		int GetThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData) const override;
 
 	private:
 		/**

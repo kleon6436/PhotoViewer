@@ -2,7 +2,7 @@
   "profiles": {
     "PhotoViewer": {
       "commandName": "Project",
-      "nativeDebugging": true
+      "nativeDebugging": false
     }
   }
 }

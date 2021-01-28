@@ -15,28 +15,28 @@ using namespace Kchary::ImageController::NormalImageControl;
 
 namespace Kchary::ImageController::Library
 {
-	int GetRawImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+	int GetRawImageData(const char* path, ImageData* imageData)
 	{
-		std::unique_ptr<IImageController> rawImageController = std::make_unique<RawImageController>();
-		return rawImageController->GetImageData(path, buffer, size, stride, width, height);
+		const std::unique_ptr<IImageController> rawImageController = std::make_unique<RawImageController>();
+		return rawImageController->GetImageData(path, imageData);
 	}
 
-	int GetRawThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+	int GetRawThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData)
 	{
-		std::unique_ptr<IImageController> rawImageController = std::make_unique<RawImageController>();
-		return rawImageController->GetThumbnailImageData(path, resizeLongSideLength, buffer, size, stride, width, height);
+		const std::unique_ptr<IImageController> rawImageController = std::make_unique<RawImageController>();
+		return rawImageController->GetThumbnailImageData(path, resizeLongSideLength, imageData);
 	}
 	
-	int GetNormalImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+	int GetNormalImageData(const char* path, ImageData* imageData)
 	{
-		std::unique_ptr<IImageController> normalImageController = std::make_unique<NormalImageController>();
-		return normalImageController->GetImageData(path, buffer, size, stride, width, height);
+		const std::unique_ptr<IImageController> normalImageController = std::make_unique<NormalImageController>();
+		return normalImageController->GetImageData(path, imageData);
 	}
 
-	int GetNormalThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height)
+	int GetNormalThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData)
 	{
-		std::unique_ptr<IImageController> normalImageController = std::make_unique<NormalImageController>();
-		return normalImageController->GetThumbnailImageData(path, resizeLongSideLength, buffer, size, stride, width, height);
+		const std::unique_ptr<IImageController> normalImageController = std::make_unique<NormalImageController>();
+		return normalImageController->GetThumbnailImageData(path, resizeLongSideLength, imageData);
 	}
 
 	void FreeBuffer(std::uint8_t* buffer)

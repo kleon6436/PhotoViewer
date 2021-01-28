@@ -188,6 +188,7 @@ copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x64\Release\net5.0
     <ClInclude Include="framework.h" />
     <ClInclude Include="IImageController.h" />
     <ClInclude Include="ImageControlLibrary.h" />
+    <ClInclude Include="ImageData.h" />
     <ClInclude Include="NormalImageController.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RawImageController.h" />

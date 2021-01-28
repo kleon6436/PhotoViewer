@@ -10,7 +10,7 @@
 
 namespace Kchary::ImageController::RawImageControl
 {
-    int RawImageController::GetImageData(const char* path, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const
+    int RawImageController::GetImageData(const char* path, ImageData* imageData) const
     {
         const std::unique_ptr<LibRaw> rawProcessor = std::make_unique<LibRaw>();
 
@@ -46,13 +46,13 @@ namespace Kchary::ImageController::RawImageControl
             const auto dataSize = image->data_size;
             const auto rawData = (std::uint8_t*)image->data;
 
-            *buffer = new std::uint8_t[dataSize];
-            memcpy(*buffer, rawData, dataSize);
+            imageData->buffer = new std::uint8_t[dataSize];
+            memcpy(imageData->buffer, rawData, dataSize);
 
-            *size = dataSize;
-            *stride = image->width * image->colors * image->bits / 8;
-            *width = image->width;
-            *height = image->height;
+            imageData->size = dataSize;
+            imageData->stride = image->width * image->colors * image->bits / 8;
+            imageData->width = image->width;
+            imageData->height = image->height;
         }
         else
         {
@@ -67,7 +67,7 @@ namespace Kchary::ImageController::RawImageControl
         return 0;
     }
 
-    int RawImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, std::uint8_t** buffer, unsigned int* size, int* stride, int* width, int* height) const
+    int RawImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData) const
     {
         const std::unique_ptr<LibRaw> rawProcessor = std::make_unique<LibRaw>();
 
@@ -108,14 +108,14 @@ namespace Kchary::ImageController::RawImageControl
         cv::resize(img, resizeImg, cv::Size(), ratio, ratio, cv::INTER_AREA);
 
         const auto imgDataSize = resizeImg.total() * resizeImg.elemSize();
-        *buffer = new std::uint8_t[imgDataSize];
-        memcpy(*buffer, resizeImg.data, imgDataSize * sizeof(std::uint8_t));
+        imageData->buffer = new std::uint8_t[imgDataSize];
+        memcpy(imageData->buffer, resizeImg.data, imgDataSize * sizeof(std::uint8_t));
 
         // Translate data to C#
-        *size = (unsigned int)imgDataSize;
-        *stride = (int)resizeImg.step;
-        *width = resizeImg.cols;
-        *height = resizeImg.rows;
+        imageData->size = (unsigned int)imgDataSize;
+        imageData->stride = (int)resizeImg.step;
+        imageData->width = resizeImg.cols;
+        imageData->height = resizeImg.rows;
 
         img.release();
         resizeImg.release();
