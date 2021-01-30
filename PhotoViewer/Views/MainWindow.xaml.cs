@@ -24,7 +24,7 @@ namespace Kchary.PhotoViewer
         public static class NativeMethods
         {
             [DllImport("user32.dll")]
-            internal static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
+            internal static extern bool SetWindowPlacement(IntPtr hWnd, [In] WINDOWPLACEMENT lpwndpl);
 
             [DllImport("user32.dll")]
             internal static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
@@ -207,7 +207,7 @@ namespace Kchary.PhotoViewer
             windowPlacement.showCmd = (windowPlacement.showCmd == NativeMethods.SW.SHOWMINIMIZED) ? NativeMethods.SW.SHOWNORMAL : windowPlacement.showCmd;
 
             IntPtr hwnd = new WindowInteropHelper(this).Handle;
-            NativeMethods.SetWindowPlacement(hwnd, ref windowPlacement);
+            NativeMethods.SetWindowPlacement(hwnd, windowPlacement);
         }
     }
 }
