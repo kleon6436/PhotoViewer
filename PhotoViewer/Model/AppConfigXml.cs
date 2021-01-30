@@ -181,9 +181,9 @@ namespace Kchary.PhotoViewer.Model
             configData.WindowPlaceData.maxPosition.Y = Convert.ToInt32(windowMaxPositionY.Value);
             configData.WindowPlaceData.minPosition.X = Convert.ToInt32(windowMinPositionX.Value);
             configData.WindowPlaceData.minPosition.Y = Convert.ToInt32(windowMinPositionY.Value);
-            configData.WindowPlaceData.length = Marshal.SizeOf(typeof(MainWindow.WINDOWPLACEMENT));
+            configData.WindowPlaceData.length = Marshal.SizeOf(typeof(MainWindow.NativeMethods.WINDOWPLACEMENT));
             configData.WindowPlaceData.flags = Convert.ToInt32(windowFlag.Value);
-            configData.WindowPlaceData.showCmd = (MainWindow.SW)Enum.Parse(typeof(MainWindow.SW), windowSwElement.Value);
+            configData.WindowPlaceData.showCmd = (MainWindow.NativeMethods.SW)Enum.Parse(typeof(MainWindow.NativeMethods.SW), windowSwElement.Value);
         }
     }
 }

@@ -18,6 +18,60 @@ namespace Kchary.PhotoViewer
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Native method class.
+        /// </summary>
+        public static class NativeMethods
+        {
+            [DllImport("user32.dll")]
+            internal static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
+
+            [DllImport("user32.dll")]
+            internal static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct WINDOWPLACEMENT
+            {
+                public int length;
+                public int flags;
+                public SW showCmd;
+                public POINT minPosition;
+                public POINT maxPosition;
+                public RECT normalPosition;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct POINT
+            {
+                public int X;
+                public int Y;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct RECT
+            {
+                public int Left;
+                public int Top;
+                public int Right;
+                public int Bottom;
+            }
+
+            public enum SW
+            {
+                HIDE = 0,
+                SHOWNORMAL = 1,
+                SHOWMINIMIZED = 2,
+                SHOWMAXIMIZED = 3,
+                SHOWNOACTIVATE = 4,
+                SHOW = 5,
+                MINIMIZE = 6,
+                SHOWMINNOACTIVE = 7,
+                SHOWNA = 8,
+                RESTORE = 9,
+                SHOWDEFAULT = 10,
+            }
+        }
+
         private const int MIN_SPL_TIME = 1000;
 
         public MainWindow()
@@ -77,7 +131,7 @@ namespace Kchary.PhotoViewer
 
             // ウィンドウ情報を保存
             IntPtr hwnd = new WindowInteropHelper(this).Handle;
-            GetWindowPlacement(hwnd, out WINDOWPLACEMENT placement);
+            NativeMethods.GetWindowPlacement(hwnd, out NativeMethods.WINDOWPLACEMENT placement);
 
             var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.ConfigData.WindowPlaceData = placement;
@@ -149,59 +203,11 @@ namespace Kchary.PhotoViewer
 
             var appConfigManager = AppConfigManager.GetInstance();
 
-            WINDOWPLACEMENT windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
-            windowPlacement.showCmd = (windowPlacement.showCmd == SW.SHOWMINIMIZED) ? SW.SHOWNORMAL : windowPlacement.showCmd;
+            NativeMethods.WINDOWPLACEMENT windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
+            windowPlacement.showCmd = (windowPlacement.showCmd == NativeMethods.SW.SHOWMINIMIZED) ? NativeMethods.SW.SHOWNORMAL : windowPlacement.showCmd;
 
             IntPtr hwnd = new WindowInteropHelper(this).Handle;
-            SetWindowPlacement(hwnd, ref windowPlacement);
+            NativeMethods.SetWindowPlacement(hwnd, ref windowPlacement);
         }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct WINDOWPLACEMENT
-        {
-            public int length;
-            public int flags;
-            public SW showCmd;
-            public POINT minPosition;
-            public POINT maxPosition;
-            public RECT normalPosition;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
-        {
-            public int X;
-            public int Y;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }
-
-        public enum SW
-        {
-            HIDE = 0,
-            SHOWNORMAL = 1,
-            SHOWMINIMIZED = 2,
-            SHOWMAXIMIZED = 3,
-            SHOWNOACTIVATE = 4,
-            SHOW = 5,
-            MINIMIZE = 6,
-            SHOWMINNOACTIVE = 7,
-            SHOWNA = 8,
-            RESTORE = 9,
-            SHOWDEFAULT = 10,
-        }
-
-        [DllImport("user32.dll")]
-        private static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
-
-        [DllImport("user32.dll")]
-        private static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
     }
 }

@@ -20,6 +20,6 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Window display status
         /// </summary>
-        public MainWindow.WINDOWPLACEMENT WindowPlaceData;
+        public MainWindow.NativeMethods.WINDOWPLACEMENT WindowPlaceData;
     }
 }

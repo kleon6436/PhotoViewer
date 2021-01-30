@@ -12,25 +12,25 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Native image control method class.
         /// </summary>
-        private static class NativeMethods
+        internal static class NativeMethods
         {
-            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int GetRawImageData(string path, ref ImageData imageData);
+            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+            internal static extern int GetRawImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, [Out] ImageData imageData);
 
-            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int GetRawThumbnailImageData(string path, int longSideLength, ref ImageData imageData);
+            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+            internal static extern int GetRawThumbnailImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, [In] int longSideLength, [Out] ImageData imageData);
 
-            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int GetNormalImageData(string path, ref ImageData imageData);
+            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+            internal static extern int GetNormalImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, ImageData imageData);
 
-            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int GetNormalThumbnailImageData(string path, int longSideLength, ref ImageData imageData);
+            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
+            internal static extern int GetNormalThumbnailImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, [In] int longSideLength, [Out] ImageData imageData);
 
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
             internal static extern void FreeBuffer(IntPtr buffer);
 
             [StructLayout(LayoutKind.Sequential)]
-            internal struct ImageData
+            internal class ImageData
             {
                 public IntPtr buffer;
                 public uint size;
@@ -124,7 +124,7 @@ namespace Kchary.PhotoViewer.Model
             if (MediaChecker.CheckRawFileExtension(Path.GetExtension(filePath).ToLower()))
             {
                 var imageData = new NativeMethods.ImageData();
-                if (NativeMethods.GetRawThumbnailImageData(filePath, longSideLength, ref imageData) != 0)
+                if (NativeMethods.GetRawThumbnailImageData(filePath, longSideLength, imageData) != 0)
                 {
                     throw new FileFormatException("File format is wrong.");
                 }
@@ -136,13 +136,13 @@ namespace Kchary.PhotoViewer.Model
                 var bitmap = new WriteableBitmap(imageData.width, imageData.height, 96, 96, PixelFormats.Bgr24, null);
                 bitmap.WritePixels(new Int32Rect(0, 0, imageData.width, imageData.height), imgData, imageData.stride, 0, 0);
                 bitmap.Freeze();
-                
+
                 return bitmap;
             }
             else
             {
                 var imageData = new NativeMethods.ImageData();
-                if (NativeMethods.GetNormalThumbnailImageData(filePath, longSideLength, ref imageData) != 0)
+                if (NativeMethods.GetNormalThumbnailImageData(filePath, longSideLength, imageData) != 0)
                 {
                     throw new FileFormatException("File format is wrong.");
                 }

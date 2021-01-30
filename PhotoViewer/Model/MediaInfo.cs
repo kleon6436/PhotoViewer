@@ -73,8 +73,9 @@ namespace Kchary.PhotoViewer.Model
                 };
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                App.LogException(ex);
                 return false;
             }
         }
