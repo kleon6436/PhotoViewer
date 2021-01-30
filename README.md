@@ -36,11 +36,11 @@ https://docs.microsoft.com/ja-jp/cpp/build/vcpkg?view=msvc-160
 
 次に、以下のコマンドを打ち、OpenCVとLibrawのライブラリをビルドしてください。
 
-'vcpkg install opencv:x64-windows opencv:x86-windows libraw:x64-windows libraw:x86-windows'
+`vcpkg install opencv:x64-windows opencv:x86-windows libraw:x64-windows libraw:x86-windows`
 
 その後、以下のコマンドを打ち、Visual studioのプロジェクトにvcpkgを適用してください。
 
-'vcpkg integrate install'
+`vcpkg integrate install`
 
 
 ## 使用しているテクノロジ
