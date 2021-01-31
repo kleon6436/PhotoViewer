@@ -77,7 +77,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="e">Argument</param>
         private void ChangeLinkageApp(object sender, EventArgs e)
         {
-            if (sender is not LinkageAppViewModel linkageAppVM)
+            if (sender is not LinkageAppViewModel)
             {
                 return;
             }

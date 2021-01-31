@@ -47,8 +47,8 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureViewImage(string filePath)
         {
-            const int longSideLength = 2200;
-            return DecodePicture(filePath, longSideLength);
+            const int LongSideLength = 2200;
+            return DecodePicture(filePath, LongSideLength);
         }
 
         /// <summary>
@@ -58,14 +58,17 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureThumbnailImage(string filePath)
         {
-            const int longSideLength = 100;
-            return DecodePicture(filePath, longSideLength);
+            const int LongSideLength = 100;
+            return DecodePicture(filePath, LongSideLength);
         }
 
         /// <summary>
         /// Create thumbnail image for still image edit screen.
         /// </summary>
         /// <param name="filePath">FilePath</param>
+        /// <param name="defaultPictureWidth">DefaultPictureWidth</param>
+        /// <param name="defaultPictureHeight">DefaultPictureHeight</param>
+        /// <param name="rotation">Rotation</param>
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureEditViewThumbnail(string filePath, out int defaultPictureWidth, out int defaultPictureHeight, out uint rotation)
         {
@@ -78,16 +81,16 @@ namespace Kchary.PhotoViewer.Model
             defaultPictureHeight = bitmapFrame.PixelHeight;
             rotation = GetRotation(bitmapFrame.Metadata as BitmapMetadata);
 
-            const int longSideLength = 240;
-            return DecodePicture(filePath, longSideLength);
+            const int LongSideLength = 240;
+            return DecodePicture(filePath, LongSideLength);
         }
 
         /// <summary>
         /// Create save image.
         /// </summary>
-        /// <param name="filePath"><FilePath/param>
+        /// <param name="filePath">FilePath</param>
         /// <param name="scale">scale</param>
-        /// <returns>BitmapSOurce</returns>
+        /// <returns>BitmapSource</returns>
         public static BitmapSource CreateSavePicture(string filePath, double scale)
         {
             using var sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
@@ -188,13 +191,8 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>rotation value</returns>
         private static uint GetRotation(BitmapMetadata metaData)
         {
-            var _query = "/app1/ifd/exif:{uint=274}";
-            if (!metaData.ContainsQuery(_query))
-            {
-                return 0;
-            }
-
-            return Convert.ToUInt32(metaData.GetQuery(_query));
+            const string Query = "/app1/ifd/exif:{uint=274}";
+            return !metaData.ContainsQuery(Query) ? (uint) 0 : Convert.ToUInt32(metaData.GetQuery(Query));
         }
 
         /// <summary>

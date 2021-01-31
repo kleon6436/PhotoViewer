@@ -43,14 +43,7 @@ namespace Kchary.PhotoViewer.Model
             ExplorerItemPath = path;
 
             // Set header information to be displayed in explorer.
-            if (isDrive)
-            {
-                Header = CreateExplorerItemHeader(ExplorerItemPath, true);
-            }
-            else
-            {
-                Header = CreateExplorerItemHeader(Path.GetFileName(ExplorerItemPath), false);
-            }
+            Header = isDrive ? CreateExplorerItemHeader(ExplorerItemPath, true) : CreateExplorerItemHeader(Path.GetFileName(ExplorerItemPath), false);
 
             // Directory information in the drive(if it exists, create an empty TreeItem)
             // Note: Create contents when expanding the tree to reduce memory consumption.
@@ -79,30 +72,30 @@ namespace Kchary.PhotoViewer.Model
         /// <returns>Stack panel settings shown in TreeView.</returns>
         private static StackPanel CreateExplorerItemHeader(string path, bool isDrive)
         {
-            var stackpanel = new StackPanel()
+            var stackPanel = new StackPanel()
             {
                 Orientation = Orientation.Horizontal
             };
 
             // Generate Icon.
-            BitmapSource iconSource = CreateTreeIcon(isDrive);
+            var iconSource = CreateTreeIcon(isDrive);
 
-            stackpanel.Children.Add(new Image()
+            stackPanel.Children.Add(new Image()
             {
                 Source = iconSource,
                 Width = 20,
                 Height = 20
             });
-            stackpanel.Children.Add(new TextBlock()
+            stackPanel.Children.Add(new TextBlock()
             {
                 Text = path,
                 FontWeight = FontWeights.Normal,
                 ToolTip = path,
                 Margin = new Thickness(2.5, 0, 0, 0)
             });
-            stackpanel.Margin = new Thickness(0, 5, 0, 0);
+            stackPanel.Margin = new Thickness(0, 5, 0, 0);
 
-            return stackpanel;
+            return stackPanel;
         }
 
         /// <summary>
@@ -115,9 +108,9 @@ namespace Kchary.PhotoViewer.Model
             Items.Clear();
 
             // Regenerate the directory order by rearranging it in natural order.
-            IOrderedEnumerable<DirectoryInfo> sortDirectoryInfos = innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer());
+            var sortDirectoryInfos = innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer());
 
-            foreach (DirectoryInfo directory in sortDirectoryInfos)
+            foreach (var directory in sortDirectoryInfos)
             {
                 // Get the first character of the file name.
                 var fileNameFirst = Path.GetFileName(directory.FullName).Substring(0, 1);
@@ -141,12 +134,12 @@ namespace Kchary.PhotoViewer.Model
         {
             if (isDrive)
             {
-                BitmapSource iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_DRIVEFIXED);
+                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SiidDrivefixed);
                 return iconImage;
             }
             else
             {
-                BitmapSource iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SIID_FOLDER);
+                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SiidFolder);
                 return iconImage;
             }
         }
@@ -173,7 +166,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Monitor information in the drive.
         /// </summary>
-        /// <param name="drive">Directory information to monitor</param>
+        /// <param name="path">Watch path</param>
         private void StartWatcher(string path)
         {
             // Set monitoring for each directory information.
@@ -198,10 +191,7 @@ namespace Kchary.PhotoViewer.Model
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             // Reload.
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                UpdateDirectoryTree();
-            });
+            Application.Current.Dispatcher.Invoke(UpdateDirectoryTree);
         }
     }
 }

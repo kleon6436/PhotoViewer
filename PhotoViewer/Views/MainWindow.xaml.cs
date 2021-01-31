@@ -1,7 +1,4 @@
-﻿using Kchary.PhotoViewer.Model;
-using Kchary.PhotoViewer.ViewModels;
-using Kchary.PhotoViewer.Views;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,13 +7,15 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using Kchary.PhotoViewer.Model;
+using Kchary.PhotoViewer.ViewModels;
 
-namespace Kchary.PhotoViewer
+namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         /// <summary>
         /// Native method class.
@@ -24,31 +23,31 @@ namespace Kchary.PhotoViewer
         public static class NativeMethods
         {
             [DllImport("user32.dll")]
-            internal static extern bool SetWindowPlacement(IntPtr hWnd, [In] WINDOWPLACEMENT lpwndpl);
+            internal static extern bool SetWindowPlacement(IntPtr hWnd, [In] WindowPlacement lpwndpl);
 
             [DllImport("user32.dll")]
-            internal static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+            internal static extern bool GetWindowPlacement(IntPtr hWnd, out WindowPlacement lpwndpl);
 
             [StructLayout(LayoutKind.Sequential)]
-            public struct WINDOWPLACEMENT
+            public struct WindowPlacement
             {
                 public int length;
                 public int flags;
-                public SW showCmd;
-                public POINT minPosition;
-                public POINT maxPosition;
-                public RECT normalPosition;
+                public Sw showCmd;
+                public Point minPosition;
+                public Point maxPosition;
+                public Rect normalPosition;
             }
 
             [StructLayout(LayoutKind.Sequential)]
-            public struct POINT
+            public struct Point
             {
                 public int X;
                 public int Y;
             }
 
             [StructLayout(LayoutKind.Sequential)]
-            public struct RECT
+            public struct Rect
             {
                 public int Left;
                 public int Top;
@@ -56,23 +55,17 @@ namespace Kchary.PhotoViewer
                 public int Bottom;
             }
 
-            public enum SW
+            public enum Sw
             {
-                HIDE = 0,
-                SHOWNORMAL = 1,
-                SHOWMINIMIZED = 2,
-                SHOWMAXIMIZED = 3,
-                SHOWNOACTIVATE = 4,
-                SHOW = 5,
-                MINIMIZE = 6,
-                SHOWMINNOACTIVE = 7,
-                SHOWNA = 8,
-                RESTORE = 9,
-                SHOWDEFAULT = 10,
+                Hide = 0,
+                ShowNormal = 1,
+                ShowMinimized = 2,
+                Show = 5,
+                Restore = 9,
             }
         }
 
-        private const int MIN_SPL_TIME = 1000;
+        private const int MinSplTime = 1000;
 
         public MainWindow()
         {
@@ -83,15 +76,17 @@ namespace Kchary.PhotoViewer
             // SplashScreen表示中にViewModelの読み込み
             var timer = new Stopwatch();
             timer.Start();
+
             var vm = new MainWindowViewModel();
             vm.InitViewFolder();
             DataContext = vm;
+
             timer.Stop();
 
             // 一定時間待機後、SplashScreenを閉じる
-            if (MIN_SPL_TIME - timer.ElapsedMilliseconds > 0)
+            if (MinSplTime - timer.ElapsedMilliseconds > 0)
             {
-                Thread.Sleep(MIN_SPL_TIME);
+                Thread.Sleep(MinSplTime);
             }
             splashScreen.Close();
 
@@ -105,13 +100,15 @@ namespace Kchary.PhotoViewer
         /// <param name="e">引数情報</param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is MainWindowViewModel vm && vm.SelectedMedia == null && vm.MediaInfoList.Any())
+            if (DataContext is not MainWindowViewModel vm || vm.SelectedMedia != null || !vm.MediaInfoList.Any())
             {
-                MediaInfo firstImageData = vm.MediaInfoList.First();
-                if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(firstImageData.FilePath).ToLower()))
-                {
-                    vm.SelectedMedia = firstImageData;
-                }
+                return;
+            }
+
+            var firstImageData = vm.MediaInfoList.First();
+            if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(firstImageData.FilePath)?.ToLower()))
+            {
+                vm.SelectedMedia = firstImageData;
             }
         }
 
@@ -122,16 +119,15 @@ namespace Kchary.PhotoViewer
         /// <param name="e">引数情報</param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var vm = DataContext as MainWindowViewModel;
-            if (!vm.StopThreadAndTask())
+            if (DataContext is MainWindowViewModel vm && !vm.StopThreadAndTask())
             {
                 // 少し待ってからクローズ
                 Thread.Sleep(200);
             }
 
             // ウィンドウ情報を保存
-            IntPtr hwnd = new WindowInteropHelper(this).Handle;
-            NativeMethods.GetWindowPlacement(hwnd, out NativeMethods.WINDOWPLACEMENT placement);
+            var hwnd = new WindowInteropHelper(this).Handle;
+            NativeMethods.GetWindowPlacement(hwnd, out var placement);
 
             var appConfigManager = AppConfigManager.GetInstance();
             appConfigManager.ConfigData.WindowPlaceData = placement;
@@ -153,7 +149,7 @@ namespace Kchary.PhotoViewer
             }
 
             // Run GC.
-            App.RunGC();
+            App.RunGc();
         }
 
         /// <summary>
@@ -173,8 +169,10 @@ namespace Kchary.PhotoViewer
                 return;
             }
 
-            var vm = DataContext as MainWindowViewModel;
-            await vm.LoadMediaAsync(mediaInfo);
+            if (DataContext is MainWindowViewModel vm)
+            {
+                await vm.LoadMediaAsync(mediaInfo);
+            }
         }
 
         /// <summary>
@@ -189,8 +187,10 @@ namespace Kchary.PhotoViewer
                 return;
             }
 
-            var vm = DataContext as MainWindowViewModel;
-            vm.ExecuteContextMenu(Convert.ToString(menuItem.Header));
+            if (DataContext is MainWindowViewModel vm)
+            {
+                vm.ExecuteContextMenu(Convert.ToString(menuItem.Header));
+            }
         }
 
         /// <summary>
@@ -203,10 +203,10 @@ namespace Kchary.PhotoViewer
 
             var appConfigManager = AppConfigManager.GetInstance();
 
-            NativeMethods.WINDOWPLACEMENT windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
-            windowPlacement.showCmd = (windowPlacement.showCmd == NativeMethods.SW.SHOWMINIMIZED) ? NativeMethods.SW.SHOWNORMAL : windowPlacement.showCmd;
+            var windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
+            windowPlacement.showCmd = (windowPlacement.showCmd == NativeMethods.Sw.ShowMinimized) ? NativeMethods.Sw.ShowNormal : windowPlacement.showCmd;
 
-            IntPtr hwnd = new WindowInteropHelper(this).Handle;
+            var hwnd = new WindowInteropHelper(this).Handle;
             NativeMethods.SetWindowPlacement(hwnd, windowPlacement);
         }
     }

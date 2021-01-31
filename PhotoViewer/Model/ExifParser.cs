@@ -14,8 +14,8 @@ namespace Kchary.PhotoViewer.Model
         {
             var _ = new FileInfo(filePath);
             var shell = new Shell32.Shell();
-            Shell32.Folder objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
-            Shell32.FolderItem folderItem = objFolder.ParseName(Path.GetFileName(filePath));
+            var objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
+            var folderItem = objFolder.ParseName(Path.GetFileName(filePath));
 
             // Get file name.
             yield return GetFileName(filePath);
@@ -28,7 +28,7 @@ namespace Kchary.PhotoViewer.Model
             // Get bit depth.
             yield return GetBitDepth(objFolder, folderItem);
             // Get ISO data.
-            yield return GetISO(objFolder, folderItem);
+            yield return GetIso(objFolder, folderItem);
             // Get focal length.
             yield return GetFocusLength(objFolder, folderItem);
             // Get metering mode.
@@ -42,13 +42,13 @@ namespace Kchary.PhotoViewer.Model
             // Get image height resolution.
             yield return GetImageResolutionHeight(objFolder, folderItem);
             // Get aperture value.
-            yield return GetFnumber(objFolder, folderItem);
+            yield return GetFNumber(objFolder, folderItem);
             // Get shutter speed value.
             yield return GetShutterSpeed(objFolder, folderItem);
             // Get exposure program.
             yield return GetExposeMode(objFolder, folderItem);
             // Get white balance.
-            yield return GetWhiteBlance(objFolder, folderItem);
+            yield return GetWhiteBalance(objFolder, folderItem);
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace Kchary.PhotoViewer.Model
         private static ExifInfo GetFileName(string filePath)
         {
             var propertyValue = Path.GetFileName(filePath);
-            var propertyText = "File name";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "File name";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -68,8 +68,8 @@ namespace Kchary.PhotoViewer.Model
         private static ExifInfo GetMediaDate(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 3);
-            var propertyText = "Date";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Date";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -78,8 +78,8 @@ namespace Kchary.PhotoViewer.Model
         private static ExifInfo GetCameraModel(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 30);
-            var propertyText = "Camera model";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Camera model";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace Kchary.PhotoViewer.Model
         private static ExifInfo GetCameraManufacturer(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 32);
-            var propertyText = "Camera manufacturer";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Camera manufacturer";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -99,8 +99,8 @@ namespace Kchary.PhotoViewer.Model
         {
             // Width
             var propertyValue = objFolder.GetDetailsOf(folderItem, 176);
-            var propertyText = "Width";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Width";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -110,8 +110,8 @@ namespace Kchary.PhotoViewer.Model
         {
             // Height
             var propertyValue = objFolder.GetDetailsOf(folderItem, 178);
-            var propertyText = "Height";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Height";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -121,8 +121,8 @@ namespace Kchary.PhotoViewer.Model
         {
             // Horizon resolution
             var propertyValue = objFolder.GetDetailsOf(folderItem, 175);
-            var propertyText = "Horizon resolution";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Horizon resolution";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -132,8 +132,8 @@ namespace Kchary.PhotoViewer.Model
         {
             // Vertical resolution
             var propertyValue = objFolder.GetDetailsOf(folderItem, 177);
-            var propertyText = "Vertical resolution";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Vertical resolution";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -142,8 +142,8 @@ namespace Kchary.PhotoViewer.Model
         private static ExifInfo GetBitDepth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 174);
-            var propertyText = "Bit depth";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Bit depth";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -153,29 +153,29 @@ namespace Kchary.PhotoViewer.Model
         {
             // Shutter speed
             var propertyValue = objFolder.GetDetailsOf(folderItem, 259);
-            var propertyText = "Shutter speed";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Shutter speed";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
         /// Get aperture value.
         /// </summary>
-        private static ExifInfo GetFnumber(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        private static ExifInfo GetFNumber(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             // F number
             var propertyValue = objFolder.GetDetailsOf(folderItem, 260);
-            var propertyText = "F number";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "F number";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
         /// Get ISO data.
         /// </summary>
-        private static ExifInfo GetISO(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        private static ExifInfo GetIso(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 264);
-            var propertyText = "ISO";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "ISO";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -184,8 +184,8 @@ namespace Kchary.PhotoViewer.Model
         private static ExifInfo GetFocusLength(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 262);
-            var propertyText = "Focal length";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Focal length";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -195,19 +195,19 @@ namespace Kchary.PhotoViewer.Model
         {
             // Exposure program
             var propertyValue = objFolder.GetDetailsOf(folderItem, 258);
-            var propertyText = "Exposure program";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Exposure program";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
         /// Get  white balance.
         /// </summary>
-        private static ExifInfo GetWhiteBlance(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        private static ExifInfo GetWhiteBalance(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             // White balance
             var propertyValue = objFolder.GetDetailsOf(folderItem, 275);
-            var propertyText = "White balance";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "White balance";
+            return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
@@ -216,8 +216,8 @@ namespace Kchary.PhotoViewer.Model
         private static ExifInfo GetMeteringMode(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 269);
-            var propertyText = "Metering mode";
-            return new ExifInfo(propertyText, propertyValue);
+            const string PropertyText = "Metering mode";
+            return new ExifInfo(PropertyText, propertyValue);
         }
     }
 }

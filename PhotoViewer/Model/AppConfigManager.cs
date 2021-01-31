@@ -13,18 +13,18 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Data of application setting information.
         /// </summary>
-        public AppConfigData ConfigData { get; private set; }
+        public AppConfigData ConfigData { get; private init; }
 
-        private static readonly string appConfigFilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KcharyPhotoViewer\\Setting.conf";
-        private static readonly AppConfigManager singleInstance = new AppConfigManager { ConfigData = new AppConfigData() };
-        private static readonly AppConfigXml ConfigXmlObject = new AppConfigXml(appConfigFilePath);
+        private static readonly string AppConfigFilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KcharyPhotoViewer\\Setting.conf";
+        private static readonly AppConfigManager SingleInstance = new() { ConfigData = new AppConfigData() };
+        private static readonly AppConfigXml ConfigXmlObject = new(AppConfigFilePath);
 
         /// <summary>
         /// Get instance of application setting information class.
         /// </summary>
         public static AppConfigManager GetInstance()
         {
-            return singleInstance;
+            return SingleInstance;
         }
 
         /// <summary>
@@ -49,10 +49,10 @@ namespace Kchary.PhotoViewer.Model
         public void Export()
         {
             // Create folder if it does not exist.
-            var appConfigdirectory = Path.GetDirectoryName(appConfigFilePath);
-            if (!Directory.Exists(appConfigdirectory))
+            var appConfigDirectory = Path.GetDirectoryName(AppConfigFilePath);
+            if (!Directory.Exists(appConfigDirectory))
             {
-                Directory.CreateDirectory(appConfigdirectory);
+                Directory.CreateDirectory(appConfigDirectory ?? throw new InvalidOperationException());
             }
 
             try

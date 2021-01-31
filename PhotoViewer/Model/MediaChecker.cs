@@ -27,7 +27,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Check if the extension is a still image supported extension.
         /// </summary>
-        /// <param name="_extension">Extension to check</param>
+        /// <param name="extension">Extension to check</param>
         /// <returns>True: the extension is supported, False: the extension is not supported</returns>
         public static bool CheckPictureExtensions(string extension)
         {

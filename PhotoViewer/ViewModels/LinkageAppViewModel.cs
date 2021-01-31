@@ -3,7 +3,6 @@ using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -28,15 +27,15 @@ namespace Kchary.PhotoViewer.ViewModels
             set => SetProperty(ref linkAppPath, value);
         }
 
-        public ObservableCollection<ExtraAppSetting> LinkageAppList { get; } = new ObservableCollection<ExtraAppSetting>();
+        public ObservableCollection<ExtraAppSetting> LinkageAppList { get; } = new();
 
         #endregion UI binding parameter
 
         #region Command
 
-        public ICommand LinkAppReferenceCommand { get; private set; }
-        public ICommand RegisterLinkAppCommand { get; private set; }
-        public ICommand DeleteLinkAppCommand { get; private set; }
+        public ICommand LinkAppReferenceCommand { get; }
+        public ICommand RegisterLinkAppCommand { get; }
+        public ICommand DeleteLinkAppCommand { get; }
 
         #endregion Command
 
@@ -52,12 +51,15 @@ namespace Kchary.PhotoViewer.ViewModels
             DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
             var appConfigManager = AppConfigManager.GetInstance();
-            List<ExtraAppSetting> linkageAppList = appConfigManager.ConfigData.LinkageAppList;
-            if (linkageAppList != null && linkageAppList.Any())
+
+            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            if (linkageAppList == null || !linkageAppList.Any())
             {
-                LinkageAppList.Clear();
-                LinkageAppList.AddRange(linkageAppList);
+                return;
             }
+
+            LinkageAppList.Clear();
+            LinkageAppList.AddRange(linkageAppList);
         }
 
         /// <summary>
@@ -73,17 +75,12 @@ namespace Kchary.PhotoViewer.ViewModels
             var dialog = new OpenFileDialog
             {
                 Title = DialogTitle,
-                DefaultExt = DialogDefaultExt
+                DefaultExt = DialogDefaultExt,
+                InitialDirectory = Environment.GetFolderPath(Environment.Is64BitProcess
+                    ? Environment.SpecialFolder.ProgramFiles
+                    : Environment.SpecialFolder.ProgramFilesX86)
             };
 
-            if (Environment.Is64BitProcess)
-            {
-                dialog.InitialDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles);
-            }
-            else
-            {
-                dialog.InitialDirectory = Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFilesX86);
-            }
 
             if (dialog.ShowDialog() != true)
             {
@@ -131,17 +128,18 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            if (LinkageAppList.Any(x => x == deleteAppSetting))
+            if (LinkageAppList.All(x => x != deleteAppSetting))
             {
-                LinkageAppList.Remove(deleteAppSetting);
-
-                // Export information to configure file.
-                var appConfigManager = AppConfigManager.GetInstance();
-                appConfigManager.RemoveLinkageApp(LinkageAppList);
-                appConfigManager.Export();
-
-                ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
+                return;
             }
+            LinkageAppList.Remove(deleteAppSetting);
+
+            // Export information to configure file.
+            var appConfigManager = AppConfigManager.GetInstance();
+            appConfigManager.RemoveLinkageApp(LinkageAppList);
+            appConfigManager.Export();
+
+            ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
         }
     }
 }

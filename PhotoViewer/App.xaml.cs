@@ -7,7 +7,7 @@ namespace Kchary.PhotoViewer
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         public App()
         {
@@ -24,6 +24,8 @@ namespace Kchary.PhotoViewer
         /// Output an error message to the console when an exception occurs.
         /// </summary>
         /// <param name="ex">The message of exception.</param>
+        /// <param name="callerFilePath">CallerFilePath</param>
+        /// <param name="callerLineNumber">CallerLineNumber</param>
         public static void LogException(Exception ex,
             [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
             [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
@@ -54,7 +56,7 @@ namespace Kchary.PhotoViewer
         /// <summary>
         /// Explicit call to garbage collection.
         /// </summary>
-        public static void RunGC()
+        public static void RunGc()
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();

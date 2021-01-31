@@ -23,8 +23,6 @@ namespace Kchary.PhotoViewer.ViewModels
             set => SetProperty(ref editImage, value);
         }
 
-        public string EditFileName => Path.GetFileName(editFilePath);
-
         public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; }
 
         private ResizeImageCategory resizeCategoryItem;
@@ -35,29 +33,26 @@ namespace Kchary.PhotoViewer.ViewModels
             set
             {
                 SetProperty(ref resizeCategoryItem, value);
-                if (resizeCategoryItem != null)
+                if (resizeCategoryItem == null)
                 {
-                    double scale = 1;
-                    var isLandscape = true;
-                    if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
-                    {
-                        // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
-                        scale = ResizeCategoryItem.ResizelongSideValue / readImageSize.Width;
-                        if (readImageSize.Width < readImageSize.Height)
-                        {
-                            scale = ResizeCategoryItem.ResizelongSideValue / readImageSize.Height;
-                        }
-                    }
-
-                    var resizeWidth = (int)(readImageSize.Width * scale);
-                    var resizeHeight = (int)(readImageSize.Height * scale);
-                    if (!isLandscape)
-                    {
-                        resizeWidth = (int)(readImageSize.Height * scale);
-                        resizeHeight = (int)(readImageSize.Width * scale);
-                    }
-                    ResizeSizeText = string.Format("(Width: {0}, Height: {1} [pixel])", resizeWidth, resizeHeight);
+                    return;
                 }
+
+                double scale = 1;
+                if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
+                {
+                    // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
+                    scale = ResizeCategoryItem.ResizeLongSideValue / readImageSize.Width;
+                    if (readImageSize.Width < readImageSize.Height)
+                    {
+                        scale = ResizeCategoryItem.ResizeLongSideValue / readImageSize.Height;
+                    }
+                }
+
+                var resizeWidth = (int)(readImageSize.Width * scale);
+                var resizeHeight = (int)(readImageSize.Height * scale);
+
+                ResizeSizeText = $"(Width: {resizeWidth}, Height: {resizeHeight} [pixel])";
             }
         }
 
@@ -117,25 +112,25 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ResizeCategoryItems = new ObservableCollection<ResizeImageCategory>
             {
-                new ResizeImageCategory{ Name = "No resize", Category = ResizeImageCategory.ResizeCategory.None },
-                new ResizeImageCategory{ Name = "Print size", Category = ResizeImageCategory.ResizeCategory.Print, ResizelongSideValue = 2500 },
-                new ResizeImageCategory{ Name = "Blog size", Category = ResizeImageCategory.ResizeCategory.Blog, ResizelongSideValue = 1500 },
-                new ResizeImageCategory{ Name = "SNS size", Category = ResizeImageCategory.ResizeCategory.Twitter, ResizelongSideValue = 1000 }
+                new() { Name = "No resize", Category = ResizeImageCategory.ResizeCategory.None },
+                new() { Name = "Print size", Category = ResizeImageCategory.ResizeCategory.Print, ResizeLongSideValue = 2500 },
+                new() { Name = "Blog size", Category = ResizeImageCategory.ResizeCategory.Blog, ResizeLongSideValue = 1500 },
+                new() { Name = "SNS size", Category = ResizeImageCategory.ResizeCategory.Twitter, ResizeLongSideValue = 1000 }
             };
 
             ImageSaveQualityItems = new ObservableCollection<ImageQuality>
             {
-                new ImageQuality { Name = "High", QualityValue = 90 },
-                new ImageQuality { Name = "standard", QualityValue = 80 },
-                new ImageQuality { Name = "Low", QualityValue = 60 }
+                new() { Name = "High", QualityValue = 90 },
+                new() { Name = "standard", QualityValue = 80 },
+                new() { Name = "Low", QualityValue = 60 }
             };
 
             ImageFormItems = new ObservableCollection<ImageForm>
             {
-                new ImageForm { Name = "Jpeg", Form = ImageForm.ImageForms.Jpeg },
-                new ImageForm { Name = "Png", Form = ImageForm.ImageForms.Png },
-                new ImageForm { Name = "Bmp", Form = ImageForm.ImageForms.Bmp },
-                new ImageForm { Name = "Tiff", Form = ImageForm.ImageForms.Tiff }
+                new() { Name = "Jpeg", Form = ImageForm.ImageForms.Jpeg },
+                new() { Name = "Png", Form = ImageForm.ImageForms.Png },
+                new() { Name = "Bmp", Form = ImageForm.ImageForms.Bmp },
+                new() { Name = "Tiff", Form = ImageForm.ImageForms.Tiff }
             };
 
             SaveButtonCommand = new DelegateCommand(SaveButtonClicked);
@@ -148,8 +143,8 @@ namespace Kchary.PhotoViewer.ViewModels
         public void SetEditFileData(string filePath)
         {
             editFilePath = filePath;
-            
-            EditImage = ImageController.CreatePictureEditViewThumbnail(editFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation); ;
+
+            EditImage = ImageController.CreatePictureEditViewThumbnail(editFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
 
             if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
             {
@@ -167,7 +162,7 @@ namespace Kchary.PhotoViewer.ViewModels
             IsEnableImageSaveQuality = true;
 
             // Release memory of Writable Bitmap.
-            App.RunGC();
+            App.RunGc();
         }
 
         /// <summary>
@@ -202,7 +197,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     break;
 
                 default:
-                    break;
+                    throw new ArgumentOutOfRangeException();
             }
 
             if (dialog.ShowDialog() == false)
@@ -217,43 +212,29 @@ namespace Kchary.PhotoViewer.ViewModels
             if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
             {
                 // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
-                scale = ResizeCategoryItem.ResizelongSideValue / readImageSize.Width;
+                scale = ResizeCategoryItem.ResizeLongSideValue / readImageSize.Width;
                 if (readImageSize.Width < readImageSize.Height)
                 {
-                    scale = ResizeCategoryItem.ResizelongSideValue / readImageSize.Height;
+                    scale = ResizeCategoryItem.ResizeLongSideValue / readImageSize.Height;
                 }
             }
-            BitmapSource saveImageSource = ImageController.CreateSavePicture(editFilePath, scale);
+            var saveImageSource = ImageController.CreateSavePicture(editFilePath, scale);
 
             // Select the same encoder as the selected format.
-            BitmapEncoder encoder = null;
-            switch (selectedForm.Form)
+            BitmapEncoder encoder = selectedForm.Form switch
             {
-                case ImageForm.ImageForms.Bmp:
-                    encoder = new BmpBitmapEncoder();
-                    break;
-
-                case ImageForm.ImageForms.Jpeg:
-                    encoder = new JpegBitmapEncoder() { QualityLevel = SelectedQuality.QualityValue };
-                    break;
-
-                case ImageForm.ImageForms.Png:
-                    encoder = new PngBitmapEncoder();
-                    break;
-
-                case ImageForm.ImageForms.Tiff:
-                    encoder = new TiffBitmapEncoder();
-                    break;
-
-                default:
-                    break;
-            }
+                ImageForm.ImageForms.Bmp => new BmpBitmapEncoder(),
+                ImageForm.ImageForms.Jpeg => new JpegBitmapEncoder() {QualityLevel = SelectedQuality.QualityValue},
+                ImageForm.ImageForms.Png => new PngBitmapEncoder(),
+                ImageForm.ImageForms.Tiff => new TiffBitmapEncoder(),
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
             try
             {
                 // Add a frame to the encoder and save the file.
                 encoder.Frames.Add(BitmapFrame.Create(saveImageSource));
-                using (FileStream dstStream = File.OpenWrite(saveFilePath))
+                using (var dstStream = File.OpenWrite(saveFilePath))
                 {
                     encoder.Save(dstStream);
                 }

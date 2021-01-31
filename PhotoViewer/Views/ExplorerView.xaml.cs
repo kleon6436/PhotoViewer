@@ -9,7 +9,7 @@ namespace Kchary.PhotoViewer.Views
     /// <summary>
     /// Interaction logic for ExplorerView.xaml
     /// </summary>
-    public partial class ExplorerView : UserControl
+    public partial class ExplorerView
     {
         public ExplorerView()
         {
@@ -23,12 +23,7 @@ namespace Kchary.PhotoViewer.Views
         /// <param name="e">引数情報</param>
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            if (sender as TreeView == null)
-            {
-                return;
-            }
-
-            if (!((sender as TreeView).SelectedItem is ExplorerItem selectedExplorerItem))
+            if ((sender as TreeView)?.SelectedItem is not ExplorerItem selectedExplorerItem)
             {
                 return;
             }

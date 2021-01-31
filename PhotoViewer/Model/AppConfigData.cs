@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Kchary.PhotoViewer.Views;
 
 namespace Kchary.PhotoViewer.Model
 {
@@ -15,11 +16,11 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Registered linked application.
         /// </summary>
-        public List<ExtraAppSetting> LinkageAppList { get; set; } = new List<ExtraAppSetting>();
+        public List<ExtraAppSetting> LinkageAppList { get; set; } = new();
 
         /// <summary>
         /// Window display status
         /// </summary>
-        public MainWindow.NativeMethods.WINDOWPLACEMENT WindowPlaceData;
+        public MainWindow.NativeMethods.WindowPlacement WindowPlaceData;
     }
 }
