@@ -68,19 +68,19 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Set list of linked applications.
         /// </summary>
-        /// <param name="linkageApplist">List of linked applications</param>
-        public void SetLinkageApp(IEnumerable<ExtraAppSetting> linkageApplist)
+        /// <param name="linkageAppList">List of linked applications</param>
+        public void SetLinkageApp(IEnumerable<ExtraAppSetting> linkageAppList)
         {
-            ConfigData.LinkageAppList = linkageApplist.ToList();
+            ConfigData.LinkageAppList = linkageAppList.ToList();
         }
 
         /// <summary>
         /// Remove linked application from linked application list.
         /// </summary>
-        /// <param name="linkageApplist">List of linked applications</param>
-        public void RemoveLinkageApp(IEnumerable<ExtraAppSetting> linkageApplist)
+        /// <param name="linkageAppList">List of linked applications</param>
+        public void RemoveLinkageApp(IEnumerable<ExtraAppSetting> linkageAppList)
         {
-            ConfigData.LinkageAppList = linkageApplist.ToList();
+            ConfigData.LinkageAppList = linkageAppList.ToList();
         }
     }
 }
