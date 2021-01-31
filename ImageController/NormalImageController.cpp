@@ -57,7 +57,7 @@ namespace Kchary::ImageController::NormalImageControl
 		return 0;
 	}
 
-	cv::ImreadModes NormalImageController::GetImreadMode(int resizeLongSideLength) const
+	cv::ImreadModes NormalImageController::GetImreadMode(int resizeLongSideLength)
 	{
 		auto imreadMode = cv::ImreadModes::IMREAD_COLOR;
 

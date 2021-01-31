@@ -44,7 +44,7 @@ namespace Kchary::ImageController::NormalImageControl
 		 *
 		 * @return	ImreadModes
 		 */
-		cv::ImreadModes GetImreadMode(int resizeLongSideLength) const;
+		static cv::ImreadModes GetImreadMode(int resizeLongSideLength);
 	};
 }
 
