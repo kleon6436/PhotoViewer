@@ -192,7 +192,7 @@ namespace Kchary.PhotoViewer.Model
         private static uint GetRotation(BitmapMetadata metaData)
         {
             const string Query = "/app1/ifd/exif:{uint=274}";
-            return !metaData.ContainsQuery(Query) ? (uint) 0 : Convert.ToUInt32(metaData.GetQuery(Query));
+            return !metaData.ContainsQuery(Query) ? 0 : Convert.ToUInt32(metaData.GetQuery(Query));
         }
 
         /// <summary>
