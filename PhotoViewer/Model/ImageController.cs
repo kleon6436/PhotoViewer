@@ -126,7 +126,7 @@ namespace Kchary.PhotoViewer.Model
         {
             if (MediaChecker.CheckRawFileExtension(Path.GetExtension(filePath).ToLower()))
             {
-                if (NativeMethods.GetRawThumbnailImageData(filePath, longSideLength, out NativeMethods.ImageData imageData) != 0)
+                if (NativeMethods.GetRawThumbnailImageData(filePath, longSideLength, out var imageData) != 0)
                 {
                     throw new FileFormatException("File format is wrong.");
                 }
@@ -143,7 +143,7 @@ namespace Kchary.PhotoViewer.Model
             }
             else
             {
-                if (NativeMethods.GetNormalThumbnailImageData(filePath, longSideLength, out NativeMethods.ImageData imageData) != 0)
+                if (NativeMethods.GetNormalThumbnailImageData(filePath, longSideLength, out var imageData) != 0)
                 {
                     throw new FileFormatException("File format is wrong.");
                 }
