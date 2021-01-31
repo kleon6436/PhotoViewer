@@ -46,7 +46,7 @@ namespace Kchary::ImageController::RawImageControl
 		 *
 		 * @return	ImreadModes
 		 */
-		cv::ImreadModes GetImreadMode(libraw_thumbnail_t thumbnail, int resizeLongSideLength) const;
+		static cv::ImreadModes GetImreadMode(libraw_thumbnail_t thumbnail, int resizeLongSideLength);
 	};
 }
 

@@ -6,9 +6,7 @@
 #ifndef IMAGEDATA_H_
 #define IMAGEDATA_H_
 
-#include <iostream>
-
-typedef struct imageData
+typedef struct ImageData
 {
 	std::uint8_t* buffer;
 	unsigned int size;

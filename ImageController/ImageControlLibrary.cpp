@@ -19,7 +19,7 @@ namespace Kchary::ImageController::Library
 	{
 		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
 		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		std::unique_ptr<char[]> path = std::make_unique<char[]>(requestBufferSize);
+		auto path = std::make_unique<char[]>(requestBufferSize);
 
 		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
 		{
@@ -34,7 +34,7 @@ namespace Kchary::ImageController::Library
 	{
 		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
 		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		std::unique_ptr<char[]> path = std::make_unique<char[]>(requestBufferSize);
+		auto path = std::make_unique<char[]>(requestBufferSize);
 
 		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
 		{
@@ -49,7 +49,7 @@ namespace Kchary::ImageController::Library
 	{
 		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
 		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		std::unique_ptr<char[]> path = std::make_unique<char[]>(requestBufferSize);
+		auto path = std::make_unique<char[]>(requestBufferSize);
 
 		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
 		{
@@ -64,7 +64,7 @@ namespace Kchary::ImageController::Library
 	{
 		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
 		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		std::unique_ptr<char[]> path = std::make_unique<char[]>(requestBufferSize);
+		auto path = std::make_unique<char[]>(requestBufferSize);
 
 		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
 		{

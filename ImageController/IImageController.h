@@ -6,7 +6,6 @@
 #ifndef IIMAGECONTROLLER_H_
 #define IIMAGECONTROLLER_H_
 
-#include <stdint.h>
 #include "ImageData.h"
 
 class IImageController

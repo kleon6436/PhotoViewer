@@ -12,7 +12,7 @@ namespace Kchary::ImageController::RawImageControl
 {
 	int RawImageController::GetImageData(const char* path, ImageData* imageData) const
 	{
-		const std::unique_ptr<LibRaw> rawProcessor = std::make_unique<LibRaw>();
+		const auto rawProcessor = std::make_unique<LibRaw>();
 
 		// Read raw image using libraw.
 		if (rawProcessor->open_file(path) != LIBRAW_SUCCESS)
@@ -34,7 +34,7 @@ namespace Kchary::ImageController::RawImageControl
 			return -1;
 		}
 
-		const auto image = rawProcessor->dcraw_make_mem_image();
+		auto* const image = rawProcessor->dcraw_make_mem_image();
 		if (!image || image->type != LIBRAW_IMAGE_BITMAP || image->colors != 3)
 		{
 			// Todo: Error sequence.
@@ -44,7 +44,7 @@ namespace Kchary::ImageController::RawImageControl
 		if (image->bits == 16 || image->bits == 8)
 		{
 			const auto dataSize = image->data_size;
-			const auto rawData = (std::uint8_t*)image->data;
+			auto* const rawData = static_cast<std::uint8_t*>(image->data);
 
 			imageData->buffer = new std::uint8_t[dataSize];
 			memcpy(imageData->buffer, rawData, dataSize);
@@ -69,7 +69,7 @@ namespace Kchary::ImageController::RawImageControl
 
 	int RawImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData) const
 	{
-		const std::unique_ptr<LibRaw> rawProcessor = std::make_unique<LibRaw>();
+		const auto rawProcessor = std::make_unique<LibRaw>();
 
 		// Read raw image using libraw.
 		if (rawProcessor->open_file(path) != LIBRAW_SUCCESS)
@@ -85,7 +85,7 @@ namespace Kchary::ImageController::RawImageControl
 		}
 
 		// Get thumbnail struct data.
-		libraw_processed_image_t* thumbnail = rawProcessor->dcraw_make_mem_thumb();
+		auto* thumbnail = rawProcessor->dcraw_make_mem_thumb();
 		if (!thumbnail || thumbnail->type != LibRaw_thumbnail_formats::LIBRAW_THUMBNAIL_JPEG)
 		{
 			// Todo: Error sequence.
@@ -95,15 +95,15 @@ namespace Kchary::ImageController::RawImageControl
 		// Read thumbnail jpeg image data using opencv.
 		// (Raw image's thumbnail data is jpeg.)
 		const auto thumbnailDataSize = thumbnail->data_size;
-		const auto thumbnailData = (std::uint8_t*)thumbnail->data;
+		auto* const thumbnailData = static_cast<std::uint8_t*>(thumbnail->data);
 
 		const auto imreadMode = GetImreadMode(rawProcessor->imgdata.thumbnail, resizeLongSideLength);
 		const std::vector<std::uint8_t> jpegData(thumbnailData, thumbnailData + thumbnailDataSize);
-		cv::Mat img = cv::imdecode(jpegData, imreadMode);
+		auto img = cv::imdecode(jpegData, imreadMode);
 
 		// Resize image data.
-		int longSideLength = img.cols > img.rows ? img.cols : img.rows;
-		double ratio = ((double)resizeLongSideLength / (double)longSideLength);
+		auto longSideLength = img.cols > img.rows ? img.cols : img.rows;
+		auto ratio = (static_cast<double>(resizeLongSideLength) / static_cast<double>(longSideLength));
 		cv::Mat resizeImg;
 		cv::resize(img, resizeImg, cv::Size(), ratio, ratio, cv::INTER_AREA);
 
@@ -112,8 +112,8 @@ namespace Kchary::ImageController::RawImageControl
 		memcpy(imageData->buffer, resizeImg.data, imgDataSize * sizeof(std::uint8_t));
 
 		// Translate data to C#
-		imageData->size = (unsigned int)imgDataSize;
-		imageData->stride = (int)resizeImg.step;
+		imageData->size = static_cast<unsigned>(imgDataSize);
+		imageData->stride = static_cast<int>(resizeImg.step);
 		imageData->width = resizeImg.cols;
 		imageData->height = resizeImg.rows;
 
@@ -127,9 +127,9 @@ namespace Kchary::ImageController::RawImageControl
 		return 0;
 	}
 
-	cv::ImreadModes RawImageController::GetImreadMode(libraw_thumbnail_t thumbnail, int resizeLongSideLength) const
+	cv::ImreadModes RawImageController::GetImreadMode(libraw_thumbnail_t thumbnail, int resizeLongSideLength)
 	{
-		const ushort thumbLongSideLength = thumbnail.twidth > thumbnail.theight ? thumbnail.twidth : thumbnail.theight;
+		const auto thumbLongSideLength = thumbnail.twidth > thumbnail.theight ? thumbnail.twidth : thumbnail.theight;
 
 		auto imreadMode = cv::ImreadModes::IMREAD_COLOR;
 		if (resizeLongSideLength <= thumbLongSideLength / 8)
