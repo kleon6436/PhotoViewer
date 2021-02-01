@@ -19,7 +19,7 @@ namespace Kchary::ImageController::Library
 	{
 		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
 		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		auto path = std::make_unique<char[]>(requestBufferSize);
+		const auto path = std::make_unique<char[]>(requestBufferSize);
 
 		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
 		{
@@ -30,11 +30,11 @@ namespace Kchary::ImageController::Library
 		return rawImageController->GetImageData(path.get(), imageData);
 	}
 
-	int GetRawThumbnailImageData(const wchar_t* wpath, int resizeLongSideLength, ImageData* imageData)
+	int GetRawThumbnailImageData(const wchar_t* wpath, const int resizeLongSideLength, ImageData* imageData)
 	{
 		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
 		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		auto path = std::make_unique<char[]>(requestBufferSize);
+		const auto path = std::make_unique<char[]>(requestBufferSize);
 
 		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
 		{
@@ -49,7 +49,7 @@ namespace Kchary::ImageController::Library
 	{
 		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
 		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		auto path = std::make_unique<char[]>(requestBufferSize);
+		const auto path = std::make_unique<char[]>(requestBufferSize);
 
 		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
 		{
@@ -60,11 +60,11 @@ namespace Kchary::ImageController::Library
 		return normalImageController->GetImageData(path.get(), imageData);
 	}
 
-	int GetNormalThumbnailImageData(const wchar_t* wpath, int resizeLongSideLength, ImageData* imageData)
+	int GetNormalThumbnailImageData(const wchar_t* wpath, const int resizeLongSideLength, ImageData* imageData)
 	{
 		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
 		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		auto path = std::make_unique<char[]>(requestBufferSize);
+		const auto path = std::make_unique<char[]>(requestBufferSize);
 
 		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
 		{
@@ -75,7 +75,7 @@ namespace Kchary::ImageController::Library
 		return normalImageController->GetThumbnailImageData(path.get(), resizeLongSideLength, imageData);
 	}
 
-	void FreeBuffer(std::uint8_t* buffer)
+	void FreeBuffer(const std::uint8_t* buffer)
 	{
 		delete[] buffer;
 	}

@@ -86,7 +86,7 @@ namespace Kchary::ImageController::RawImageControl
 
 		// Get thumbnail struct data.
 		auto* thumbnail = rawProcessor->dcraw_make_mem_thumb();
-		if (!thumbnail || thumbnail->type != LibRaw_thumbnail_formats::LIBRAW_THUMBNAIL_JPEG)
+		if (!thumbnail || thumbnail->type != LibRaw_image_formats::LIBRAW_IMAGE_JPEG)
 		{
 			// Todo: Error sequence.
 			return -1;
@@ -102,8 +102,8 @@ namespace Kchary::ImageController::RawImageControl
 		auto img = cv::imdecode(jpegData, imreadMode);
 
 		// Resize image data.
-		auto longSideLength = img.cols > img.rows ? img.cols : img.rows;
-		auto ratio = (static_cast<double>(resizeLongSideLength) / static_cast<double>(longSideLength));
+		const auto longSideLength = img.cols > img.rows ? img.cols : img.rows;
+		const auto ratio = (static_cast<double>(resizeLongSideLength) / static_cast<double>(longSideLength));
 		cv::Mat resizeImg;
 		cv::resize(img, resizeImg, cv::Size(), ratio, ratio, cv::INTER_AREA);
 
@@ -131,7 +131,8 @@ namespace Kchary::ImageController::RawImageControl
 	{
 		const auto thumbLongSideLength = thumbnail.twidth > thumbnail.theight ? thumbnail.twidth : thumbnail.theight;
 
-		auto imreadMode = cv::ImreadModes::IMREAD_COLOR;
+		cv::ImreadModes imreadMode;
+
 		if (resizeLongSideLength <= thumbLongSideLength / 8)
 		{
 			imreadMode = cv::ImreadModes::IMREAD_REDUCED_COLOR_8;

@@ -64,7 +64,7 @@ namespace Kchary::ImageController::Library
 	 *
 	 * @param	uint8_t* buffer: Memory pointer you want to release.
 	 */
-	DllExport void FreeBuffer(std::uint8_t* buffer);
+	DllExport void FreeBuffer(const std::uint8_t* buffer);
 
 	/**
 	 * @brief	Convert wchar to char.
