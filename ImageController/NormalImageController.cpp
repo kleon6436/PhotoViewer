@@ -4,7 +4,6 @@
  * @author	kchary6436
  */
 
-#include <memory>
 #include "NormalImageController.h"
 
 namespace Kchary::ImageController::NormalImageControl

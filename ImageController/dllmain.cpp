@@ -3,11 +3,11 @@
 #include "pch.h"
 
 BOOL APIENTRY DllMain(HMODULE,
-	DWORD  ul_reason_for_call,
-	LPVOID
+						const DWORD  ulReasonForCall,
+						LPVOID
 )
 {
-	switch (ul_reason_for_call)
+	switch (ulReasonForCall)
 	{
 	case DLL_PROCESS_ATTACH:
 	case DLL_THREAD_ATTACH:
