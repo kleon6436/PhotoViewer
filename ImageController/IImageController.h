@@ -3,21 +3,20 @@
  * @author	kchary6436
  */
 
-#ifndef IIMAGECONTROLLER_H_
-#define IIMAGECONTROLLER_H_
+#pragma once
 
 #include "ImageData.h"
 
 class IImageController
 {
 public:
-	virtual ~IImageController() {}
+	virtual ~IImageController() = default;
 
 	/**
 	 * @brief	This function is getting image data.
 	 *
-	 * @param	const char* path: Raw image file path.
-	 * @param	ImageData* imageData: Image data
+	 * @param	path: Raw image file path.
+	 * @param	imageData: Image data
 	 *
 	 * @return	Success: 0, Failure: -1
 	 */
@@ -26,13 +25,11 @@ public:
 	/**
 	 * @brief	This function is getting thumbnail image data.
 	 *
-	 * @param	const char* path: Raw image file path.
-	 * @param	int resizeLongSideLength: Long side length of a resize image.
-	 * @param	ImageData* imageData: Image data
+	 * @param	path: Raw image file path.
+	 * @param	resizeLongSideLength: Long side length of a resize image.
+	 * @param	imageData: Image data
 	 *
 	 * @return	Success: 0, Failure: -1
 	 */
 	virtual int GetThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData) const = 0;
 };
-
-#endif // IIMAGECONTROLLER_H_

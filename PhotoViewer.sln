@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoViewer", "PhotoViewer\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageController", "ImageController\ImageController.vcxproj", "{171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageControllerWPFTester", "ImageControllerWPFTester\ImageControllerWPFTester.csproj", "{96654814-9DA9-4400-BF46-C9FD7F9EC02E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -33,14 +31,6 @@ Global
 		{171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C}.Release|x64.Build.0 = Release|x64
 		{171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C}.Release|x86.ActiveCfg = Release|Win32
 		{171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C}.Release|x86.Build.0 = Release|Win32
-		{96654814-9DA9-4400-BF46-C9FD7F9EC02E}.Debug|x64.ActiveCfg = Debug|x64
-		{96654814-9DA9-4400-BF46-C9FD7F9EC02E}.Debug|x64.Build.0 = Debug|x64
-		{96654814-9DA9-4400-BF46-C9FD7F9EC02E}.Debug|x86.ActiveCfg = Debug|x86
-		{96654814-9DA9-4400-BF46-C9FD7F9EC02E}.Debug|x86.Build.0 = Debug|x86
-		{96654814-9DA9-4400-BF46-C9FD7F9EC02E}.Release|x64.ActiveCfg = Release|x64
-		{96654814-9DA9-4400-BF46-C9FD7F9EC02E}.Release|x64.Build.0 = Release|x64
-		{96654814-9DA9-4400-BF46-C9FD7F9EC02E}.Release|x86.ActiveCfg = Release|x86
-		{96654814-9DA9-4400-BF46-C9FD7F9EC02E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

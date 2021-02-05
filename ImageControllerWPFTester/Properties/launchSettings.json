@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ImageControllerWPFTester": {
-      "commandName": "Project",
-      "nativeDebugging": true
-    }
-  }
-}

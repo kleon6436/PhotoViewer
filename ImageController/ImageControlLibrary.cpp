@@ -4,7 +4,6 @@
  * @author	kchary6436
  */
 
-#include <stdlib.h>
 #include <memory>
 #include "ImageControlLibrary.h"
 #include "RawImageController.h"
@@ -15,62 +14,30 @@ using namespace Kchary::ImageController::NormalImageControl;
 
 namespace Kchary::ImageController::Library
 {
-	int GetRawImageData(const wchar_t* wpath, ImageData* imageData)
+	int GetRawImageData(const wchar_t* imagePath, ImageData* imageData)
 	{
-		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
-		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		const auto path = std::make_unique<char[]>(requestBufferSize);
-
-		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
-		{
-			return -1;
-		}
-
+		const auto path = ConvertWcharToChar(imagePath);
 		const std::unique_ptr<IImageController> rawImageController = std::make_unique<RawImageController>();
 		return rawImageController->GetImageData(path.get(), imageData);
 	}
 
-	int GetRawThumbnailImageData(const wchar_t* wpath, const int resizeLongSideLength, ImageData* imageData)
+	int GetRawThumbnailImageData(const wchar_t* imagePath, const int resizeLongSideLength, ImageData* imageData)
 	{
-		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
-		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		const auto path = std::make_unique<char[]>(requestBufferSize);
-
-		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
-		{
-			return -1;
-		}
-
+		const auto path = ConvertWcharToChar(imagePath);
 		const std::unique_ptr<IImageController> rawImageController = std::make_unique<RawImageController>();
 		return rawImageController->GetThumbnailImageData(path.get(), resizeLongSideLength, imageData);
 	}
 
-	int GetNormalImageData(const wchar_t* wpath, ImageData* imageData)
+	int GetNormalImageData(const wchar_t* imagePath, ImageData* imageData)
 	{
-		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
-		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		const auto path = std::make_unique<char[]>(requestBufferSize);
-
-		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
-		{
-			return -1;
-		}
-
+		const auto path = ConvertWcharToChar(imagePath);
 		const std::unique_ptr<IImageController> normalImageController = std::make_unique<NormalImageController>();
 		return normalImageController->GetImageData(path.get(), imageData);
 	}
 
-	int GetNormalThumbnailImageData(const wchar_t* wpath, const int resizeLongSideLength, ImageData* imageData)
+	int GetNormalThumbnailImageData(const wchar_t* imagePath, const int resizeLongSideLength, ImageData* imageData)
 	{
-		const auto wpathLen = wcslen(wpath) + 1; // This is the number of null characters.
-		const auto requestBufferSize = wpathLen * 2;	// Convert to byte number.
-		const auto path = std::make_unique<char[]>(requestBufferSize);
-
-		if (ConvertWcharToChar(wpath, requestBufferSize, path.get()) != 0)
-		{
-			return -1;
-		}
-
+		const auto path = ConvertWcharToChar(imagePath);
 		const std::unique_ptr<IImageController> normalImageController = std::make_unique<NormalImageController>();
 		return normalImageController->GetThumbnailImageData(path.get(), resizeLongSideLength, imageData);
 	}
@@ -80,11 +47,17 @@ namespace Kchary::ImageController::Library
 		delete[] buffer;
 	}
 
-	int ConvertWcharToChar(const wchar_t* wpath, const size_t requestBufferSize, char* path)
+	std::unique_ptr<char[]> ConvertWcharToChar(const wchar_t* imagePath)
 	{
 		setlocale(LC_CTYPE, "ja_JP.UTF-8"); // Handle character strings in Japanese.
 
+		const auto imagePathLen = wcslen(imagePath) + 1; // This is the number of null characters.
+		const auto requestBufferSize = imagePathLen * 2;	// Convert to byte number.
+		auto path = std::make_unique<char[]>(requestBufferSize);
+
 		size_t convertedCharSize = 0;
-		return wcstombs_s(&convertedCharSize, path, requestBufferSize, wpath, _TRUNCATE);
+		wcstombs_s(&convertedCharSize, path.get(), requestBufferSize, imagePath, _TRUNCATE);
+
+		return std::move(path);
 	}
 }
