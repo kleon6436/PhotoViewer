@@ -63,9 +63,9 @@
             </Grid.ColumnDefinitions>
             <Rectangle Grid.Column="0" Fill="#D4D4D4" />
             <StackPanel Grid.Column="0" Orientation="Vertical">
-                <RadioButton Content="連携アプリ設定" Style="{StaticResource RadioButtonStyle}" FontSize="14"
+                <RadioButton Content="Linked app settings" Style="{StaticResource RadioButtonStyle}" FontSize="14"
                              IsChecked="{Binding SelectPageButtonValue, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=LinkageAppPage}" />
-                <RadioButton Content="情報" Style="{StaticResource RadioButtonStyle}" FontSize="14"
+                <RadioButton Content="Information" Style="{StaticResource RadioButtonStyle}" FontSize="14"
                              IsChecked="{Binding SelectPageButtonValue, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=InformationPage}" />
             </StackPanel>
             <Frame x:Name="_Frame" Grid.Column="1" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage, Mode=OneWay}" />

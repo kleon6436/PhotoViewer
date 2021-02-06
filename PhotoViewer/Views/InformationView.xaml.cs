@@ -1,11 +1,9 @@
-﻿using System.Windows.Controls;
-
-namespace Kchary.PhotoViewer.Views
+﻿namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for InformationView.xaml
     /// </summary>
-    public partial class InformationView : Page
+    public partial class InformationView
     {
         public InformationView()
         {

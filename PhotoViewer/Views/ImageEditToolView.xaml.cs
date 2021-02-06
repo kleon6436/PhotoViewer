@@ -20,7 +20,7 @@ namespace Kchary.PhotoViewer.Views
                     vm.CloseView += (sender, args) =>
                     {
                         // Release memory.
-                        App.RunGC();
+                        App.RunGc();
                         Close();
                     };
                 }
@@ -35,7 +35,7 @@ namespace Kchary.PhotoViewer.Views
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             // Release memory.
-            App.RunGC();
+            App.RunGc();
             Close();
         }
 

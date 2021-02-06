@@ -16,16 +16,16 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="10" Orientation="Vertical">
-            <TextBlock Text="■ 連携アプリ設定 ■" FontSize="24" FontWeight="Medium" Margin="0,0,0,15" />
-            <TextBlock Text="連携アプリを1つ登録することができます。" FontSize="15" Margin="10,0,0,5" />
-            <TextBlock Text="登録したアプリは、コンテンツリストの画像上で右クリックすると、起動することができます。" FontSize="15" Margin="10,0,0,5" />
-            <TextBlock Text="登録するアプリを以下の参照ボタンより選択してください。" FontSize="15" Margin="10,0,0,5" />
+            <TextBlock Text="■ Linkage application settings ■" FontSize="22" FontWeight="Medium" Margin="0,0,0,15" />
+            <TextBlock Text="You can register one linked application." FontSize="13" Margin="10,0,0,5" />
+            <TextBlock Text="The registered app can be started by right-clicking on the image in the content list." FontSize="13" Margin="10,0,0,5" />
+            <TextBlock Text="Please select the application to register from the browse button below." FontSize="13" Margin="10,0,0,5" />
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding LinkAppPath}" Height="40" Width="350" FontSize="14" />
-            <Button Content="参照" FontSize="18" Command="{Binding LinkAppReferenceCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="60" Margin="10,0,10,0" />
-            <Button Content="登録" FontSize="18" Command="{Binding RegisterLinkAppCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="60" />
+            <Button Content="Reference" FontSize="15" Command="{Binding LinkAppReferenceCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="85" Margin="10,0,10,0" />
+            <Button Content="Register" FontSize="15" Command="{Binding RegisterLinkAppCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="85" />
         </StackPanel>
 
         <ScrollViewer Grid.Row="2" Margin="10" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -35,7 +35,7 @@
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="True"
                   VerticalGridLinesBrush="LightSlateGray" HorizontalGridLinesBrush="LightSlateGray">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="登録アプリ名" Binding="{Binding AppName}" Width="auto" MinWidth="100">
+                    <DataGridTextColumn Header="App name" Binding="{Binding AppName}" Width="auto" MinWidth="100">
                         <DataGridTextColumn.ElementStyle>
                             <Style>
                                 <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis" />
@@ -44,7 +44,7 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="アプリパス" Binding="{Binding AppPath}" Width="*" MinWidth="100">
+                    <DataGridTextColumn Header="Application path" Binding="{Binding AppPath}" Width="*" MinWidth="100">
                         <DataGridTextColumn.ElementStyle>
                             <Style>
                                 <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis" />
@@ -57,7 +57,7 @@
                     <DataGridTemplateColumn Header="Action" Width="70" CanUserResize="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="削除" Command="{Binding Path=DataContext.DeleteLinkAppCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}" />
+                                <Button Content="Delete" Command="{Binding Path=DataContext.DeleteLinkAppCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

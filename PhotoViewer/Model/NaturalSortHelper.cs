@@ -22,7 +22,7 @@ namespace Kchary.PhotoViewer.Model
     {
         public int Compare(DirectoryInfo x, DirectoryInfo y)
         {
-            return SafeNativeMethods.StrCmpLogicalW(x.Name, y.Name);
+            return SafeNativeMethods.StrCmpLogicalW(x?.Name, y?.Name);
         }
     }
 }

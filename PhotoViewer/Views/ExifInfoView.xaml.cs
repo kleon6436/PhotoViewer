@@ -1,11 +1,9 @@
-﻿using System.Windows.Controls;
-
-namespace Kchary.PhotoViewer.Views
+﻿namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for ExifInfoView.xaml
     /// </summary>
-    public partial class ExifInfoView : UserControl
+    public partial class ExifInfoView
     {
         public ExifInfoView()
         {

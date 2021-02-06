@@ -13,22 +13,22 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Data of application setting information.
         /// </summary>
-        public AppConfigData ConfigData { get; private set; }
+        public AppConfigData ConfigData { get; private init; }
 
-        private static readonly string appConfigFilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KcharyPhotoViewer\\Setting.conf";
-        private static readonly AppConfigManager singleInstance = new AppConfigManager { ConfigData = new AppConfigData() };
-        private static readonly AppConfigXml ConfigXmlObject = new AppConfigXml(appConfigFilePath);
+        private static readonly string AppConfigFilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KcharyPhotoViewer\\Setting.conf";
+        private static readonly AppConfigManager SingleInstance = new() { ConfigData = new AppConfigData() };
+        private static readonly AppConfigXml ConfigXmlObject = new(AppConfigFilePath);
 
         /// <summary>
         /// Get instance of application setting information class.
         /// </summary>
         public static AppConfigManager GetInstance()
         {
-            return singleInstance;
+            return SingleInstance;
         }
 
         /// <summary>
-        /// Import application data from app config file.
+        /// Import application data from application configure file.
         /// </summary>
         public void Import()
         {
@@ -44,15 +44,15 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Export application data to app config file.
+        /// Export application data to application configure file.
         /// </summary>
         public void Export()
         {
             // Create folder if it does not exist.
-            var appConfigdirectory = Path.GetDirectoryName(appConfigFilePath);
-            if (!Directory.Exists(appConfigdirectory))
+            var appConfigDirectory = Path.GetDirectoryName(AppConfigFilePath);
+            if (!Directory.Exists(appConfigDirectory))
             {
-                Directory.CreateDirectory(appConfigdirectory);
+                Directory.CreateDirectory(appConfigDirectory ?? throw new InvalidOperationException());
             }
 
             try
@@ -66,21 +66,21 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Set list of linked apps.
+        /// Set list of linked applications.
         /// </summary>
-        /// <param name="linkageApplist">List of linked apps</param>
-        public void SetLinkageApp(IEnumerable<ExtraAppSetting> linkageApplist)
+        /// <param name="linkageAppList">List of linked applications</param>
+        public void SetLinkageApp(IEnumerable<ExtraAppSetting> linkageAppList)
         {
-            ConfigData.LinkageAppList = linkageApplist.ToList();
+            ConfigData.LinkageAppList = linkageAppList.ToList();
         }
 
         /// <summary>
-        /// Remove linked app from linked app list.
+        /// Remove linked application from linked application list.
         /// </summary>
-        /// <param name="linkageApplist">List of linked apps</param>
-        public void RemoveLinkageApp(IEnumerable<ExtraAppSetting> linkageApplist)
+        /// <param name="linkageAppList">List of linked applications</param>
+        public void RemoveLinkageApp(IEnumerable<ExtraAppSetting> linkageAppList)
         {
-            ConfigData.LinkageAppList = linkageApplist.ToList();
+            ConfigData.LinkageAppList = linkageAppList.ToList();
         }
     }
 }

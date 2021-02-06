@@ -26,6 +26,6 @@
         /// <summary>
         /// Resize long side value
         /// </summary>
-        public int ResizelongSideValue { get; init; }
+        public int ResizeLongSideValue { get; init; }
     }
 }

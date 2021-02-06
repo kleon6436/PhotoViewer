@@ -12,8 +12,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         public enum MediaType
         {
-            PICTURE,
-            MOVIE,
+            Picture,
+            Movie,
         }
 
         #region Media Parameters
@@ -60,21 +60,22 @@ namespace Kchary.PhotoViewer.Model
         {
             try
             {
-                if (FilePath == null || !File.Exists(FilePath))
+                if (string.IsNullOrEmpty(FilePath) || !File.Exists(FilePath))
                 {
                     return false;
                 }
 
                 ThumbnailImage = ContentMediaType switch
                 {
-                    MediaType.PICTURE => ImageController.CreatePictureThumbnailImage(FilePath),
+                    MediaType.Picture => ImageController.CreatePictureThumbnailImage(FilePath),
+                    MediaType.Movie => throw new ArgumentOutOfRangeException(),
                     _ => throw new ArgumentOutOfRangeException(),
                 };
-
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                App.LogException(ex);
                 return false;
             }
         }
@@ -82,7 +83,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Get the type of media file.
         /// </summary>
-        /// <param name="_filePath">File path to check</param>
+        /// <param name="filePath">File path to check</param>
         /// <returns>File type</returns>
         private static MediaType CheckMediaType(string filePath)
         {
@@ -90,7 +91,7 @@ namespace Kchary.PhotoViewer.Model
 
             if (MediaChecker.CheckPictureExtensions(extension))
             {
-                return MediaType.PICTURE;
+                return MediaType.Picture;
             }
             else
             {

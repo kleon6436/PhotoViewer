@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Kchary.PhotoViewer.Views"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
@@ -13,7 +12,7 @@
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="True"
                   VerticalGridLinesBrush="LightSlateGray" HorizontalGridLinesBrush="LightSlateGray" PreviewMouseDown="DataGrid_PreviewMouseDown">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="パラメータ名" Binding="{Binding ExifParameterText, Mode=OneWay}" Width="auto" MinWidth="100">
+                <DataGridTextColumn Header="Parameter" Binding="{Binding ExifParameterText, Mode=OneWay}" Width="auto" MinWidth="160">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis" />
@@ -22,7 +21,7 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="値" Binding="{Binding ExifParameterValue, Mode=OneWay}" Width="*" MinWidth="100">
+                <DataGridTextColumn Header="Value" Binding="{Binding ExifParameterValue, Mode=OneWay}" Width="*" MinWidth="100">
                     <DataGridTextColumn.ElementStyle>
                         <Style>
                             <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis" />

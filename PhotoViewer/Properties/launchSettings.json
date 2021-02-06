@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PhotoViewer": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}
