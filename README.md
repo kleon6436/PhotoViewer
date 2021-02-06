@@ -61,3 +61,4 @@ https://docs.microsoft.com/ja-jp/cpp/build/vcpkg?view=msvc-160
 - kchary @kleon6436 (Author, Developer)
 
 This software is released under the MIT License, see LICENSE.txt.
+The license for this app was licensed by kleon6436 and not presented by the developers of Libraw.
