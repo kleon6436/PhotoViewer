@@ -104,7 +104,8 @@
       <Command>copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerTester\bin\x86\Debug\net5.0
 copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerWPFTester\bin\x86\Debug\net5.0-windows
 copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x86\Debug\net5.0-windows
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewerUnitTest\bin\x64\Debug\net5.0-windows</Command>
+copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewerUnitTest\bin\x86\Debug\net5.0-windows
+copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x86\Debug\net5.0-windows</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -155,7 +156,8 @@ copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x86\Release\net5.0
       <Command>copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerTester\bin\x64\Debug\net5.0
 copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerWPFTester\bin\x64\Debug\net5.0-windows
 copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x64\Debug\net5.0-windows
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewerUnitTest\bin\x64\Debug\net5.0-windows</Command>
+copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewerUnitTest\bin\x64\Debug\net5.0-windows
+copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x64\Debug\net5.0-windows</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
