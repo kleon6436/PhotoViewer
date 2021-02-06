@@ -47,7 +47,8 @@ https://docs.microsoft.com/ja-jp/cpp/build/vcpkg?view=msvc-160
 
 - VirtualizingWrapPanel
 
-- Libraw
+- Libraw  
+  このアプリは、Libraw オープン ソース プロジェクト (http://www.libraw.org) に基づいて機能します。Libraw ライブラリは、COMMON DEVELOPMENT AND THIS DISTRIBUTION LICENSE Version   1.0 (CDDL-1.0) に基づいてライセンスされます。
 
 - OpenCV
 
