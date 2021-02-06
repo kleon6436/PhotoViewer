@@ -7,15 +7,13 @@
 - 作者は、このソフトのサポート ( 不具合修正・バージョンアップなど ) に関する一切の義務を負わない。
 
 ## アプリ概要
-Windows用のKchary作成PhotoViewerです。技術力が上がってきたので、前回のものをリメイクしています。
+Windows用のKchary作成PhotoViewerです。
 
-Windows 10 1903以降の対応で、RawImageExtension、および、NikonのNEF Codecのインストールが必須である。https://downloadcenter.nikonimglib.com/ja/products/170/NEF_Codec.html
+Windows 10 1903以降の対応で、RawImageExtension、および、NikonのNEF Codecのインストールが必須です。
+
+https://downloadcenter.nikonimglib.com/ja/products/170/NEF_Codec.html
 
 Exif情報と写真閲覧、Exif情報の削除などが行えます。
-
-以前のものから機能を考え直して、作り直しました。
-
-動画再生機能などは組み込んでいません。
 
 ![app screenshot](./Images/AppScreen.png)
 
@@ -23,6 +21,7 @@ Exif情報と写真閲覧、Exif情報の削除などが行えます。
 Exif情報や写真の閲覧ができます。
 
 Exif情報の削除し、ブログ向け、SNS向けにファイルサイズを変更して保存できます。
+
 ※ 私がよく使う3つのファイルサイズを選択できます。
 
 設定画面で設定した他のアプリを起動することも可能です。
@@ -45,6 +44,8 @@ https://docs.microsoft.com/ja-jp/cpp/build/vcpkg?view=msvc-160
 
 ## 使用しているテクノロジ
 - Prism
+
+- VirtualizingWrapPanel
 
 - Libraw
 
