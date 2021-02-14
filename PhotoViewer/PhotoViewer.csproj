@@ -7,7 +7,7 @@
     <PackageIcon>PhotoExifViewerIcon.ico</PackageIcon>
     <Platforms>x64;x86</Platforms>
     <ApplicationIcon>PhotoExifViewerIcon.ico</ApplicationIcon>
-    <AssemblyName>KcharyPhotoViewer</AssemblyName>
+    <AssemblyName>PhotoViewer</AssemblyName>
     <Version>3.1.0</Version>
     <Authors>Kchary</Authors>
     <RootNamespace>Kchary.PhotoViewer</RootNamespace>
