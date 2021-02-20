@@ -44,7 +44,7 @@ namespace Kchary.PhotoViewer
         /// <param name="e">arguments</param>
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            if (!mutex.WaitOne(0, false))
+            if (mutex.WaitOne(0, false))
             {
                 return;
             }
