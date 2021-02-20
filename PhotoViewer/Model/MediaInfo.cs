@@ -93,10 +93,8 @@ namespace Kchary.PhotoViewer.Model
             {
                 return MediaType.Picture;
             }
-            else
-            {
-                throw new FileFormatException();
-            }
+
+            throw new FileFormatException();
         }
     }
 }

@@ -53,7 +53,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Rectangle Grid.Row="0" Fill="LightSkyBlue" />
-        <TextBlock Grid.Row="0" Text="Kchary Photograph Viewer" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="25" FontWeight="Medium" />
+        <TextBlock Grid.Row="0" Text="Photo Viewer" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="25" FontWeight="Medium" />
         <Line X1="0" X2="800" Y1="40" Y2="40" StrokeThickness="1" Stroke="#FF909090" />
 
         <Grid Grid.Row="1">

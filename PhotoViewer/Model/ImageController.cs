@@ -131,15 +131,7 @@ namespace Kchary.PhotoViewer.Model
                     throw new FileFormatException("File format is wrong.");
                 }
 
-                var imgData = new byte[imageData.size];
-                Marshal.Copy(imageData.buffer, imgData, 0, (int)imageData.size);
-                NativeMethods.FreeBuffer(imageData.buffer);
-
-                var bitmap = new WriteableBitmap(imageData.width, imageData.height, 96, 96, PixelFormats.Bgr24, null);
-                bitmap.WritePixels(new Int32Rect(0, 0, imageData.width, imageData.height), imgData, imageData.stride, 0, 0);
-                bitmap.Freeze();
-
-                return bitmap;
+                return CreateBitmapSourceFromImageStruct(imageData);
             }
             else
             {
@@ -148,15 +140,38 @@ namespace Kchary.PhotoViewer.Model
                     throw new FileFormatException("File format is wrong.");
                 }
 
+                return CreateBitmapSourceFromImageStruct(imageData);
+            }
+        }
+
+        /// <summary>
+        /// Create bitmap source from ImageData structure.
+        /// </summary>
+        /// <param name="imageData">Image data structure</param>
+        /// <returns>BitmapSource</returns>
+        private static BitmapSource CreateBitmapSourceFromImageStruct(in NativeMethods.ImageData imageData)
+        {
+            try
+            {
                 var imgData = new byte[imageData.size];
                 Marshal.Copy(imageData.buffer, imgData, 0, (int)imageData.size);
-                NativeMethods.FreeBuffer(imageData.buffer);
 
                 var bitmap = new WriteableBitmap(imageData.width, imageData.height, 96, 96, PixelFormats.Bgr24, null);
                 bitmap.WritePixels(new Int32Rect(0, 0, imageData.width, imageData.height), imgData, imageData.stride, 0, 0);
                 bitmap.Freeze();
 
                 return bitmap;
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+                App.ShowErrorMessageBox("Cannot decode picture.", "Picture decode error");
+
+                return null;
+            }
+            finally
+            {
+                NativeMethods.FreeBuffer(imageData.buffer);
             }
         }
 

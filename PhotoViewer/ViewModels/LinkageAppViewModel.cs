@@ -96,7 +96,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void RegisterLinkAppButtonClicked()
         {
-            if (LinkageAppList.Count > MaxLinkAppNum)
+            if (LinkageAppList.Count > MaxLinkAppNum || string.IsNullOrEmpty(LinkAppPath))
             {
                 return;
             }

@@ -5,9 +5,9 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <PackageIcon>PhotoExifViewerIcon.ico</PackageIcon>
-    <Platforms>x64;x86</Platforms>
+    <Platforms>x64</Platforms>
     <ApplicationIcon>PhotoExifViewerIcon.ico</ApplicationIcon>
-    <AssemblyName>KcharyPhotoViewer</AssemblyName>
+    <AssemblyName>PhotoViewer</AssemblyName>
     <Version>3.1.0</Version>
     <Authors>Kchary</Authors>
     <RootNamespace>Kchary.PhotoViewer</RootNamespace>
@@ -16,13 +16,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ErrorReport>none</ErrorReport>
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <ErrorReport>none</ErrorReport>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
