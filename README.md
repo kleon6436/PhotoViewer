@@ -27,7 +27,7 @@ Exif情報の削除し、ブログ向け、SNS向けにファイルサイズを�
 設定画面で設定した他のアプリを起動することも可能です。
 
 ## ビルドについて
-本アプリは、vcpkgにて、OpenCV、Librawの32bit,、64bitのライブラリがインストールされている環境でのみビルド可能です。
+本アプリは、vcpkgにて、OpenCV、Librawの64bitのライブラリがインストールされている環境でのみビルド可能です。
 
 vcpkgは、以下のURLを参考にインストールしてください。
 
@@ -35,7 +35,7 @@ https://docs.microsoft.com/ja-jp/cpp/build/vcpkg?view=msvc-160
 
 次に、以下のコマンドを打ち、OpenCVとLibrawのライブラリをビルドしてください。
 
-`vcpkg install opencv:x64-windows opencv:x86-windows libraw:x64-windows libraw:x86-windows`
+`vcpkg install opencv:x64-windows libraw:x64-windows`
 
 その後、以下のコマンドを打ち、Visual studioのプロジェクトにvcpkgを適用してください。
 
