@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 
 namespace Kchary.PhotoViewer
@@ -9,12 +11,91 @@ namespace Kchary.PhotoViewer
     /// </summary>
     public partial class App
     {
+        internal class NativeMethods
+        {
+            [DllImport("user32.dll")]
+            internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+            [DllImport("user32.dll")]
+            internal static extern bool IsWindow(IntPtr hWnd);
+            [DllImport("user32.dll")]
+            internal static extern bool IsWindowVisible(IntPtr hWnd);
+            [DllImport("user32.dll")]
+            internal static extern IntPtr GetLastActivePopup(IntPtr hWnd);
+            [DllImport("user32.dll")]
+            internal static extern int ShowWindow(IntPtr hWnd, int nCmdShow);
+            [DllImport("user32.dll")]
+            internal static extern bool SetForegroundWindow(IntPtr hWnd);
+        }
+
+        private Mutex mutex = new(false, "PhotoViewer");
+
         public App()
         {
             DispatcherUnhandledException += AppDispatcherUnhandledException;
         }
 
-        private void AppDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        /// <summary>
+        /// Application startup event.
+        /// </summary>
+        /// <remarks>
+        /// Set mutex to prevent multiple startup.
+        /// </remarks>
+        /// <param name="sender">sender</param>
+        /// <param name="e">arguments</param>
+        private void App_OnStartup(object sender, StartupEventArgs e)
+        {
+            if (!mutex.WaitOne(0, false))
+            {
+                return;
+            }
+
+            // Active a launched windows.
+            var hMWnd = NativeMethods.FindWindow(null, "PhotoViewer");
+            if (!NativeMethods.IsWindow((hMWnd)))
+            {
+                return;
+            }
+
+            var hCWnd = NativeMethods.GetLastActivePopup(hMWnd);
+            if (!NativeMethods.IsWindow(hCWnd) || !NativeMethods.IsWindowVisible(hCWnd))
+            {
+                return;
+            }
+
+            // Show normal window.
+            _ = NativeMethods.ShowWindow(hCWnd, 1);
+            NativeMethods.SetForegroundWindow(hCWnd);
+
+            mutex.Close();
+            mutex = null;
+            Shutdown();
+        }
+
+        /// <summary>
+        /// Application close event.
+        /// </summary>
+        /// <remarks>
+        /// Release mutex to prevent multiple startup.
+        /// </remarks>
+        /// <param name="sender">sender</param>
+        /// <param name="e">arguments</param>
+        private void App_OnExit(object sender, ExitEventArgs e)
+        {
+            if (mutex == null)
+            {
+                return;
+            }
+
+            mutex.ReleaseMutex();
+            mutex.Close();
+        }
+
+        /// <summary>
+        /// Application Unhandled Exception
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">arguments</param>
+        private static void AppDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             LogException(e.Exception);
             ShowErrorMessageBox("File access error occurred", "File access error");
