@@ -27,7 +27,7 @@ namespace Kchary.PhotoViewer
             internal static extern bool SetForegroundWindow(IntPtr hWnd);
         }
 
-        private Mutex mutex = new(false, "PhotoViewer");
+        private static Mutex _mutex = new(false, "PhotoViewer");
 
         public App()
         {
@@ -44,7 +44,7 @@ namespace Kchary.PhotoViewer
         /// <param name="e">arguments</param>
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            if (mutex.WaitOne(0, false))
+            if (_mutex.WaitOne(0, false))
             {
                 return;
             }
@@ -66,8 +66,8 @@ namespace Kchary.PhotoViewer
             _ = NativeMethods.ShowWindow(hCWnd, 1);
             NativeMethods.SetForegroundWindow(hCWnd);
 
-            mutex.Close();
-            mutex = null;
+            _mutex.Close();
+            _mutex = null;
             Shutdown();
         }
 
@@ -81,13 +81,13 @@ namespace Kchary.PhotoViewer
         /// <param name="e">arguments</param>
         private void App_OnExit(object sender, ExitEventArgs e)
         {
-            if (mutex == null)
+            if (_mutex == null)
             {
                 return;
             }
 
-            mutex.ReleaseMutex();
-            mutex.Close();
+            _mutex.ReleaseMutex();
+            _mutex.Close();
         }
 
         /// <summary>
