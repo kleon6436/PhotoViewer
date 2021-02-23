@@ -130,7 +130,7 @@ namespace Kchary.PhotoViewer.Views
             NativeMethods.GetWindowPlacement(hwnd, out var placement);
 
             var appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.ConfigData.WindowPlaceData = placement;
+            appConfigManager.ConfigData.PlaceData = placement;
             appConfigManager.Export();
         }
 
@@ -142,10 +142,10 @@ namespace Kchary.PhotoViewer.Views
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             // ListBoxのアイテム選択時は、そのアイテムまでスクロールする
-            var selectedItem = mediaListBox.SelectedItem;
+            var selectedItem = MediaListBox.SelectedItem;
             if (selectedItem != null)
             {
-                mediaListBox.ScrollIntoView(selectedItem);
+                MediaListBox.ScrollIntoView(selectedItem);
             }
 
             // Run GC.
@@ -203,7 +203,7 @@ namespace Kchary.PhotoViewer.Views
 
             var appConfigManager = AppConfigManager.GetInstance();
 
-            var windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
+            var windowPlacement = appConfigManager.ConfigData.PlaceData;
             windowPlacement.showCmd = (windowPlacement.showCmd == NativeMethods.Sw.ShowMinimized) ? NativeMethods.Sw.ShowNormal : windowPlacement.showCmd;
 
             var hwnd = new WindowInteropHelper(this).Handle;

@@ -4,7 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:converter="clr-namespace:Kchary.PhotoViewer.Converter"
+        xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance viewmodel:SettingViewModel}"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
         Icon="/Images/PhotoExifViewerIcon.ico"
         Title="Kchary Photograph Viewer" Height="600" Width="800">
@@ -54,7 +56,7 @@
         </Grid.RowDefinitions>
         <Rectangle Grid.Row="0" Fill="LightSkyBlue" />
         <TextBlock Grid.Row="0" Text="Photo Viewer" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="25" FontWeight="Medium" />
-        <Line X1="0" X2="800" Y1="40" Y2="40" StrokeThickness="1" Stroke="#FF909090" />
+        <Line Grid.Row="0" X1="0" X2="800" Y1="40" Y2="40" StrokeThickness="1" Stroke="#FF909090" />
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -68,7 +70,7 @@
                 <RadioButton Content="Information" Style="{StaticResource RadioButtonStyle}" FontSize="14"
                              IsChecked="{Binding SelectPageButtonValue, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=InformationPage}" />
             </StackPanel>
-            <Frame x:Name="_Frame" Grid.Column="1" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage, Mode=OneWay}" />
+            <Frame x:Name="Frame" Grid.Column="1" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage, Mode=OneWay}" />
         </Grid>
     </Grid>
 </Window>

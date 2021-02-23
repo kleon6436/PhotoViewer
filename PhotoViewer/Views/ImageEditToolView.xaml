@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance viewmodel:ImageEditToolViewModel}"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
         Icon="/Images/PhotoExifViewerIcon.ico"
         Title="Kchary Photograph Viewer" Height="400" Width="600">
@@ -26,12 +28,8 @@
             <!-- 右下のレイアウト -->
             <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Image Source="{Binding EditImage, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform"
-                       Width="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelWidth}" RenderOptions.BitmapScalingMode="NearestNeighbor" UseLayoutRounding="True"
-                       Height="{Binding RelativeSource={RelativeSource Self}, Path=Source.PixelHeight}" Margin="0,0,0,5" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Target: " FontSize="16" />
-                    <TextBlock Text="{Binding EditFileName, Mode=OneWay}" FontSize="16" />
-                </StackPanel>
+                       Width="{Binding RelativeSource={RelativeSource Self}, Path=Source.Width}" RenderOptions.BitmapScalingMode="NearestNeighbor" UseLayoutRounding="True"
+                       Height="{Binding RelativeSource={RelativeSource Self}, Path=Source.Height}" Margin="0,0,0,5" />
             </StackPanel>
 
             <!-- 左下のレイアウト -->
