@@ -106,10 +106,7 @@ namespace Kchary.PhotoViewer.Views
             }
 
             var firstImageData = vm.MediaInfoList.First();
-            if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(firstImageData.FilePath)?.ToLower()))
-            {
-                vm.SelectedMedia = firstImageData;
-            }
+            vm.SelectedMedia = firstImageData;
         }
 
         /// <summary>

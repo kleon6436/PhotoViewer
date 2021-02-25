@@ -611,7 +611,23 @@ namespace Kchary.PhotoViewer.ViewModels
                         continue;
                     }
 
-                    Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        MediaInfoList.AddRange(queue);
+
+                        // If the image is not displayed at the time of loading, the image at the top of the list is displayed.
+                        if (!MediaInfoList.Any() || SelectedMedia != null)
+                        {
+                            return;
+                        }
+
+                        var firstImageData = MediaInfoList.First();
+                        if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(firstImageData.FilePath)?.ToLower()))
+                        {
+                            SelectedMedia = firstImageData;
+                        }
+                    });
+
                     queue.Clear();
                     tick = Environment.TickCount;
                 }
