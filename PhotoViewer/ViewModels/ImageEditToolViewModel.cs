@@ -20,7 +20,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public BitmapSource EditImage
         {
             get => editImage;
-            set => SetProperty(ref editImage, value);
+            private set => SetProperty(ref editImage, value);
         }
 
         public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; }
@@ -89,14 +89,14 @@ namespace Kchary.PhotoViewer.ViewModels
         public string ResizeSizeText
         {
             get => resizeSizeText;
-            set => SetProperty(ref resizeSizeText, value);
+            private set => SetProperty(ref resizeSizeText, value);
         }
 
         #endregion UI binding parameter
 
         #region Command
 
-        public ICommand SaveButtonCommand { get; set; }
+        public ICommand SaveButtonCommand { get; private set; }
 
         #endregion Command
 

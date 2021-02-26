@@ -45,7 +45,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public string SelectFolderPath
         {
             get => selectFolderPath;
-            set => SetProperty(ref selectFolderPath, value);
+            private set => SetProperty(ref selectFolderPath, value);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public BitmapSource PictureImageSource
         {
             get => pictureImageSource;
-            set => SetProperty(ref pictureImageSource, value);
+            private set => SetProperty(ref pictureImageSource, value);
         }
 
         /// <summary>
