@@ -1,14 +1,18 @@
-# build
-PhotoViewer/obj/
+# Visual studio settings
 .vs/
-PhotoViewer/bin/
-packages/
 *.StyleCop
-x64
-x86
-Release
-Debug
-obj
-bin
-.idea/
 *.user
+
+# Packages
+packages/
+
+# build
+x64/
+x86/
+Release/
+Debug/
+obj/
+bin/
+
+# JetBrains settings
+.idea/
