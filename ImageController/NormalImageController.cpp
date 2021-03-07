@@ -1,7 +1,7 @@
-#include "pch.h"
+﻿#include "pch.h"
 /**
  * @file	NormalImageController.cpp
- * @author	kchary6436
+ * @author	kleon6436
  */
 
 #include "NormalImageController.h"

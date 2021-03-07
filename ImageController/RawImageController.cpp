@@ -1,7 +1,7 @@
-#include "pch.h"
+﻿#include "pch.h"
 /**
  * @file	RawImageController.cpp
- * @author	kchary6436
+ * @author	kleon6436
  */
 
 #include <memory>
