@@ -49,10 +49,14 @@ namespace Kchary::ImageController::Library
 
 	std::unique_ptr<char[]> ConvertWcharToChar(const wchar_t imagePath[])
 	{
-		setlocale(LC_CTYPE, "ja_JP.UTF-8"); // Handle character strings in Japanese.
+		// Handle character strings in Japanese.
+		setlocale(LC_CTYPE, "ja_JP.UTF-8");
 
-		const auto imagePathLen = wcslen(imagePath) + 1; // This is the number of null characters.
-		const auto requestBufferSize = imagePathLen * 2;	// Convert to byte number.
+		// This is the number of null characters.
+		const auto imagePathLen = wcslen(imagePath) + 1;
+
+		// Convert to byte number.
+		const auto requestBufferSize = imagePathLen * 2;
 		auto path = std::make_unique<char[]>(requestBufferSize);
 
 		size_t convertedCharSize = 0;

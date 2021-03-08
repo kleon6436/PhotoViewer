@@ -52,7 +52,7 @@ namespace Kchary::ImageController::Library
 
 	/**
 	 * @brief	Release the memory acquired on the DLL side.
-	 * @param	buffer: Memory pointer you want to release.
+	 * @param	buffer: Memory array pointer you want to release.
 	 */
 	DllExport void FreeBuffer(const std::uint8_t* buffer);
 
