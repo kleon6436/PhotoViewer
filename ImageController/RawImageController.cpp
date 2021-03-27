@@ -50,9 +50,9 @@ namespace Kchary::ImageController::RawImageControl
 			memcpy(imageData->buffer, rawData, dataSize);
 
 			imageData->size = dataSize;
-			imageData->stride = image->width * image->colors * image->bits / 8;
-			imageData->width = image->width;
-			imageData->height = image->height;
+			imageData->stride = static_cast<int>(image->width * image->colors * image->bits / 8);
+			imageData->width = static_cast<int>(image->width);
+			imageData->height = static_cast<int>(image->height);
 		}
 		else
 		{
@@ -112,7 +112,7 @@ namespace Kchary::ImageController::RawImageControl
 		memcpy(imageData->buffer, resizeImg.data, imgDataSize * sizeof(std::uint8_t));
 
 		// Translate data to C#
-		imageData->size = static_cast<unsigned>(imgDataSize);
+		imageData->size = static_cast<unsigned int>(imgDataSize);
 		imageData->stride = static_cast<int>(resizeImg.step);
 		imageData->width = resizeImg.cols;
 		imageData->height = resizeImg.rows;

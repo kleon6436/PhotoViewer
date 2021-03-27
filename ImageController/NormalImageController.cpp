@@ -18,7 +18,7 @@ namespace Kchary::ImageController::NormalImageControl
 		memcpy(imageData->buffer, img.data, dataSize * sizeof(std::uint8_t));
 
 		// Translate data to C#
-		imageData->size = static_cast<unsigned>(dataSize);
+		imageData->size = static_cast<unsigned int>(dataSize);
 		imageData->stride = static_cast<int>(img.step);
 		imageData->width = img.cols;
 		imageData->height = img.rows;
@@ -45,7 +45,7 @@ namespace Kchary::ImageController::NormalImageControl
 		memcpy(imageData->buffer, resizeImg.data, dataSize * sizeof(std::uint8_t));
 
 		// Translate data to C#
-		imageData->size = static_cast<unsigned>(dataSize);
+		imageData->size = static_cast<unsigned int>(dataSize);
 		imageData->stride = static_cast<int>(resizeImg.step);
 		imageData->width = resizeImg.cols;
 		imageData->height = resizeImg.rows;
