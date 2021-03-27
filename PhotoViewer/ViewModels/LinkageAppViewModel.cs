@@ -111,7 +111,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // Export information to Configure file.
             var appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.SetLinkageApp(LinkageAppList);
+            appConfigManager.AddLinkageApp(linkageApp);
             appConfigManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
@@ -136,7 +136,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // Export information to configure file.
             var appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.RemoveLinkageApp(LinkageAppList);
+            appConfigManager.RemoveLinkageApp(deleteAppSetting);
             appConfigManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
