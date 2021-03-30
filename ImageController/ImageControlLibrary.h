@@ -22,7 +22,7 @@ namespace Kchary::ImageController::Library
 	 * @param	imageData: Image data.
 	 * @return	Success: 0, Failure: -1
 	 */
-	DllExport int GetRawImageData(const wchar_t imagePath[], ImageData* imageData);
+	DllExport int GetRawImageData(const wchar_t imagePath[], ImageData& imageData);
 
 	/**
 	 * @brief	This function is getting raw thumbnail image data using libraw library.
@@ -31,7 +31,7 @@ namespace Kchary::ImageController::Library
 	 * @param	imageData: Image data.
 	 * @return	Success: 0, Failure: -1
 	 */
-	DllExport int GetRawThumbnailImageData(const wchar_t imagePath[], int resizeLongSideLength, ImageData* imageData);
+	DllExport int GetRawThumbnailImageData(const wchar_t imagePath[], int resizeLongSideLength, ImageData& imageData);
 
 	/**
 	 * @brief	This function is getting image data.
@@ -39,7 +39,7 @@ namespace Kchary::ImageController::Library
 	 * @param	imageData: Image data.
 	 * @return	Success: 0, Failure: -1
 	 */
-	DllExport int GetNormalImageData(const wchar_t imagePath[], ImageData* imageData);
+	DllExport int GetNormalImageData(const wchar_t imagePath[], ImageData& imageData);
 
 	/**
 	 * @brief	This function is getting thumbnail image data.
@@ -48,7 +48,7 @@ namespace Kchary::ImageController::Library
 	 * @param	imageData: Image data.
 	 * @return	Success: 0, Failure: -1
 	 */
-	DllExport int GetNormalThumbnailImageData(const wchar_t imagePath[], int resizeLongSideLength, ImageData* imageData);
+	DllExport int GetNormalThumbnailImageData(const wchar_t imagePath[], int resizeLongSideLength, ImageData& imageData);
 
 	/**
 	 * @brief	Release the memory acquired on the DLL side.

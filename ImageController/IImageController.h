@@ -18,7 +18,7 @@ public:
 	 * @param	imageData: Image data
 	 * @return	Success: 0, Failure: -1
 	 */
-	virtual int GetImageData(const char* path, ImageData* imageData) const = 0;
+	virtual int GetImageData(const char path[], ImageData& imageData) const = 0;
 
 	/**
 	 * @brief	This function is getting thumbnail image data.
@@ -27,5 +27,5 @@ public:
 	 * @param	imageData: Image data
 	 * @return	Success: 0, Failure: -1
 	 */
-	virtual int GetThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData) const = 0;
+	virtual int GetThumbnailImageData(const char path[], int resizeLongSideLength, ImageData& imageData) const = 0;
 };

@@ -14,28 +14,28 @@ using namespace Kchary::ImageController::NormalImageControl;
 
 namespace Kchary::ImageController::Library
 {
-	int GetRawImageData(const wchar_t imagePath[], ImageData* imageData)
+	int GetRawImageData(const wchar_t imagePath[], ImageData& imageData)
 	{
 		const auto path = ConvertWcharToChar(imagePath);
 		const std::unique_ptr<IImageController> rawImageController = std::make_unique<RawImageController>();
 		return rawImageController->GetImageData(path.get(), imageData);
 	}
 
-	int GetRawThumbnailImageData(const wchar_t imagePath[], const int resizeLongSideLength, ImageData* imageData)
+	int GetRawThumbnailImageData(const wchar_t imagePath[], const int resizeLongSideLength, ImageData& imageData)
 	{
 		const auto path = ConvertWcharToChar(imagePath);
 		const std::unique_ptr<IImageController> rawImageController = std::make_unique<RawImageController>();
 		return rawImageController->GetThumbnailImageData(path.get(), resizeLongSideLength, imageData);
 	}
 
-	int GetNormalImageData(const wchar_t imagePath[], ImageData* imageData)
+	int GetNormalImageData(const wchar_t imagePath[], ImageData& imageData)
 	{
 		const auto path = ConvertWcharToChar(imagePath);
 		const std::unique_ptr<IImageController> normalImageController = std::make_unique<NormalImageController>();
 		return normalImageController->GetImageData(path.get(), imageData);
 	}
 
-	int GetNormalThumbnailImageData(const wchar_t imagePath[], const int resizeLongSideLength, ImageData* imageData)
+	int GetNormalThumbnailImageData(const wchar_t imagePath[], const int resizeLongSideLength, ImageData& imageData)
 	{
 		const auto path = ConvertWcharToChar(imagePath);
 		const std::unique_ptr<IImageController> normalImageController = std::make_unique<NormalImageController>();

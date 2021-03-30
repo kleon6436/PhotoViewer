@@ -21,7 +21,7 @@ namespace Kchary::ImageController::RawImageControl
 		 * @param	imageData: Image data
 		 * @return	Success: 0, Failure: -1
 		 */
-		int GetImageData(const char* path, ImageData* imageData) const override;
+		int GetImageData(const char path[], ImageData& imageData) const override;
 
 		/**
 		 * @brief	This function is getting thumbnail image data.
@@ -30,7 +30,7 @@ namespace Kchary::ImageController::RawImageControl
 		 * @param	imageData: Image data
 		 * @return	Success: 0, Failure: -1
 		 */
-		int GetThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData) const override;
+		int GetThumbnailImageData(const char path[], int resizeLongSideLength, ImageData& imageData) const override;
 
 	private:
 		/**
