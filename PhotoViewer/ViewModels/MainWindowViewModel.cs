@@ -613,6 +613,12 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
+                        if (sender is BackgroundWorker {CancellationPending: true})
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+
                         MediaInfoList.AddRange(queue);
 
                         // If the image is not displayed at the time of loading, the image at the top of the list is displayed.

@@ -9,10 +9,7 @@
         d:DataContext="{d:DesignInstance viewmodel:SettingViewModel}"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
         Icon="/Images/PhotoExifViewerIcon.ico"
-        Title="Kchary Photograph Viewer" Height="600" Width="800">
-    <Window.Background>
-        <SolidColorBrush Color="#F0F0F0" />
-    </Window.Background>
+        Title="PhotoViewer" Height="600" Width="800">
     <Window.Resources>
         <converter:BoolToEnumConverter x:Key="SelectPageBoolToEnumConverter" />
         <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
@@ -50,27 +47,17 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Rectangle Grid.Row="0" Fill="LightSkyBlue" />
-        <TextBlock Grid.Row="0" Text="Photo Viewer" VerticalAlignment="Center" Margin="10,0,0,0" FontSize="25" FontWeight="Medium" />
-        <Line Grid.Row="0" X1="0" X2="800" Y1="40" Y2="40" StrokeThickness="1" Stroke="#FF909090" />
-
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Rectangle Grid.Column="0" Fill="#D4D4D4" />
-            <StackPanel Grid.Column="0" Orientation="Vertical">
-                <RadioButton Content="Linked app settings" Style="{StaticResource RadioButtonStyle}" FontSize="14"
-                             IsChecked="{Binding SelectPageButtonValue, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=LinkageAppPage}" />
-                <RadioButton Content="Information" Style="{StaticResource RadioButtonStyle}" FontSize="14"
-                             IsChecked="{Binding SelectPageButtonValue, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=InformationPage}" />
-            </StackPanel>
-            <Frame x:Name="Frame" Grid.Column="1" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage, Mode=OneWay}" />
-        </Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Rectangle Grid.Column="0" Fill="#D4D4D4" />
+        <StackPanel Grid.Column="0" Orientation="Vertical">
+            <RadioButton Content="Linked app settings" Style="{StaticResource RadioButtonStyle}" FontSize="14"
+                         IsChecked="{Binding SelectPageButtonValue, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=LinkageAppPage}" />
+            <RadioButton Content="Information" Style="{StaticResource RadioButtonStyle}" FontSize="14"
+                         IsChecked="{Binding SelectPageButtonValue, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=InformationPage}" />
+        </StackPanel>
+        <Frame x:Name="Frame" Grid.Column="1" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage, Mode=OneWay}" />
     </Grid>
 </Window>

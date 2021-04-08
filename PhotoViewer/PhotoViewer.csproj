@@ -45,6 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.6" />
     <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.4" />
