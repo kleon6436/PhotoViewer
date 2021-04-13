@@ -25,7 +25,11 @@ namespace Kchary.PhotoViewer.ViewModels
             get => selectedItem;
             set
             {
-                if (selectedItem == value) return;
+                if (selectedItem == value)
+                {
+                    return;
+                }
+
                 selectedItem = value;
                 ChangeSelectItemEvent?.Invoke(this, EventArgs.Empty);
             }
@@ -68,10 +72,6 @@ namespace Kchary.PhotoViewer.ViewModels
                     // Check drive information and expand tree.
                     var previousDrive = parentPath;
                     var driveItem = ExplorerItems.First(item => item.ExplorerItemPath == previousDrive);
-                    if (driveItem == null)
-                    {
-                        return;
-                    }
 
                     driveItem.IsExpanded = true;
 

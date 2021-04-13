@@ -112,24 +112,24 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ResizeCategoryItems = new ObservableCollection<ResizeImageCategory>
             {
-                new() { Name = "No resize", Category = ResizeImageCategory.ResizeCategory.None },
-                new() { Name = "Print size", Category = ResizeImageCategory.ResizeCategory.Print, ResizeLongSideValue = 2500 },
-                new() { Name = "Blog size", Category = ResizeImageCategory.ResizeCategory.Blog, ResizeLongSideValue = 1500 },
-                new() { Name = "SNS size", Category = ResizeImageCategory.ResizeCategory.Twitter, ResizeLongSideValue = 1000 }
+                new() { Name = "No resize" , Category = ResizeImageCategory.ResizeCategory.None },
+                new() { Name = "Print size", Category = ResizeImageCategory.ResizeCategory.Print  , ResizeLongSideValue = 2500 },
+                new() { Name = "Blog size" , Category = ResizeImageCategory.ResizeCategory.Blog   , ResizeLongSideValue = 1500 },
+                new() { Name = "SNS size"  , Category = ResizeImageCategory.ResizeCategory.Twitter, ResizeLongSideValue = 1000 }
             };
 
             ImageSaveQualityItems = new ObservableCollection<ImageQuality>
             {
-                new() { Name = "High", QualityValue = 90 },
+                new() { Name = "High"    , QualityValue = 90 },
                 new() { Name = "standard", QualityValue = 80 },
-                new() { Name = "Low", QualityValue = 60 }
+                new() { Name = "Low"     , QualityValue = 60 }
             };
 
             ImageFormItems = new ObservableCollection<ImageForm>
             {
                 new() { Name = "Jpeg", Form = ImageForm.ImageForms.Jpeg },
-                new() { Name = "Png", Form = ImageForm.ImageForms.Png },
-                new() { Name = "Bmp", Form = ImageForm.ImageForms.Bmp },
+                new() { Name = "Png" , Form = ImageForm.ImageForms.Png },
+                new() { Name = "Bmp" , Form = ImageForm.ImageForms.Bmp },
                 new() { Name = "Tiff", Form = ImageForm.ImageForms.Tiff }
             };
 
@@ -146,14 +146,9 @@ namespace Kchary.PhotoViewer.ViewModels
 
             EditImage = ImageController.CreatePictureEditViewThumbnail(editFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
 
-            if (rotation == 5 || rotation == 6 || rotation == 7 || rotation == 8)
-            {
-                readImageSize = new Size { Width = defaultPictureHeight, Height = defaultPictureWidth };
-            }
-            else
-            {
-                readImageSize = new Size { Width = defaultPictureWidth, Height = defaultPictureHeight };
-            }
+            readImageSize = rotation is 5 or 6 or 7 or 8
+                ? new Size { Width = defaultPictureHeight, Height = defaultPictureWidth }
+                : new Size { Width = defaultPictureWidth, Height = defaultPictureHeight };
 
             // Set each initial value.
             ResizeCategoryItem = ResizeCategoryItems[0];
@@ -223,9 +218,9 @@ namespace Kchary.PhotoViewer.ViewModels
             // Select the same encoder as the selected format.
             BitmapEncoder encoder = selectedForm.Form switch
             {
-                ImageForm.ImageForms.Bmp => new BmpBitmapEncoder(),
-                ImageForm.ImageForms.Jpeg => new JpegBitmapEncoder() {QualityLevel = SelectedQuality.QualityValue},
-                ImageForm.ImageForms.Png => new PngBitmapEncoder(),
+                ImageForm.ImageForms.Bmp  => new BmpBitmapEncoder(),
+                ImageForm.ImageForms.Jpeg => new JpegBitmapEncoder {QualityLevel = SelectedQuality.QualityValue},
+                ImageForm.ImageForms.Png  => new PngBitmapEncoder(),
                 ImageForm.ImageForms.Tiff => new TiffBitmapEncoder(),
                 _ => throw new ArgumentOutOfRangeException()
             };
@@ -239,17 +234,12 @@ namespace Kchary.PhotoViewer.ViewModels
                     encoder.Save(dstStream);
                 }
 
-                const string SaveSuccessMessage = "Success to save image file.";
-                const string SaveSuccessTitle = "Successful save";
-                App.ShowSuccessMessageBox(SaveSuccessMessage, SaveSuccessTitle);
+                App.ShowSuccessMessageBox("Success to save image file.", "Successful save");
             }
             catch (Exception ex)
             {
                 App.LogException(ex);
-
-                const string SaveFailedMessage = "Failed to save the image.";
-                const string SaveFailedTitle = "Save failure";
-                App.ShowErrorMessageBox(SaveFailedMessage, SaveFailedTitle);
+                App.ShowErrorMessageBox("Failed to save the image.", "Save failure");
             }
             finally
             {
