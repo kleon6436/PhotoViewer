@@ -58,7 +58,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public Page DisplayPage
         {
             get => displayPage;
-            set => SetProperty(ref displayPage, value);
+            private set => SetProperty(ref displayPage, value);
         }
 
         /// <summary>

@@ -45,7 +45,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public string SelectFolderPath
         {
             get => selectFolderPath;
-            set => SetProperty(ref selectFolderPath, value);
+            private set => SetProperty(ref selectFolderPath, value);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public BitmapSource PictureImageSource
         {
             get => pictureImageSource;
-            set => SetProperty(ref pictureImageSource, value);
+            private set => SetProperty(ref pictureImageSource, value);
         }
 
         /// <summary>
@@ -118,14 +118,19 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private bool isReloadContents;
 
+        /// <summary>
+        /// Application configuration manager
+        /// </summary>
+        private static readonly AppConfigManager AppConfigManager = AppConfigManager.GetInstance();
+
         public MainWindowViewModel()
         {
             // Set command.
-            BluetoothButtonCommand = new DelegateCommand(BluetoothButtonClicked);
+            BluetoothButtonCommand  = new DelegateCommand(BluetoothButtonClicked);
             OpenFolderButtonCommand = new DelegateCommand(OpenFolderButtonClicked);
-            ReloadButtonCommand = new DelegateCommand(ReloadButtonClicked);
-            SettingButtonCommand = new DelegateCommand(SettingButtonClicked);
-            ImageEditButtonCommand = new DelegateCommand(ImageEditButtonClicked);
+            ReloadButtonCommand     = new DelegateCommand(ReloadButtonClicked);
+            SettingButtonCommand    = new DelegateCommand(SettingButtonClicked);
+            ImageEditButtonCommand  = new DelegateCommand(ImageEditButtonClicked);
 
             // Read configure file.
             LoadConfigFile();
@@ -145,15 +150,16 @@ namespace Kchary.PhotoViewer.ViewModels
         public void InitViewFolder()
         {
             // Read setting information.
-            var appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var linkageAppList = AppConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList != null && linkageAppList.Any())
             {
-                foreach (var linkageApp in linkageAppList)
+                for (var i = 0; i < linkageAppList.Count; i++)
                 {
+                    var linkageApp = linkageAppList[i];
+
                     if (!File.Exists(linkageApp.AppPath))
                     {
-                        appConfigManager.ConfigData.LinkageAppList.Remove(linkageApp);
+                        AppConfigManager.ConfigData.LinkageAppList.Remove(linkageApp);
                         continue;
                     }
 
@@ -174,9 +180,9 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // Load image folder.
             var picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
-            if (!string.IsNullOrEmpty(appConfigManager.ConfigData.PreviousFolderPath))
+            if (!string.IsNullOrEmpty(AppConfigManager.ConfigData.PreviousFolderPath))
             {
-                picturePath = appConfigManager.ConfigData.PreviousFolderPath;
+                picturePath = AppConfigManager.ConfigData.PreviousFolderPath;
             }
             ChangeContents(picturePath);
         }
@@ -187,8 +193,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="appName">Application name</param>
         public void ExecuteContextMenu(string appName)
         {
-            var appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var linkageAppList = AppConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList.All(x => x.AppName != appName))
             {
                 return;
@@ -226,9 +231,7 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             if (!File.Exists(mediaInfo.FilePath))
             {
-                const string FileNotExistErrorMessage = "File not exist.";
-                const string FileNotExistErrorTitle = "File access error";
-                App.ShowErrorMessageBox(FileNotExistErrorMessage, FileNotExistErrorTitle);
+                App.ShowErrorMessageBox("File not exist.", "File access error");
             }
 
             IsEnableImageEditButton = false;
@@ -247,7 +250,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public bool StopThreadAndTask()
         {
             // Cancel notification if content loading thread is running
-            if (loadContentsBackgroundWorker == null || !loadContentsBackgroundWorker.IsBusy)
+            if (loadContentsBackgroundWorker is not {IsBusy: true})
             {
                 return true;
             }
@@ -262,8 +265,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private static void LoadConfigFile()
         {
-            var appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.Import();
+            AppConfigManager.Import();
         }
 
         private void BluetoothButtonClicked()
@@ -389,8 +391,7 @@ namespace Kchary.PhotoViewer.ViewModels
             IsShowContextMenu = false;
 
             // Reload the information related to the linked application from the setting information.
-            var appConfigManager = AppConfigManager.GetInstance();
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var linkageAppList = AppConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList == null || !linkageAppList.Any())
             {
                 return;
@@ -436,11 +437,10 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ExplorerViewModel.CreateDriveTreeItem();
 
-            var appConfigManager = AppConfigManager.GetInstance();
-            var previousFolderPath = appConfigManager.ConfigData.PreviousFolderPath;
+            var previousFolderPath = AppConfigManager.ConfigData.PreviousFolderPath;
             if (!string.IsNullOrEmpty(previousFolderPath))
             {
-                ExplorerViewModel.ExpandPreviousPath(appConfigManager.ConfigData.PreviousFolderPath);
+                ExplorerViewModel.ExpandPreviousPath(AppConfigManager.ConfigData.PreviousFolderPath);
             }
         }
 
@@ -459,8 +459,7 @@ namespace Kchary.PhotoViewer.ViewModels
             SelectFolderPath = folderPath;
             UpdateContents();
 
-            var appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.ConfigData.PreviousFolderPath = SelectFolderPath;
+            AppConfigManager.ConfigData.PreviousFolderPath = SelectFolderPath;
         }
 
         /// <summary>
@@ -611,7 +610,29 @@ namespace Kchary.PhotoViewer.ViewModels
                         continue;
                     }
 
-                    Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        if (sender is BackgroundWorker {CancellationPending: true})
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+
+                        MediaInfoList.AddRange(queue);
+
+                        // If the image is not displayed at the time of loading, the image at the top of the list is displayed.
+                        if (!MediaInfoList.Any() || SelectedMedia != null)
+                        {
+                            return;
+                        }
+
+                        var firstImageData = MediaInfoList.First();
+                        if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(firstImageData.FilePath)?.ToLower()))
+                        {
+                            SelectedMedia = firstImageData;
+                        }
+                    });
+
                     queue.Clear();
                     tick = Environment.TickCount;
                 }
@@ -665,10 +686,7 @@ namespace Kchary.PhotoViewer.ViewModels
             catch (Exception ex)
             {
                 App.LogException(ex);
-
-                const string FileAccessErrorMessage = "File access error occurred";
-                const string FileAccessErrorTitle = "File access error";
-                App.ShowErrorMessageBox(FileAccessErrorMessage, FileAccessErrorTitle);
+                App.ShowErrorMessageBox("File access error occurred", "File access error");
 
                 return false;
             }

@@ -42,17 +42,20 @@ namespace Kchary.PhotoViewer.ViewModels
         public event EventHandler ChangeLinkageAppEvent;
 
         /// <summary>
+        /// Application configuration manager
+        /// </summary>
+        private static readonly AppConfigManager AppConfigManager = AppConfigManager.GetInstance();
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public LinkageAppViewModel()
         {
             LinkAppReferenceCommand = new DelegateCommand(LinkAppReferenceButtonClicked);
-            RegisterLinkAppCommand = new DelegateCommand(RegisterLinkAppButtonClicked);
-            DeleteLinkAppCommand = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
+            RegisterLinkAppCommand  = new DelegateCommand(RegisterLinkAppButtonClicked);
+            DeleteLinkAppCommand    = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
-            var appConfigManager = AppConfigManager.GetInstance();
-
-            var linkageAppList = appConfigManager.ConfigData.LinkageAppList;
+            var linkageAppList = AppConfigManager.ConfigData.LinkageAppList;
             if (linkageAppList == null || !linkageAppList.Any())
             {
                 return;
@@ -110,9 +113,8 @@ namespace Kchary.PhotoViewer.ViewModels
             LinkageAppList.Add(linkageApp);
 
             // Export information to Configure file.
-            var appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.SetLinkageApp(LinkageAppList);
-            appConfigManager.Export();
+            AppConfigManager.AddLinkageApp(linkageApp);
+            AppConfigManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
             LinkAppPath = "";
@@ -135,9 +137,8 @@ namespace Kchary.PhotoViewer.ViewModels
             LinkageAppList.Remove(deleteAppSetting);
 
             // Export information to configure file.
-            var appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.RemoveLinkageApp(LinkageAppList);
-            appConfigManager.Export();
+            AppConfigManager.RemoveLinkageApp(deleteAppSetting);
+            AppConfigManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
         }

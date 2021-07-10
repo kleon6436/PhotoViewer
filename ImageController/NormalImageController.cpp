@@ -1,34 +1,34 @@
-#include "pch.h"
+﻿#include "pch.h"
 /**
  * @file	NormalImageController.cpp
- * @author	kchary6436
+ * @author	kleon6436
  */
 
 #include "NormalImageController.h"
 
 namespace Kchary::ImageController::NormalImageControl
 {
-	int NormalImageController::GetImageData(const char* path, ImageData* imageData) const
+	int NormalImageController::GetImageData(const char path[], ImageData& imageData) const
 	{
 		// Read image data to mat.
 		auto img = cv::imread(path, cv::ImreadModes::IMREAD_COLOR);
 
 		const auto dataSize = img.total() * img.elemSize();
-		imageData->buffer = new std::uint8_t[dataSize];
-		memcpy(imageData->buffer, img.data, dataSize * sizeof(std::uint8_t));
+		imageData.buffer = new std::uint8_t[dataSize];
+		memcpy(imageData.buffer, img.data, dataSize * sizeof(std::uint8_t));
 
 		// Translate data to C#
-		imageData->size = static_cast<unsigned>(dataSize);
-		imageData->stride = static_cast<int>(img.step);
-		imageData->width = img.cols;
-		imageData->height = img.rows;
+		imageData.size = static_cast<unsigned int>(dataSize);
+		imageData.stride = static_cast<int>(img.step);
+		imageData.width = img.cols;
+		imageData.height = img.rows;
 
 		img.release();
 
 		return 0;
 	}
 
-	int NormalImageController::GetThumbnailImageData(const char* path, int resizeLongSideLength, ImageData* imageData) const
+	int NormalImageController::GetThumbnailImageData(const char path[], int resizeLongSideLength, ImageData& imageData) const
 	{
 		// Read image data to mat.
 		const auto imreadMode = GetImreadMode(resizeLongSideLength);
@@ -41,14 +41,14 @@ namespace Kchary::ImageController::NormalImageControl
 		cv::resize(img, resizeImg, cv::Size(), ratio, ratio, cv::INTER_AREA);
 
 		const auto dataSize = resizeImg.total() * resizeImg.elemSize();
-		imageData->buffer = new std::uint8_t[dataSize];
-		memcpy(imageData->buffer, resizeImg.data, dataSize * sizeof(std::uint8_t));
+		imageData.buffer = new std::uint8_t[dataSize];
+		memcpy(imageData.buffer, resizeImg.data, dataSize * sizeof(std::uint8_t));
 
 		// Translate data to C#
-		imageData->size = static_cast<unsigned>(dataSize);
-		imageData->stride = static_cast<int>(resizeImg.step);
-		imageData->width = resizeImg.cols;
-		imageData->height = resizeImg.rows;
+		imageData.size = static_cast<unsigned int>(dataSize);
+		imageData.stride = static_cast<int>(resizeImg.step);
+		imageData.width = resizeImg.cols;
+		imageData.height = resizeImg.rows;
 
 		img.release();
 		resizeImg.release();

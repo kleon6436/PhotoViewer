@@ -67,6 +67,11 @@ namespace Kchary.PhotoViewer.Views
 
         private const int MinSplTime = 1000;
 
+        /// <summary>
+        /// Application configuration manager
+        /// </summary>
+        private static readonly AppConfigManager AppConfigManager = AppConfigManager.GetInstance();
+
         public MainWindow()
         {
             // SplashScreenの表示
@@ -106,10 +111,7 @@ namespace Kchary.PhotoViewer.Views
             }
 
             var firstImageData = vm.MediaInfoList.First();
-            if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(firstImageData.FilePath)?.ToLower()))
-            {
-                vm.SelectedMedia = firstImageData;
-            }
+            vm.SelectedMedia = firstImageData;
         }
 
         /// <summary>
@@ -129,9 +131,8 @@ namespace Kchary.PhotoViewer.Views
             var hwnd = new WindowInteropHelper(this).Handle;
             NativeMethods.GetWindowPlacement(hwnd, out var placement);
 
-            var appConfigManager = AppConfigManager.GetInstance();
-            appConfigManager.ConfigData.WindowPlaceData = placement;
-            appConfigManager.Export();
+            AppConfigManager.ConfigData.PlaceData = placement;
+            AppConfigManager.Export();
         }
 
         /// <summary>
@@ -142,10 +143,10 @@ namespace Kchary.PhotoViewer.Views
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             // ListBoxのアイテム選択時は、そのアイテムまでスクロールする
-            var selectedItem = mediaListBox.SelectedItem;
+            var selectedItem = MediaListBox.SelectedItem;
             if (selectedItem != null)
             {
-                mediaListBox.ScrollIntoView(selectedItem);
+                MediaListBox.ScrollIntoView(selectedItem);
             }
 
             // Run GC.
@@ -201,9 +202,7 @@ namespace Kchary.PhotoViewer.Views
         {
             base.OnSourceInitialized(e);
 
-            var appConfigManager = AppConfigManager.GetInstance();
-
-            var windowPlacement = appConfigManager.ConfigData.WindowPlaceData;
+            var windowPlacement = AppConfigManager.ConfigData.PlaceData;
             windowPlacement.showCmd = (windowPlacement.showCmd == NativeMethods.Sw.ShowMinimized) ? NativeMethods.Sw.ShowNormal : windowPlacement.showCmd;
 
             var hwnd = new WindowInteropHelper(this).Handle;

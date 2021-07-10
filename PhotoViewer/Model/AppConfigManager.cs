@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Kchary.PhotoViewer.Model
@@ -65,21 +64,21 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Set list of linked applications.
+        /// Add list of linked applications.
         /// </summary>
-        /// <param name="linkageAppList">List of linked applications</param>
-        public void SetLinkageApp(IEnumerable<ExtraAppSetting> linkageAppList)
+        /// <param name="linkageApp">linked applications</param>
+        public void AddLinkageApp(ExtraAppSetting linkageApp)
         {
-            ConfigData.LinkageAppList = linkageAppList as List<ExtraAppSetting>;
+            ConfigData.LinkageAppList.Add(linkageApp);
         }
 
         /// <summary>
         /// Remove linked application from linked application list.
         /// </summary>
-        /// <param name="linkageAppList">List of linked applications</param>
-        public void RemoveLinkageApp(IEnumerable<ExtraAppSetting> linkageAppList)
+        /// <param name="linkageApp">linked applications</param>
+        public void RemoveLinkageApp(ExtraAppSetting linkageApp)
         {
-            ConfigData.LinkageAppList = linkageAppList as List<ExtraAppSetting>;
+            ConfigData.LinkageAppList.Remove(linkageApp);
         }
     }
 }

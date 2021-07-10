@@ -1,6 +1,6 @@
-/**
+﻿/**
  * @file	ImageData.h
- * @author	kchary6436
+ * @author	kleon6436
  */
 
 #pragma once

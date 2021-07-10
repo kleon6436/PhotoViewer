@@ -3,12 +3,25 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance viewmodel:LinkageAppViewModel}"
       d:DesignHeight="550" d:DesignWidth="600"
       Title="LinkageAppView">
     <Page.Background>
         <SolidColorBrush Color="#F0F0F0" />
     </Page.Background>
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/materialdesigncolor.blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.amber.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="150" />
@@ -24,8 +37,8 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding LinkAppPath}" Height="40" Width="350" FontSize="14" />
-            <Button Content="Reference" FontSize="15" Command="{Binding LinkAppReferenceCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="85" Margin="10,0,10,0" />
-            <Button Content="Register" FontSize="15" Command="{Binding RegisterLinkAppCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="85" />
+            <Button Content="Reference" Command="{Binding LinkAppReferenceCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="auto" Margin="10,0,10,0" />
+            <Button Content="Register" Command="{Binding RegisterLinkAppCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="auto" />
         </StackPanel>
 
         <ScrollViewer Grid.Row="2" Margin="10" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
@@ -33,7 +46,9 @@
                   ItemsSource="{Binding LinkageAppList, Mode=OneWay}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="True"
-                  VerticalGridLinesBrush="LightSlateGray" HorizontalGridLinesBrush="LightSlateGray">
+                  VerticalGridLinesBrush="#F0F0F0" HorizontalGridLinesBrush="#F0F0F0"
+                  materialDesign:DataGridAssist.CellPadding="4 2 2 2"
+                  materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="App name" Binding="{Binding AppName}" Width="auto" MinWidth="100">
                         <DataGridTextColumn.ElementStyle>
@@ -54,7 +69,7 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="Action" Width="70" CanUserResize="False">
+                    <DataGridTemplateColumn Header="Action" Width="90" CanUserResize="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="Delete" Command="{Binding Path=DataContext.DeleteLinkAppCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding}" />
