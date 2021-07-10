@@ -4,6 +4,7 @@
  * @author	kleon6436
  */
 
+#include <locale.h>
 #include <memory>
 #include "ImageControlLibrary.h"
 #include "RawImageController.h"
@@ -49,9 +50,6 @@ namespace Kchary::ImageController::Library
 
 	std::unique_ptr<char[]> ConvertWcharToChar(const wchar_t imagePath[])
 	{
-		// Handle character strings in Japanese.
-		setlocale(LC_CTYPE, "ja_JP.UTF-8");
-
 		// This is the number of null characters.
 		const auto imagePathLen = wcslen(imagePath) + 1;
 
@@ -60,7 +58,8 @@ namespace Kchary::ImageController::Library
 		auto path = std::make_unique<char[]>(requestBufferSize);
 
 		size_t convertedCharSize = 0;
-		wcstombs_s(&convertedCharSize, path.get(), requestBufferSize, imagePath, _TRUNCATE);
+		const auto locale = _create_locale(LC_CTYPE, "ja_JP.UTF-8");
+		_wcstombs_s_l(&convertedCharSize, path.get(), requestBufferSize, imagePath, _TRUNCATE, locale);
 
 		return std::move(path);
 	}
