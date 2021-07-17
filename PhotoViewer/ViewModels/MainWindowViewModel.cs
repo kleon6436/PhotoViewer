@@ -123,6 +123,11 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private static readonly AppConfigManager AppConfigManager = AppConfigManager.GetInstance();
 
+        /// <summary>
+        /// Default picture path
+        /// </summary>
+        private static readonly string DefaultPicturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
+
         public MainWindowViewModel()
         {
             // Set command.
@@ -179,8 +184,8 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             // Load image folder.
-            var picturePath = Environment.GetFolderPath(Environment.SpecialFolder.CommonPictures);
-            if (!string.IsNullOrEmpty(AppConfigManager.ConfigData.PreviousFolderPath))
+            var picturePath = DefaultPicturePath;
+            if (!string.IsNullOrEmpty(AppConfigManager.ConfigData.PreviousFolderPath) && Directory.Exists(AppConfigManager.ConfigData.PreviousFolderPath))
             {
                 picturePath = AppConfigManager.ConfigData.PreviousFolderPath;
             }
@@ -437,11 +442,12 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ExplorerViewModel.CreateDriveTreeItem();
 
-            var previousFolderPath = AppConfigManager.ConfigData.PreviousFolderPath;
-            if (!string.IsNullOrEmpty(previousFolderPath))
+            var previousFolderPath = DefaultPicturePath;
+            if (!string.IsNullOrEmpty(AppConfigManager.ConfigData.PreviousFolderPath) && Directory.Exists(AppConfigManager.ConfigData.PreviousFolderPath))
             {
-                ExplorerViewModel.ExpandPreviousPath(AppConfigManager.ConfigData.PreviousFolderPath);
+                previousFolderPath = AppConfigManager.ConfigData.PreviousFolderPath;
             }
+            ExplorerViewModel.ExpandPreviousPath(previousFolderPath);
         }
 
         /// <summary>
