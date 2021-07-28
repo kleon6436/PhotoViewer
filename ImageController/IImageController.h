@@ -13,19 +13,19 @@ public:
 	virtual ~IImageController() = default;
 
 	/**
-	 * @brief	This function is getting image data.
-	 * @param	path: Raw image file path.
-	 * @param	imageData: Image data
-	 * @return	Success: 0, Failure: -1
+	 * @brief	画像データを取得する
+	 * @param	path: 画像ファイルパス
+	 * @param	imageData: 画像データ(out)
+	 * @return	成功: 0, 失敗: -1
 	 */
 	virtual int GetImageData(const char path[], ImageData& imageData) const = 0;
 
 	/**
-	 * @brief	This function is getting thumbnail image data.
-	 * @param	path: Raw image file path.
-	 * @param	resizeLongSideLength: Long side length of a resize image.
-	 * @param	imageData: Image data
-	 * @return	Success: 0, Failure: -1
+	 * @brief	サムネイル画像を取得する
+	 * @param	path: 画像ファイルパス
+	 * @param	resizeLongSideLength: リサイズする長辺の長さ
+	 * @param	imageData: 画像データ(out)
+	 * @return	成功: 0, 失敗: -1
 	 */
 	virtual int GetThumbnailImageData(const char path[], int resizeLongSideLength, ImageData& imageData) const = 0;
 };

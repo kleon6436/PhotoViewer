@@ -5,6 +5,9 @@
 
 #pragma once
 
+/*!
+ * @brief 画像データ構造体
+ */
 typedef struct ImageData
 {
 	std::uint8_t* buffer;
