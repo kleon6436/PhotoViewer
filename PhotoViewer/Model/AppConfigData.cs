@@ -27,6 +27,6 @@ namespace Kchary.PhotoViewer.Model
         /// <remarks>
         /// 位置、表示状態などが保持されている
         /// </remarks>
-        public MainWindow.NativeMethods.WindowPlacement PlaceData;
+        public MainWindow.NativeMethods.Placement PlaceData;
     }
 }

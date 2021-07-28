@@ -7,17 +7,17 @@ namespace Kchary.PhotoViewer.Views
     /// <summary>
     /// Interaction logic for ExifDeleteToolView.xaml
     /// </summary>
-    public partial class ImageEditToolView : Window
+    public partial class ImageEditToolView
     {
         public ImageEditToolView()
         {
             InitializeComponent();
 
-            DataContextChanged += (o, e) =>
+            DataContextChanged += (_, _) =>
             {
                 if (DataContext is ImageEditToolViewModel vm)
                 {
-                    vm.CloseView += (sender, args) =>
+                    vm.CloseView += (_, _) =>
                     {
                         // Release memory.
                         App.RunGc();

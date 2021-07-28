@@ -16,17 +16,17 @@ namespace Kchary.PhotoViewer.Model
         private const string LinkAppDataName = "linkage_app_data";
         private const string LinkAppNameElemName = "name";
         private const string LinkAppPathElemName = "path";
-        private const string WindowPlacementElemName = "window_placement";
-        private const string WindowPlacementTopElemName = "top";
-        private const string WindowPlacementLeftElemName = "left";
-        private const string WindowPlacementRightElemName = "right";
-        private const string WindowsPlacementButtomElemName = "buttom";
-        private const string WindowPlacementMaxPosXElemName = "maxPosX";
-        private const string WindowPlacementMaxPosYElemName = "maxPosY";
-        private const string WindowPlacementMinPosXElemName = "minPosX";
-        private const string WindowPlacementMinPosYElemName = "minPosY";
-        private const string WindowPlacementFlagElemName = "windowFlag";
-        private const string WindowPlacementSwElemName = "sw";
+        private const string PlacementElemName = "window_placement";
+        private const string PlacementTopElemName = "top";
+        private const string PlacementLeftElemName = "left";
+        private const string PlacementRightElemName = "right";
+        private const string PlacementButtomElemName = "buttom";
+        private const string PlacementMaxPosXElemName = "maxPosX";
+        private const string PlacementMaxPosYElemName = "maxPosY";
+        private const string PlacementMinPosXElemName = "minPosX";
+        private const string PlacementMinPosYElemName = "minPosY";
+        private const string PlacementFlagElemName = "windowFlag";
+        private const string PlacementSwElemName = "sw";
 
         /// <summary>
         /// アプリケーション設定情報をXMLファイルからインポートする
@@ -151,17 +151,17 @@ namespace Kchary.PhotoViewer.Model
         /// <param name="configData">アプリケーション設定データ</param>
         private static XElement CreateWindowPlacementXml(AppConfigData configData)
         {
-            var dataElement = new XElement(WindowPlacementElemName);
-            var windowPlaceTopElement = new XElement(WindowPlacementTopElemName, new XText(configData.PlaceData.normalPosition.Top.ToString()));
-            var windowPlaceLeftElement = new XElement(WindowPlacementLeftElemName, new XText(configData.PlaceData.normalPosition.Left.ToString()));
-            var windowPlaceRightElement = new XElement(WindowPlacementRightElemName, new XText(configData.PlaceData.normalPosition.Right.ToString()));
-            var windowPlaceButtonElement = new XElement(WindowsPlacementButtomElemName, new XText(configData.PlaceData.normalPosition.Bottom.ToString()));
-            var windowMaxPositionX = new XElement(WindowPlacementMaxPosXElemName, new XText(configData.PlaceData.maxPosition.X.ToString()));
-            var windowMaxPositionY = new XElement(WindowPlacementMaxPosYElemName, new XText(configData.PlaceData.maxPosition.Y.ToString()));
-            var windowMinPositionX = new XElement(WindowPlacementMinPosXElemName, new XText(configData.PlaceData.minPosition.X.ToString()));
-            var windowMinPositionY = new XElement(WindowPlacementMinPosYElemName, new XText(configData.PlaceData.minPosition.Y.ToString()));
-            var windowFlag = new XElement(WindowPlacementFlagElemName, new XText(configData.PlaceData.flags.ToString()));
-            var windowSwElement = new XElement(WindowPlacementSwElemName, new XText(configData.PlaceData.showCmd.ToString()));
+            var dataElement = new XElement(PlacementElemName);
+            var windowPlaceTopElement = new XElement(PlacementTopElemName, new XText(configData.PlaceData.normalPosition.Top.ToString()));
+            var windowPlaceLeftElement = new XElement(PlacementLeftElemName, new XText(configData.PlaceData.normalPosition.Left.ToString()));
+            var windowPlaceRightElement = new XElement(PlacementRightElemName, new XText(configData.PlaceData.normalPosition.Right.ToString()));
+            var windowPlaceButtonElement = new XElement(PlacementButtomElemName, new XText(configData.PlaceData.normalPosition.Bottom.ToString()));
+            var windowMaxPositionX = new XElement(PlacementMaxPosXElemName, new XText(configData.PlaceData.maxPosition.X.ToString()));
+            var windowMaxPositionY = new XElement(PlacementMaxPosYElemName, new XText(configData.PlaceData.maxPosition.Y.ToString()));
+            var windowMinPositionX = new XElement(PlacementMinPosXElemName, new XText(configData.PlaceData.minPosition.X.ToString()));
+            var windowMinPositionY = new XElement(PlacementMinPosYElemName, new XText(configData.PlaceData.minPosition.Y.ToString()));
+            var windowFlag = new XElement(PlacementFlagElemName, new XText(configData.PlaceData.flags.ToString()));
+            var windowSwElement = new XElement(PlacementSwElemName, new XText(configData.PlaceData.showCmd.ToString()));
 
             dataElement.Add(windowPlaceTopElement);
             dataElement.Add(windowPlaceLeftElement);
@@ -184,17 +184,17 @@ namespace Kchary.PhotoViewer.Model
         /// <param name="configData">アプリケーション設定データ</param>
         private static void ParseWindowPlacementXml(XDocument doc, AppConfigData configData)
         {
-            var dataElement = doc.Root?.Element(WindowPlacementElemName);
-            var windowPlaceTopElement = dataElement?.Element(WindowPlacementTopElemName);
-            var windowPlaceLeftElement = dataElement?.Element(WindowPlacementLeftElemName);
-            var windowPlaceRightElement = dataElement?.Element(WindowPlacementRightElemName);
-            var windowPlaceButtomElement = dataElement?.Element(WindowsPlacementButtomElemName);
-            var windowMaxPositionX = dataElement?.Element(WindowPlacementMaxPosXElemName);
-            var windowMaxPositionY = dataElement?.Element(WindowPlacementMaxPosYElemName);
-            var windowMinPositionX = dataElement?.Element(WindowPlacementMinPosXElemName);
-            var windowMinPositionY = dataElement?.Element(WindowPlacementMinPosYElemName);
-            var windowFlag = dataElement?.Element(WindowPlacementFlagElemName);
-            var windowSwElement = dataElement?.Element(WindowPlacementSwElemName);
+            var dataElement = doc.Root?.Element(PlacementElemName);
+            var windowPlaceTopElement = dataElement?.Element(PlacementTopElemName);
+            var windowPlaceLeftElement = dataElement?.Element(PlacementLeftElemName);
+            var windowPlaceRightElement = dataElement?.Element(PlacementRightElemName);
+            var windowPlaceButtomElement = dataElement?.Element(PlacementButtomElemName);
+            var windowMaxPositionX = dataElement?.Element(PlacementMaxPosXElemName);
+            var windowMaxPositionY = dataElement?.Element(PlacementMaxPosYElemName);
+            var windowMinPositionX = dataElement?.Element(PlacementMinPosXElemName);
+            var windowMinPositionY = dataElement?.Element(PlacementMinPosYElemName);
+            var windowFlag = dataElement?.Element(PlacementFlagElemName);
+            var windowSwElement = dataElement?.Element(PlacementSwElemName);
 
             configData.PlaceData.normalPosition.Top = Convert.ToInt32(windowPlaceTopElement?.Value);
             configData.PlaceData.normalPosition.Left = Convert.ToInt32(windowPlaceLeftElement?.Value);
@@ -204,7 +204,7 @@ namespace Kchary.PhotoViewer.Model
             configData.PlaceData.maxPosition.Y = Convert.ToInt32(windowMaxPositionY?.Value);
             configData.PlaceData.minPosition.X = Convert.ToInt32(windowMinPositionX?.Value);
             configData.PlaceData.minPosition.Y = Convert.ToInt32(windowMinPositionY?.Value);
-            configData.PlaceData.length = Marshal.SizeOf(typeof(MainWindow.NativeMethods.WindowPlacement));
+            configData.PlaceData.length = Marshal.SizeOf(typeof(MainWindow.NativeMethods.Placement));
             configData.PlaceData.flags = Convert.ToInt32(windowFlag?.Value);
             if (windowSwElement == null)
             {
