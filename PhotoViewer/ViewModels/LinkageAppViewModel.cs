@@ -10,10 +10,10 @@ using System.Windows.Input;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public class LinkageAppViewModel : BindableBase
+    public sealed class LinkageAppViewModel : BindableBase
     {
         /// <summary>
-        /// Maximum number of link application.
+        /// 登録アプリ数の最大値
         /// </summary>
         private const int MaxLinkAppNum = 10;
 
@@ -21,33 +21,48 @@ namespace Kchary.PhotoViewer.ViewModels
 
         private string linkAppPath;
 
+        /// <summary>
+        /// 登録アプリのパス
+        /// </summary>
         public string LinkAppPath
         {
             get => linkAppPath;
             set => SetProperty(ref linkAppPath, value);
         }
 
+        /// <summary>
+        /// 登録アプリリスト
+        /// </summary>
         public ObservableCollection<ExtraAppSetting> LinkageAppList { get; } = new();
 
         #endregion UI binding parameter
 
         #region Command
 
+        /// <summary>
+        /// 参照ボタンのコマンド
+        /// </summary>
         public ICommand LinkAppReferenceCommand { get; }
+        
+        /// <summary>
+        /// 登録ボタンのコマンド
+        /// </summary>
         public ICommand RegisterLinkAppCommand { get; }
+        
+        /// <summary>
+        /// 削除ボタンのコマンド
+        /// </summary>
         public ICommand DeleteLinkAppCommand { get; }
 
         #endregion Command
 
+        /// <summary>
+        /// 登録アプリを変更した場合のイベント
+        /// </summary>
         public event EventHandler ChangeLinkageAppEvent;
 
         /// <summary>
-        /// Application configuration manager
-        /// </summary>
-        private static readonly AppConfigManager AppConfigManager = AppConfigManager.GetInstance();
-
-        /// <summary>
-        /// Constructor
+        /// コンストラクタ
         /// </summary>
         public LinkageAppViewModel()
         {
@@ -55,7 +70,7 @@ namespace Kchary.PhotoViewer.ViewModels
             RegisterLinkAppCommand  = new DelegateCommand(RegisterLinkAppButtonClicked);
             DeleteLinkAppCommand    = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
 
-            var linkageAppList = AppConfigManager.ConfigData.LinkageAppList;
+            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
             if (linkageAppList == null || !linkageAppList.Any())
             {
                 return;
@@ -66,7 +81,7 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// Event when the reference button is pressed.
+        /// 参照ボタンを押下時の処理
         /// </summary>
         private void LinkAppReferenceButtonClicked()
         {
@@ -95,7 +110,7 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// Event when register button is pressed.
+        /// 登録ボタンを押下時の処理
         /// </summary>
         private void RegisterLinkAppButtonClicked()
         {
@@ -112,16 +127,16 @@ namespace Kchary.PhotoViewer.ViewModels
 
             LinkageAppList.Add(linkageApp);
 
-            // Export information to Configure file.
-            AppConfigManager.AddLinkageApp(linkageApp);
-            AppConfigManager.Export();
+            var applicationManager = AppConfigManager.GetInstance();
+            applicationManager.AddLinkageApp(linkageApp);
+            applicationManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
             LinkAppPath = "";
         }
 
         /// <summary>
-        /// Event when delete button is pressed.
+        /// 削除ボタンを押下時の処理
         /// </summary>
         private void DeleteLinkAppButtonClicked(ExtraAppSetting deleteAppSetting)
         {
@@ -136,9 +151,9 @@ namespace Kchary.PhotoViewer.ViewModels
             }
             LinkageAppList.Remove(deleteAppSetting);
 
-            // Export information to configure file.
-            AppConfigManager.RemoveLinkageApp(deleteAppSetting);
-            AppConfigManager.Export();
+            var applicationManager = AppConfigManager.GetInstance();
+            applicationManager.RemoveLinkageApp(deleteAppSetting);
+            applicationManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
         }

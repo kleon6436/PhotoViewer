@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
-    /// Class that acquires an icon using the Windows API.
+    /// Windows APIを用いたアイコン生成クラス
     /// </summary>
     public static class WindowsIconCreator
     {

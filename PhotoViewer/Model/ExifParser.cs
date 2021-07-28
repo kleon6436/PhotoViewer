@@ -4,11 +4,15 @@ using System.IO;
 
 namespace Kchary.PhotoViewer.Model
 {
+    /// <summary>
+    /// Exif情報のパースクラス
+    /// </summary>
     public static class ExifParser
     {
         /// <summary>
-        /// Set exif data in MediaInfo.
+        /// ファイルからExif情報を取得する
         /// </summary>
+        /// <param name="filePath">画像のファイルパス</param>
         [STAThread]
         public static IEnumerable<ExifInfo> GetExifDataFromFile(string filePath)
         {
@@ -17,44 +21,28 @@ namespace Kchary.PhotoViewer.Model
             var objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
             var folderItem = objFolder.ParseName(Path.GetFileName(filePath));
 
-            // Get file name.
             yield return GetFileName(filePath);
-            // Get shooting date and time.
             yield return GetMediaDate(objFolder, folderItem);
-            // Get camera model information.
             yield return GetCameraModel(objFolder, folderItem);
-            // Get camera manufacturer information.
             yield return GetCameraManufacturer(objFolder, folderItem);
-            // Get bit depth.
             yield return GetBitDepth(objFolder, folderItem);
-            // Get ISO data.
             yield return GetIso(objFolder, folderItem);
-            // Get focal length.
             yield return GetFocusLength(objFolder, folderItem);
-            // Get metering mode.
             yield return GetMeteringMode(objFolder, folderItem);
-            // Get image width.
             yield return GetImageWidth(objFolder, folderItem);
-            // Get image height.
             yield return GetImageHeight(objFolder, folderItem);
-            // Get image width resolution.
             yield return GetImageResolutionWidth(objFolder, folderItem);
-            // Get image height resolution.
             yield return GetImageResolutionHeight(objFolder, folderItem);
-            // Get aperture value.
             yield return GetFNumber(objFolder, folderItem);
-            // Get shutter speed value.
             yield return GetShutterSpeed(objFolder, folderItem);
-            // Get exposure program.
             yield return GetExposeMode(objFolder, folderItem);
-            // Get white balance.
             yield return GetWhiteBalance(objFolder, folderItem);
         }
 
         /// <summary>
-        /// Get file name.
+        /// ファイル名を取得する
         /// </summary>
-        /// <param name="filePath">filePath</param>
+        /// <param name="filePath">画像のファイルパス</param>
         private static ExifInfo GetFileName(string filePath)
         {
             var propertyValue = Path.GetFileName(filePath);
@@ -63,8 +51,10 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get shooting date and time.
+        /// ファイル更新日時を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetMediaDate(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 3);
@@ -73,8 +63,10 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get camera model information.
+        /// カメラ情報を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetCameraModel(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 30);
@@ -83,8 +75,10 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get camera manufacturer information.
+        /// カメラの製造メーカーを取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetCameraManufacturer(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 32);
@@ -93,52 +87,58 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get image width.
+        /// カメラ情報を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetImageWidth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            // Width
             var propertyValue = objFolder.GetDetailsOf(folderItem, 176);
             const string PropertyText = "Width";
             return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
-        /// Get image height.
+        /// 画像の幅と高さを取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetImageHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            // Height
             var propertyValue = objFolder.GetDetailsOf(folderItem, 178);
             const string PropertyText = "Height";
             return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
-        /// Get image width resolution.
+        /// 画像の解像度(幅側)を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetImageResolutionWidth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            // Horizon resolution
             var propertyValue = objFolder.GetDetailsOf(folderItem, 175);
             const string PropertyText = "Horizon resolution";
             return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
-        /// Get image height resolution.
+        /// 画像の解像度(高さ側)を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetImageResolutionHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            // Vertical resolution
             var propertyValue = objFolder.GetDetailsOf(folderItem, 177);
             const string PropertyText = "Vertical resolution";
             return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
-        /// Get bit depth.
+        /// ビット深度を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetBitDepth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 174);
@@ -147,30 +147,34 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get shutter speed and aperture value.
+        /// シャッター速度を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetShutterSpeed(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            // Shutter speed
             var propertyValue = objFolder.GetDetailsOf(folderItem, 259);
             const string PropertyText = "Shutter speed";
             return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
-        /// Get aperture value.
+        /// F値を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetFNumber(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            // F number
             var propertyValue = objFolder.GetDetailsOf(folderItem, 260);
             const string PropertyText = "F number";
             return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
-        /// Get ISO data.
+        /// ISO値を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetIso(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 264);
@@ -179,8 +183,10 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get focal length.
+        /// 焦点距離を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetFocusLength(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 262);
@@ -189,30 +195,34 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get exposure program and white balance.
+        /// 露光プログラムを取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetExposeMode(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            // Exposure program
             var propertyValue = objFolder.GetDetailsOf(folderItem, 258);
             const string PropertyText = "Exposure program";
             return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
-        /// Get  white balance.
+        /// ホワイトバランスの情報を取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetWhiteBalance(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
-            // White balance
             var propertyValue = objFolder.GetDetailsOf(folderItem, 275);
             const string PropertyText = "White balance";
             return new ExifInfo(PropertyText, propertyValue);
         }
 
         /// <summary>
-        /// Get metering mode.
+        /// 露光モードを取得する
         /// </summary>
+        /// <param name="objFolder">フォルダ情報</param>
+        /// <param name="folderItem">ファイル情報</param>
         private static ExifInfo GetMeteringMode(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
         {
             var propertyValue = objFolder.GetDetailsOf(folderItem, 269);

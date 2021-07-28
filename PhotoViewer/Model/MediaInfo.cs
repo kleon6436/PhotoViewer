@@ -5,10 +5,13 @@ using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Model
 {
+    /// <summary>
+    /// メディア情報クラス
+    /// </summary>
     public sealed class MediaInfo : BindableBase
     {
         /// <summary>
-        /// Media type
+        /// メディアのタイプ
         /// </summary>
         public enum MediaType
         {
@@ -19,14 +22,14 @@ namespace Kchary.PhotoViewer.Model
         #region Media Parameters
 
         /// <summary>
-        /// Media type
+        /// メディアタイプ
         /// </summary>
         public MediaType ContentMediaType => CheckMediaType(FilePath);
 
         private BitmapSource thumbnailImage;
 
         /// <summary>
-        /// Image of thumbnail
+        /// サムネイル画像
         /// </summary>
         public BitmapSource ThumbnailImage
         {
@@ -37,7 +40,7 @@ namespace Kchary.PhotoViewer.Model
         private string fileName;
 
         /// <summary>
-        /// File name
+        /// ファイル名
         /// </summary>
         public string FileName
         {
@@ -46,16 +49,16 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// File path
+        /// ファイルパス
         /// </summary>
         public string FilePath { get; set; }
 
         #endregion Media Parameters
 
         /// <summary>
-        /// Create thumbnail image.
+        /// サムネイル画像を作成する
         /// </summary>
-        /// <returns>True: Success、False: Failure</returns>
+        /// <returns>True: 成功、False: 失敗</returns>
         public bool CreateThumbnailImage()
         {
             try
@@ -81,10 +84,10 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get the type of media file.
+        /// ファイルのタイプを確認する
         /// </summary>
-        /// <param name="filePath">File path to check</param>
-        /// <returns>File type</returns>
+        /// <param name="filePath">確認するファイルパス</param>
+        /// <returns>メディアタイプ</returns>
         private static MediaType CheckMediaType(string filePath)
         {
             var extension = Path.GetExtension(filePath).ToLower();

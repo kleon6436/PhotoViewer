@@ -5,20 +5,27 @@ using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public class SettingViewModel : BindableBase
+    public sealed class SettingViewModel : BindableBase
     {
+        private SelectPage selectPageButtonValue;
+        private Page displayPage;
+
+        /// <summary>
+        /// コンテキストメニューの再読み込みイベント
+        /// </summary>
+        public event EventHandler ReloadContextMenuEvent;
+
+        /// <summary>
+        /// 読み込むページのEnum
+        /// </summary>
         public enum SelectPage
         {
             LinkageAppPage,
             InformationPage,
         }
 
-        public event EventHandler ReloadContextMenuEvent;
-
-        private SelectPage selectPageButtonValue;
-
         /// <summary>
-        /// Page selected by radio button
+        /// ラジオボタンで設定された読み込むページの情報
         /// </summary>
         public SelectPage SelectPageButtonValue
         {
@@ -50,8 +57,6 @@ namespace Kchary.PhotoViewer.ViewModels
             }
         }
 
-        private Page displayPage;
-
         /// <summary>
         /// Page information to display
         /// </summary>
@@ -62,19 +67,19 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// Constructor
+        /// コンストラクタ
         /// </summary>
         public SettingViewModel()
         {
-            // Default page setup
+            // デフォルトはリンク登録ページとする
             SelectPageButtonValue = SelectPage.LinkageAppPage;
         }
 
         /// <summary>
-        /// Event when the status of the linked application is changed.
+        /// 登録アプリ変更時の処理
         /// </summary>
         /// <param name="sender">LinkageAppViewModel</param>
-        /// <param name="e">Argument</param>
+        /// <param name="e">引数情報</param>
         private void ChangeLinkageApp(object sender, EventArgs e)
         {
             if (sender is not LinkageAppViewModel)

@@ -11,14 +11,20 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class ExplorerViewModel : BindableBase
     {
-        public event EventHandler ChangeSelectItemEvent;
-
-        public ObservableCollection<ExplorerItem> ExplorerItems { get; } = new();
-
         private ExplorerItem selectedItem;
 
         /// <summary>
-        /// Selected item information
+        /// アイテム選択を変更したときのイベント
+        /// </summary>
+        public event EventHandler ChangeSelectItemEvent;
+
+        /// <summary>
+        /// ツリーに表示するアイテムリスト
+        /// </summary>
+        public ObservableCollection<ExplorerItem> ExplorerItems { get; } = new();
+
+        /// <summary>
+        /// 選択したアイテム情報
         /// </summary>
         public ExplorerItem SelectedItem
         {
@@ -36,7 +42,7 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// Create a TreeItem for drive.
+        /// ドライブツリーを作成する
         /// </summary>
         public void CreateDriveTreeItem()
         {
@@ -49,12 +55,15 @@ namespace Kchary.PhotoViewer.ViewModels
                     continue;
                 }
 
-                // Create drive tree item
                 var driveItem = new ExplorerItem(drive.Name, true);
                 ExplorerItems.Add(driveItem);
             }
         }
 
+        /// <summary>
+        /// 前回表示していたフォルダパスを展開する
+        /// </summary>
+        /// <param name="previousFolderPath">前回表示していたフォルダパス</param>
         public void ExpandPreviousPath(string previousFolderPath)
         {
             var parentPathList = new List<string>();
@@ -69,7 +78,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 if (count == 0)
                 {
-                    // Check drive information and expand tree.
+                    // ドライブの情報を確認し、ツリーを展開する
                     var previousDrive = parentPath;
                     var driveItem = ExplorerItems.First(item => item.ExplorerItemPath == previousDrive);
 
@@ -79,7 +88,6 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
                 else if (count == parentPathList.Count - 1)
                 {
-                    // Confirm directory information and select item.
                     var directoryItem = GetDirectoryItem(parentPath, previousItem);
                     if (directoryItem == null)
                     {
@@ -90,7 +98,6 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
                 else
                 {
-                    // Confirm directory information and select item
                     var directoryItem = GetDirectoryItem(parentPath, previousItem);
                     if (directoryItem == null)
                     {
@@ -98,7 +105,6 @@ namespace Kchary.PhotoViewer.ViewModels
                     }
 
                     directoryItem.IsExpanded = true;
-
                     previousItem = directoryItem;
                 }
 
@@ -107,20 +113,17 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// Get all parent directory names.
+        /// すべての親ディレクトリのリストを取得する
         /// </summary>
         private static void GetAllParentPathList(string previousFolderPath, ICollection<string> parentPathList)
         {
-            // Get the lowest directory name.
             var directoryInfo = new DirectoryInfo(previousFolderPath);
             parentPathList.Add(directoryInfo.FullName);
-
-            // Obtain parent directories in order and add to the list.
             GetParentPathList(previousFolderPath, parentPathList);
         }
 
         /// <summary>
-        /// Get list of parent directory names.
+        /// 親ディレクトリのパスを取得する
         /// </summary>
         private static void GetParentPathList(string directoryPath, ICollection<string> parentPathList)
         {
@@ -133,13 +136,12 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
 
                 parentPathList.Add(parentDirectory.FullName);
-
                 directoryPath = parentDirectory.FullName;
             }
         }
 
         /// <summary>
-        /// Get ExplorerItem of directory.
+        /// ディレクトリに含まれるアイテムを取得する
         /// </summary>
         private static ExplorerItem GetDirectoryItem(string parentPath, ItemsControl previousItem)
         {

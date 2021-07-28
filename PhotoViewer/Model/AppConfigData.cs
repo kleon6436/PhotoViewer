@@ -4,23 +4,29 @@ using Kchary.PhotoViewer.Views;
 namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
-    /// Data class of application setting information
+    /// アプリケーションデータクラス
     /// </summary>
     public sealed class AppConfigData
     {
         /// <summary>
-        /// Folder path at the time of the previous end.
+        /// 前回のフォルダパス
         /// </summary>
         public string PreviousFolderPath { get; set; }
 
         /// <summary>
-        /// Registered linked application.
+        /// 登録アプリリスト
         /// </summary>
+        /// <remarks>
+        /// 登録アプリの一覧表示に使用される
+        /// </remarks>
         public List<ExtraAppSetting> LinkageAppList { get; set; } = new();
 
         /// <summary>
-        /// Window display status
+        /// Windowの設定情報
         /// </summary>
+        /// <remarks>
+        /// 位置、表示状態などが保持されている
+        /// </remarks>
         public MainWindow.NativeMethods.WindowPlacement PlaceData;
     }
 }

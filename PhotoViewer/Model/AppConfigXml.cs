@@ -6,7 +6,7 @@ using Kchary.PhotoViewer.Views;
 namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
-    /// XML management class of application setting information.
+    /// アプリケーション設定ファイル用のXML管理クラス
     /// </summary>
     public sealed class AppConfigXml
     {
@@ -28,39 +28,42 @@ namespace Kchary.PhotoViewer.Model
         private const string WindowPlacementFlagElemName = "windowFlag";
         private const string WindowPlacementSwElemName = "sw";
 
-        // File path of application setting information.
-        private readonly string appConfigFilePath;
-
-        public AppConfigXml(string filePath)
+        /// <summary>
+        /// アプリケーション設定情報をXMLファイルからインポートする
+        /// </summary>
+        /// <param name="filePath">XMLファイルパス</param>
+        /// <param name="configData">アプリケーション設定データ</param>
+        public static void Import(string filePath, AppConfigData configData)
         {
-            appConfigFilePath = filePath;
-        }
+            var doc = XDocument.Load(filePath);
 
-        public void Import(AppConfigData configData)
-        {
-            var xdoc = XDocument.Load(appConfigFilePath);
-
-            ParsePreviousPathXml(xdoc, configData);
-            ParseLinkageAppXml(xdoc, configData);
-            ParseWindowPlacementXml(xdoc, configData);
-        }
-
-        public void Export(AppConfigData configData)
-        {
-            var xdoc = new XDocument(new XDeclaration("1.0", "utf-8", null));
-            var xdata = new XElement("data");
-
-            xdata.Add(CreatePreviousPathXml(configData));
-            xdata.Add(CreateLinkageAppXml(configData));
-            xdata.Add(CreateWindowPlacementXml(configData));
-            xdoc.Add(xdata);
-
-            xdoc.Save(appConfigFilePath);
+            ParsePreviousPathXml(doc, configData);
+            ParseLinkageAppXml(doc, configData);
+            ParseWindowPlacementXml(doc, configData);
         }
 
         /// <summary>
-        /// Generate xml of previous folder path.
+        /// アプリケーション設定情報を既定XMLファイルに出力する
         /// </summary>
+        /// <param name="filePath">XMLファイルパス</param>
+        /// <param name="configData">アプリケーション設定データ</param>
+        public static void Export(string filePath, AppConfigData configData)
+        {
+            var doc = new XDocument(new XDeclaration("1.0", "utf-8", null));
+            var data = new XElement("data");
+
+            data.Add(CreatePreviousPathXml(configData));
+            data.Add(CreateLinkageAppXml(configData));
+            data.Add(CreateWindowPlacementXml(configData));
+            doc.Add(data);
+
+            doc.Save(filePath);
+        }
+
+        /// <summary>
+        /// 前回のフォルダパスのXMLデータを作成する
+        /// </summary>
+        /// <param name="configData">アプリケーション設定データ</param>
         private static XElement CreatePreviousPathXml(AppConfigData configData)
         {
             var dataElement = new XElement(PreviousFolderElemName);
@@ -71,11 +74,13 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Parse xml of previous path.
+        /// 前回のフォルダパスをXMLから読み込む
         /// </summary>
-        private static void ParsePreviousPathXml(XDocument xdoc, AppConfigData configData)
+        /// <param name="doc">XMLデータ</param>
+        /// <param name="configData">アプリケーション設定データ</param>
+        private static void ParsePreviousPathXml(XDocument doc, AppConfigData configData)
         {
-            var dataElement = xdoc.Root?.Element(PreviousFolderElemName);
+            var dataElement = doc.Root?.Element(PreviousFolderElemName);
             var previousPath = dataElement?.Element(PreviousPathElemName);
 
             if (previousPath == null)
@@ -86,8 +91,9 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Generate XML for linked application.
+        /// 登録アプリリストのXMLデータを作成する
         /// </summary>
+        /// <param name="configData">アプリケーション設定データ</param>
         private static XElement CreateLinkageAppXml(AppConfigData configData)
         {
             var linkageElement = new XElement(LinkAppElemName);
@@ -109,11 +115,13 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Parse the XML of the linked application.
+        /// 登録アプリリストをXMLデータから取得する
         /// </summary>
-        private static void ParseLinkageAppXml(XDocument xdoc, AppConfigData configData)
+        /// <param name="doc">XMLデータ</param>
+        /// <param name="configData">アプリケーション設定データ</param>
+        private static void ParseLinkageAppXml(XDocument doc, AppConfigData configData)
         {
-            var linkageElement = xdoc.Root?.Element(LinkAppElemName);
+            var linkageElement = doc.Root?.Element(LinkAppElemName);
             var dataElements = linkageElement?.Elements(LinkAppDataName);
 
             if (dataElements == null)
@@ -138,8 +146,9 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Generate XML of Window size and position.
+        /// ウィンドウサイズ、位置などの情報のXMLデータを作成する
         /// </summary>
+        /// <param name="configData">アプリケーション設定データ</param>
         private static XElement CreateWindowPlacementXml(AppConfigData configData)
         {
             var dataElement = new XElement(WindowPlacementElemName);
@@ -169,11 +178,13 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Parse xml of window size and position.
+        /// ウィンドウサイズ、位置などの情報をXMLデータから取得する
         /// </summary>
-        private static void ParseWindowPlacementXml(XDocument xdoc, AppConfigData configData)
+        /// <param name="doc">XMLデータ</param>
+        /// <param name="configData">アプリケーション設定データ</param>
+        private static void ParseWindowPlacementXml(XDocument doc, AppConfigData configData)
         {
-            var dataElement = xdoc.Root?.Element(WindowPlacementElemName);
+            var dataElement = doc.Root?.Element(WindowPlacementElemName);
             var windowPlaceTopElement = dataElement?.Element(WindowPlacementTopElemName);
             var windowPlaceLeftElement = dataElement?.Element(WindowPlacementLeftElemName);
             var windowPlaceRightElement = dataElement?.Element(WindowPlacementRightElemName);
