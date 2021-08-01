@@ -8,14 +8,14 @@ namespace Kchary.PhotoViewer.ViewModels
     public sealed class ExifInfoViewModel : BindableBase
     {
         /// <summary>
-        /// List of exif information
+        /// Exif情報データを保持するリスト
         /// </summary>
         public ObservableCollection<ExifInfo> ExifDataList { get; } = new();
 
         /// <summary>
-        /// Set exif information.
+        /// Exif情報を設定する
         /// </summary>
-        /// <param name="filePath">File path</param>
+        /// <param name="filePath">画像ファイルパス</param>
         public void SetExif(string filePath)
         {
             Application.Current.Dispatcher.Invoke(() =>

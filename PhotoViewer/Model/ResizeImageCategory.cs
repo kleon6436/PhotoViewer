@@ -1,9 +1,12 @@
 ﻿namespace Kchary.PhotoViewer.Model
 {
+    /// <summary>
+    /// 編集画面に表示するリサイズカテゴリクラス
+    /// </summary>
     public sealed class ResizeImageCategory
     {
         /// <summary>
-        /// Resize category enum
+        /// リサイズカテゴリ
         /// </summary>
         public enum ResizeCategory
         {
@@ -14,17 +17,17 @@
         }
 
         /// <summary>
-        /// Resize category name
+        /// リサイズカテゴリ名
         /// </summary>
         public string Name { get; init; }
 
         /// <summary>
-        /// Resize category
+        /// リサイズカテゴリ
         /// </summary>
         public ResizeCategory Category { get; init; }
 
         /// <summary>
-        /// Resize long side value
+        /// リサイズする長辺の長さ
         /// </summary>
         public int ResizeLongSideValue { get; init; }
     }

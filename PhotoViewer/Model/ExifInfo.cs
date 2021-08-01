@@ -2,12 +2,16 @@
 
 namespace Kchary.PhotoViewer.Model
 {
+    /// <summary>
+    /// Exif表示用クラス
+    /// </summary>
     public sealed class ExifInfo : BindableBase
     {
         private string exifParameterText;
+        private string exifParameterValue;
 
         /// <summary>
-        /// Exif parameter name
+        /// Exifパラメータ名
         /// </summary>
         public string ExifParameterText
         {
@@ -15,10 +19,8 @@ namespace Kchary.PhotoViewer.Model
             set => SetProperty(ref exifParameterText, value);
         }
 
-        private string exifParameterValue;
-
         /// <summary>
-        /// Exif parameter value
+        /// Exifパラメータ値
         /// </summary>
         public string ExifParameterValue
         {
@@ -26,6 +28,11 @@ namespace Kchary.PhotoViewer.Model
             set => SetProperty(ref exifParameterValue, value);
         }
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="exifText">Exifパラメータ名</param>
+        /// <param name="exifValue">Exifパラメータ値</param>
         public ExifInfo(string exifText, string exifValue)
         {
             ExifParameterText = exifText;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -23,13 +22,13 @@ namespace Kchary.PhotoViewer.Views
         public static class NativeMethods
         {
             [DllImport("user32.dll")]
-            internal static extern bool SetWindowPlacement(IntPtr hWnd, [In] WindowPlacement lpwndpl);
+            internal static extern bool SetWindowPlacement(IntPtr hWnd, [In] Placement lpwndpl);
 
             [DllImport("user32.dll")]
-            internal static extern bool GetWindowPlacement(IntPtr hWnd, out WindowPlacement lpwndpl);
+            internal static extern bool GetWindowPlacement(IntPtr hWnd, out Placement lpwndpl);
 
             [StructLayout(LayoutKind.Sequential)]
-            public struct WindowPlacement
+            public struct Placement
             {
                 public int length;
                 public int flags;

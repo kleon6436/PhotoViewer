@@ -35,7 +35,7 @@ namespace Kchary.PhotoViewer.Views
             var vm = DataContext as ExplorerViewModel;
             Debug.Assert(vm != null);
 
-            if (vm.SelectedItem != selectedExplorerItem)
+            if (vm != null && vm.SelectedItem != selectedExplorerItem)
             {
                 vm.SelectedItem = selectedExplorerItem;
             }

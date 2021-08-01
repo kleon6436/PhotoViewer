@@ -7,28 +7,64 @@ using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Model
 {
+    /// <summary>
+    /// 画像を管理するクラス
+    /// </summary>
     public static class ImageController
     {
         /// <summary>
-        /// Native image control method class.
+        /// 画像処理を行うネイティブメソッドを管理するクラス
         /// </summary>
         internal static class NativeMethods
         {
+            /// <summary>
+            /// Raw画像データを取得する
+            /// </summary>
+            /// <param name="path">画像ファイルパス</param>
+            /// <param name="imageData">画像データ</param>
+            /// <returns>0: 成功、1: 失敗</returns>
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
             internal static extern int GetRawImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, out ImageData imageData);
 
+            /// <summary>
+            /// Raw画像のサムネイルデータを取得する
+            /// </summary>
+            /// <param name="path">画像ファイルパス</param>
+            /// <param name="longSideLength">長辺の長さ(この長さにリサイズされる)</param>
+            /// <param name="imageData">画像データ</param>
+            /// <returns>0: 成功、1: 失敗</returns>
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
             internal static extern int GetRawThumbnailImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, [In] int longSideLength, out ImageData imageData);
 
+            /// <summary>
+            /// 画像データを取得する(Raw画像以外のJpeg画像などで使用)
+            /// </summary>
+            /// <param name="path">画像ファイルパス</param>
+            /// <param name="imageData">画像データ</param>
+            /// <returns>0: 成功、1: 失敗</returns>
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
             internal static extern int GetNormalImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, out ImageData imageData);
 
+            /// <summary>
+            /// 画像のサムネイルデータを取得する(Raw画像以外のJpeg画像などで使用)
+            /// </summary>
+            /// <param name="path">画像ファイルパス</param>
+            /// <param name="longSideLength">長辺の長さ(この長さにリサイズされる)</param>
+            /// <param name="imageData">画像データ</param>
+            /// <returns>0: 成功、1: 失敗</returns>
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
             internal static extern int GetNormalThumbnailImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, [In] int longSideLength, out ImageData imageData);
 
+            /// <summary>
+            /// メモリを解放する
+            /// </summary>
+            /// <param name="buffer">解放するメモリバッファ</param>
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
             internal static extern void FreeBuffer(IntPtr buffer);
 
+            /// <summary>
+            /// 画像データ
+            /// </summary>
             [StructLayout(LayoutKind.Sequential)]
             internal struct ImageData
             {
@@ -41,9 +77,9 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Generate an image to be magnified.
+        /// ピクチャビューに表示する画像を作成する
         /// </summary>
-        /// <param name="filePath">FilePath</param>
+        /// <param name="filePath">画像ファイルパス</param>
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureViewImage(string filePath)
         {
@@ -52,9 +88,9 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Creating thumbnail images of still images.
+        /// 画像一覧に表示するサムネイル画像を作成する
         /// </summary>
-        /// <param name="filePath">FilePath</param>
+        /// <param name="filePath">画像ファイルパス</param>
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreatePictureThumbnailImage(string filePath)
         {
@@ -63,9 +99,9 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Create thumbnail image for still image edit screen.
+        /// 編集画面に表示するサムネイル画像を作成する
         /// </summary>
-        /// <param name="filePath">FilePath</param>
+        /// <param name="filePath">画像ファイルパス</param>
         /// <param name="defaultPictureWidth">DefaultPictureWidth</param>
         /// <param name="defaultPictureHeight">DefaultPictureHeight</param>
         /// <param name="rotation">Rotation</param>
@@ -86,9 +122,9 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Create save image.
+        /// 保存対象の画像を作成する
         /// </summary>
-        /// <param name="filePath">FilePath</param>
+        /// <param name="filePath">画像ファイルパス</param>
         /// <param name="scale">scale</param>
         /// <returns>BitmapSource</returns>
         public static BitmapSource CreateSavePicture(string filePath, double scale)
@@ -98,18 +134,17 @@ namespace Kchary.PhotoViewer.Model
             sourceStream.Seek(0, SeekOrigin.Begin);
             var bitmapFrame = BitmapFrame.Create(sourceStream);
 
-            // Check the rotation information.
+            // 回転情報をメタデータから取得
             var metaData = bitmapFrame.Metadata as BitmapMetadata;
 
-            // Decode picture.
+            // 画像を指定サイズにリサイズ
             BitmapSource saveImage = bitmapFrame;
-
-            // Resize image.
             saveImage = new TransformedBitmap(saveImage, new ScaleTransform(scale, scale));
 
-            // Rotate image.
+            // リサイズ後に回転
             saveImage = RotateImage(metaData, saveImage);
 
+            // リサイズ、回転した画像を書き出す
             var decodeImage = new WriteableBitmap(saveImage);
             decodeImage.Freeze();
 
@@ -117,10 +152,10 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Decode image from filePath.(If you set max width and max height, Image is resized.)
+        /// 画像をデコードする
         /// </summary>
-        /// <param name="filePath">FilePath</param>
-        /// <param name="longSideLength">Long side Length of a resize picture</param>
+        /// <param name="filePath">画像ファイルパス</param>
+        /// <param name="longSideLength">長辺の長さ(この長さにあわせて画像がリサイズされる)</param>
         /// <returns>BitmapSource</returns>
         private static BitmapSource DecodePicture(string filePath, int longSideLength)
         {
@@ -145,9 +180,9 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Create bitmap source from ImageData structure.
+        /// 画像データ情報からBitmapSourceを作成する
         /// </summary>
-        /// <param name="imageData">Image data structure</param>
+        /// <param name="imageData">画像データ情報</param>
         /// <returns>BitmapSource</returns>
         private static BitmapSource CreateBitmapSourceFromImageStruct(in NativeMethods.ImageData imageData)
         {
@@ -176,7 +211,7 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Rotate image
+        /// 画像を回転させる
         /// </summary>
         /// <param name="metaData">Metadata</param>
         /// <param name="image">BitmapSource</param>
@@ -200,10 +235,10 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Get image rotation information from image metadata.
+        /// 画像の回転情報を取得する
         /// </summary>
         /// <param name="metaData">Metadata</param>
-        /// <returns>rotation value</returns>
+        /// <returns>画像の回転情報</returns>
         private static uint GetRotation(BitmapMetadata metaData)
         {
             const string Query = "/app1/ifd/exif:{uint=274}";
@@ -211,7 +246,7 @@ namespace Kchary.PhotoViewer.Model
         }
 
         /// <summary>
-        /// Rotate the image.
+        /// 画像を回転させる
         /// </summary>
         private static BitmapSource TransformBitmap(BitmapSource source, Transform transform)
         {

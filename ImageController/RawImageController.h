@@ -15,28 +15,27 @@ namespace Kchary::ImageController::RawImageControl
 	{
 	public:
 		/**
-		 * @brief	This function is getting image data using libraw library.
-		 *			Get from a thumbnail image that can be read at high speed for display.
-		 * @param	path: Raw image file path.
-		 * @param	imageData: Image data
-		 * @return	Success: 0, Failure: -1
+		 * @brief	LibRawライブラリを用いて画像データを取得する
+		 * @param	path: 画像ファイルパス
+		 * @param	imageData: 画像データ
+		 * @return	成功: 0, 失敗: -1
 		 */
 		int GetImageData(const char path[], ImageData& imageData) const override;
 
 		/**
-		 * @brief	This function is getting thumbnail image data.
-		 * @param	path: Raw image file path.
-		 * @param	resizeLongSideLength: Long side length of a resize image.
-		 * @param	imageData: Image data
-		 * @return	Success: 0, Failure: -1
+		 * @brief	LibRawライブラリを用いて画像サムネイルデータを取得する
+		 * @param	path: 画像ファイルパス
+		 * @param	resizeLongSideLength: リサイズする長辺の長さ
+		 * @param	imageData: 画像データ
+		 * @return	成功: 0, 失敗: -1
 		 */
 		int GetThumbnailImageData(const char path[], int resizeLongSideLength, ImageData& imageData) const override;
 
 	private:
 		/**
-		 * @brief	This function is getting thumbnail image data.
-		 * @param	thumbnail: Thumbnail image data structure.
-		 * @param	resizeLongSideLength: Long side length of a resize image.
+		 * @brief	画像取得モード(OpenCV)を取得する
+		 * @param   thumbnail: サムネイル画像データ
+		 * @param	resizeLongSideLength: リサイズする長辺の長さ
 		 * @return	ImreadModes
 		 */
 		static cv::ImreadModes GetImreadMode(libraw_thumbnail_t thumbnail, int resizeLongSideLength);

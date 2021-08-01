@@ -3,42 +3,45 @@ using System.Linq;
 
 namespace Kchary.PhotoViewer.Model
 {
+    /// <summary>
+    /// メディアファイルの確認クラス
+    /// </summary>
     public static class MediaChecker
     {
         /// <summary>
-        /// Support extensions
+        /// サポートする画像の拡張子名
         /// </summary>
         private static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng", ".nef" };
 
         /// <summary>
-        /// Support raw extensions
+        /// サポートするRaw画像の拡張子名
         /// </summary>
         private static readonly string[] SupportRawPictureExtensions = { ".dng", ".nef" };
 
         /// <summary>
-        /// Get a list of extensions supported by the app.
+        /// サポートする画像の拡張子名リストを取得する
         /// </summary>
-        /// <returns>Extension list supported</returns>
+        /// <returns>サポートする画像の拡張子名リスト</returns>
         public static IEnumerable<string> GetSupportExtentions()
         {
             return SupportPictureExtensions;
         }
 
         /// <summary>
-        /// Check if the extension is a still image supported extension.
+        /// サポートする画像の拡張子であるか確認する
         /// </summary>
-        /// <param name="extension">Extension to check</param>
-        /// <returns>True: the extension is supported, False: the extension is not supported</returns>
+        /// <param name="extension">確認する拡張子名</param>
+        /// <returns>True: サポートする拡張子である, False: サポートしない拡張子である</returns>
         public static bool CheckPictureExtensions(string extension)
         {
             return SupportPictureExtensions.Any(supportExtension => supportExtension == extension);
         }
 
         /// <summary>
-        /// Check if the file is a Raw File.
+        /// サポートするRaw画像の拡張子であるか確認する
         /// </summary>
-        /// <param name="extension">Extension to check</param>
-        /// <returns>True: the extension is nef, False: the extension is not nef</returns>
+        /// <param name="extension">確認する拡張子名</param>
+        /// <returns>True: サポートする拡張子である, False: サポートしない拡張子である</returns>
         public static bool CheckRawFileExtension(string extension)
         {
             return SupportRawPictureExtensions.Any(x => x == extension);

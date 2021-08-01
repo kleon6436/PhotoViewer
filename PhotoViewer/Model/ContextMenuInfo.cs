@@ -3,12 +3,16 @@ using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Model
 {
+    /// <summary>
+    /// コンテキストメニュークラス
+    /// </summary>
     public sealed class ContextMenuInfo : BindableBase
     {
         private string displayName;
+        private BitmapSource contextIcon;
 
         /// <summary>
-        /// Display name
+        /// 表示名
         /// </summary>
         public string DisplayName
         {
@@ -16,10 +20,8 @@ namespace Kchary.PhotoViewer.Model
             set => SetProperty(ref displayName, value);
         }
 
-        private BitmapSource contextIcon;
-
         /// <summary>
-        /// Context icon
+        /// アイコン
         /// </summary>
         public BitmapSource ContextIcon
         {

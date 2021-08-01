@@ -6,9 +6,6 @@ using System.Windows;
 
 namespace Kchary.PhotoViewer
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App
     {
         internal class NativeMethods
@@ -27,7 +24,7 @@ namespace Kchary.PhotoViewer
             internal static extern bool SetForegroundWindow(IntPtr hWnd);
         }
 
-        private static Mutex _mutex = new(false, "PhotoViewer");
+        private static Mutex Mutex = new(false, "PhotoViewer");
 
         public App()
         {
@@ -35,21 +32,20 @@ namespace Kchary.PhotoViewer
         }
 
         /// <summary>
-        /// Application startup event.
+        /// アプリスタート時の処理
         /// </summary>
         /// <remarks>
-        /// Set mutex to prevent multiple startup.
+        /// mutexを作成して多重起動を抑制する
         /// </remarks>
         /// <param name="sender">sender</param>
-        /// <param name="e">arguments</param>
+        /// <param name="e">引数情報</param>
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            if (_mutex.WaitOne(0, false))
+            if (Mutex.WaitOne(0, false))
             {
                 return;
             }
 
-            // Active a launched windows.
             var hMWnd = NativeMethods.FindWindow(null, "PhotoViewer");
             if (!NativeMethods.IsWindow((hMWnd)))
             {
@@ -62,39 +58,38 @@ namespace Kchary.PhotoViewer
                 return;
             }
 
-            // Show normal window.
             _ = NativeMethods.ShowWindow(hCWnd, 1);
             NativeMethods.SetForegroundWindow(hCWnd);
 
-            _mutex.Close();
-            _mutex = null;
+            Mutex.Close();
+            Mutex = null;
             Shutdown();
         }
 
         /// <summary>
-        /// Application close event.
+        /// アプリ終了時の処理
         /// </summary>
         /// <remarks>
         /// Release mutex to prevent multiple startup.
         /// </remarks>
         /// <param name="sender">sender</param>
-        /// <param name="e">arguments</param>
+        /// <param name="e">引数情報</param>
         private void App_OnExit(object sender, ExitEventArgs e)
         {
-            if (_mutex == null)
+            if (Mutex == null)
             {
                 return;
             }
 
-            _mutex.ReleaseMutex();
-            _mutex.Close();
+            Mutex.ReleaseMutex();
+            Mutex.Close();
         }
 
         /// <summary>
-        /// Application Unhandled Exception
+        /// アプリケーションのハンドルされていないExceptionが発生したとき
         /// </summary>
         /// <param name="sender">sender</param>
-        /// <param name="e">arguments</param>
+        /// <param name="e">引数情報</param>
         private static void AppDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             LogException(e.Exception);
@@ -102,7 +97,7 @@ namespace Kchary.PhotoViewer
         }
 
         /// <summary>
-        /// Output an error message to the console when an exception occurs.
+        /// ログ出力する
         /// </summary>
         /// <param name="ex">The message of exception.</param>
         /// <param name="callerFilePath">CallerFilePath</param>
@@ -115,7 +110,7 @@ namespace Kchary.PhotoViewer
         }
 
         /// <summary>
-        /// Display an error message box.
+        /// エラーメッセージボックスを表示する
         /// </summary>
         /// <param name="message">Message</param>
         /// <param name="caption">Title</param>
@@ -125,7 +120,7 @@ namespace Kchary.PhotoViewer
         }
 
         /// <summary>
-        /// Display am success message box.
+        /// 成功メッセージボックスを表示する
         /// </summary>
         /// <param name="message">Message</param>
         /// <param name="caption">Title</param>
@@ -135,7 +130,7 @@ namespace Kchary.PhotoViewer
         }
 
         /// <summary>
-        /// Explicit call to garbage collection.
+        /// ガベージコレクションを用いてメモリ解放する
         /// </summary>
         public static void RunGc()
         {
