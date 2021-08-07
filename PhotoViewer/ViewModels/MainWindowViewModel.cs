@@ -204,7 +204,8 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // 画像フォルダの読み込み
             var picturePath = DefaultPicturePath;
-            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath) && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
+            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath) 
+                && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
             {
                 picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
             }
@@ -318,7 +319,8 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                var selectPath = (File.GetAttributes(SelectFolderPath) & FileAttributes.Directory) == FileAttributes.Directory ? SelectFolderPath : Path.GetDirectoryName(SelectFolderPath);
+                var selectPath = (File.GetAttributes(SelectFolderPath) & FileAttributes.Directory) == FileAttributes.Directory 
+                    ? SelectFolderPath : Path.GetDirectoryName(SelectFolderPath);
 
                 const string Explorer = "EXPLORER.EXE";
                 if (!string.IsNullOrEmpty(selectPath))
