@@ -2,7 +2,6 @@
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
@@ -21,7 +20,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// ツリーに表示するアイテムリスト
         /// </summary>
-        public ObservableCollection<ExplorerItem> ExplorerItems { get; } = new();
+        public List<ExplorerItem> ExplorerItems { get; } = new();
 
         /// <summary>
         /// 選択したアイテム情報

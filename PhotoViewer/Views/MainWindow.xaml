@@ -42,7 +42,7 @@
 
             <StackPanel Grid.Column="0" Margin="4,0,10,0" Orientation="Horizontal">
                 <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Path: " FontWeight="Medium" IsHitTestVisible="True" />
-                <TextBox FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath, Mode=OneWay}" IsReadOnly="True" Background="Transparent" BorderThickness="0" IsHitTestVisible="True" ToolTip="{Binding SelectFolderPath, Mode=OneWay}" />
+                <TextBox FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath.Value, Mode=OneWay}" IsReadOnly="True" Background="Transparent" BorderThickness="0" IsHitTestVisible="True" ToolTip="{Binding SelectFolderPath, Mode=OneWay}" />
             </StackPanel>
 
             <Grid Grid.Column="1" Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Right">
@@ -94,6 +94,7 @@
                     Grid.Column="3"
                     Margin="5, 2.5"
                     Content="Edit"
+                    IsEnabled="{Binding IsEnableImageEditButton.Value, Mode=OneWay}"
                     Command="{Binding ImageEditButtonCommand, Mode=OneTime}"
                     IconBackground="{DynamicResource PrimaryHueDarkBrush}"
                     IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
@@ -145,7 +146,7 @@
                 </Grid.RowDefinitions>
 
                 <GridSplitter Grid.Row="0" Margin="0,0,0,-2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="CurrentAndNext" Height="2.5"/>
-                <ListView Grid.Row="0" x:Name="MediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneTime}" SelectedItem="{Binding SelectedMedia, Mode=OneWay}" SelectionChanged="MediaListBox_SelectionChanged"
+                <ListView Grid.Row="0" x:Name="MediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneTime}" SelectedItem="{Binding SelectedMedia.Value, Mode=OneWay}" SelectionChanged="MediaListBox_SelectionChanged"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
                       ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
                       BorderBrush="{x:Null}" Background="#F0F0F0"
@@ -177,7 +178,7 @@
                             <Setter Property="HorizontalAlignment" Value="Center" />
                             <Setter Property="VerticalAlignment" Value="Center" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=DataContext.IsShowContextMenu, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" Value="True">
+                                <DataTrigger Binding="{Binding Path=DataContext.IsShowContextMenu.Value, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" Value="True">
                                     <Setter Property="ContextMenu" Value="{StaticResource ListBoxItemMenu}" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -203,9 +204,9 @@
                     </ListView.Style>
                 </ListView>
 
-                <Image Grid.Row="1" x:Name="ViewImage" Source="{Binding PictureImageSource, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
-                       MaxWidth="{Binding PictureImageSource.PixelWidth, Mode=OneWay}"
-                       MaxHeight="{Binding PictureImageSource.PixelHeight, Mode=OneWay}" />
+                <Image Grid.Row="1" x:Name="ViewImage" Source="{Binding PictureImageSource.Value, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
+                       MaxWidth="{Binding PictureImageSource.Value.PixelWidth, Mode=OneWay}"
+                       MaxHeight="{Binding PictureImageSource.Value.PixelHeight, Mode=OneWay}" />
             </Grid>
         </Grid>
     </Grid>

@@ -36,7 +36,7 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding LinkAppPath}" Height="40" Width="350" FontSize="14" />
+            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding LinkAppPath, Mode=OneWay}" Height="40" Width="350" FontSize="14" />
             <Button Content="Reference" Command="{Binding LinkAppReferenceCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="auto" Margin="10,0,10,0" />
             <Button Content="Register" Command="{Binding RegisterLinkAppCommand, Mode=OneTime}" VerticalAlignment="Center" Height="40" Width="auto" />
         </StackPanel>
@@ -50,7 +50,7 @@
                   materialDesign:DataGridAssist.CellPadding="4 2 2 2"
                   materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="App name" Binding="{Binding AppName}" Width="auto" MinWidth="100">
+                    <DataGridTextColumn Header="App name" Binding="{Binding AppName, Mode=OneWay}" Width="auto" MinWidth="100">
                         <DataGridTextColumn.ElementStyle>
                             <Style>
                                 <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis" />
@@ -59,13 +59,13 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Application path" Binding="{Binding AppPath}" Width="*" MinWidth="100">
+                    <DataGridTextColumn Header="Application path" Binding="{Binding AppPath, Mode=OneWay}" Width="*" MinWidth="100">
                         <DataGridTextColumn.ElementStyle>
                             <Style>
                                 <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis" />
                                 <Setter Property="TextBlock.VerticalAlignment" Value="Center" />
                                 <Setter Property="TextBlock.Margin" Value="5,0,0,0" />
-                                <Setter Property="TextBlock.ToolTip" Value="{Binding AppPath}" />
+                                <Setter Property="TextBlock.ToolTip" Value="{Binding AppPath, Mode=OneWay}" />
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
