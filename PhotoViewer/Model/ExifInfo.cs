@@ -1,6 +1,4 @@
-﻿using Prism.Mvvm;
-
-namespace Kchary.PhotoViewer.Model
+﻿namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// Exif表示用クラス
@@ -10,12 +8,12 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// Exifパラメータ名
         /// </summary>
-        public string ExifParameterText { get; set; }
+        public string ExifParameterText { get; init; }
 
         /// <summary>
         /// Exifパラメータ値
         /// </summary>
-        public string ExifParameterValue { get; set; }
+        public string ExifParameterValue { get; init; }
 
         /// <summary>
         /// コンストラクタ

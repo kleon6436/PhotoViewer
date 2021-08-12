@@ -1,6 +1,4 @@
-﻿using Prism.Mvvm;
-
-namespace Kchary.PhotoViewer.Model
+﻿namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
     /// 登録アプリ情報クラス
@@ -10,11 +8,11 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// アプリケーション名
         /// </summary>
-        public string AppName { get; set; }
+        public string AppName { get; init; }
 
         /// <summary>
         /// アプリケーションの絶対パス
         /// </summary>
-        public string AppPath { get; set; }
+        public string AppPath { get; init; }
     }
 }
