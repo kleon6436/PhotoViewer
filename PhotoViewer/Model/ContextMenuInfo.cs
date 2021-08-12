@@ -6,27 +6,16 @@ namespace Kchary.PhotoViewer.Model
     /// <summary>
     /// コンテキストメニュークラス
     /// </summary>
-    public sealed class ContextMenuInfo : BindableBase
+    public sealed class ContextMenuInfo
     {
-        private string displayName;
-        private BitmapSource contextIcon;
-
         /// <summary>
         /// 表示名
         /// </summary>
-        public string DisplayName
-        {
-            get => displayName;
-            set => SetProperty(ref displayName, value);
-        }
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// アイコン
         /// </summary>
-        public BitmapSource ContextIcon
-        {
-            get => contextIcon;
-            set => SetProperty(ref contextIcon, value);
-        }
+        public BitmapSource ContextIcon { get; set; }
     }
 }

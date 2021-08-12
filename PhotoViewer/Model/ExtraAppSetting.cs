@@ -5,27 +5,16 @@ namespace Kchary.PhotoViewer.Model
     /// <summary>
     /// 登録アプリ情報クラス
     /// </summary>
-    public sealed class ExtraAppSetting : BindableBase
+    public sealed class ExtraAppSetting
     {
-        private string appName;
-        private string appPath;
-
         /// <summary>
         /// アプリケーション名
         /// </summary>
-        public string AppName
-        {
-            get => appName;
-            set => SetProperty(ref appName, value);
-        }
+        public string AppName { get; set; }
 
         /// <summary>
         /// アプリケーションの絶対パス
         /// </summary>
-        public string AppPath
-        {
-            get => appPath;
-            set => SetProperty(ref appPath, value);
-        }
+        public string AppPath { get; set; }
     }
 }
