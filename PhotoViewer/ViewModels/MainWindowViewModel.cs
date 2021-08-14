@@ -332,7 +332,7 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             // Exif情報、画像表示をクリア
             PictureImageSource.Value = null;
-            ExifInfoViewModel.ExifDataList.Clear();
+            ExifInfoViewModel.ClearExif();
 
             // 編集ボタンを非活性にする
             IsEnableImageEditButton.Value = false;
@@ -426,7 +426,7 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             SelectedMedia.Value = null;
             PictureImageSource.Value = null;
-            ExifInfoViewModel.ExifDataList.Clear();
+            ExifInfoViewModel.ClearExif();
             IsEnableImageEditButton.Value = false;
 
             var selectedExplorerItem = ExplorerViewModel.SelectedItem;

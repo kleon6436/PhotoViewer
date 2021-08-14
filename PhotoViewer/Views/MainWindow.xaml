@@ -126,7 +126,7 @@
             <!-- Left side layout -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition MinHeight="465" Height="Auto" />
+                    <RowDefinition MinHeight="400" Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
