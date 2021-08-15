@@ -43,6 +43,8 @@ https://docs.microsoft.com/ja-jp/cpp/build/vcpkg?view=msvc-160
 ## 使用しているテクノロジ
 - Prism.Wpf
 
+- ReactiveProperty
+
 - System.Drawing.Common
 
 - VirtualizingWrapPanel

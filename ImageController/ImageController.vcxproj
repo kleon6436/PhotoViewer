@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -59,7 +59,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <CallingConvention>StdCall</CallingConvention>
       <OpenMPSupport>
       </OpenMPSupport>
@@ -71,11 +71,9 @@
       <EnableUAC>false</EnableUAC>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerTester\bin\x64\Debug\net5.0
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerWPFTester\bin\x64\Debug\net5.0-windows
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x64\Debug\net5.0-windows
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewerUnitTest\bin\x64\Debug\net5.0-windows
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x64\Debug\net5.0-windows</Command>
+      <Command>copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x64\Debug\net6.0-windows7.0
+copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewerUnitTest\bin\x64\Debug\net6.0-windows7.0
+copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x64\Debug\net6.0-windows7.0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -88,7 +86,7 @@ copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x64
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <CallingConvention>StdCall</CallingConvention>
       <Optimization>Full</Optimization>
       <DisableSpecificWarnings>26451;26495;26812;4819;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -104,9 +102,7 @@ copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x64
       <EnableUAC>false</EnableUAC>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerTester\bin\x64\Release\net5.0
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerWPFTester\bin\x86\Release\net5.0-windows
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x64\Release\net5.0-windows</Command>
+      <Command>copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x64\Release\net6.0-windows7.0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

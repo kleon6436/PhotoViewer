@@ -1,18 +1,20 @@
 ﻿using Kchary.PhotoViewer.Model;
 using Microsoft.Win32;
-using Prism.Commands;
 using Prism.Mvvm;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using System;
-using System.Collections.ObjectModel;
 using System.IO;
+using System.Reactive.Disposables;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class ImageEditToolViewModel : BindableBase
+    public sealed class ImageEditToolViewModel : BindableBase, IDisposable
     {
+        private readonly CompositeDisposable disposable = new();
+
         /// <summary>
         /// 編集対象のファイルパス
         /// </summary>
@@ -25,104 +27,49 @@ namespace Kchary.PhotoViewer.ViewModels
 
         #region UI binding parameter
 
-        private BitmapSource editImage;
-        private ResizeImageCategory resizeCategoryItem;
-        private bool isEnableImageSaveQuality;
-        private ImageQuality selectedQuality;
-        private ImageForm selectedForm;
-        private string resizeSizeText;
-
         /// <summary>
         /// リサイズカテゴリの表示用リスト
         /// </summary>
-        public ObservableCollection<ResizeImageCategory> ResizeCategoryItems { get; }
+        public ResizeImageCategory[] ResizeCategoryItems { get; }
         
         /// <summary>
         /// 画質カテゴリの表示用リスト
         /// </summary>
-        public ObservableCollection<ImageQuality> ImageSaveQualityItems { get; }
+        public ImageQuality[] ImageSaveQualityItems { get; }
 
         /// <summary>
         /// 保存形式の表示用リスト
         /// </summary>
-        public ObservableCollection<ImageForm> ImageFormItems { get; }
+        public ImageForm[] ImageFormItems { get; }
 
         /// <summary>
         /// 編集画面に表示する画像
         /// </summary>
-        public BitmapSource EditImage
-        {
-            get => editImage;
-            private set => SetProperty(ref editImage, value);
-        }
+        public ReactivePropertySlim<BitmapSource> EditImage { get; } = new();
 
         /// <summary>
         /// 編集画面に表示するリサイズカテゴリアイテム
         /// </summary>
-        public ResizeImageCategory ResizeCategoryItem
-        {
-            get => resizeCategoryItem;
-            set
-            {
-                SetProperty(ref resizeCategoryItem, value);
-                if (resizeCategoryItem == null)
-                {
-                    return;
-                }
-
-                double scale = 1;
-                if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
-                {
-                    // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
-                    scale = ResizeCategoryItem.ResizeLongSideValue / ReadImageSize.Width;
-                    if (ReadImageSize.Width < ReadImageSize.Height)
-                    {
-                        scale = ResizeCategoryItem.ResizeLongSideValue / ReadImageSize.Height;
-                    }
-                }
-
-                var resizeWidth = (int)(ReadImageSize.Width * scale);
-                var resizeHeight = (int)(ReadImageSize.Height * scale);
-
-                ResizeSizeText = $"(Width: {resizeWidth}, Height: {resizeHeight} [pixel])";
-            }
-        }
+        public ReactivePropertySlim<ResizeImageCategory> ResizeCategoryItem { get; } = new();
 
         /// <summary>
         /// 編集画面の保存ボタンのON・OFFフラグ
         /// </summary>
-        public bool IsEnableImageSaveQuality
-        {
-            get => isEnableImageSaveQuality;
-            set => SetProperty(ref isEnableImageSaveQuality, value);
-        }
+        public ReactivePropertySlim<bool> IsEnableImageSaveQuality { get; } = new();
 
         /// <summary>
         /// 選択した保存画質
         /// </summary>
-        public ImageQuality SelectedQuality
-        {
-            get => selectedQuality;
-            set => SetProperty(ref selectedQuality, value);
-        }
+        public ReactivePropertySlim<ImageQuality> SelectedQuality { get; } = new();
 
         /// <summary>
         /// 選択した保存形式
         /// </summary>
-        public ImageForm SelectedForm
-        {
-            get => selectedForm;
-            set => SetProperty(ref selectedForm, value);
-        }
-
+        public ReactivePropertySlim<ImageForm> SelectedForm { get; } = new();
         /// <summary>
         /// 選択したリサイズサイズ(幅x高さ)
         /// </summary>
-        public string ResizeSizeText
-        {
-            get => resizeSizeText;
-            private set => SetProperty(ref resizeSizeText, value);
-        }
+        public ReactivePropertySlim<string> ResizeSizeText { get; } = new();
 
         #endregion UI binding parameter
 
@@ -131,7 +78,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 保存ボタンのコマンド
         /// </summary>
-        public ICommand SaveButtonCommand { get; }
+        public ReactiveCommand SaveButtonCommand { get; }
 
         #endregion Command
 
@@ -145,7 +92,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public ImageEditToolViewModel()
         {
-            ResizeCategoryItems = new ObservableCollection<ResizeImageCategory>
+            ResizeCategoryItems = new ResizeImageCategory[]
             {
                 new() { Name = "No resize" , Category = ResizeImageCategory.ResizeCategory.None },
                 new() { Name = "Print size", Category = ResizeImageCategory.ResizeCategory.Print  , ResizeLongSideValue = 2500 },
@@ -153,14 +100,14 @@ namespace Kchary.PhotoViewer.ViewModels
                 new() { Name = "SNS size"  , Category = ResizeImageCategory.ResizeCategory.Twitter, ResizeLongSideValue = 1000 }
             };
 
-            ImageSaveQualityItems = new ObservableCollection<ImageQuality>
+            ImageSaveQualityItems = new ImageQuality[]
             {
                 new() { Name = "High"    , QualityValue = 90 },
                 new() { Name = "standard", QualityValue = 80 },
                 new() { Name = "Low"     , QualityValue = 60 }
             };
 
-            ImageFormItems = new ObservableCollection<ImageForm>
+            ImageFormItems = new ImageForm[]
             {
                 new() { Name = "Jpeg", Form = ImageForm.ImageForms.Jpeg },
                 new() { Name = "Png" , Form = ImageForm.ImageForms.Png },
@@ -168,7 +115,9 @@ namespace Kchary.PhotoViewer.ViewModels
                 new() { Name = "Tiff", Form = ImageForm.ImageForms.Tiff }
             };
 
-            SaveButtonCommand = new DelegateCommand(SaveButtonClicked);
+            ResizeCategoryItem.Subscribe(x => OnResizeCategoryItemChanged(x)).AddTo(disposable);
+
+            SaveButtonCommand = new ReactiveCommand().WithSubscribe(SaveButtonClicked).AddTo(disposable);
         }
 
         /// <summary>
@@ -179,19 +128,24 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             EditFilePath = filePath;
 
-            EditImage = ImageController.CreatePictureEditViewThumbnail(EditFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
+            EditImage.Value = ImageController.CreatePictureEditViewThumbnail(EditFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
 
             ReadImageSize = rotation is 5 or 6 or 7 or 8
                 ? new Size { Width = defaultPictureHeight, Height = defaultPictureWidth }
                 : new Size { Width = defaultPictureWidth, Height = defaultPictureHeight };
 
-            ResizeCategoryItem = ResizeCategoryItems[0];
-            SelectedQuality = ImageSaveQualityItems[0];
-            SelectedForm = ImageFormItems[0];
-            IsEnableImageSaveQuality = true;
+            ResizeCategoryItem.Value = ResizeCategoryItems[0];
+            SelectedQuality.Value = ImageSaveQualityItems[0];
+            SelectedForm.Value = ImageFormItems[0];
+            IsEnableImageSaveQuality.Value = true;
 
             App.RunGc();
         }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose() => disposable.Dispose();
 
         /// <summary>
         /// 保存ボタンを押下時の処理
@@ -202,7 +156,7 @@ namespace Kchary.PhotoViewer.ViewModels
             const string DialogTitle = "Save as...";
             dialog.Title = DialogTitle;
 
-            dialog.Filter = SelectedForm.Form switch
+            dialog.Filter = SelectedForm.Value.Form switch
             {
                 ImageForm.ImageForms.Bmp => "Bmp file(*.bmp)|*.bmp",
                 ImageForm.ImageForms.Jpeg => "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg",
@@ -221,21 +175,21 @@ namespace Kchary.PhotoViewer.ViewModels
             // 保存する画像の作成
             // デフォルトでは、リサイズなしとする
             var scale = 1.0; 
-            if (ResizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
+            if (ResizeCategoryItem.Value.Category != ResizeImageCategory.ResizeCategory.None)
             {
-                scale = ResizeCategoryItem.ResizeLongSideValue / ReadImageSize.Width;
+                scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Width;
                 if (ReadImageSize.Width < ReadImageSize.Height)
                 {
-                    scale = ResizeCategoryItem.ResizeLongSideValue / ReadImageSize.Height;
+                    scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Height;
                 }
             }
             var saveImageSource = ImageController.CreateSavePicture(EditFilePath, scale);
 
             // 選択された保存形式と同じエンコーダーを用意
-            BitmapEncoder encoder = selectedForm.Form switch
+            BitmapEncoder encoder = SelectedForm.Value.Form switch
             {
                 ImageForm.ImageForms.Bmp  => new BmpBitmapEncoder(),
-                ImageForm.ImageForms.Jpeg => new JpegBitmapEncoder {QualityLevel = SelectedQuality.QualityValue},
+                ImageForm.ImageForms.Jpeg => new JpegBitmapEncoder {QualityLevel = SelectedQuality.Value.QualityValue},
                 ImageForm.ImageForms.Png  => new PngBitmapEncoder(),
                 ImageForm.ImageForms.Tiff => new TiffBitmapEncoder(),
                 _ => throw new ArgumentOutOfRangeException()
@@ -261,6 +215,34 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 CloseView?.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        /// <summary>
+        /// リサイズカテゴリの選択が変更されたときの処理
+        /// </summary>
+        /// <param name="resizeCategoryItem">リサイズカテゴリ</param>
+        private void OnResizeCategoryItemChanged(ResizeImageCategory resizeCategoryItem)
+        {
+            if (resizeCategoryItem == null)
+            {
+                return;
+            }
+
+            double scale = 1;
+            if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
+            {
+                // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
+                scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Width;
+                if (ReadImageSize.Width < ReadImageSize.Height)
+                {
+                    scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Height;
+                }
+            }
+
+            var resizeWidth = (int)(ReadImageSize.Width * scale);
+            var resizeHeight = (int)(ReadImageSize.Height * scale);
+
+            ResizeSizeText.Value = $"(Width: {resizeWidth}, Height: {resizeHeight} [pixel])";
         }
     }
 }
