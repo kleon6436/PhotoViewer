@@ -23,7 +23,7 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class MainWindowViewModel : BindableBase, IDisposable
     {
-        private CompositeDisposable disposables = new();
+        private readonly CompositeDisposable disposables = new();
 
         #region ViewModels
 
