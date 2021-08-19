@@ -13,7 +13,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <remarks>
         /// Exif情報に表示するプロパティ要素数だけ配列を準備する
         /// </remarks>
-        public ExifInfo[] ExifDataList { get; } = new ExifInfo[Enum.GetNames(typeof(PropertyType)).Length];
+        public ExifInfo[] ExifDataList { get; } = new ExifInfo[Enum.GetNames<PropertyType>().Length];
 
         /// <summary>
         /// コンストラクタ

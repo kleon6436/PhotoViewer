@@ -70,7 +70,6 @@ namespace Kchary.PhotoViewer.Model
         [STAThread]
         public static void SetExifDataFromFile(string filePath, ExifInfo[] exifDataList)
         {
-            var _ = new FileInfo(filePath);
             var shell = new Shell32.Shell();
             var objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
             var folderItem = objFolder.ParseName(Path.GetFileName(filePath));

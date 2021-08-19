@@ -17,7 +17,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
@@ -110,12 +109,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// バックグラウンドでコンテンツをロードするためのワーカー
         /// </summary>
-        private BackgroundWorker loadContentsBackgroundWorker;
+        private static BackgroundWorker LoadContentsBackgroundWorker { get; } = new() { WorkerSupportsCancellation = true };
 
         /// <summary>
         /// コンテンツをリロードするためのフラグ
         /// </summary>
-        private bool isReloadContents;
+        private static bool IsReloadContents { get; set; } 
 
         /// <summary>
         /// 既定のピクチャフォルダパス
@@ -257,12 +256,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <returns>まだ実行中: False, 停止完了: True</returns>
         public bool StopThreadAndTask()
         {
-            if (loadContentsBackgroundWorker is not {IsBusy: true})
+            if (LoadContentsBackgroundWorker is not { IsBusy: true })
             {
                 return true;
             }
 
-            loadContentsBackgroundWorker.CancelAsync();
+            LoadContentsBackgroundWorker.CancelAsync();
             return false;
 
         }
@@ -470,10 +469,10 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void UpdateContents()
         {
-            if (loadContentsBackgroundWorker is {IsBusy: true})
+            if (LoadContentsBackgroundWorker is { IsBusy: true })
             {
-                loadContentsBackgroundWorker.CancelAsync();
-                isReloadContents = true;
+                LoadContentsBackgroundWorker.CancelAsync();
+                IsReloadContents = true;
                 return;
             }
 
@@ -487,15 +486,9 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             MediaInfoList.Clear();
 
-            var backgroundWorker = new BackgroundWorker
-            {
-                WorkerSupportsCancellation = true
-            };
-            backgroundWorker.DoWork += LoadContentsWorker_DoWork;
-            backgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
-
-            loadContentsBackgroundWorker = backgroundWorker;
-            loadContentsBackgroundWorker.RunWorkerAsync();
+            LoadContentsBackgroundWorker.DoWork += LoadContentsWorker_DoWork;
+            LoadContentsBackgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
+            LoadContentsBackgroundWorker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -530,25 +523,25 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             if (e.Cancelled)
             {
-                loadContentsBackgroundWorker?.Dispose();
+                LoadContentsBackgroundWorker?.Dispose();
 
                 // 再読み込み時は、読み込み処理を再開
-                if (isReloadContents)
+                if (IsReloadContents)
                 {
-                    Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateContents();
-                        isReloadContents = false;
-                    }), DispatcherPriority.Normal);
+                        IsReloadContents = false;
+                    });
                 }
             }
             else
             {
-                loadContentsBackgroundWorker?.Dispose();
+                LoadContentsBackgroundWorker?.Dispose();
 
                 if (SelectedMedia == null && MediaInfoList.Any())
                 {
-                    SelectedMedia.Value = MediaInfoList[0];
+                    SelectedMedia.Value = MediaInfoList.ElementAt(0);
                 }
             }
         }
@@ -581,7 +574,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 // サポート対象のファイルを順番に読み込む
                 foreach (var supportFile in Directory.EnumerateFiles(folderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
                 {
-                    if (sender is BackgroundWorker {CancellationPending: true})
+                    if (sender is BackgroundWorker { CancellationPending: true })
                     {
                         e.Cancel = true;
                         return;
@@ -614,7 +607,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        if (sender is BackgroundWorker {CancellationPending: true})
+                        if (sender is BackgroundWorker { CancellationPending: true })
                         {
                             e.Cancel = true;
                             return;
