@@ -140,7 +140,7 @@ namespace Kchary.PhotoViewer.Model
                     continue;
                 }
 
-                var linkageApp = new ExtraAppSetting {AppName = appNameElement?.Value, AppPath = appPathElement?.Value};
+                var linkageApp = new ExtraAppSetting { AppName = appNameElement?.Value, AppPath = appPathElement?.Value };
                 configData.LinkageAppList.Add(linkageApp);
             }
         }
