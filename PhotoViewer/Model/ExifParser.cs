@@ -55,7 +55,7 @@ namespace Kchary.PhotoViewer.Model
         public static void CreateExifDefaultList(ExifInfo[] exifDataList)
         {
             var count = 0;
-            foreach (PropertyType propertyType in Enum.GetValues(typeof(PropertyType)))
+            foreach (PropertyType propertyType in Enum.GetValues<PropertyType>())
             {
                 exifDataList[count] = new ExifInfo(GetPropertyName(propertyType), "", propertyType);
                 count++;

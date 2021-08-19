@@ -212,7 +212,7 @@ namespace Kchary.PhotoViewer.Model
             }
             else
             {
-                configData.PlaceData.showCmd = (MainWindow.NativeMethods.Sw)Enum.Parse(typeof(MainWindow.NativeMethods.Sw), windowSwElement.Value);
+                configData.PlaceData.showCmd = Enum.Parse<MainWindow.NativeMethods.Sw>(windowSwElement.Value);
             }
         }
     }
