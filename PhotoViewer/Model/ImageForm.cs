@@ -3,7 +3,7 @@
     /// <summary>
     /// 編集画面に表示する画像保存形式クラス
     /// </summary>
-    public sealed record ImageForm
+    public sealed class ImageForm
     {
         /// <summary>
         /// 画像保存形式
