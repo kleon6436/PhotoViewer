@@ -234,7 +234,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 非同期で画像を読み込む
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
-        public async Task<bool> LoadMediaAsync(MediaInfo mediaInfo)
+        public async Task LoadMediaAsync(MediaInfo mediaInfo)
         {
             if (!File.Exists(mediaInfo.FilePath))
             {
@@ -243,11 +243,18 @@ namespace Kchary.PhotoViewer.ViewModels
 
             IsEnableImageEditButton.Value = false;
 
-            return mediaInfo.ContentMediaType switch
+            switch (mediaInfo.ContentMediaType)
             {
-                MediaInfo.MediaType.Picture => await LoadPictureImageAsync(mediaInfo),
-                _ => false,
-            };
+                case MediaInfo.MediaType.Picture:
+                    await LoadPictureImageAsync(mediaInfo);
+                    break;
+
+                case MediaInfo.MediaType.Movie:
+                    throw new NotImplementedException();
+
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -600,20 +607,22 @@ namespace Kchary.PhotoViewer.ViewModels
                     }
 
                     var duration = Environment.TickCount - tick;
-                    if ((count > 50 || duration <= 250) && duration <= 500)
+                    if ((count > 25 || duration <= 125) && duration <= 250)
                     {
                         continue;
                     }
 
+                    if (sender is BackgroundWorker { CancellationPending: true })
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        if (sender is BackgroundWorker { CancellationPending: true })
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-
                         MediaInfoList.AddRange(queue);
+                        queue.Clear();
+                        tick = Environment.TickCount;
 
                         // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
                         if (!MediaInfoList.Any() || SelectedMedia.Value != null)
@@ -622,15 +631,15 @@ namespace Kchary.PhotoViewer.ViewModels
                         }
 
                         var firstImageData = MediaInfoList.First();
-                        if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(firstImageData.FilePath)?.ToLower()))
-                        {
-                            SelectedMedia.Value = firstImageData;
-                        }
+                        SelectedMedia.Value = firstImageData;
                     });
-
-                    queue.Clear();
-                    tick = Environment.TickCount;
                 }
+            }
+
+            if (sender is BackgroundWorker { CancellationPending: true })
+            {
+                e.Cancel = true;
+                return;
             }
 
             if (queue.Any())
@@ -644,7 +653,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
         /// <returns>読み込み成功: True、読み込み失敗: False</returns>
-        private async Task<bool> LoadPictureImageAsync(MediaInfo mediaInfo)
+        private async Task LoadPictureImageAsync(MediaInfo mediaInfo)
         {
             try
             {
@@ -655,7 +664,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
 
                 // タスクを実行し、処理完了まで待つ
-                await Task.WhenAll(loadPictureTask, setExifInfoTask);
+                await Task.WhenAll(new Task[] { loadPictureTask, setExifInfoTask });
 
                 // 編集ボタンの状態を更新(Raw画像以外は活性状態とする)
                 IsEnableImageEditButton.Value = !MediaChecker.CheckRawFileExtension(Path.GetExtension(mediaInfo.FilePath)?.ToLower());
@@ -665,15 +674,11 @@ namespace Kchary.PhotoViewer.ViewModels
 
                 // WritableBitmapのメモリを解放
                 App.RunGc();
-
-                return true;
             }
             catch (Exception ex)
             {
                 App.LogException(ex);
                 App.ShowErrorMessageBox("File access error occurred", "File access error");
-
-                return false;
             }
             finally
             {
