@@ -170,11 +170,13 @@ namespace Kchary.PhotoViewer.Model
                         break;
 
                     case PropertyType.HorizonResolution:
-                        exifInfo.ExifParameterValue = $"{GetExifDataFromMetadata(directories, ExifDirectoryBase.TagXResolution)} dpi";
+                        var horizonResolution = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagXResolution);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(horizonResolution) ? $"{horizonResolution} dpi" : horizonResolution;
                         break;
 
                     case PropertyType.VerticalResolution:
-                        exifInfo.ExifParameterValue = $"{GetExifDataFromMetadata(directories, ExifDirectoryBase.TagYResolution)} dpi";
+                        var verticalResolution = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagYResolution);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(verticalResolution) ? $"{verticalResolution} dpi" : verticalResolution;
                         break;
 
                     case PropertyType.Bitdepth:
@@ -192,7 +194,8 @@ namespace Kchary.PhotoViewer.Model
                         break;
 
                     case PropertyType.ShutterSpeed:
-                        exifInfo.ExifParameterValue = $"{GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExposureTime)} sec";
+                        var shutterSpeed = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExposureTime);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(shutterSpeed) ? $"{shutterSpeed} sec" : shutterSpeed;
                         break;
 
                     case PropertyType.Fnumber:
@@ -204,22 +207,23 @@ namespace Kchary.PhotoViewer.Model
                         break;
 
                     case PropertyType.FocalLength:
-                        exifInfo.ExifParameterValue = $"{GetExifDataFromMetadata(directories, ExifDirectoryBase.Tag35MMFilmEquivFocalLength)} mm";
+                        var focalLength = GetExifDataFromMetadata(directories, ExifDirectoryBase.Tag35MMFilmEquivFocalLength);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(focalLength) ? $"{focalLength} mm" : focalLength;
                         break;
 
                     case PropertyType.ExposureProgram:
                         var exposureProgram = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExposureProgram);
-                        exifInfo.ExifParameterValue = Enum.Parse<ExposureProgramType>(exposureProgram).ToString();
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(exposureProgram) ? Enum.Parse<ExposureProgramType>(exposureProgram).ToString() : exposureProgram;
                         break;
 
                     case PropertyType.WhiteBalance:
                         var whiteBalance = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagWhiteBalance);
-                        exifInfo.ExifParameterValue = Enum.Parse<WhiteBlanceType>(whiteBalance).ToString();
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(whiteBalance) ? Enum.Parse<WhiteBlanceType>(whiteBalance).ToString() : whiteBalance;
                         break;
 
                     case PropertyType.MeteringMode:
                         var metaringMode = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagMeteringMode);
-                        exifInfo.ExifParameterValue = Enum.Parse<MeteringModeType>(metaringMode).ToString();
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(metaringMode) ? Enum.Parse<MeteringModeType>(metaringMode).ToString() : metaringMode;
                         break;
 
                     default:
