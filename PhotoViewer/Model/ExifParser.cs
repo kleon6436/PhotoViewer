@@ -247,8 +247,7 @@ namespace Kchary.PhotoViewer.Model
                 FileExtensionType.Png => PngMetadataReader.ReadMetadata(filePath),
                 FileExtensionType.Gif => GifMetadataReader.ReadMetadata(filePath),
                 FileExtensionType.Tiff or FileExtensionType.Dng or FileExtensionType.Nef => TiffMetadataReader.ReadMetadata(filePath),
-                FileExtensionType.Unknown => throw new NotImplementedException(),
-                _ => throw new ArgumentOutOfRangeException(),
+                FileExtensionType.Unknown or _ => throw new ArgumentOutOfRangeException(nameof(fileExtensionType)),
             };
 
             return directories;

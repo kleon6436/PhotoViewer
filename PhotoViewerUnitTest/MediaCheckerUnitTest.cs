@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Kchary.PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PhotoViewerUnitTest
