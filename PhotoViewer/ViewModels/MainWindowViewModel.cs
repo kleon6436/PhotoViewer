@@ -261,7 +261,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 実行中のスレッド、タスクの停止を要請する
         /// </summary>
         /// <returns>まだ実行中: False, 停止完了: True</returns>
-        public bool StopThreadAndTask()
+        public static bool StopThreadAndTask()
         {
             if (LoadContentsBackgroundWorker is not { IsBusy: true })
             {
