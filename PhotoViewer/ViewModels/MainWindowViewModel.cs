@@ -136,6 +136,10 @@ namespace Kchary.PhotoViewer.ViewModels
             SettingButtonCommand    = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
             ImageEditButtonCommand  = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
 
+            // バックグラウンドスレッドの設定
+            LoadContentsBackgroundWorker.DoWork += LoadContentsWorker_DoWork;
+            LoadContentsBackgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
+
             // 設定ファイルの読み込み
             AppConfigManager.GetInstance().Import();
 
@@ -492,9 +496,6 @@ namespace Kchary.PhotoViewer.ViewModels
         private void LoadContentsList()
         {
             MediaInfoList.Clear();
-
-            LoadContentsBackgroundWorker.DoWork += LoadContentsWorker_DoWork;
-            LoadContentsBackgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
             LoadContentsBackgroundWorker.RunWorkerAsync();
         }
 
@@ -546,7 +547,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 LoadContentsBackgroundWorker?.Dispose();
 
-                if (SelectedMedia == null && MediaInfoList.Any())
+                if (SelectedMedia.Value == null && MediaInfoList.Any())
                 {
                     SelectedMedia.Value = MediaInfoList.ElementAt(0);
                 }
@@ -645,6 +646,7 @@ namespace Kchary.PhotoViewer.ViewModels
             if (queue.Any())
             {
                 Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
+                queue.Clear();
             }
         }
 
