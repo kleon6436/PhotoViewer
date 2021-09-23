@@ -7,13 +7,13 @@
 - 作者は、このソフトのサポート ( 不具合修正・バージョンアップなど ) に関する一切の義務を負わない。
 
 ## アプリ概要
-Windows用のPhotoViewerです。C++、C#で組まれています。
+Windows用のPhotoViewerです。Exif情報や写真閲覧が可能です。
 
-Windows 10 1903以降の対応で、RawImageExtension、および、NikonのNEF Codecのインストールが必須です。
+Windows 10 1903以降の対応で、Raw 画像拡張機能、NikonのNEF Codecのインストールが必須です。
 
-https://downloadcenter.nikonimglib.com/ja/products/170/NEF_Codec.html
+- https://www.microsoft.com/ja-jp/p/raw-%E7%94%BB%E5%83%8F%E6%8B%A1%E5%BC%B5%E6%A9%9F%E8%83%BD/9nctdw2w1bh8?activetab=pivot:overviewtab
+- https://downloadcenter.nikonimglib.com/ja/products/170/NEF_Codec.html
 
-Exif情報や写真閲覧が可能です。
 
 ![app screenshot](./Images/AppScreen.png)
 
@@ -40,7 +40,7 @@ https://docs.microsoft.com/ja-jp/cpp/build/vcpkg?view=msvc-160
 `vcpkg integrate install`
 
 
-## 使用しているテクノロジ
+## 使用しているライブラリ
 - Prism.Wpf
 
 - ReactiveProperty
@@ -49,12 +49,14 @@ https://docs.microsoft.com/ja-jp/cpp/build/vcpkg?view=msvc-160
 
 - VirtualizingWrapPanel
 
-- Libraw
-  このアプリは、Libraw オープン ソース プロジェクト (http://www.libraw.org) に基づいて機能します。Libraw ライブラリは、COMMON DEVELOPMENT AND THIS DISTRIBUTION LICENSE Version   1.0 (CDDL-1.0) に基づいてライセンスされます。
-
 - OpenCV
 
 - MaterialDesignThemes.MahApps
+
+- MetadataExtractor
+
+- Libraw
+  このアプリは、Libraw オープン ソース プロジェクト (http://www.libraw.org) に基づいて機能します。Libraw ライブラリは、COMMON DEVELOPMENT AND THIS DISTRIBUTION LICENSE Version   1.0 (CDDL-1.0) に基づいてライセンスされます。
 
 ## 機能
 - 写真閲覧

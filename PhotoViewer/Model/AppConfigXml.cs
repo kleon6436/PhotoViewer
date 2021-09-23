@@ -140,7 +140,7 @@ namespace Kchary.PhotoViewer.Model
                     continue;
                 }
 
-                var linkageApp = new ExtraAppSetting {AppName = appNameElement?.Value, AppPath = appPathElement?.Value};
+                var linkageApp = new ExtraAppSetting { AppName = appNameElement?.Value, AppPath = appPathElement?.Value };
                 configData.LinkageAppList.Add(linkageApp);
             }
         }
@@ -212,7 +212,7 @@ namespace Kchary.PhotoViewer.Model
             }
             else
             {
-                configData.PlaceData.showCmd = (MainWindow.NativeMethods.Sw)Enum.Parse(typeof(MainWindow.NativeMethods.Sw), windowSwElement.Value);
+                configData.PlaceData.showCmd = Enum.Parse<MainWindow.NativeMethods.Sw>(windowSwElement.Value);
             }
         }
     }

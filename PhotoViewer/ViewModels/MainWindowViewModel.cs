@@ -17,7 +17,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
@@ -110,12 +109,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// バックグラウンドでコンテンツをロードするためのワーカー
         /// </summary>
-        private BackgroundWorker loadContentsBackgroundWorker;
+        private static BackgroundWorker LoadContentsBackgroundWorker { get; } = new() { WorkerSupportsCancellation = true };
 
         /// <summary>
         /// コンテンツをリロードするためのフラグ
         /// </summary>
-        private bool isReloadContents;
+        private static bool IsReloadContents { get; set; } 
 
         /// <summary>
         /// 既定のピクチャフォルダパス
@@ -136,6 +135,10 @@ namespace Kchary.PhotoViewer.ViewModels
             ReloadButtonCommand     = new ReactiveCommand().WithSubscribe(ReloadButtonClicked).AddTo(disposables);
             SettingButtonCommand    = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
             ImageEditButtonCommand  = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
+
+            // バックグラウンドスレッドの設定
+            LoadContentsBackgroundWorker.DoWork += LoadContentsWorker_DoWork;
+            LoadContentsBackgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
 
             // 設定ファイルの読み込み
             AppConfigManager.GetInstance().Import();
@@ -235,7 +238,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 非同期で画像を読み込む
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
-        public async Task<bool> LoadMediaAsync(MediaInfo mediaInfo)
+        public async Task LoadMediaAsync(MediaInfo mediaInfo)
         {
             if (!File.Exists(mediaInfo.FilePath))
             {
@@ -244,25 +247,32 @@ namespace Kchary.PhotoViewer.ViewModels
 
             IsEnableImageEditButton.Value = false;
 
-            return mediaInfo.ContentMediaType switch
+            switch (mediaInfo.ContentMediaType)
             {
-                MediaInfo.MediaType.Picture => await LoadPictureImageAsync(mediaInfo),
-                _ => false,
-            };
+                case MediaInfo.MediaType.Picture:
+                    await LoadPictureImageAsync(mediaInfo);
+                    break;
+
+                case MediaInfo.MediaType.Movie:
+                    throw new NotImplementedException();
+
+                default:
+                    break;
+            }
         }
 
         /// <summary>
         /// 実行中のスレッド、タスクの停止を要請する
         /// </summary>
         /// <returns>まだ実行中: False, 停止完了: True</returns>
-        public bool StopThreadAndTask()
+        public static bool StopThreadAndTask()
         {
-            if (loadContentsBackgroundWorker is not {IsBusy: true})
+            if (LoadContentsBackgroundWorker is not { IsBusy: true })
             {
                 return true;
             }
 
-            loadContentsBackgroundWorker.CancelAsync();
+            LoadContentsBackgroundWorker.CancelAsync();
             return false;
 
         }
@@ -470,10 +480,10 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void UpdateContents()
         {
-            if (loadContentsBackgroundWorker is {IsBusy: true})
+            if (LoadContentsBackgroundWorker is { IsBusy: true })
             {
-                loadContentsBackgroundWorker.CancelAsync();
-                isReloadContents = true;
+                LoadContentsBackgroundWorker.CancelAsync();
+                IsReloadContents = true;
                 return;
             }
 
@@ -486,16 +496,7 @@ namespace Kchary.PhotoViewer.ViewModels
         private void LoadContentsList()
         {
             MediaInfoList.Clear();
-
-            var backgroundWorker = new BackgroundWorker
-            {
-                WorkerSupportsCancellation = true
-            };
-            backgroundWorker.DoWork += LoadContentsWorker_DoWork;
-            backgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
-
-            loadContentsBackgroundWorker = backgroundWorker;
-            loadContentsBackgroundWorker.RunWorkerAsync();
+            LoadContentsBackgroundWorker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -530,25 +531,25 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             if (e.Cancelled)
             {
-                loadContentsBackgroundWorker?.Dispose();
+                LoadContentsBackgroundWorker?.Dispose();
 
                 // 再読み込み時は、読み込み処理を再開
-                if (isReloadContents)
+                if (IsReloadContents)
                 {
-                    Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateContents();
-                        isReloadContents = false;
-                    }), DispatcherPriority.Normal);
+                        IsReloadContents = false;
+                    });
                 }
             }
             else
             {
-                loadContentsBackgroundWorker?.Dispose();
+                LoadContentsBackgroundWorker?.Dispose();
 
-                if (SelectedMedia == null && MediaInfoList.Any())
+                if (SelectedMedia.Value == null && MediaInfoList.Any())
                 {
-                    SelectedMedia.Value = MediaInfoList[0];
+                    SelectedMedia.Value = MediaInfoList.ElementAt(0);
                 }
             }
         }
@@ -581,7 +582,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 // サポート対象のファイルを順番に読み込む
                 foreach (var supportFile in Directory.EnumerateFiles(folderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
                 {
-                    if (sender is BackgroundWorker {CancellationPending: true})
+                    if (sender is BackgroundWorker { CancellationPending: true })
                     {
                         e.Cancel = true;
                         return;
@@ -607,20 +608,22 @@ namespace Kchary.PhotoViewer.ViewModels
                     }
 
                     var duration = Environment.TickCount - tick;
-                    if ((count > 50 || duration <= 250) && duration <= 500)
+                    if ((count > 25 || duration <= 125) && duration <= 250)
                     {
                         continue;
                     }
 
+                    if (sender is BackgroundWorker { CancellationPending: true })
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        if (sender is BackgroundWorker {CancellationPending: true})
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-
                         MediaInfoList.AddRange(queue);
+                        queue.Clear();
+                        tick = Environment.TickCount;
 
                         // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
                         if (!MediaInfoList.Any() || SelectedMedia.Value != null)
@@ -629,20 +632,21 @@ namespace Kchary.PhotoViewer.ViewModels
                         }
 
                         var firstImageData = MediaInfoList.First();
-                        if (!MediaChecker.CheckRawFileExtension(Path.GetExtension(firstImageData.FilePath)?.ToLower()))
-                        {
-                            SelectedMedia.Value = firstImageData;
-                        }
+                        SelectedMedia.Value = firstImageData;
                     });
-
-                    queue.Clear();
-                    tick = Environment.TickCount;
                 }
+            }
+
+            if (sender is BackgroundWorker { CancellationPending: true })
+            {
+                e.Cancel = true;
+                return;
             }
 
             if (queue.Any())
             {
                 Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
+                queue.Clear();
             }
         }
 
@@ -651,7 +655,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
         /// <returns>読み込み成功: True、読み込み失敗: False</returns>
-        private async Task<bool> LoadPictureImageAsync(MediaInfo mediaInfo)
+        private async Task LoadPictureImageAsync(MediaInfo mediaInfo)
         {
             try
             {
@@ -662,7 +666,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
 
                 // タスクを実行し、処理完了まで待つ
-                await Task.WhenAll(loadPictureTask, setExifInfoTask);
+                await Task.WhenAll(new Task[] { loadPictureTask, setExifInfoTask });
 
                 // 編集ボタンの状態を更新(Raw画像以外は活性状態とする)
                 IsEnableImageEditButton.Value = !MediaChecker.CheckRawFileExtension(Path.GetExtension(mediaInfo.FilePath)?.ToLower());
@@ -672,15 +676,11 @@ namespace Kchary.PhotoViewer.ViewModels
 
                 // WritableBitmapのメモリを解放
                 App.RunGc();
-
-                return true;
             }
             catch (Exception ex)
             {
                 App.LogException(ex);
                 App.ShowErrorMessageBox("File access error occurred", "File access error");
-
-                return false;
             }
             finally
             {

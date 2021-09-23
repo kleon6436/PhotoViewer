@@ -113,14 +113,12 @@ namespace Kchary.PhotoViewer.Model
                 // 1文字目の文字を確認
                 var fileNameFirst = Path.GetFileName(directory.FullName).Substring(0, 1);
 
-                // Windowsの特殊フォルダについては、非表示とする
-                if (fileNameFirst == "$" || (directory.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                // Windowsの特殊フォルダ以外を表示する
+                if (fileNameFirst != "$" && (directory.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
                 {
-                    continue;
+                    var node = new ExplorerItem(directory.FullName, false);
+                    Items.Add(node);
                 }
-
-                var node = new ExplorerItem(directory.FullName, false);
-                Items.Add(node);
             }
         }
 
