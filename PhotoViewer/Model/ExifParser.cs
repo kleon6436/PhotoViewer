@@ -1,233 +1,312 @@
-﻿using System;
+﻿using MetadataExtractor;
+using MetadataExtractor.Formats.Exif;
+using MetadataExtractor.Formats.Jpeg;
+using MetadataExtractor.Formats.Bmp;
+using MetadataExtractor.Formats.Png;
+using MetadataExtractor.Formats.Tiff;
+using MetadataExtractor.Formats.Gif;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
+    /// プロパティ名のタイプ
+    /// </summary>
+    public enum PropertyType
+    {
+        FileName,
+        Date,
+        CameraModel,
+        CameraManufacturer,
+        ImageWidth,
+        ImageHeight,
+        HorizonResolution,
+        VerticalResolution,
+        Bitdepth,
+        ShutterSpeed,
+        Fnumber,
+        Iso,
+        FocalLength,
+        ExposureProgram,
+        WhiteBalance,
+        MeteringMode
+    }
+
+    /// <summary>
+    /// 露光プログラムのタイプ定義
+    /// </summary>
+    public enum ExposureProgramType
+    {
+        Unknown,
+        Manual,
+        Normal,
+        AperturePriority,
+        ShutterPriority,
+        Slow,
+        HighSpeed,
+        Portrait,
+        LandScape
+    }
+
+    /// <summary>
+    /// 測光モードのタイプ定義
+    /// </summary>
+    public enum MeteringModeType
+    {
+        Unknown,
+        Average,
+        CenterWeightedAverage,
+        Spot,
+        MultiSpot,
+        MultiSegment,
+        Partial,
+        Other = 255
+    }
+
+    /// <summary>
+    /// ホワイトバランスのタイプ定義
+    /// </summary>
+    public enum WhiteBlanceType
+    {
+        Unknown,
+        Daylight,
+        Fluorescent,
+        Tungsten,
+        Flash = 10,
+        StandardLightA = 18,
+        StandardLightB = 19,
+        StandardLightC = 20,
+        D55 = 21,
+        D64 = 22,
+        D75 = 255
+    }
+
+    /// <summary>
     /// Exif情報のパースクラス
     /// </summary>
+    /// <remarks>
+    /// Exif規格表のID値を参照する
+    /// https://www.cipa.jp/std/documents/j/DC-008-2012_J.pdf
+    /// https://github.com/drewnoakes/metadata-extractor-dotnet
+    /// </remarks>
     public static class ExifParser
     {
+        private const string FileNameProperty = "File name";
+        private const string DateProperty = "Date";
+        private const string CameraModelProperty = "Camera model";
+        private const string CameraManufacturerProperty = "Camera manufacturer";
+        private const string ImageWidthProperty = "Width";
+        private const string ImageHeightProperty = "Height";
+        private const string HorizonResolutionProperty = "Horizon resolution";
+        private const string VerticalResolutionProperty = "Vertical resolution";
+        private const string BitdepthProperty = "Bit depth";
+        private const string ShutterSpeedProperty = "Shutter speed";
+        private const string FnumberProperty = "F number";
+        private const string IsoProperty = "ISO";
+        private const string FocalLengthProperty = "Focal length";
+        private const string ExposureProgramProperty = "Exposure program";
+        private const string WhiteBalanceProperty = "White balance";
+        private const string MeteringModeProperty = "Metering mode";
+
         /// <summary>
-        /// ファイルからExif情報を取得する
+        /// Exif情報表示の値なしのリストを作成する
+        /// </summary>
+        /// <returns></returns>
+        public static void CreateExifDefaultList(ExifInfo[] exifDataList)
+        {
+            var count = 0;
+            foreach (PropertyType propertyType in Enum.GetValues<PropertyType>())
+            {
+                exifDataList[count] = new ExifInfo(GetPropertyName(propertyType), "", propertyType);
+                count++;
+            }
+        }
+
+        /// <summary>
+        /// ファイルからExif情報を取得してリストに設定する
         /// </summary>
         /// <param name="filePath">画像のファイルパス</param>
-        [STAThread]
-        public static IEnumerable<ExifInfo> GetExifDataFromFile(string filePath)
+        /// <param name="exifDataList">読み込んだExif情報を設定するリスト</param>
+        public static void SetExifDataFromFile(string filePath, ExifInfo[] exifDataList)
         {
-            var _ = new FileInfo(filePath);
-            var shell = new Shell32.Shell();
-            var objFolder = shell.NameSpace(Path.GetDirectoryName(filePath));
-            var folderItem = objFolder.ParseName(Path.GetFileName(filePath));
+            var extension = Path.GetExtension(filePath);
+            var fileExtensionType = MediaChecker.GetFileExtensionType(extension.ToLower());
+            var directories = GetMetadataDirectories(filePath, fileExtensionType);
+            var subIfdDirectories = directories.OfType<ExifSubIfdDirectory>();
 
-            yield return GetFileName(filePath);
-            yield return GetMediaDate(objFolder, folderItem);
-            yield return GetCameraModel(objFolder, folderItem);
-            yield return GetCameraManufacturer(objFolder, folderItem);
-            yield return GetBitDepth(objFolder, folderItem);
-            yield return GetIso(objFolder, folderItem);
-            yield return GetFocusLength(objFolder, folderItem);
-            yield return GetMeteringMode(objFolder, folderItem);
-            yield return GetImageWidth(objFolder, folderItem);
-            yield return GetImageHeight(objFolder, folderItem);
-            yield return GetImageResolutionWidth(objFolder, folderItem);
-            yield return GetImageResolutionHeight(objFolder, folderItem);
-            yield return GetFNumber(objFolder, folderItem);
-            yield return GetShutterSpeed(objFolder, folderItem);
-            yield return GetExposeMode(objFolder, folderItem);
-            yield return GetWhiteBalance(objFolder, folderItem);
+            foreach (var exifInfo in exifDataList)
+            {
+                switch (exifInfo.ExifPropertyType)
+                {
+                    case PropertyType.FileName:
+                        exifInfo.ExifParameterValue = Path.GetFileName(filePath);
+                        break;
+
+                    case PropertyType.Date:
+                        exifInfo.ExifParameterValue = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagDateTime);
+                        break;
+
+                    case PropertyType.CameraModel:
+                        exifInfo.ExifParameterValue = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagModel);
+                        break;
+
+                    case PropertyType.CameraManufacturer:
+                        exifInfo.ExifParameterValue = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagMake);
+                        break;
+
+                    case PropertyType.ImageWidth:
+                        exifInfo.ExifParameterValue = MediaChecker.CheckRawFileExtension(extension.ToLower())
+                            ? $"{GetExifDataFromMetadata(subIfdDirectories, ExifDirectoryBase.TagImageWidth)} pixel"
+                            : $"{GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExifImageWidth)} pixel";
+                        break;
+
+                    case PropertyType.ImageHeight:
+                        exifInfo.ExifParameterValue = MediaChecker.CheckRawFileExtension(extension.ToLower())
+                            ? $"{GetExifDataFromMetadata(subIfdDirectories, ExifDirectoryBase.TagImageHeight)} pixel"
+                            : $"{GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExifImageHeight)} pixel";
+                        break;
+
+                    case PropertyType.HorizonResolution:
+                        var horizonResolution = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagXResolution);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(horizonResolution) ? $"{horizonResolution} dpi" : horizonResolution;
+                        break;
+
+                    case PropertyType.VerticalResolution:
+                        var verticalResolution = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagYResolution);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(verticalResolution) ? $"{verticalResolution} dpi" : verticalResolution;
+                        break;
+
+                    case PropertyType.Bitdepth:
+                        var bitdepth = fileExtensionType switch
+                        {
+                            FileExtensionType.Jpeg => GetExifDataFromMetadata(directories, JpegDirectory.TagDataPrecision),
+                            FileExtensionType.Bmp => GetExifDataFromMetadata(directories, BmpHeaderDirectory.TagBitsPerPixel),
+                            FileExtensionType.Png => GetExifDataFromMetadata(directories, PngDirectory.TagBitsPerSample),
+                            FileExtensionType.Gif => GetExifDataFromMetadata(directories, GifHeaderDirectory.TagBitsPerPixel),
+                            FileExtensionType.Tiff or FileExtensionType.Dng or FileExtensionType.Nef => GetExifDataFromMetadata(directories, ExifDirectoryBase.TagBitsPerSample).AsSpan(0, 1),
+                            FileExtensionType.Unknown => throw new NotImplementedException(),
+                            _ => throw new ArgumentOutOfRangeException(),
+                        };
+                        exifInfo.ExifParameterValue = bitdepth.ToString();
+                        break;
+
+                    case PropertyType.ShutterSpeed:
+                        var shutterSpeed = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExposureTime);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(shutterSpeed) ? $"{shutterSpeed} sec" : shutterSpeed;
+                        break;
+
+                    case PropertyType.Fnumber:
+                        exifInfo.ExifParameterValue = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagFNumber);
+                        break;
+
+                    case PropertyType.Iso:
+                        exifInfo.ExifParameterValue = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagIsoEquivalent);
+                        break;
+
+                    case PropertyType.FocalLength:
+                        var focalLength = GetExifDataFromMetadata(directories, ExifDirectoryBase.Tag35MMFilmEquivFocalLength);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(focalLength) ? $"{focalLength} mm" : focalLength;
+                        break;
+
+                    case PropertyType.ExposureProgram:
+                        var exposureProgram = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExposureProgram);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(exposureProgram) ? Enum.Parse<ExposureProgramType>(exposureProgram).ToString() : exposureProgram;
+                        break;
+
+                    case PropertyType.WhiteBalance:
+                        var whiteBalance = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagWhiteBalance);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(whiteBalance) ? Enum.Parse<WhiteBlanceType>(whiteBalance).ToString() : whiteBalance;
+                        break;
+
+                    case PropertyType.MeteringMode:
+                        var metaringMode = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagMeteringMode);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(metaringMode) ? Enum.Parse<MeteringModeType>(metaringMode).ToString() : metaringMode;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
         }
 
         /// <summary>
-        /// ファイル名を取得する
+        /// メタデータの構造データを取得する
         /// </summary>
-        /// <param name="filePath">画像のファイルパス</param>
-        private static ExifInfo GetFileName(string filePath)
+        /// <param name="filePath">ファイルパス</param>
+        /// <param name="fileExtensionType">ファイルの拡張子</param>
+        /// <returns>メタデータの構造データ</returns>
+        private static IEnumerable<MetadataExtractor.Directory> GetMetadataDirectories(string filePath, FileExtensionType fileExtensionType)
         {
-            var propertyValue = Path.GetFileName(filePath);
-            const string PropertyText = "File name";
-            return new ExifInfo(PropertyText, propertyValue);
+            var directories = fileExtensionType switch
+            {
+                FileExtensionType.Jpeg => JpegMetadataReader.ReadMetadata(filePath),
+                FileExtensionType.Bmp => BmpMetadataReader.ReadMetadata(filePath),
+                FileExtensionType.Png => PngMetadataReader.ReadMetadata(filePath),
+                FileExtensionType.Gif => GifMetadataReader.ReadMetadata(filePath),
+                FileExtensionType.Tiff or FileExtensionType.Dng or FileExtensionType.Nef => TiffMetadataReader.ReadMetadata(filePath),
+                FileExtensionType.Unknown or _ => throw new ArgumentOutOfRangeException(nameof(fileExtensionType)),
+            };
+
+            return directories;
         }
 
         /// <summary>
-        /// ファイル更新日時を取得する
+        /// Exif情報をメタデータから取得する
         /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetMediaDate(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        /// <typeparam name="T">MetadataExtractor.Directory</typeparam>
+        /// <param name="metadataDirectories">メタデータの構造データ</param>
+        /// <param name="tag">取得したいExifのタグ番号</param>
+        /// <returns></returns>
+        private static string GetExifDataFromMetadata<T>(IEnumerable<T> metadataDirectories, int tag)
+            where T : MetadataExtractor.Directory
         {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 3);
-            const string PropertyText = "Date";
-            return new ExifInfo(PropertyText, propertyValue);
+            foreach (var metadataDirectory in metadataDirectories)
+            {
+                if (metadataDirectory is MetadataExtractor.Directory exifDirectory)
+                {
+                    // 該当データが見つかった場合は、すぐにその値を返す
+                    var metadata = exifDirectory.GetString(tag);
+                    if (!string.IsNullOrEmpty(metadata))
+                    {
+                        return metadata;
+                    }
+                }
+            }
+
+            // 見つからなかった場合、空文字とする
+            return "";
         }
 
         /// <summary>
-        /// カメラ情報を取得する
+        /// 表示用のExifプロパティ名を取得する
         /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetCameraModel(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
+        /// <param name="propertyType">プロパティタイプ</param>
+        /// <returns>Exifプロパティ名</returns>
+        private static string GetPropertyName(PropertyType propertyType)
         {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 30);
-            const string PropertyText = "Camera model";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// カメラの製造メーカーを取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetCameraManufacturer(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 32);
-            const string PropertyText = "Camera manufacturer";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// カメラ情報を取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetImageWidth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 176);
-            const string PropertyText = "Width";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// 画像の幅と高さを取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetImageHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 178);
-            const string PropertyText = "Height";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// 画像の解像度(幅側)を取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetImageResolutionWidth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 175);
-            const string PropertyText = "Horizon resolution";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// 画像の解像度(高さ側)を取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetImageResolutionHeight(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 177);
-            const string PropertyText = "Vertical resolution";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// ビット深度を取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetBitDepth(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 174);
-            const string PropertyText = "Bit depth";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// シャッター速度を取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetShutterSpeed(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 259);
-            const string PropertyText = "Shutter speed";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// F値を取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetFNumber(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 260);
-            const string PropertyText = "F number";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// ISO値を取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetIso(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 264);
-            const string PropertyText = "ISO";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// 焦点距離を取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetFocusLength(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 262);
-            const string PropertyText = "Focal length";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// 露光プログラムを取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetExposeMode(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 258);
-            const string PropertyText = "Exposure program";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// ホワイトバランスの情報を取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetWhiteBalance(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 275);
-            const string PropertyText = "White balance";
-            return new ExifInfo(PropertyText, propertyValue);
-        }
-
-        /// <summary>
-        /// 露光モードを取得する
-        /// </summary>
-        /// <param name="objFolder">フォルダ情報</param>
-        /// <param name="folderItem">ファイル情報</param>
-        private static ExifInfo GetMeteringMode(Shell32.Folder objFolder, Shell32.FolderItem folderItem)
-        {
-            var propertyValue = objFolder.GetDetailsOf(folderItem, 269);
-            const string PropertyText = "Metering mode";
-            return new ExifInfo(PropertyText, propertyValue);
+            return propertyType switch
+            {
+                PropertyType.FileName => FileNameProperty,
+                PropertyType.Date => DateProperty,
+                PropertyType.CameraModel => CameraModelProperty,
+                PropertyType.CameraManufacturer => CameraManufacturerProperty,
+                PropertyType.ImageWidth => ImageWidthProperty,
+                PropertyType.ImageHeight => ImageHeightProperty,
+                PropertyType.HorizonResolution => HorizonResolutionProperty,
+                PropertyType.VerticalResolution => VerticalResolutionProperty,
+                PropertyType.Bitdepth => BitdepthProperty,
+                PropertyType.ShutterSpeed => ShutterSpeedProperty,
+                PropertyType.Fnumber => FnumberProperty,
+                PropertyType.Iso => IsoProperty,
+                PropertyType.FocalLength => FocalLengthProperty,
+                PropertyType.ExposureProgram => ExposureProgramProperty,
+                PropertyType.WhiteBalance => WhiteBalanceProperty,
+                PropertyType.MeteringMode => MeteringModeProperty,
+                _ => throw new ArgumentOutOfRangeException(nameof(propertyType)),
+            };
         }
     }
 }

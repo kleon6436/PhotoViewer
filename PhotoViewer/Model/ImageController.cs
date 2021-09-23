@@ -95,7 +95,44 @@ namespace Kchary.PhotoViewer.Model
         public static BitmapSource CreatePictureThumbnailImage(string filePath)
         {
             const int LongSideLength = 100;
-            return DecodePicture(filePath, LongSideLength);
+
+            if (MediaChecker.CheckRawFileExtension(Path.GetExtension(filePath).ToLower()))
+            {
+                return DecodePicture(filePath, LongSideLength);
+            }
+            else
+            {
+                using var sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+                sourceStream.Seek(0, SeekOrigin.Begin);
+                var bitmapFrame = BitmapFrame.Create(sourceStream);
+                var metadata = bitmapFrame.Metadata as BitmapMetadata;
+                var thumbnail = bitmapFrame.Thumbnail;
+
+                if (thumbnail != null)
+                {
+                    // リサイズ処理
+                    var scale = LongSideLength / (double)thumbnail.PixelWidth;
+                    if (thumbnail.PixelWidth < thumbnail.PixelHeight)
+                    {
+                        scale = LongSideLength / thumbnail.PixelHeight;
+                    }
+                    thumbnail = new TransformedBitmap(thumbnail, new ScaleTransform(scale, scale));
+
+                    // リサイズ後に回転
+                    thumbnail = RotateImage(metadata, thumbnail);
+
+                    // リサイズ、回転した画像を書き出す
+                    var decodeImage = new WriteableBitmap(thumbnail);
+                    decodeImage.Freeze();
+
+                    return decodeImage;
+                }
+                else
+                {
+                    return DecodePicture(filePath, LongSideLength);
+                }
+            }
         }
 
         /// <summary>

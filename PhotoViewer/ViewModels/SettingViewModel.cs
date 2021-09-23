@@ -1,14 +1,17 @@
 ﻿using Kchary.PhotoViewer.Views;
 using Prism.Mvvm;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using System;
+using System.Reactive.Disposables;
 using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class SettingViewModel : BindableBase
     {
-        private SelectPage selectPageButtonValue;
-        private Page displayPage;
+        private readonly CompositeDisposable disposable = new();
+        private ReactivePropertySlim<SelectPage> selectPageButtonValue;
 
         /// <summary>
         /// コンテキストメニューの再読み込みイベント
@@ -27,53 +30,53 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// ラジオボタンで設定された読み込むページの情報
         /// </summary>
-        public SelectPage SelectPageButtonValue
+        public ReactivePropertySlim<SelectPage> SelectPageButtonValue
         {
-            get => selectPageButtonValue;
-            set
+            get
             {
-                SetProperty(ref selectPageButtonValue, value);
-
-                switch (selectPageButtonValue)
+                if (selectPageButtonValue != null)
                 {
-                    case SelectPage.LinkageAppPage:
-                        var vm = new LinkageAppViewModel();
-                        vm.ChangeLinkageAppEvent += ChangeLinkageApp;
+                    switch (selectPageButtonValue.Value)
+                    {
+                        case SelectPage.LinkageAppPage:
+                            var vm = new LinkageAppViewModel();
+                            vm.ChangeLinkageAppEvent += ChangeLinkageApp;
+                            DisplayPage.Value = new LinkageAppView
+                            {
+                                DataContext = vm
+                            };
+                            break;
 
-                        DisplayPage = new LinkageAppView
-                        {
-                            DataContext = vm
-                        };
-                        break;
+                        case SelectPage.InformationPage:
+                            DisplayPage.Value = new InformationView();
+                            break;
 
-                    case SelectPage.InformationPage:
-                        DisplayPage = new InformationView();
-                        break;
-
-                    default:
-                        DisplayPage = null;
-                        throw new ArgumentOutOfRangeException(nameof(selectPageButtonValue), "Invalid name");
+                        default:
+                            DisplayPage.Value = null;
+                            throw new ArgumentOutOfRangeException(nameof(selectPageButtonValue.Value), "Invalid name");
+                    }
+                    
                 }
+                return selectPageButtonValue ??= new ReactivePropertySlim<SelectPage>(SelectPage.LinkageAppPage).AddTo(disposable);
             }
         }
 
         /// <summary>
-        /// Page information to display
+        /// 表示する画面
         /// </summary>
-        public Page DisplayPage
-        {
-            get => displayPage;
-            private set => SetProperty(ref displayPage, value);
-        }
+        public ReactivePropertySlim<Page> DisplayPage { get; set; } = new();
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public SettingViewModel()
         {
-            // デフォルトはリンク登録ページとする
-            SelectPageButtonValue = SelectPage.LinkageAppPage;
         }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose() => disposable.Dispose();
 
         /// <summary>
         /// 登録アプリ変更時の処理

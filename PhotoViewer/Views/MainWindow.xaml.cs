@@ -110,7 +110,7 @@ namespace Kchary.PhotoViewer.Views
             }
 
             var firstImageData = vm.MediaInfoList.First();
-            vm.SelectedMedia = firstImageData;
+            vm.SelectedMedia.Value = firstImageData;
         }
 
         /// <summary>
@@ -120,7 +120,8 @@ namespace Kchary.PhotoViewer.Views
         /// <param name="e">引数情報</param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (DataContext is MainWindowViewModel vm && !vm.StopThreadAndTask())
+            var vm = DataContext as MainWindowViewModel;
+            if (!MainWindowViewModel.StopThreadAndTask())
             {
                 // 少し待ってからクローズ
                 Thread.Sleep(200);
@@ -132,6 +133,8 @@ namespace Kchary.PhotoViewer.Views
 
             AppConfigManager.ConfigData.PlaceData = placement;
             AppConfigManager.Export();
+
+            vm.Dispose();
         }
 
         /// <summary>

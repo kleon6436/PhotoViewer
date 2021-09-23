@@ -40,9 +40,9 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Margin="10,0" Orientation="Horizontal">
+            <StackPanel Grid.Column="0" Margin="4,0,10,0" Orientation="Horizontal">
                 <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Path: " FontWeight="Medium" IsHitTestVisible="True" />
-                <TextBox FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath, Mode=OneWay}" IsReadOnly="True" Background="Transparent" BorderThickness="0" IsHitTestVisible="True" ToolTip="{Binding SelectFolderPath, Mode=OneWay}" />
+                <TextBox FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath.Value, Mode=OneWay}" IsReadOnly="True" Background="Transparent" BorderThickness="0" IsHitTestVisible="True" ToolTip="{Binding SelectFolderPath, Mode=OneWay}" />
             </StackPanel>
 
             <Grid Grid.Column="1" Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Right">
@@ -58,7 +58,7 @@
                         Grid.Column="0"
                         Margin="5, 2.5"
                         Content="Bluetooth"
-                        Command="{Binding BluetoothButtonCommand, Mode=OneWay}"
+                        Command="{Binding BluetoothButtonCommand, Mode=OneTime}"
                         IconBackground="{DynamicResource PrimaryHueDarkBrush}"
                         IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
                     <materialDesign:Chip.Icon>
@@ -70,7 +70,7 @@
                     Grid.Column="1"
                     Margin="5, 2.5"
                     Content="Explorer"
-                    Command="{Binding OpenFolderButtonCommand, Mode=OneWay}"
+                    Command="{Binding OpenFolderButtonCommand, Mode=OneTime}"
                     IconBackground="{DynamicResource PrimaryHueDarkBrush}"
                     IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
                     <materialDesign:Chip.Icon>
@@ -82,7 +82,7 @@
                     Grid.Column="2"
                     Margin="5, 2.5"
                     Content="Reload"
-                    Command="{Binding ReloadButtonCommand, Mode=OneWay}"
+                    Command="{Binding ReloadButtonCommand, Mode=OneTime}"
                     IconBackground="{DynamicResource PrimaryHueDarkBrush}"
                     IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
                     <materialDesign:Chip.Icon>
@@ -94,7 +94,8 @@
                     Grid.Column="3"
                     Margin="5, 2.5"
                     Content="Edit"
-                    Command="{Binding ImageEditButtonCommand, Mode=OneWay}"
+                    IsEnabled="{Binding IsEnableImageEditButton.Value, Mode=OneWay}"
+                    Command="{Binding ImageEditButtonCommand, Mode=OneTime}"
                     IconBackground="{DynamicResource PrimaryHueDarkBrush}"
                     IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
                     <materialDesign:Chip.Icon>
@@ -104,9 +105,9 @@
 
                 <materialDesign:Chip
                     Grid.Column="4"
-                    Margin="5, 2.5"
+                    Margin="5,2.5,2.5,2.5"
                     Content="Config"
-                    Command="{Binding SettingButtonCommand, Mode=OneWay}"
+                    Command="{Binding SettingButtonCommand, Mode=OneTime}"
                     IconBackground="{DynamicResource PrimaryHueDarkBrush}"
                     IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
                     <materialDesign:Chip.Icon>
@@ -125,7 +126,7 @@
             <!-- Left side layout -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition MinHeight="360" Height="Auto" />
+                    <RowDefinition MinHeight="400" Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -145,7 +146,7 @@
                 </Grid.RowDefinitions>
 
                 <GridSplitter Grid.Row="0" Margin="0,0,0,-2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="CurrentAndNext" Height="2.5"/>
-                <ListView Grid.Row="0" x:Name="MediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneWay}" SelectedItem="{Binding SelectedMedia, Mode=TwoWay}" SelectionChanged="MediaListBox_SelectionChanged"
+                <ListView Grid.Row="0" x:Name="MediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneTime}" SelectedItem="{Binding SelectedMedia.Value, Mode=OneWay}" SelectionChanged="MediaListBox_SelectionChanged"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
                       ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
                       BorderBrush="{x:Null}" Background="#F0F0F0"
@@ -155,13 +156,13 @@
                         <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}">
                             <ContextMenu.ItemContainerStyle>
                                 <Style TargetType="{x:Type MenuItem}">
-                                    <Setter Property="Header" Value="{Binding Path=DisplayName, Mode=OneWay}" />
+                                    <Setter Property="Header" Value="{Binding Path=DisplayName, Mode=OneTime}" />
                                     <Setter Property="Icon" Value="{DynamicResource Icon}" />
                                     <EventSetter Event="Click" Handler="MenuItem_Click" />
                                 </Style>
                             </ContextMenu.ItemContainerStyle>
                         </ContextMenu>
-                        <Image x:Key="Icon" d:DataContext="{d:DesignInstance model:ContextMenuInfo}" Source="{Binding Path=ContextIcon, Mode=OneWay}" x:Shared="false" />
+                        <Image x:Key="Icon" d:DataContext="{d:DesignInstance model:ContextMenuInfo}" Source="{Binding Path=ContextIcon, Mode=OneTime}" x:Shared="false" />
                     </ListView.Resources>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -170,14 +171,14 @@
                     </ListView.ItemsPanel>
                     <ListView.ItemContainerStyle>
                         <Style TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="ToolTip" Value="{Binding FileName, Mode=OneWay}" />
+                            <Setter Property="ToolTip" Value="{Binding FileName, Mode=OneTime}" />
                             <Setter Property="ContextMenu" Value="{x:Null}" />
                             <Setter Property="HorizontalContentAlignment" Value="Center" />
                             <Setter Property="VerticalContentAlignment" Value="Center" />
                             <Setter Property="HorizontalAlignment" Value="Center" />
                             <Setter Property="VerticalAlignment" Value="Center" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=DataContext.IsShowContextMenu, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" Value="True">
+                                <DataTrigger Binding="{Binding Path=DataContext.IsShowContextMenu.Value, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" Value="True">
                                     <Setter Property="ContextMenu" Value="{StaticResource ListBoxItemMenu}" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -193,8 +194,8 @@
                                                 <RowDefinition Height="75" />
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
-                                            <Image Grid.Row="0" d:DataContext="{d:DesignInstance model:MediaInfo}" Source="{Binding ThumbnailImage}" />
-                                            <TextBlock Grid.Row="1" d:DataContext="{d:DesignInstance model:MediaInfo}" HorizontalAlignment="Center" Text="{Binding FileName}" TextTrimming="CharacterEllipsis" />
+                                            <Image Grid.Row="0" d:DataContext="{d:DesignInstance model:MediaInfo}" Source="{Binding ThumbnailImage, Mode=OneTime}" />
+                                            <TextBlock Grid.Row="1" d:DataContext="{d:DesignInstance model:MediaInfo}" HorizontalAlignment="Center" Text="{Binding FileName, Mode=OneTime}" TextTrimming="CharacterEllipsis" />
                                         </Grid>
                                     </DataTemplate>
                                 </Setter.Value>
@@ -203,9 +204,9 @@
                     </ListView.Style>
                 </ListView>
 
-                <Image Grid.Row="1" x:Name="ViewImage" Source="{Binding PictureImageSource}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
-                       MaxWidth="{Binding PictureImageSource.PixelWidth}"
-                       MaxHeight="{Binding PictureImageSource.PixelHeight}" />
+                <Image Grid.Row="1" x:Name="ViewImage" Source="{Binding PictureImageSource.Value, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
+                       MaxWidth="{Binding PictureImageSource.Value.PixelWidth, Mode=OneWay}"
+                       MaxHeight="{Binding PictureImageSource.Value.PixelHeight, Mode=OneWay}" />
             </Grid>
         </Grid>
     </Grid>
