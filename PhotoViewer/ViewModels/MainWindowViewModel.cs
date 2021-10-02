@@ -342,6 +342,7 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             // Exif情報、画像表示をクリア
             PictureImageSource.Value = null;
+            SelectedMedia.Value = null;
             ExifInfoViewModel.ClearExif();
 
             // 編集ボタンを非活性にする
@@ -673,6 +674,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
                 // パス表示を更新
                 SelectFolderPath.Value = mediaInfo.FilePath;
+                SelectedMedia.Value = mediaInfo;
 
                 // WritableBitmapのメモリを解放
                 App.RunGc();
