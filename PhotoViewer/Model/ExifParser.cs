@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Directory = MetadataExtractor.Directory;
 
 namespace Kchary.PhotoViewer.Model
 {
@@ -69,7 +70,7 @@ namespace Kchary.PhotoViewer.Model
     /// <summary>
     /// ホワイトバランスのタイプ定義
     /// </summary>
-    public enum WhiteBlanceType
+    public enum WhiteBalanceType
     {
         Unknown,
         Daylight,
@@ -134,8 +135,8 @@ namespace Kchary.PhotoViewer.Model
         {
             var extension = Path.GetExtension(filePath);
             var fileExtensionType = MediaChecker.GetFileExtensionType(extension.ToLower());
-            var directories = GetMetadataDirectories(filePath, fileExtensionType);
-            var subIfdDirectories = directories.OfType<ExifSubIfdDirectory>();
+            var directories = GetMetadataDirectories(filePath, fileExtensionType).ToArray();
+            var subIfdDirectories = directories.OfType<ExifSubIfdDirectory>().ToArray();
 
             foreach (var exifInfo in exifDataList)
             {
@@ -180,7 +181,7 @@ namespace Kchary.PhotoViewer.Model
                         break;
 
                     case PropertyType.Bitdepth:
-                        var bitdepth = fileExtensionType switch
+                        var bitDepth = fileExtensionType switch
                         {
                             FileExtensionType.Jpeg => GetExifDataFromMetadata(directories, JpegDirectory.TagDataPrecision),
                             FileExtensionType.Bmp => GetExifDataFromMetadata(directories, BmpHeaderDirectory.TagBitsPerPixel),
@@ -190,7 +191,7 @@ namespace Kchary.PhotoViewer.Model
                             FileExtensionType.Unknown => throw new NotImplementedException(),
                             _ => throw new ArgumentOutOfRangeException(),
                         };
-                        exifInfo.ExifParameterValue = bitdepth.ToString();
+                        exifInfo.ExifParameterValue = bitDepth.ToString();
                         break;
 
                     case PropertyType.ShutterSpeed:
@@ -218,16 +219,16 @@ namespace Kchary.PhotoViewer.Model
 
                     case PropertyType.WhiteBalance:
                         var whiteBalance = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagWhiteBalance);
-                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(whiteBalance) ? Enum.Parse<WhiteBlanceType>(whiteBalance).ToString() : whiteBalance;
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(whiteBalance) ? Enum.Parse<WhiteBalanceType>(whiteBalance).ToString() : whiteBalance;
                         break;
 
                     case PropertyType.MeteringMode:
-                        var metaringMode = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagMeteringMode);
-                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(metaringMode) ? Enum.Parse<MeteringModeType>(metaringMode).ToString() : metaringMode;
+                        var meteringMode = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagMeteringMode);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(meteringMode) ? Enum.Parse<MeteringModeType>(meteringMode).ToString() : meteringMode;
                         break;
 
                     default:
-                        break;
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -238,7 +239,7 @@ namespace Kchary.PhotoViewer.Model
         /// <param name="filePath">ファイルパス</param>
         /// <param name="fileExtensionType">ファイルの拡張子</param>
         /// <returns>メタデータの構造データ</returns>
-        private static IEnumerable<MetadataExtractor.Directory> GetMetadataDirectories(string filePath, FileExtensionType fileExtensionType)
+        private static IEnumerable<Directory> GetMetadataDirectories(string filePath, FileExtensionType fileExtensionType)
         {
             var directories = fileExtensionType switch
             {
@@ -261,18 +262,20 @@ namespace Kchary.PhotoViewer.Model
         /// <param name="tag">取得したいExifのタグ番号</param>
         /// <returns></returns>
         private static string GetExifDataFromMetadata<T>(IEnumerable<T> metadataDirectories, int tag)
-            where T : MetadataExtractor.Directory
+            where T : Directory
         {
             foreach (var metadataDirectory in metadataDirectories)
             {
-                if (metadataDirectory is MetadataExtractor.Directory exifDirectory)
+                if (metadataDirectory is not Directory exifDirectory)
                 {
-                    // 該当データが見つかった場合は、すぐにその値を返す
-                    var metadata = exifDirectory.GetString(tag);
-                    if (!string.IsNullOrEmpty(metadata))
-                    {
-                        return metadata;
-                    }
+                    continue;
+                }
+
+                // 該当データが見つかった場合は、すぐにその値を返す
+                var metadata = exifDirectory.GetString(tag);
+                if (!string.IsNullOrEmpty(metadata))
+                {
+                    return metadata;
                 }
             }
 

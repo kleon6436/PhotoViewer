@@ -257,7 +257,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     throw new NotImplementedException();
 
                 default:
-                    break;
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -280,7 +280,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// Bluetoothボタンを押下時の処理
         /// </summary>
-        private void BluetoothButtonClicked()
+        private static void BluetoothButtonClicked()
         {
             try
             {

@@ -115,7 +115,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 new() { Name = "Tiff", Form = ImageForm.ImageForms.Tiff }
             };
 
-            ResizeCategoryItem.Subscribe(x => OnResizeCategoryItemChanged(x)).AddTo(disposable);
+            ResizeCategoryItem.Subscribe(OnResizeCategoryItemChanged).AddTo(disposable);
 
             SaveButtonCommand = new ReactiveCommand().WithSubscribe(SaveButtonClicked).AddTo(disposable);
         }
