@@ -13,29 +13,34 @@ namespace Kchary::ImageController::NormalImageControl
 	class NormalImageController final : public IImageController
 	{
 	public:
-		/**
+		/*!
+		 * @brief コンストラクタ
+		 */
+		NormalImageController() = default;
+
+		/*!
 		 * @brief	画像データを取得する
 		 * @param	path: 画像ファイルパス
 		 * @param	imageData: 画像データ
 		 * @return	成功: 0, 失敗: -1
 		 */
-		int GetImageData(const char path[], ImageData& imageData) const override;
+		int GetImageData(const char* path, ImageData& imageData) const override;
 
-		/**
+		/*!
 		 * @brief	画像のサムネイルデータを取得する
 		 * @param	path: ファイルパス
 		 * @param	resizeLongSideLength: リサイズする長辺の長さ
 		 * @param	imageData: 画像データ
 		 * @return	成功: 0, 失敗: -1
 		 */
-		int GetThumbnailImageData(const char path[], int resizeLongSideLength, ImageData& imageData) const override;
+		int GetThumbnailImageData(const char* path, const int resizeLongSideLength, ImageData& imageData) const override;
 
 	private:
-		/**
+		/*!
 		 * @brief	画像取得モード(OpenCV)を取得する
 		 * @param	resizeLongSideLength: リサイズする長辺の長さ
 		 * @return	ImreadModes
 		 */
-		static cv::ImreadModes GetImreadMode(int resizeLongSideLength);
+		static cv::ImreadModes GetImreadMode(const int resizeLongSideLength);
 	};
 }
