@@ -115,7 +115,7 @@ namespace Kchary.PhotoViewer.Model
                     var scale = LongSideLength / (double)thumbnail.PixelWidth;
                     if (thumbnail.PixelWidth < thumbnail.PixelHeight)
                     {
-                        scale = LongSideLength / thumbnail.PixelHeight;
+                        scale = LongSideLength / (double)thumbnail.PixelHeight;
                     }
                     thumbnail = new TransformedBitmap(thumbnail, new ScaleTransform(scale, scale));
 

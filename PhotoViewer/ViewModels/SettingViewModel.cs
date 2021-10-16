@@ -1,10 +1,10 @@
-﻿using Kchary.PhotoViewer.Views;
+﻿using System;
+using System.Reactive.Disposables;
+using System.Windows.Controls;
+using Kchary.PhotoViewer.Views;
 using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
-using System;
-using System.Reactive.Disposables;
-using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
@@ -34,30 +34,31 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             get
             {
-                if (selectPageButtonValue != null)
+                if (selectPageButtonValue == null)
                 {
-                    switch (selectPageButtonValue.Value)
-                    {
-                        case SelectPage.LinkageAppPage:
-                            var vm = new LinkageAppViewModel();
-                            vm.ChangeLinkageAppEvent += ChangeLinkageApp;
-                            DisplayPage.Value = new LinkageAppView
-                            {
-                                DataContext = vm
-                            };
-                            break;
-
-                        case SelectPage.InformationPage:
-                            DisplayPage.Value = new InformationView();
-                            break;
-
-                        default:
-                            DisplayPage.Value = null;
-                            throw new ArgumentOutOfRangeException(nameof(selectPageButtonValue.Value), "Invalid name");
-                    }
-                    
+                    return selectPageButtonValue ??= new ReactivePropertySlim<SelectPage>().AddTo(disposable);
                 }
-                return selectPageButtonValue ??= new ReactivePropertySlim<SelectPage>(SelectPage.LinkageAppPage).AddTo(disposable);
+
+                switch (selectPageButtonValue.Value)
+                {
+                    case SelectPage.LinkageAppPage:
+                        var vm = new LinkageAppViewModel();
+                        vm.ChangeLinkageAppEvent += ChangeLinkageApp;
+                        DisplayPage.Value = new LinkageAppView
+                        {
+                            DataContext = vm
+                        };
+                        break;
+
+                    case SelectPage.InformationPage:
+                        DisplayPage.Value = new InformationView();
+                        break;
+
+                    default:
+                        DisplayPage.Value = null;
+                        throw new ArgumentOutOfRangeException(nameof(selectPageButtonValue.Value), "Invalid name");
+                }
+                return selectPageButtonValue ??= new ReactivePropertySlim<SelectPage>().AddTo(disposable);
             }
         }
 
@@ -65,13 +66,6 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 表示する画面
         /// </summary>
         public ReactivePropertySlim<Page> DisplayPage { get; set; } = new();
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public SettingViewModel()
-        {
-        }
 
         /// <summary>
         /// Dispose

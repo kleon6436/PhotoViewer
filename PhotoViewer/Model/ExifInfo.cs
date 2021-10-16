@@ -37,6 +37,7 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         /// <param name="exifText">Exifパラメータ名</param>
         /// <param name="exifValue">Exifパラメータ値</param>
+        /// <param name="propertyType">Exif情報のプロパティタイプ</param>
         public ExifInfo(string exifText, string exifValue, PropertyType propertyType)
         {
             ExifParameterText = exifText;
