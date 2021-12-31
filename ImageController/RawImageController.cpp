@@ -10,7 +10,7 @@
 
 namespace Kchary::ImageController::RawImageControl
 {
-	int RawImageController::GetImageData(const char path[], ImageData& imageData) const
+	int RawImageController::GetImageData(const char* path, ImageData& imageData) const
 	{
 		const auto rawProcessor = std::make_unique<LibRaw>();
 
@@ -67,7 +67,7 @@ namespace Kchary::ImageController::RawImageControl
 		return 0;
 	}
 
-	int RawImageController::GetThumbnailImageData(const char path[], int resizeLongSideLength, ImageData& imageData) const
+	int RawImageController::GetThumbnailImageData(const char* path, const int resizeLongSideLength, ImageData& imageData) const
 	{
 		const auto rawProcessor = std::make_unique<LibRaw>();
 
@@ -127,7 +127,7 @@ namespace Kchary::ImageController::RawImageControl
 		return 0;
 	}
 
-	cv::ImreadModes RawImageController::GetImreadMode(libraw_thumbnail_t thumbnail, int resizeLongSideLength)
+	cv::ImreadModes RawImageController::GetImreadMode(const libraw_thumbnail_t& thumbnail, const int resizeLongSideLength)
 	{
 		const auto thumbLongSideLength = thumbnail.twidth > thumbnail.theight ? thumbnail.twidth : thumbnail.theight;
 
