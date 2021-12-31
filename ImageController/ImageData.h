@@ -1,4 +1,4 @@
-﻿/**
+﻿/*!
  * @file	ImageData.h
  * @author	kleon6436
  */

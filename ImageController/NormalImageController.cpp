@@ -8,7 +8,7 @@
 
 namespace Kchary::ImageController::NormalImageControl
 {
-	int NormalImageController::GetImageData(const char path[], ImageData& imageData) const
+	int NormalImageController::GetImageData(const char* path, ImageData& imageData) const
 	{
 		// Read image data to mat.
 		auto img = cv::imread(path, cv::ImreadModes::IMREAD_COLOR);
@@ -28,7 +28,7 @@ namespace Kchary::ImageController::NormalImageControl
 		return 0;
 	}
 
-	int NormalImageController::GetThumbnailImageData(const char path[], int resizeLongSideLength, ImageData& imageData) const
+	int NormalImageController::GetThumbnailImageData(const char* path, const int resizeLongSideLength, ImageData& imageData) const
 	{
 		// Read image data to mat.
 		const auto imreadMode = GetImreadMode(resizeLongSideLength);
@@ -56,7 +56,7 @@ namespace Kchary::ImageController::NormalImageControl
 		return 0;
 	}
 
-	cv::ImreadModes NormalImageController::GetImreadMode(int resizeLongSideLength)
+	cv::ImreadModes NormalImageController::GetImreadMode(const int resizeLongSideLength)
 	{
 		cv::ImreadModes imreadMode;
 

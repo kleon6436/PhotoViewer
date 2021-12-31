@@ -1,5 +1,4 @@
-﻿using Prism.Mvvm;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -8,7 +7,7 @@ namespace Kchary.PhotoViewer.Model
     /// <summary>
     /// メディア情報クラス
     /// </summary>
-    public sealed class MediaInfo : BindableBase
+    public sealed class MediaInfo
     {
         /// <summary>
         /// メディアのタイプ
@@ -26,27 +25,15 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         public MediaType ContentMediaType => CheckMediaType(FilePath);
 
-        private BitmapSource thumbnailImage;
-
         /// <summary>
         /// サムネイル画像
         /// </summary>
-        public BitmapSource ThumbnailImage
-        {
-            get => thumbnailImage;
-            set => SetProperty(ref thumbnailImage, value);
-        }
-
-        private string fileName;
+        public BitmapSource ThumbnailImage { get; set; }
 
         /// <summary>
         /// ファイル名
         /// </summary>
-        public string FileName
-        {
-            get => fileName;
-            set => SetProperty(ref fileName, value);
-        }
+        public string FileName { get; set; }
 
         /// <summary>
         /// ファイルパス

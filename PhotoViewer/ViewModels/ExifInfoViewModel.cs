@@ -1,7 +1,6 @@
 ﻿using Kchary.PhotoViewer.Model;
 using Prism.Mvvm;
-using System.Collections.ObjectModel;
-using System.Windows;
+using System;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
@@ -10,7 +9,20 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// Exif情報データを保持するリスト
         /// </summary>
-        public ObservableCollection<ExifInfo> ExifDataList { get; } = new();
+        /// <remarks>
+        /// Exif情報に表示するプロパティ要素数だけ配列を準備する
+        /// </remarks>
+        public ExifInfo[] ExifDataList { get; } = new ExifInfo[Enum.GetNames<PropertyType>().Length];
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ExifInfoViewModel()
+        {
+            // Exif情報の基礎部分を作っておく。
+            // 各Exif情報の値は、画像読み込み時に設定する
+            ExifParser.CreateExifDefaultList(ExifDataList);
+        }
 
         /// <summary>
         /// Exif情報を設定する
@@ -18,11 +30,22 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="filePath">画像ファイルパス</param>
         public void SetExif(string filePath)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            ExifParser.SetExifDataFromFile(filePath, ExifDataList);
+        }
+
+        /// <summary>
+        /// リストのデータからExif情報を削除
+        /// </summary>
+        /// <remarks>
+        /// リストに含まれるExifプロパティ名は削除しない
+        /// したがって、中身のパラメータだけを空文字にする
+        /// </remarks>
+        public void ClearExif()
+        {
+            foreach (var exifData in ExifDataList)
             {
-                ExifDataList.Clear();
-                ExifDataList.AddRange(ExifParser.GetExifDataFromFile(filePath));
-            });
+                exifData.ExifParameterValue = "";
+            }
         }
     }
 }

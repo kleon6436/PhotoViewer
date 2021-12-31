@@ -9,7 +9,7 @@
         d:DataContext="{d:DesignInstance viewmodel:SettingViewModel}"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
         Icon="/Images/PhotoExifViewerIcon.ico"
-        Title="PhotoViewer" Height="600" Width="800">
+        Title="PhotoViewer" Height="600" Width="800" Closing="Window_Closing">
     <Window.Resources>
         <converter:BoolToEnumConverter x:Key="SelectPageBoolToEnumConverter" />
         <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
@@ -54,10 +54,10 @@
         <Rectangle Grid.Column="0" Fill="#D4D4D4" />
         <StackPanel Grid.Column="0" Orientation="Vertical">
             <RadioButton Content="Linked app settings" Style="{StaticResource RadioButtonStyle}" FontSize="14"
-                         IsChecked="{Binding SelectPageButtonValue, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=LinkageAppPage}" />
+                         IsChecked="{Binding SelectPageButtonValue.Value, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterParameter=LinkageAppPage}" />
             <RadioButton Content="Information" Style="{StaticResource RadioButtonStyle}" FontSize="14"
-                         IsChecked="{Binding SelectPageButtonValue, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=InformationPage}" />
+                         IsChecked="{Binding SelectPageButtonValue.Value, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterParameter=InformationPage}" />
         </StackPanel>
-        <Frame x:Name="Frame" Grid.Column="1" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage, Mode=OneWay}" />
+        <Frame x:Name="Frame" Grid.Column="1" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage.Value, Mode=OneWay}" />
     </Grid>
 </Window>

@@ -1,7 +1,7 @@
 ﻿namespace Kchary.PhotoViewer.Model
 {
     /// <summary>
-    /// 編集画面に表示するリサイズカテゴリクラス
+    /// 編集画面に表示するリサイズカテゴリ情報クラス
     /// </summary>
     public sealed class ResizeImageCategory
     {

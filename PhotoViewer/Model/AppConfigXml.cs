@@ -20,7 +20,7 @@ namespace Kchary.PhotoViewer.Model
         private const string PlacementTopElemName = "top";
         private const string PlacementLeftElemName = "left";
         private const string PlacementRightElemName = "right";
-        private const string PlacementButtomElemName = "buttom";
+        private const string PlacementBottomElemName = "buttom";
         private const string PlacementMaxPosXElemName = "maxPosX";
         private const string PlacementMaxPosYElemName = "maxPosY";
         private const string PlacementMinPosXElemName = "minPosX";
@@ -140,7 +140,7 @@ namespace Kchary.PhotoViewer.Model
                     continue;
                 }
 
-                var linkageApp = new ExtraAppSetting {AppName = appNameElement?.Value, AppPath = appPathElement?.Value};
+                var linkageApp = new ExtraAppSetting { AppName = appNameElement?.Value, AppPath = appPathElement?.Value };
                 configData.LinkageAppList.Add(linkageApp);
             }
         }
@@ -155,7 +155,7 @@ namespace Kchary.PhotoViewer.Model
             var windowPlaceTopElement = new XElement(PlacementTopElemName, new XText(configData.PlaceData.normalPosition.Top.ToString()));
             var windowPlaceLeftElement = new XElement(PlacementLeftElemName, new XText(configData.PlaceData.normalPosition.Left.ToString()));
             var windowPlaceRightElement = new XElement(PlacementRightElemName, new XText(configData.PlaceData.normalPosition.Right.ToString()));
-            var windowPlaceButtonElement = new XElement(PlacementButtomElemName, new XText(configData.PlaceData.normalPosition.Bottom.ToString()));
+            var windowPlaceButtonElement = new XElement(PlacementBottomElemName, new XText(configData.PlaceData.normalPosition.Bottom.ToString()));
             var windowMaxPositionX = new XElement(PlacementMaxPosXElemName, new XText(configData.PlaceData.maxPosition.X.ToString()));
             var windowMaxPositionY = new XElement(PlacementMaxPosYElemName, new XText(configData.PlaceData.maxPosition.Y.ToString()));
             var windowMinPositionX = new XElement(PlacementMinPosXElemName, new XText(configData.PlaceData.minPosition.X.ToString()));
@@ -188,7 +188,7 @@ namespace Kchary.PhotoViewer.Model
             var windowPlaceTopElement = dataElement?.Element(PlacementTopElemName);
             var windowPlaceLeftElement = dataElement?.Element(PlacementLeftElemName);
             var windowPlaceRightElement = dataElement?.Element(PlacementRightElemName);
-            var windowPlaceButtomElement = dataElement?.Element(PlacementButtomElemName);
+            var windowPlaceButtomElement = dataElement?.Element(PlacementBottomElemName);
             var windowMaxPositionX = dataElement?.Element(PlacementMaxPosXElemName);
             var windowMaxPositionY = dataElement?.Element(PlacementMaxPosYElemName);
             var windowMinPositionX = dataElement?.Element(PlacementMinPosXElemName);
@@ -212,7 +212,7 @@ namespace Kchary.PhotoViewer.Model
             }
             else
             {
-                configData.PlaceData.showCmd = (MainWindow.NativeMethods.Sw)Enum.Parse(typeof(MainWindow.NativeMethods.Sw), windowSwElement.Value);
+                configData.PlaceData.showCmd = Enum.Parse<MainWindow.NativeMethods.Sw>(windowSwElement.Value);
             }
         }
     }
