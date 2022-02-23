@@ -257,7 +257,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     throw new NotImplementedException();
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(null, nameof(mediaInfo.ContentMediaType));
             }
         }
 
