@@ -1,6 +1,5 @@
 ﻿using Kchary.PhotoViewer.Model;
 using Prism.Mvvm;
-using System;
 using FastEnumUtility;
 
 namespace Kchary.PhotoViewer.ViewModels
