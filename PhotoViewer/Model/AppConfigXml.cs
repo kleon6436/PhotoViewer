@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
+using FastEnumUtility;
 using Kchary.PhotoViewer.Views;
 
 namespace Kchary.PhotoViewer.Model
@@ -206,7 +207,7 @@ namespace Kchary.PhotoViewer.Model
             configData.PlaceData.minPosition.Y = Convert.ToInt32(windowMinPositionY?.Value);
             configData.PlaceData.length = Marshal.SizeOf(typeof(MainWindow.NativeMethods.Placement));
             configData.PlaceData.flags = Convert.ToInt32(windowFlag?.Value);
-            configData.PlaceData.showCmd = windowSwElement == null ? MainWindow.NativeMethods.Sw.ShowNormal : Enum.Parse<MainWindow.NativeMethods.Sw>(windowSwElement.Value);
+            configData.PlaceData.showCmd = windowSwElement == null ? MainWindow.NativeMethods.Sw.ShowNormal : FastEnum.Parse<MainWindow.NativeMethods.Sw>(windowSwElement.Value);
         }
     }
 }

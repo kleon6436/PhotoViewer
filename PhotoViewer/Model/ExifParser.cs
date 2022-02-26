@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FastEnumUtility;
 using Directory = MetadataExtractor.Directory;
 
 namespace Kchary.PhotoViewer.Model
@@ -119,7 +120,7 @@ namespace Kchary.PhotoViewer.Model
         public static void CreateExifDefaultList(ExifInfo[] exifDataList)
         {
             var count = 0;
-            foreach (PropertyType propertyType in Enum.GetValues<PropertyType>())
+            foreach (var propertyType in FastEnum.GetValues<PropertyType>())
             {
                 exifDataList[count] = new ExifInfo(GetPropertyName(propertyType), "", propertyType);
                 count++;
@@ -214,17 +215,17 @@ namespace Kchary.PhotoViewer.Model
 
                     case PropertyType.ExposureProgram:
                         var exposureProgram = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExposureProgram);
-                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(exposureProgram) ? Enum.Parse<ExposureProgramType>(exposureProgram).ToString() : exposureProgram;
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(exposureProgram) ? FastEnum.Parse<ExposureProgramType>(exposureProgram).ToString() : exposureProgram;
                         break;
 
                     case PropertyType.WhiteBalance:
                         var whiteBalance = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagWhiteBalance);
-                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(whiteBalance) ? Enum.Parse<WhiteBalanceType>(whiteBalance).ToString() : whiteBalance;
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(whiteBalance) ? FastEnum.Parse<WhiteBalanceType>(whiteBalance).ToString() : whiteBalance;
                         break;
 
                     case PropertyType.MeteringMode:
                         var meteringMode = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagMeteringMode);
-                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(meteringMode) ? Enum.Parse<MeteringModeType>(meteringMode).ToString() : meteringMode;
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(meteringMode) ? FastEnum.Parse<MeteringModeType>(meteringMode).ToString() : meteringMode;
                         break;
 
                     default:

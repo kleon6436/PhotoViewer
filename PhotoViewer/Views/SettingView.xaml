@@ -11,7 +11,7 @@
         Icon="/Images/PhotoExifViewerIcon.ico"
         Title="PhotoViewer" Height="600" Width="800" Closing="Window_Closing">
     <Window.Resources>
-        <converter:BoolToEnumConverter x:Key="SelectPageBoolToEnumConverter" />
+        <converter:BoolToSelectPageConverter x:Key="SelectPageBoolToEnumConverter" />
         <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
             <Setter Property="Template">
                 <Setter.Value>

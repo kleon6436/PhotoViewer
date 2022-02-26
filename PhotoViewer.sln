@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoViewer", "PhotoViewer\PhotoViewer.csproj", "{AE1E20A0-3AE8-46CA-B5B8-491E1C117D03}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -18,6 +18,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageControllerDllUnitTest", "ImageControllerDllUnitTest\ImageControllerDllUnitTest.csproj", "{B7B01549-743F-4C73-A3DF-9196B688B470}"
 	ProjectSection(ProjectDependencies) = postProject
 		{171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C} = {171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F44EF9FB-7F9F-4C01-B7FD-67003C339BDC}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
+		third_party_license.txt = third_party_license.txt
 	EndProjectSection
 EndProject
 Global
