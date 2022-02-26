@@ -26,9 +26,9 @@ namespace Kchary.PhotoViewer.Model
         ImageHeight,
         HorizonResolution,
         VerticalResolution,
-        Bitdepth,
+        BitDepth,
         ShutterSpeed,
-        Fnumber,
+        FNumber,
         Iso,
         FocalLength,
         ExposureProgram,
@@ -103,9 +103,9 @@ namespace Kchary.PhotoViewer.Model
         private const string ImageHeightProperty = "Height";
         private const string HorizonResolutionProperty = "Horizon resolution";
         private const string VerticalResolutionProperty = "Vertical resolution";
-        private const string BitdepthProperty = "Bit depth";
+        private const string BitDepthProperty = "Bit depth";
         private const string ShutterSpeedProperty = "Shutter speed";
-        private const string FnumberProperty = "F number";
+        private const string FNumberProperty = "F number";
         private const string IsoProperty = "ISO";
         private const string FocalLengthProperty = "Focal length";
         private const string ExposureProgramProperty = "Exposure program";
@@ -180,7 +180,7 @@ namespace Kchary.PhotoViewer.Model
                         exifInfo.ExifParameterValue = !string.IsNullOrEmpty(verticalResolution) ? $"{verticalResolution} dpi" : verticalResolution;
                         break;
 
-                    case PropertyType.Bitdepth:
+                    case PropertyType.BitDepth:
                         var bitDepth = fileExtensionType switch
                         {
                             FileExtensionType.Jpeg => GetExifDataFromMetadata(directories, JpegDirectory.TagDataPrecision),
@@ -199,7 +199,7 @@ namespace Kchary.PhotoViewer.Model
                         exifInfo.ExifParameterValue = !string.IsNullOrEmpty(shutterSpeed) ? $"{shutterSpeed} sec" : shutterSpeed;
                         break;
 
-                    case PropertyType.Fnumber:
+                    case PropertyType.FNumber:
                         exifInfo.ExifParameterValue = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagFNumber);
                         break;
 
@@ -300,9 +300,9 @@ namespace Kchary.PhotoViewer.Model
                 PropertyType.ImageHeight => ImageHeightProperty,
                 PropertyType.HorizonResolution => HorizonResolutionProperty,
                 PropertyType.VerticalResolution => VerticalResolutionProperty,
-                PropertyType.Bitdepth => BitdepthProperty,
+                PropertyType.BitDepth => BitDepthProperty,
                 PropertyType.ShutterSpeed => ShutterSpeedProperty,
-                PropertyType.Fnumber => FnumberProperty,
+                PropertyType.FNumber => FNumberProperty,
                 PropertyType.Iso => IsoProperty,
                 PropertyType.FocalLength => FocalLengthProperty,
                 PropertyType.ExposureProgram => ExposureProgramProperty,
