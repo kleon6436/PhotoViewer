@@ -16,7 +16,7 @@ namespace Kchary.PhotoViewer.Model
         /// <summary>
         /// アイテムパス
         /// </summary>
-        public string ExplorerItemPath { get; private set; }
+        public string ExplorerItemPath { get; }
 
         /// <summary>
         /// 内部ディレクトリ情報

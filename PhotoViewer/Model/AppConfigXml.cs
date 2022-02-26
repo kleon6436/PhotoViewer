@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
+using FastEnumUtility;
 using Kchary.PhotoViewer.Views;
 
 namespace Kchary.PhotoViewer.Model
@@ -188,7 +189,7 @@ namespace Kchary.PhotoViewer.Model
             var windowPlaceTopElement = dataElement?.Element(PlacementTopElemName);
             var windowPlaceLeftElement = dataElement?.Element(PlacementLeftElemName);
             var windowPlaceRightElement = dataElement?.Element(PlacementRightElemName);
-            var windowPlaceButtomElement = dataElement?.Element(PlacementBottomElemName);
+            var windowPlaceBottomElement = dataElement?.Element(PlacementBottomElemName);
             var windowMaxPositionX = dataElement?.Element(PlacementMaxPosXElemName);
             var windowMaxPositionY = dataElement?.Element(PlacementMaxPosYElemName);
             var windowMinPositionX = dataElement?.Element(PlacementMinPosXElemName);
@@ -199,21 +200,14 @@ namespace Kchary.PhotoViewer.Model
             configData.PlaceData.normalPosition.Top = Convert.ToInt32(windowPlaceTopElement?.Value);
             configData.PlaceData.normalPosition.Left = Convert.ToInt32(windowPlaceLeftElement?.Value);
             configData.PlaceData.normalPosition.Right = Convert.ToInt32(windowPlaceRightElement?.Value);
-            configData.PlaceData.normalPosition.Bottom = Convert.ToInt32(windowPlaceButtomElement?.Value);
+            configData.PlaceData.normalPosition.Bottom = Convert.ToInt32(windowPlaceBottomElement?.Value);
             configData.PlaceData.maxPosition.X = Convert.ToInt32(windowMaxPositionX?.Value);
             configData.PlaceData.maxPosition.Y = Convert.ToInt32(windowMaxPositionY?.Value);
             configData.PlaceData.minPosition.X = Convert.ToInt32(windowMinPositionX?.Value);
             configData.PlaceData.minPosition.Y = Convert.ToInt32(windowMinPositionY?.Value);
             configData.PlaceData.length = Marshal.SizeOf(typeof(MainWindow.NativeMethods.Placement));
             configData.PlaceData.flags = Convert.ToInt32(windowFlag?.Value);
-            if (windowSwElement == null)
-            {
-                configData.PlaceData.showCmd = MainWindow.NativeMethods.Sw.ShowNormal;
-            }
-            else
-            {
-                configData.PlaceData.showCmd = Enum.Parse<MainWindow.NativeMethods.Sw>(windowSwElement.Value);
-            }
+            configData.PlaceData.showCmd = windowSwElement == null ? MainWindow.NativeMethods.Sw.ShowNormal : FastEnum.Parse<MainWindow.NativeMethods.Sw>(windowSwElement.Value);
         }
     }
 }

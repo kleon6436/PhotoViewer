@@ -86,12 +86,7 @@ namespace Kchary.PhotoViewer.Model
                 return FileExtensionType.Unknown;
             }
 
-            if (!SupportExtensionMap.TryGetValue(extension, out var extensionType))
-            {
-                return FileExtensionType.Unknown;
-            }
-
-            return extensionType;
+            return !SupportExtensionMap.TryGetValue(extension, out var extensionType) ? FileExtensionType.Unknown : extensionType;
         }
     }
 }

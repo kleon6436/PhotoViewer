@@ -1,6 +1,6 @@
 ﻿using Kchary.PhotoViewer.Model;
 using Prism.Mvvm;
-using System;
+using FastEnumUtility;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
@@ -12,7 +12,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <remarks>
         /// Exif情報に表示するプロパティ要素数だけ配列を準備する
         /// </remarks>
-        public ExifInfo[] ExifDataList { get; } = new ExifInfo[Enum.GetNames<PropertyType>().Length];
+        public ExifInfo[] ExifDataList { get; } = new ExifInfo[FastEnum.GetNames<PropertyType>().Count];
 
         /// <summary>
         /// コンストラクタ

@@ -257,7 +257,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     throw new NotImplementedException();
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(null, nameof(mediaInfo.ContentMediaType));
             }
         }
 
@@ -667,7 +667,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
 
                 // タスクを実行し、処理完了まで待つ
-                await Task.WhenAll(new Task[] { loadPictureTask, setExifInfoTask });
+                await Task.WhenAll(loadPictureTask, setExifInfoTask);
 
                 // 編集ボタンの状態を更新(Raw画像以外は活性状態とする)
                 IsEnableImageEditButton.Value = !MediaChecker.CheckRawFileExtension(Path.GetExtension(mediaInfo.FilePath)?.ToLower());
