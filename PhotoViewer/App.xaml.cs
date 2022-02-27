@@ -10,17 +10,17 @@ namespace Kchary.PhotoViewer
     {
         internal class NativeMethods
         {
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
             internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
             internal static extern bool IsWindow(IntPtr hWnd);
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
             internal static extern bool IsWindowVisible(IntPtr hWnd);
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
             internal static extern IntPtr GetLastActivePopup(IntPtr hWnd);
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
             internal static extern int ShowWindow(IntPtr hWnd, int nCmdShow);
-            [DllImport("user32.dll")]
+            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
             internal static extern bool SetForegroundWindow(IntPtr hWnd);
         }
 

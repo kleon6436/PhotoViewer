@@ -121,7 +121,7 @@ namespace Kchary::ImageController::RawImageControl
 		resizeImg.release();
 
 		// Free all internal data.
-		rawProcessor->dcraw_clear_mem(thumbnail);
+		LibRaw::dcraw_clear_mem(thumbnail);
 		rawProcessor->recycle();
 
 		return 0;
