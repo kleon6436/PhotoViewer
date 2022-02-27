@@ -44,7 +44,7 @@ namespace Kchary::ImageController::RawImageControl
 		if (image->bits == 16 || image->bits == 8)
 		{
 			const auto dataSize = image->data_size;
-			auto* const rawData = static_cast<std::uint8_t*>(image->data);
+			const auto* const rawData = static_cast<std::uint8_t*>(image->data);
 
 			imageData.buffer = new std::uint8_t[dataSize];
 			memcpy(imageData.buffer, rawData, dataSize);
