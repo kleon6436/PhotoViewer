@@ -189,8 +189,8 @@ namespace Kchary.PhotoViewer.Model
                             FileExtensionType.Png => GetExifDataFromMetadata(directories, PngDirectory.TagBitsPerSample),
                             FileExtensionType.Gif => GetExifDataFromMetadata(directories, GifHeaderDirectory.TagBitsPerPixel),
                             FileExtensionType.Tiff or FileExtensionType.Dng or FileExtensionType.Nef => GetExifDataFromMetadata(directories, ExifDirectoryBase.TagBitsPerSample).AsSpan(0, 1),
-                            FileExtensionType.Unknown => throw new NotImplementedException(),
-                            _ => throw new ArgumentOutOfRangeException(),
+                            FileExtensionType.Unknown => throw new ArgumentOutOfRangeException(exifInfo.ExifPropertyType.ToString(), nameof(exifInfo.ExifPropertyType)),
+                            _ => throw new ArgumentOutOfRangeException(exifInfo.ExifPropertyType.ToString(), nameof(exifInfo.ExifPropertyType)),
                         };
                         exifInfo.ExifParameterValue = bitDepth.ToString();
                         break;
@@ -229,7 +229,7 @@ namespace Kchary.PhotoViewer.Model
                         break;
 
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException(exifInfo.ExifPropertyType.ToString(), nameof(exifInfo.ExifPropertyType));
                 }
             }
         }

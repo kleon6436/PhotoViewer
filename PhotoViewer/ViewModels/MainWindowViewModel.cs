@@ -243,6 +243,7 @@ namespace Kchary.PhotoViewer.ViewModels
             if (!File.Exists(mediaInfo.FilePath))
             {
                 App.ShowErrorMessageBox("File not exist.", "File access error");
+                return;
             }
 
             IsEnableImageEditButton.Value = false;
@@ -254,10 +255,8 @@ namespace Kchary.PhotoViewer.ViewModels
                     break;
 
                 case MediaInfo.MediaType.Movie:
-                    throw new NotImplementedException();
-
                 default:
-                    throw new ArgumentOutOfRangeException(null, nameof(mediaInfo.ContentMediaType));
+                    throw new ArgumentOutOfRangeException(mediaInfo.ContentMediaType.ToString(), nameof(mediaInfo.ContentMediaType));
             }
         }
 
@@ -644,11 +643,12 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            if (queue.Any())
+            if (!queue.Any())
             {
-                Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
-                queue.Clear();
+                return;
             }
+            Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
+            queue.Clear();
         }
 
         /// <summary>
