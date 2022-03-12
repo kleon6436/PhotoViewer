@@ -104,13 +104,16 @@ namespace Kchary.PhotoViewer.Views
         /// <param name="e">引数情報</param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is not MainWindowViewModel vm || vm.SelectedMedia != null || !vm.MediaInfoList.Any())
+            if (DataContext is not MainWindowViewModel { SelectedMedia: null } vm || !vm.MediaInfoList.Any())
             {
                 return;
             }
 
             var firstImageData = vm.MediaInfoList.First();
-            vm.SelectedMedia.Value = firstImageData;
+            if (vm.SelectedMedia != null)
+            {
+                vm.SelectedMedia.Value = firstImageData;
+            }
         }
 
         /// <summary>
@@ -134,7 +137,7 @@ namespace Kchary.PhotoViewer.Views
             AppConfigManager.ConfigData.PlaceData = placement;
             AppConfigManager.Export();
 
-            vm.Dispose();
+            vm?.Dispose();
         }
 
         /// <summary>
@@ -150,9 +153,6 @@ namespace Kchary.PhotoViewer.Views
             {
                 MediaListBox.ScrollIntoView(selectedItem);
             }
-
-            // Run GC.
-            App.RunGc();
         }
 
         /// <summary>

@@ -111,14 +111,16 @@ namespace Kchary.PhotoViewer.Model
             foreach (var directory in sortDirectoryInfos)
             {
                 // 1文字目の文字を確認
-                var fileNameFirst = Path.GetFileName(directory.FullName).Substring(0, 1);
+                var fileNameFirst = Path.GetFileName(directory.FullName)[..1];
 
                 // Windowsの特殊フォルダ以外を表示する
-                if (fileNameFirst != "$" && (directory.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
+                if (fileNameFirst == "$" ||
+                    (directory.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                 {
-                    var node = new ExplorerItem(directory.FullName, false);
-                    Items.Add(node);
+                    continue;
                 }
+                var node = new ExplorerItem(directory.FullName, false);
+                Items.Add(node);
             }
         }
 

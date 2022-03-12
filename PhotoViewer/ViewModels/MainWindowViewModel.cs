@@ -518,8 +518,6 @@ namespace Kchary.PhotoViewer.ViewModels
                 const string MediaReadErrorTitle = "File read error";
                 App.ShowErrorMessageBox(MediaReadErrorMessage, MediaReadErrorTitle);
             }
-
-            App.RunGc();
         }
 
         /// <summary>
@@ -675,9 +673,6 @@ namespace Kchary.PhotoViewer.ViewModels
                 // パス表示を更新
                 SelectFolderPath.Value = mediaInfo.FilePath;
                 SelectedMedia.Value = mediaInfo;
-
-                // WritableBitmapのメモリを解放
-                App.RunGc();
             }
             catch (Exception ex)
             {

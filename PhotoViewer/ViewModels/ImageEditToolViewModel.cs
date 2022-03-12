@@ -138,8 +138,6 @@ namespace Kchary.PhotoViewer.ViewModels
             SelectedQuality.Value = ImageSaveQualityItems[0];
             SelectedForm.Value = ImageFormItems[0];
             IsEnableImageSaveQuality.Value = true;
-
-            App.RunGc();
         }
 
         /// <summary>
