@@ -128,15 +128,5 @@ namespace Kchary.PhotoViewer
         {
             MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
         }
-
-        /// <summary>
-        /// ガベージコレクションを用いてメモリ解放する
-        /// </summary>
-        public static void RunGc()
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-        }
     }
 }

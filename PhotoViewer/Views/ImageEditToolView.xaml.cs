@@ -19,8 +19,6 @@ namespace Kchary.PhotoViewer.Views
                 {
                     vm.CloseView += (_, _) =>
                     {
-                        // Release memory.
-                        App.RunGc();
                         Close();
                     };
                 }
@@ -34,8 +32,6 @@ namespace Kchary.PhotoViewer.Views
         /// <param name="e">引数情報</param>
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            // Release memory.
-            App.RunGc();
             Close();
         }
 
@@ -58,7 +54,7 @@ namespace Kchary.PhotoViewer.Views
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var vm = DataContext as ImageEditToolViewModel;
-            vm.Dispose();
+            vm?.Dispose();
         }
     }
 }
