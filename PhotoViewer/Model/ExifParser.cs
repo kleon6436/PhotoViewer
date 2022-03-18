@@ -14,6 +14,7 @@ using Directory = MetadataExtractor.Directory;
 
 namespace Kchary.PhotoViewer.Model
 {
+    // https://developer.adobe.com/xmp/docs/XMPNamespaces/exif/
     /// <summary>
     /// プロパティ名のタイプ
     /// </summary>
@@ -42,15 +43,15 @@ namespace Kchary.PhotoViewer.Model
     /// </summary>
     public enum ExposureProgramType
     {
-        Unknown,
-        Manual,
-        Normal,
-        AperturePriority,
-        ShutterPriority,
-        Slow,
-        HighSpeed,
-        Portrait,
-        LandScape
+        Unknown = 0,
+        Manual = 1,
+        Normal = 2,
+        AperturePriority = 3,
+        ShutterPriority = 4,
+        CreativeProgram = 5,
+        ActionProgram = 6,
+        Portrait = 7,
+        LandScape = 8
     }
 
     /// <summary>
@@ -58,13 +59,13 @@ namespace Kchary.PhotoViewer.Model
     /// </summary>
     public enum MeteringModeType
     {
-        Unknown,
-        Average,
-        CenterWeightedAverage,
-        Spot,
-        MultiSpot,
-        MultiSegment,
-        Partial,
+        Unknown = 0,
+        Average = 1,
+        CenterWeightedAverage = 2,
+        Spot = 3,
+        MultiSpot = 4,
+        Pattern = 5,
+        Partial = 6,
         Other = 255
     }
 
@@ -73,17 +74,27 @@ namespace Kchary.PhotoViewer.Model
     /// </summary>
     public enum WhiteBalanceType
     {
-        Unknown,
-        Daylight,
-        Fluorescent,
-        Tungsten,
-        Flash = 10,
-        StandardLightA = 18,
-        StandardLightB = 19,
-        StandardLightC = 20,
-        D55 = 21,
-        D64 = 22,
-        D75 = 255
+        Unknown = 0,
+        Daylight = 1,
+        Fluorescent = 2,
+        Tungsten = 3,
+        Flash = 4,
+        FineWeather = 9,
+        CloudyWeather = 10,
+        Shade = 11,
+        DaylightFluorescent = 12,
+        DayWhiteFluorescent = 13,
+        CoolWhiteFluorescent = 14,
+        WhiteFluorescent = 15,
+        StandardLightA = 17,
+        StandardLightB = 18,
+        StandardLightC = 19,
+        D55 = 20,
+        D65 = 21,
+        D75 = 22,
+        D50 = 23,
+        IsoStudioTungsten = 24,
+        Other = 255
     }
 
     /// <summary>
