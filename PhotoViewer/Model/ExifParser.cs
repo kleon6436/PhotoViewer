@@ -212,7 +212,8 @@ namespace Kchary.PhotoViewer.Model
                         break;
 
                     case PropertyType.FNumber:
-                        exifInfo.ExifParameterValue = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagFNumber);
+                        var fNumber = GetExifDataFromMetadata(directories, ExifDirectoryBase.TagFNumber);
+                        exifInfo.ExifParameterValue = !string.IsNullOrEmpty(fNumber) ? $"F/{fNumber}" : "";
                         break;
 
                     case PropertyType.Iso:
