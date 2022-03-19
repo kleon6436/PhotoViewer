@@ -23,13 +23,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\Bluetooth.png" />
-    <None Remove="Images\DeleteIcon.png" />
-    <None Remove="Images\ExifCleanIcon.png" />
-    <None Remove="Images\Folder_open.png" />
-    <None Remove="Images\Folder_small.png" />
-    <None Remove="Images\Gear_small.png" />
-    <None Remove="Images\reload.png" />
     <None Remove="Images\SplashScreen.png" />
   </ItemGroup>
 
@@ -44,7 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\Bluetooth.png" />
     <Resource Include="Images\PhotoExifViewerIcon.ico">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
@@ -52,12 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\DeleteIcon.png" />
-    <Resource Include="Images\ExifCleanIcon.png" />
-    <Resource Include="Images\Folder_open.png" />
-    <Resource Include="Images\Folder_small.png" />
-    <Resource Include="Images\Gear_small.png" />
-    <Resource Include="Images\reload.png" />
     <Resource Include="Images\SplashScreen.png" />
   </ItemGroup>
 
