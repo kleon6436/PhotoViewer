@@ -51,8 +51,6 @@ https://docs.microsoft.com/ja-jp/cpp/build/vcpkg?view=msvc-160
 
 - OpenCV
 
-- MaterialDesignThemes.MahApps
-
 - MetadataExtractor
 
 - Libraw
