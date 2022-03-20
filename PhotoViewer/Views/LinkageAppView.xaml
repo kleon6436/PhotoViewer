@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
-      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance viewmodel:LinkageAppViewModel}"
       d:DesignHeight="550" d:DesignWidth="600"
@@ -12,16 +11,6 @@
     <Page.Background>
         <SolidColorBrush Color="#F0F0F0" />
     </Page.Background>
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.defaults.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/materialdesigncolor.blue.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.amber.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="150" />
@@ -46,9 +35,7 @@
                   ItemsSource="{Binding LinkageAppList, Mode=OneWay}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
                   VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="True"
-                  VerticalGridLinesBrush="#F0F0F0" HorizontalGridLinesBrush="#F0F0F0"
-                  materialDesign:DataGridAssist.CellPadding="4 2 2 2"
-                  materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
+                  VerticalGridLinesBrush="#F0F0F0" HorizontalGridLinesBrush="#F0F0F0">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="App name" Binding="{Binding AppName, Mode=OneWay}" Width="auto" MinWidth="100">
                         <DataGridTextColumn.ElementStyle>

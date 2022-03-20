@@ -23,12 +23,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\bluetooth.png" />
+    <None Remove="Images\edit.png" />
+    <None Remove="Images\folder.png" />
+    <None Remove="Images\reload.png" />
+    <None Remove="Images\settings.png" />
     <None Remove="Images\SplashScreen.png" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FastEnum" Version="1.7.0" />
-    <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.2.0" />
     <PackageReference Include="MetadataExtractor" Version="2.7.2" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="ReactiveProperty" Version="8.0.4" />
@@ -37,10 +41,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\bluetooth.png" />
+    <Resource Include="Images\edit.png" />
+    <Resource Include="Images\folder.png" />
     <Resource Include="Images\PhotoExifViewerIcon.ico">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </Resource>
+    <Resource Include="Images\reload.png" />
+    <Resource Include="Images\settings.png" />
   </ItemGroup>
 
   <ItemGroup>

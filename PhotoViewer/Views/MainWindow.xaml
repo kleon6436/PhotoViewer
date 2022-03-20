@@ -7,7 +7,6 @@
         xmlns:view="clr-namespace:Kchary.PhotoViewer.Views"
         xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
         xmlns:model="clr-namespace:Kchary.PhotoViewer.Model"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewmodel:MainWindowViewModel}"
         Icon="/Images/PhotoExifViewerIcon.ico"
@@ -18,12 +17,43 @@
     </Window.Background>
     <Window.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.defaults.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/materialdesigncolor.blue.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.amber.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="MenuContainerStyle" TargetType="Button">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="Background" Value="#7DBFE8"/>
+                <Setter Property="Margin" Value="0, 0, 5, 0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="15" Background="{TemplateBinding Background}">
+                                <ContentPresenter />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#CDD2D4"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="MenuIconContainerStyle" TargetType="Grid">
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="Width" Value="30"/>
+            </Style>
+
+            <Style x:Key="MenuTextStyle" TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Margin" Value="5, 0, 10, 0"/>
+            </Style>
+
+            <Style x:Key="MenuImageStyle" TargetType="Image">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="7"/>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -54,66 +84,60 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <materialDesign:Chip
-                        Grid.Column="0"
-                        Margin="5, 2.5"
-                        Content="Bluetooth"
-                        Command="{Binding BluetoothButtonCommand, Mode=OneTime}"
-                        IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                        IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="Bluetooth" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="0" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding BluetoothButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/bluetooth.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Bluetooth" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
 
-                <materialDesign:Chip
-                    Grid.Column="1"
-                    Margin="5, 2.5"
-                    Content="Explorer"
-                    Command="{Binding OpenFolderButtonCommand, Mode=OneTime}"
-                    IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                    IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="Folder" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="1" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding OpenFolderButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/folder.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Explorer" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
 
-                <materialDesign:Chip
-                    Grid.Column="2"
-                    Margin="5, 2.5"
-                    Content="Reload"
-                    Command="{Binding ReloadButtonCommand, Mode=OneTime}"
-                    IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                    IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="Reload" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="2" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding ReloadButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/reload.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Reload" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
 
-                <materialDesign:Chip
-                    Grid.Column="3"
-                    Margin="5, 2.5"
-                    Content="Edit"
-                    IsEnabled="{Binding IsEnableImageEditButton.Value, Mode=OneWay}"
-                    Command="{Binding ImageEditButtonCommand, Mode=OneTime}"
-                    IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                    IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="ImageEdit" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="3" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding ImageEditButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/edit.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Edit" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
 
-                <materialDesign:Chip
-                    Grid.Column="4"
-                    Margin="5,2.5,2.5,2.5"
-                    Content="Config"
-                    Command="{Binding SettingButtonCommand, Mode=OneTime}"
-                    IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                    IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="Cog" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="4" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding SettingButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/settings.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Config" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
             </Grid>
         </Grid>
 
