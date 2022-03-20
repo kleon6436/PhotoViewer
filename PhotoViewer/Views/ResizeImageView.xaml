@@ -5,35 +5,40 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance viewmodel:ImageEditToolViewModel}"
+        d:DataContext="{d:DesignInstance viewmodel:ResizeImageViewModel}"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
         Icon="/Images/PhotoExifViewerIcon.ico"
-        Title="PhotoViewer" Height="400" Width="600" Closing="Window_Closing">
+        Title="PhotoViewer" Height="400" Width="650" Closing="Window_Closing">
     <Window.Background>
         <SolidColorBrush Color="#F0F0F0" />
     </Window.Background>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/DefaultViewResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="90" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="60" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Margin="10" Orientation="Vertical">
-            <TextBlock Text="■ Image edit and save tool ■" FontSize="24" FontWeight="Medium" Margin="0,0,0,15" />
-            <TextBlock Text="You can delete the Exif information of the displayed image and save it." FontSize="15" Margin="10,0,0,5" />
-        </StackPanel>
-        <Grid Grid.Row="1" Margin="5,0,5,0">
+
+        <TextBlock Grid.Row="0" Text="You can resize and save image." 
+                   FontSize="15" Margin="20,15,0,5" />
+
+        <Grid Grid.Row="1" Margin="30,0,10,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- 右下のレイアウト -->
-            <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <Image Source="{Binding EditImage.Value, Mode=OneTime}" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform"
-                       Width="{Binding RelativeSource={RelativeSource Self}, Path=Source.Width}" RenderOptions.BitmapScalingMode="NearestNeighbor" UseLayoutRounding="True"
-                       Height="{Binding RelativeSource={RelativeSource Self}, Path=Source.Height}" Margin="0,0,0,5" />
-            </StackPanel>
+            <Image Grid.Column="0" Source="{Binding EditImage.Value, Mode=OneTime}" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform"
+                   Width="{Binding RelativeSource={RelativeSource Self}, Path=Source.Width}" RenderOptions.BitmapScalingMode="NearestNeighbor" UseLayoutRounding="True"
+                   Height="{Binding RelativeSource={RelativeSource Self}, Path=Source.Height}" />
 
             <!-- 左下のレイアウト -->
             <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -55,9 +60,15 @@
             </StackPanel>
         </Grid>
 
-        <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
-            <Button Content="Save" Command="{Binding SaveButtonCommand, Mode=OneTime}" Width="90" Height="30" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" />
-            <Button Content="Cancel" Click="CancelButton_Click" Width="90" Height="30" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="20,0,0,0" />
+        <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,0,0,15">
+            <Button Command="{Binding SaveButtonCommand, Mode=OneTime}" 
+                    Style="{StaticResource ButtonStyle}">
+                <TextBlock Text="Save" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"/>
+            </Button>
+            <Button Click="CancelButton_Click"
+                    Style="{StaticResource ButtonStyle}">
+                <TextBlock Text="Cancel" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"/>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

@@ -92,7 +92,7 @@
                             <Ellipse Fill="#1976d2"/>
                             <Image Source="../Images/edit.png" Style="{StaticResource MenuImageStyle}"/>
                         </Grid>
-                        <TextBlock Text="Edit" Style="{StaticResource MenuTextStyle}"/>
+                        <TextBlock Text="Resize" Style="{StaticResource MenuTextStyle}"/>
                     </StackPanel>
                 </Button>
 

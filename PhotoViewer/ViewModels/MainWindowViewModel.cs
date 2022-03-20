@@ -381,7 +381,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            var vm = new ImageEditToolViewModel();
+            var vm = new ResizeImageViewModel();
             vm.SetEditFileData(SelectedMedia.Value.FilePath);
 
             var imageEditToolDialog = new ImageEditToolView
