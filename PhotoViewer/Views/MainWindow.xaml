@@ -38,7 +38,9 @@
 
             <StackPanel Grid.Column="0" Margin="4,0,10,0" Orientation="Horizontal">
                 <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Path: " FontWeight="Medium" IsHitTestVisible="True" />
-                <TextBox FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath.Value, Mode=OneWay}" IsReadOnly="True" Background="Transparent" BorderThickness="0" IsHitTestVisible="True" ToolTip="{Binding SelectFolderPath, Mode=OneWay}" />
+                <TextBox FontSize="16" Style="{StaticResource PathTextStyle}"
+                         Text="{Binding SelectFolderPath.Value, Mode=OneWay}"
+                         ToolTip="{Binding SelectFolderPath, Mode=OneWay}"/>
             </StackPanel>
 
             <Grid Grid.Column="1" Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Right">
