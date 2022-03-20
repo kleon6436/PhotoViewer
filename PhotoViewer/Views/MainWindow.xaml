@@ -17,43 +17,9 @@
     </Window.Background>
     <Window.Resources>
         <ResourceDictionary>
-            <Style x:Key="MenuContainerStyle" TargetType="Button">
-                <Setter Property="OverridesDefaultStyle" Value="True" />
-                <Setter Property="Background" Value="#7DBFE8"/>
-                <Setter Property="Margin" Value="0, 0, 5, 0"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Border CornerRadius="15" Background="{TemplateBinding Background}">
-                                <ContentPresenter />
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#CDD2D4"/>
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-
-            <Style x:Key="MenuIconContainerStyle" TargetType="Grid">
-                <Setter Property="Height" Value="30"/>
-                <Setter Property="Width" Value="30"/>
-            </Style>
-
-            <Style x:Key="MenuTextStyle" TargetType="TextBlock">
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="Margin" Value="5, 0, 10, 0"/>
-            </Style>
-
-            <Style x:Key="MenuImageStyle" TargetType="Image">
-                <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="Margin" Value="7"/>
-            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/MainWindowResources.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -154,10 +120,12 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" BorderBrush="LightGray" BorderThickness="1.5" Header="Exif" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
+                <GroupBox Grid.Row="0" Header="Exif" FontSize="16" FontWeight="Medium" IsHitTestVisible="True" 
+                          Style="{StaticResource GroupBoxViewStyle}">
                     <view:ExifInfoView DataContext="{Binding ExifInfoViewModel, Mode=OneTime}" />
                 </GroupBox>
-                <GroupBox Grid.Row="1" BorderBrush="LightGray" BorderThickness="1.5" Header="Folder" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
+                <GroupBox Grid.Row="1" Header="Folder" FontSize="16" FontWeight="Medium" IsHitTestVisible="True" 
+                          Style="{StaticResource GroupBoxViewStyle}">
                     <view:ExplorerView DataContext="{Binding ExplorerViewModel, Mode=OneTime}" />
                 </GroupBox>
             </Grid>
@@ -169,7 +137,9 @@
                     <RowDefinition Height="3*" MinHeight="450" />
                 </Grid.RowDefinitions>
 
-                <GridSplitter Grid.Row="0" Margin="0,0,0,-2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="CurrentAndNext" Height="2.5"/>
+                <GridSplitter Grid.Row="0" Margin="0,0,0,-2" BorderThickness="0,1,0,0" BorderBrush="#25A0DA"
+                              VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ResizeDirection="Rows" 
+                              ResizeBehavior="CurrentAndNext"/>
                 <ListView Grid.Row="0" x:Name="MediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneTime}" SelectedItem="{Binding SelectedMedia.Value, Mode=OneWay}" SelectionChanged="MediaListBox_SelectionChanged"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
                       ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
