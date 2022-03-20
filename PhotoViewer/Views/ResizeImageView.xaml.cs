@@ -15,7 +15,7 @@ namespace Kchary.PhotoViewer.Views
 
             DataContextChanged += (_, _) =>
             {
-                if (DataContext is ImageEditToolViewModel vm)
+                if (DataContext is ResizeImageViewModel vm)
                 {
                     vm.CloseView += (_, _) =>
                     {
@@ -42,7 +42,7 @@ namespace Kchary.PhotoViewer.Views
         /// <param name="e"></param>
         private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (DataContext is not ImageEditToolViewModel vm)
+            if (DataContext is not ResizeImageViewModel vm)
             {
                 return;
             }
@@ -53,7 +53,7 @@ namespace Kchary.PhotoViewer.Views
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            var vm = DataContext as ImageEditToolViewModel;
+            var vm = DataContext as ResizeImageViewModel;
             vm?.Dispose();
         }
     }

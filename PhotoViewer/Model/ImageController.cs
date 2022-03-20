@@ -154,7 +154,7 @@ namespace Kchary.PhotoViewer.Model
             defaultPictureHeight = bitmapFrame.PixelHeight;
             rotation = GetRotation(bitmapFrame.Metadata as BitmapMetadata);
 
-            const int LongSideLength = 240;
+            const int LongSideLength = 350;
             return DecodePicture(filePath, LongSideLength);
         }
 

@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class ImageEditToolViewModel : BindableBase, IDisposable
+    public sealed class ResizeImageViewModel : BindableBase, IDisposable
     {
         private readonly CompositeDisposable disposable = new();
 
@@ -90,7 +90,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public ImageEditToolViewModel()
+        public ResizeImageViewModel()
         {
             ResizeCategoryItems = new ResizeImageCategory[]
             {

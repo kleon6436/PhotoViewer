@@ -1,0 +1,81 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- PathText -->
+    <Style x:Key="PathTextStyle" TargetType="TextBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="IsHitTestVisible" Value="True"/>
+    </Style>
+
+    <!-- Menu -->
+    <Style x:Key="MenuContainerStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="#7DBFE8"/>
+        <Setter Property="Margin" Value="0,0,5,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border CornerRadius="15" Background="{TemplateBinding Background}">
+                        <ContentPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="#626262"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="MenuIconContainerStyle" TargetType="Grid">
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Width" Value="30"/>
+    </Style>
+
+    <Style x:Key="MenuTextStyle" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Margin" Value="5,0,10,0"/>
+    </Style>
+
+    <Style x:Key="MenuImageStyle" TargetType="Image">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="7"/>
+    </Style>
+
+    <!-- GroupBox -->
+    <Style x:Key="GroupBoxViewStyle" TargetType="GroupBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type GroupBox}">
+                    <Border BorderBrush="#25A0DA" BorderThickness="0,0,1,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="0" BorderBrush="#25A0DA" Background="#25A0DA" BorderThickness="1">
+                                <Label Foreground="White">
+                                    <ContentPresenter Margin="4" ContentSource="Header" RecognizesAccessKey="True"/>
+                                </Label>
+                            </Border>
+
+                            <Border Grid.Row="1" BorderThickness="1, 1, 1, 1">
+                                <ContentPresenter Margin="4" />
+                            </Border>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
