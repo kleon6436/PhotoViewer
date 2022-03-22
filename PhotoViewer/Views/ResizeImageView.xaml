@@ -32,8 +32,8 @@
 
         <Grid Grid.Row="1" Margin="20,20,20,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" MinWidth="320"/>
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- 右下のレイアウト -->
