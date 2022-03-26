@@ -143,7 +143,8 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         /// <param name="filePath">画像のファイルパス</param>
         /// <param name="exifDataList">読み込んだExif情報を設定するリスト</param>
-        public static void SetExifDataFromFile(string filePath, ExifInfo[] exifDataList)
+        /// <param name="stopLoading">ロード停止フラグ</param>
+        public static void SetExifDataFromFile(string filePath, ExifInfo[] exifDataList, bool stopLoading)
         {
             var extension = Path.GetExtension(filePath);
             var fileExtensionType = MediaChecker.GetFileExtensionType(extension.ToLower());
@@ -152,6 +153,11 @@ namespace Kchary.PhotoViewer.Model
 
             foreach (var exifInfo in exifDataList)
             {
+                if (stopLoading)
+                {
+                    return;
+                }
+
                 switch (exifInfo.ExifPropertyType)
                 {
                     case PropertyType.FileName:

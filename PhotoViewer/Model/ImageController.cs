@@ -80,11 +80,12 @@ namespace Kchary.PhotoViewer.Model
         /// ピクチャビューに表示する画像を作成する
         /// </summary>
         /// <param name="filePath">画像ファイルパス</param>
+        /// <param name="stopLoading">ロード停止フラグ</param>
         /// <returns>BitmapSource</returns>
-        public static BitmapSource CreatePictureViewImage(string filePath)
+        public static BitmapSource CreatePictureViewImage(string filePath, bool stopLoading)
         {
             const int LongSideLength = 2200;
-            return DecodePicture(filePath, LongSideLength);
+            return DecodePicture(filePath, LongSideLength, stopLoading);
         }
 
         /// <summary>
@@ -154,8 +155,8 @@ namespace Kchary.PhotoViewer.Model
             defaultPictureHeight = bitmapFrame.PixelHeight;
             rotation = GetRotation(bitmapFrame.Metadata as BitmapMetadata);
 
-            const int LongSideLength = 350;
-            return DecodePicture(filePath, LongSideLength);
+            var longSideLength = rotation is 5 or 6 or 7 or 8 ? 240 : 350;
+            return DecodePicture(filePath, longSideLength);
         }
 
         /// <summary>
@@ -193,8 +194,9 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         /// <param name="filePath">画像ファイルパス</param>
         /// <param name="longSideLength">長辺の長さ(この長さにあわせて画像がリサイズされる)</param>
+        /// <param name="stopLoading">ロード停止フラグ</param>
         /// <returns>BitmapSource</returns>
-        private static BitmapSource DecodePicture(string filePath, int longSideLength)
+        private static BitmapSource DecodePicture(string filePath, int longSideLength, bool stopLoading = false)
         {
             if (MediaChecker.CheckRawFileExtension(Path.GetExtension(filePath).ToLower()))
             {
@@ -212,7 +214,7 @@ namespace Kchary.PhotoViewer.Model
                     throw new FileFormatException("File format is wrong.");
                 }
 
-                return CreateBitmapSourceFromImageStruct(imageData);
+                return CreateBitmapSourceFromImageStruct(imageData, stopLoading);
             }
         }
 
@@ -220,13 +222,19 @@ namespace Kchary.PhotoViewer.Model
         /// 画像データ情報からBitmapSourceを作成する
         /// </summary>
         /// <param name="imageData">画像データ情報</param>
+        /// <param name="stopLoading">ロード停止フラグ</param>
         /// <returns>BitmapSource</returns>
-        private static BitmapSource CreateBitmapSourceFromImageStruct(in NativeMethods.ImageData imageData)
+        private static BitmapSource CreateBitmapSourceFromImageStruct(in NativeMethods.ImageData imageData, bool stopLoading = false)
         {
             try
             {
                 var imgData = new byte[imageData.size];
                 Marshal.Copy(imageData.buffer, imgData, 0, (int)imageData.size);
+
+                if (stopLoading)
+                {
+                    return null;
+                }
 
                 var bitmap = new WriteableBitmap(imageData.width, imageData.height, 96, 96, PixelFormats.Bgr24, null);
                 bitmap.WritePixels(new Int32Rect(0, 0, imageData.width, imageData.height), imgData, imageData.stride, 0, 0);

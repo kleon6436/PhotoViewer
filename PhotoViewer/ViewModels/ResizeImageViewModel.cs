@@ -16,9 +16,9 @@ namespace Kchary.PhotoViewer.ViewModels
         private readonly CompositeDisposable disposable = new();
 
         /// <summary>
-        /// 編集対象のファイルパス
+        /// リサイズ対象のファイルパス
         /// </summary>
-        private string EditFilePath { get; set; }
+        private string ResizeFilePath { get; set; }
         
         /// <summary>
         /// 読み込んだ画像のサイズ
@@ -66,10 +66,16 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 選択した保存形式
         /// </summary>
         public ReactivePropertySlim<ImageForm> SelectedForm { get; } = new();
+        
         /// <summary>
         /// 選択したリサイズサイズ(幅x高さ)
         /// </summary>
         public ReactivePropertySlim<string> ResizeSizeText { get; } = new();
+
+        /// <summary>
+        /// リサイズする画像ファイル名
+        /// </summary>
+        public string ResizeImageName { get; set; }
 
         #endregion UI binding parameter
 
@@ -126,9 +132,10 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="filePath">編集対象のファイルパス</param>
         public void SetEditFileData(string filePath)
         {
-            EditFilePath = filePath;
+            ResizeFilePath = filePath;
+            ResizeImageName = Path.GetFileName(filePath);
 
-            EditImage.Value = ImageController.CreatePictureEditViewThumbnail(EditFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
+            EditImage.Value = ImageController.CreatePictureEditViewThumbnail(ResizeFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
 
             ReadImageSize = rotation is 5 or 6 or 7 or 8
                 ? new Size { Width = defaultPictureHeight, Height = defaultPictureWidth }
@@ -181,7 +188,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Height;
                 }
             }
-            var saveImageSource = ImageController.CreateSavePicture(EditFilePath, scale);
+            var saveImageSource = ImageController.CreateSavePicture(ResizeFilePath, scale);
 
             // 選択された保存形式と同じエンコーダーを用意
             BitmapEncoder encoder = SelectedForm.Value.Form switch
