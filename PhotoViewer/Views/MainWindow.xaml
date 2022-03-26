@@ -7,7 +7,6 @@
         xmlns:view="clr-namespace:Kchary.PhotoViewer.Views"
         xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
         xmlns:model="clr-namespace:Kchary.PhotoViewer.Model"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewmodel:MainWindowViewModel}"
         Icon="/Images/PhotoExifViewerIcon.ico"
@@ -19,10 +18,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.defaults.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/materialdesigncolor.blue.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.amber.xaml" />
+                <ResourceDictionary Source="../Resources/MainWindowResources.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -42,7 +38,9 @@
 
             <StackPanel Grid.Column="0" Margin="4,0,10,0" Orientation="Horizontal">
                 <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Path: " FontWeight="Medium" IsHitTestVisible="True" />
-                <TextBox FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectFolderPath.Value, Mode=OneWay}" IsReadOnly="True" Background="Transparent" BorderThickness="0" IsHitTestVisible="True" ToolTip="{Binding SelectFolderPath, Mode=OneWay}" />
+                <TextBox FontSize="16" Style="{StaticResource PathTextStyle}"
+                         Text="{Binding SelectFolderPath.Value, Mode=OneWay}"
+                         ToolTip="{Binding SelectFolderPath, Mode=OneWay}"/>
             </StackPanel>
 
             <Grid Grid.Column="1" Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Right">
@@ -54,66 +52,60 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <materialDesign:Chip
-                        Grid.Column="0"
-                        Margin="5, 2.5"
-                        Content="Bluetooth"
-                        Command="{Binding BluetoothButtonCommand, Mode=OneTime}"
-                        IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                        IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="Bluetooth" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="0" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding BluetoothButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/bluetooth.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Bluetooth" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
 
-                <materialDesign:Chip
-                    Grid.Column="1"
-                    Margin="5, 2.5"
-                    Content="Explorer"
-                    Command="{Binding OpenFolderButtonCommand, Mode=OneTime}"
-                    IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                    IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="Folder" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="1" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding OpenFolderButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/folder.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Explorer" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
 
-                <materialDesign:Chip
-                    Grid.Column="2"
-                    Margin="5, 2.5"
-                    Content="Reload"
-                    Command="{Binding ReloadButtonCommand, Mode=OneTime}"
-                    IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                    IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="Reload" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="2" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding ReloadButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/reload.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Reload" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
 
-                <materialDesign:Chip
-                    Grid.Column="3"
-                    Margin="5, 2.5"
-                    Content="Edit"
-                    IsEnabled="{Binding IsEnableImageEditButton.Value, Mode=OneWay}"
-                    Command="{Binding ImageEditButtonCommand, Mode=OneTime}"
-                    IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                    IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="ImageEdit" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="3" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding ImageEditButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/edit.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Resize" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
 
-                <materialDesign:Chip
-                    Grid.Column="4"
-                    Margin="5,2.5,2.5,2.5"
-                    Content="Config"
-                    Command="{Binding SettingButtonCommand, Mode=OneTime}"
-                    IconBackground="{DynamicResource PrimaryHueDarkBrush}"
-                    IconForeground="{DynamicResource PrimaryHueDarkForegroundBrush}">
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="Cog" />
-                    </materialDesign:Chip.Icon>
-                </materialDesign:Chip>
+                <Button Grid.Column="4" Style="{StaticResource MenuContainerStyle}"
+                        Command="{Binding SettingButtonCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <Grid Style="{StaticResource MenuIconContainerStyle}">
+                            <Ellipse Fill="#1976d2"/>
+                            <Image Source="../Images/settings.png" Style="{StaticResource MenuImageStyle}"/>
+                        </Grid>
+                        <TextBlock Text="Config" Style="{StaticResource MenuTextStyle}"/>
+                    </StackPanel>
+                </Button>
             </Grid>
         </Grid>
 
@@ -130,10 +122,12 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" BorderBrush="LightGray" BorderThickness="1.5" Header="Exif" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
+                <GroupBox Grid.Row="0" Header="Exif" FontSize="16" FontWeight="Medium" IsHitTestVisible="True" 
+                          Style="{StaticResource GroupBoxViewStyle}">
                     <view:ExifInfoView DataContext="{Binding ExifInfoViewModel, Mode=OneTime}" />
                 </GroupBox>
-                <GroupBox Grid.Row="1" BorderBrush="LightGray" BorderThickness="1.5" Header="Folder" FontSize="16" FontWeight="Medium" IsHitTestVisible="True">
+                <GroupBox Grid.Row="1" Header="Folder" FontSize="16" FontWeight="Medium" IsHitTestVisible="True" 
+                          Style="{StaticResource GroupBoxViewStyle}">
                     <view:ExplorerView DataContext="{Binding ExplorerViewModel, Mode=OneTime}" />
                 </GroupBox>
             </Grid>
@@ -145,15 +139,17 @@
                     <RowDefinition Height="3*" MinHeight="450" />
                 </Grid.RowDefinitions>
 
-                <GridSplitter Grid.Row="0" Margin="0,0,0,-2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="CurrentAndNext" Height="2.5"/>
-                <ListView Grid.Row="0" x:Name="MediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneTime}" SelectedItem="{Binding SelectedMedia.Value, Mode=OneWay}" SelectionChanged="MediaListBox_SelectionChanged"
+                <GridSplitter Grid.Row="0" Margin="0,0,0,-2" BorderThickness="0,1,0,0" BorderBrush="#25A0DA"
+                              VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ResizeDirection="Rows" 
+                              ResizeBehavior="CurrentAndNext"/>
+                <ListView Grid.Row="0" x:Name="MediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneTime}" SelectedItem="{Binding SelectedMedia.Value, Mode=TwoWay}" SelectionMode="Single"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
                       ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
                       BorderBrush="{x:Null}" Background="#F0F0F0"
                       VirtualizingPanel.ScrollUnit="Item" VirtualizingPanel.CacheLengthUnit="Page" VirtualizingPanel.CacheLength="2"
                       VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                     <ListView.Resources>
-                        <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}">
+                        <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                             <ContextMenu.ItemContainerStyle>
                                 <Style TargetType="{x:Type MenuItem}">
                                     <Setter Property="Header" Value="{Binding Path=DisplayName, Mode=OneTime}" />
