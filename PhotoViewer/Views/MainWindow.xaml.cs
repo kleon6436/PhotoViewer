@@ -156,29 +156,6 @@ namespace Kchary.PhotoViewer.Views
         }
 
         /// <summary>
-        /// リストボックスで選択されたアイテムが変更されたとき
-        /// </summary>
-        /// <param name="sender">mediaListBox</param>
-        /// <param name="e">引数情報</param>
-        private async void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is not ListBox listBox)
-            {
-                return;
-            }
-
-            if (listBox.SelectedItem is not MediaInfo mediaInfo)
-            {
-                return;
-            }
-
-            if (DataContext is MainWindowViewModel vm)
-            {
-                await vm.LoadMediaAsync(mediaInfo);
-            }
-        }
-
-        /// <summary>
         /// コンテキストメニューがクリックされたとき
         /// </summary>
         /// <param name="sender">MenuItem</param>

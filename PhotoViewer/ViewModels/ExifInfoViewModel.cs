@@ -28,9 +28,10 @@ namespace Kchary.PhotoViewer.ViewModels
         /// Exif情報を設定する
         /// </summary>
         /// <param name="filePath">画像ファイルパス</param>
-        public void SetExif(string filePath)
+        /// <param name="stopLoading">ロード停止フラグ</param>
+        public void SetExif(string filePath, bool stopLoading)
         {
-            ExifParser.SetExifDataFromFile(filePath, ExifDataList);
+            ExifParser.SetExifDataFromFile(filePath, ExifDataList, stopLoading);
         }
 
         /// <summary>

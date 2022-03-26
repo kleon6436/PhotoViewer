@@ -142,14 +142,14 @@
                 <GridSplitter Grid.Row="0" Margin="0,0,0,-2" BorderThickness="0,1,0,0" BorderBrush="#25A0DA"
                               VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ResizeDirection="Rows" 
                               ResizeBehavior="CurrentAndNext"/>
-                <ListView Grid.Row="0" x:Name="MediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneTime}" SelectedItem="{Binding SelectedMedia.Value, Mode=OneWay}" SelectionChanged="MediaListBox_SelectionChanged"
+                <ListView Grid.Row="0" x:Name="MediaListBox" ItemsSource="{Binding MediaInfoList, Mode=OneTime}" SelectedItem="{Binding SelectedMedia.Value, Mode=TwoWay}" SelectionMode="Single"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
                       ScrollViewer.IsDeferredScrollingEnabled="True" ScrollViewer.PanningMode="VerticalOnly" ScrollViewer.CanContentScroll="True"
                       BorderBrush="{x:Null}" Background="#F0F0F0"
                       VirtualizingPanel.ScrollUnit="Item" VirtualizingPanel.CacheLengthUnit="Page" VirtualizingPanel.CacheLength="2"
                       VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
                     <ListView.Resources>
-                        <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}">
+                        <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                             <ContextMenu.ItemContainerStyle>
                                 <Style TargetType="{x:Type MenuItem}">
                                     <Setter Property="Header" Value="{Binding Path=DisplayName, Mode=OneTime}" />

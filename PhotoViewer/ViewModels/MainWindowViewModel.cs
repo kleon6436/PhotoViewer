@@ -112,6 +112,21 @@ namespace Kchary.PhotoViewer.ViewModels
         private static BackgroundWorker LoadContentsBackgroundWorker { get; } = new() { WorkerSupportsCancellation = true };
 
         /// <summary>
+        /// メディアロードタスクリスト
+        /// </summary>
+        private static Task[] LoadMediaTasks;
+
+        /// <summary>
+        /// ロード停止フラグ
+        /// </summary>
+        private static bool StopLoading { get; set; }
+
+        /// <summary>
+        /// メディアのロード中フラグ
+        /// </summary>
+        private static bool LoadingMedia { get; set;}
+
+        /// <summary>
         /// コンテンツをリロードするためのフラグ
         /// </summary>
         private static bool IsReloadContents { get; set; } 
@@ -135,6 +150,9 @@ namespace Kchary.PhotoViewer.ViewModels
             ReloadButtonCommand     = new ReactiveCommand().WithSubscribe(ReloadButtonClicked).AddTo(disposables);
             SettingButtonCommand    = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
             ImageEditButtonCommand  = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
+
+            // プロパティ変更に紐づく処理の設定
+            SelectedMedia.Subscribe(LoadMediaAsync).AddTo(disposables);
 
             // バックグラウンドスレッドの設定
             LoadContentsBackgroundWorker.DoWork += LoadContentsWorker_DoWork;
@@ -238,8 +256,26 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 非同期で画像を読み込む
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
-        public async Task LoadMediaAsync(MediaInfo mediaInfo)
+        public async void LoadMediaAsync(MediaInfo mediaInfo)
         {
+            if (mediaInfo == null)
+            {
+                return;
+            }
+
+            if (LoadingMedia)
+            {
+                StopLoading = true;
+                if (LoadMediaTasks is not null)
+                {
+                    foreach (var task in LoadMediaTasks)
+                    {
+                        task.Wait();
+                    }
+                }
+                StopLoading = false;
+            }
+
             if (!File.Exists(mediaInfo.FilePath))
             {
                 App.ShowErrorMessageBox("File not exist.", "File access error");
@@ -247,6 +283,7 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             IsEnableImageEditButton.Value = false;
+            LoadingMedia = true;
 
             switch (mediaInfo.ContentMediaType)
             {
@@ -258,6 +295,8 @@ namespace Kchary.PhotoViewer.ViewModels
                 default:
                     throw new ArgumentOutOfRangeException(mediaInfo.ContentMediaType.ToString(), nameof(mediaInfo.ContentMediaType));
             }
+
+            LoadingMedia = false;
         }
 
         /// <summary>
@@ -661,18 +700,32 @@ namespace Kchary.PhotoViewer.ViewModels
                 Mouse.OverrideCursor = Cursors.Wait;
 
                 // 画像とExifを読み込むタスクを作成する
-                var loadPictureTask = Task.Run(() => { PictureImageSource.Value = ImageController.CreatePictureViewImage(mediaInfo.FilePath); });
-                var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
+                var loadPictureTask = Task.Run(() =>
+                {
+                    if (StopLoading)
+                    {
+                        return;
+                    }
+                    PictureImageSource.Value = ImageController.CreatePictureViewImage(mediaInfo.FilePath, StopLoading);
+                });
+                var setExifInfoTask = Task.Run(() =>
+                {
+                    if (StopLoading)
+                    {
+                        return;
+                    }
+                    ExifInfoViewModel.SetExif(mediaInfo.FilePath, StopLoading);
+                });
 
                 // タスクを実行し、処理完了まで待つ
-                await Task.WhenAll(loadPictureTask, setExifInfoTask);
+                LoadMediaTasks = new[] { loadPictureTask, setExifInfoTask };
+                await Task.WhenAll(LoadMediaTasks);
 
                 // 編集ボタンの状態を更新(Raw画像以外は活性状態とする)
                 IsEnableImageEditButton.Value = !MediaChecker.CheckRawFileExtension(Path.GetExtension(mediaInfo.FilePath)?.ToLower());
 
                 // パス表示を更新
                 SelectFolderPath.Value = mediaInfo.FilePath;
-                SelectedMedia.Value = mediaInfo;
             }
             catch (Exception ex)
             {
