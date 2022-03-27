@@ -25,8 +25,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Rectangle Grid.Row="0" Fill="LightSkyBlue" IsHitTestVisible="True" />
-
+        <Rectangle Grid.Row="0" Fill="LightSkyBlue"/>
         <TextBlock Grid.Row="0" Text="Resize image tool" FontWeight="Medium"
                    FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
 

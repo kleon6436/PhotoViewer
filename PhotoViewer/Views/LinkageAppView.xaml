@@ -31,7 +31,9 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Text="{Binding LinkAppPath, Mode=OneWay}" Height="40" Width="350" FontSize="14" />
+            <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Focusable="False" 
+                     ToolTip="{Binding LinkAppPath, Mode=OneWay}" IsReadOnly="True" Text="{Binding LinkAppPath, Mode=OneWay}"
+                     Height="40" Width="350" FontSize="14" />
             <Button Command="{Binding LinkAppReferenceCommand, Mode=OneTime}"
                     Style="{StaticResource ButtonStyle}">
                 <TextBlock Text="Reference" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15"/>
@@ -46,10 +48,11 @@
             <DataGrid BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14" Focusable="False"
                   ItemsSource="{Binding LinkageAppList, Mode=OneWay}" IsReadOnly="True" Width="auto" Height="auto" HeadersVisibility="Column"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
-                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="True"
+                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="False"
                   VerticalGridLinesBrush="#F0F0F0" HorizontalGridLinesBrush="#F0F0F0" RowHeight="40">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="App name" Binding="{Binding AppName, Mode=OneWay}" Width="auto" MinWidth="100">
+                    <DataGridTextColumn Header="App name" Binding="{Binding AppName, Mode=OneWay}"
+                                        Width="auto" MinWidth="100" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style>
                                 <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis" />
@@ -58,7 +61,8 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Application path" Binding="{Binding AppPath, Mode=OneWay}" Width="*" MinWidth="100">
+                    <DataGridTextColumn Header="Application path" Binding="{Binding AppPath, Mode=OneWay}" 
+                                        Width="*" MinWidth="100" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style>
                                 <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis" />

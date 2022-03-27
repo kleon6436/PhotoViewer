@@ -11,8 +11,8 @@
         <DataGrid BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14" Focusable="False"
                   ItemsSource="{Binding ExifDataList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" HeadersVisibility="Column"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
-                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="True"
-                  VerticalGridLinesBrush="#F0F0F0" HorizontalGridLinesBrush="#F0F0F0" PreviewMouseDown="DataGrid_PreviewMouseDown">
+                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="False"
+                  VerticalGridLinesBrush="#F0F0F0" HorizontalGridLinesBrush="#F0F0F0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Parameter" Binding="{Binding ExifParameterText, Mode=OneWay}" Width="auto" MinWidth="160">
                     <DataGridTextColumn.ElementStyle>
