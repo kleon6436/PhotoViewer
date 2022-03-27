@@ -68,9 +68,14 @@ namespace Kchary.PhotoViewer.ViewModels
         public ReactivePropertySlim<ImageForm> SelectedForm { get; } = new();
         
         /// <summary>
-        /// 選択したリサイズサイズ(幅x高さ)
+        /// 選択したリサイズサイズ(幅)
         /// </summary>
-        public ReactivePropertySlim<string> ResizeSizeText { get; } = new();
+        public ReactivePropertySlim<string> ResizeSizeWidthText { get; } = new();
+
+        /// <summary>
+        /// 選択したリサイズサイズ(高さ)
+        /// </summary>
+        public ReactivePropertySlim<string> ResizeSizeHeightText { get; } = new();
 
         /// <summary>
         /// リサイズする画像ファイル名
@@ -247,7 +252,8 @@ namespace Kchary.PhotoViewer.ViewModels
             var resizeWidth = (int)(ReadImageSize.Width * scale);
             var resizeHeight = (int)(ReadImageSize.Height * scale);
 
-            ResizeSizeText.Value = $"(Width: {resizeWidth}, Height: {resizeHeight} [pixel])";
+            ResizeSizeWidthText.Value = $"Width: {resizeWidth} [pixel]";
+            ResizeSizeHeightText.Value =  $"Height: {resizeHeight} [pixel]";
         }
     }
 }
