@@ -15,7 +15,7 @@ namespace Kchary.PhotoViewer.Views
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var vm = DataContext as SettingViewModel;
-            vm.Dispose();
+            vm?.Dispose();
         }
     }
 }

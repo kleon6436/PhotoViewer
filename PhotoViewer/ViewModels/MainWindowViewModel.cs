@@ -104,6 +104,11 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public ReactiveCommand ImageEditButtonCommand { get; }
 
+        /// <summary>
+        /// コンテキストメニューのコマンド
+        /// </summary>
+        public ReactiveCommand<string> ContextMenuCommand { get; }
+
         #endregion Command
 
         /// <summary>
@@ -150,6 +155,7 @@ namespace Kchary.PhotoViewer.ViewModels
             ReloadButtonCommand     = new ReactiveCommand().WithSubscribe(ReloadButtonClicked).AddTo(disposables);
             SettingButtonCommand    = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
             ImageEditButtonCommand  = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
+            ContextMenuCommand = new ReactiveCommand<string>().WithSubscribe(ContextMenuClicked).AddTo(disposables);
 
             // プロパティ変更に紐づく処理の設定
             SelectedMedia.Subscribe(LoadMediaAsync).AddTo(disposables);
@@ -214,42 +220,6 @@ namespace Kchary.PhotoViewer.ViewModels
                 picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
             }
             ChangeContents(picturePath);
-        }
-
-        /// <summary>
-        /// コンテキストメニューを実行したときの処理
-        /// </summary>
-        /// <param name="appName">Application name</param>
-        public void ExecuteContextMenu(string appName)
-        {
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList.All(x => x.AppName != appName))
-            {
-                return;
-            }
-
-            try
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                var appPath = linkageAppList.Find(x => x.AppName == appName)?.AppPath;
-                if (!string.IsNullOrEmpty(appPath))
-                {
-                    Process.Start(appPath, SelectedMedia.Value.FilePath);
-                }
-                else
-                {
-                    App.ShowErrorMessageBox("Linkage app path is not found.", "Process start error");
-                }
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
         }
 
         /// <summary>
@@ -429,6 +399,42 @@ namespace Kchary.PhotoViewer.ViewModels
                 Owner = Application.Current.MainWindow
             };
             imageEditToolDialog.ShowDialog();
+        }
+
+        /// <summary>
+        /// コンテキストメニューを押下時の処理
+        /// </summary>
+        /// <param name="appName">アプリ名</param>
+        private void ContextMenuClicked(string appName)
+        {
+            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
+            if (linkageAppList.All(x => x.AppName != appName))
+            {
+                return;
+            }
+
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                var appPath = linkageAppList.Find(x => x.AppName == appName)?.AppPath;
+                if (!string.IsNullOrEmpty(appPath))
+                {
+                    Process.Start(appPath, SelectedMedia.Value.FilePath);
+                }
+                else
+                {
+                    App.ShowErrorMessageBox("Linkage app path is not found.", "Process start error");
+                }
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         /// <summary>
