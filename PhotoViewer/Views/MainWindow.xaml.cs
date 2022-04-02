@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Interop;
 using Kchary.PhotoViewer.Model;
 using Kchary.PhotoViewer.ViewModels;
@@ -152,24 +151,6 @@ namespace Kchary.PhotoViewer.Views
             if (selectedItem != null)
             {
                 MediaListBox.ScrollIntoView(selectedItem);
-            }
-        }
-
-        /// <summary>
-        /// コンテキストメニューがクリックされたとき
-        /// </summary>
-        /// <param name="sender">MenuItem</param>
-        /// <param name="e">引数情報</param>
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not MenuItem menuItem)
-            {
-                return;
-            }
-
-            if (DataContext is MainWindowViewModel vm)
-            {
-                vm.ExecuteContextMenu(Convert.ToString(menuItem.Header));
             }
         }
 

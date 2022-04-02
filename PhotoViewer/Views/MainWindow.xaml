@@ -154,7 +154,8 @@
                                 <Style TargetType="{x:Type MenuItem}">
                                     <Setter Property="Header" Value="{Binding Path=DisplayName, Mode=OneTime}" />
                                     <Setter Property="Icon" Value="{DynamicResource Icon}" />
-                                    <EventSetter Event="Click" Handler="MenuItem_Click" />
+                                    <Setter Property="Command" Value="{Binding DataContext.ContextMenuCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"/> 
+                                    <Setter Property="CommandParameter" Value="{Binding Path=DisplayName, Mode=OneTime}"/>
                                 </Style>
                             </ContextMenu.ItemContainerStyle>
                         </ContextMenu>
