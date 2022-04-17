@@ -3,7 +3,7 @@
     /// <summary>
     /// 編集画面に表示するリサイズカテゴリ情報クラス
     /// </summary>
-    public sealed class ResizeImageCategory
+    public sealed record ResizeImageCategory
     {
         /// <summary>
         /// リサイズカテゴリ

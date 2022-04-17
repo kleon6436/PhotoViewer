@@ -3,7 +3,7 @@
     /// <summary>
     /// 登録アプリ情報クラス
     /// </summary>
-    public sealed class ExtraAppSetting
+    public sealed record ExtraAppSetting
     {
         /// <summary>
         /// アプリケーション名

@@ -124,12 +124,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// ロード停止フラグ
         /// </summary>
-        private static bool StopLoading { get; set; }
+        private static volatile bool StopLoading;
 
         /// <summary>
         /// メディアのロード中フラグ
         /// </summary>
-        private static bool LoadingMedia { get; set;}
+        private static bool LoadingMedia;
 
         /// <summary>
         /// コンテンツをリロードするためのフラグ
@@ -604,6 +604,17 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="e">引数情報</param>
         private void LoadContentsWorker(object sender, CancelEventArgs e)
         {
+            var folderPath = SelectFolderPath.Value;
+            if ((File.GetAttributes(folderPath) & FileAttributes.Directory) != FileAttributes.Directory)
+            {
+                folderPath = Path.GetDirectoryName(folderPath);
+            }
+
+            if (string.IsNullOrEmpty(folderPath))
+            {
+                return;
+            }
+
             var queue = new LinkedList<MediaInfo>();
             var tick = Environment.TickCount;
             var count = 0;
@@ -611,17 +622,6 @@ namespace Kchary.PhotoViewer.ViewModels
             // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
             foreach (var supportExtension in MediaChecker.GetSupportExtentions())
             {
-                var folderPath = SelectFolderPath.Value;
-                if ((File.GetAttributes(folderPath) & FileAttributes.Directory) != FileAttributes.Directory)
-                {
-                    folderPath = Path.GetDirectoryName(folderPath);
-                }
-
-                if (string.IsNullOrEmpty(folderPath))
-                {
-                    continue;
-                }
-
                 // サポート対象のファイルを順番に読み込む
                 foreach (var supportFile in Directory.EnumerateFiles(folderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
                 {

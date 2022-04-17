@@ -6,7 +6,7 @@ namespace Kchary.PhotoViewer.Model
     /// <summary>
     /// アプリケーションデータクラス
     /// </summary>
-    public sealed class AppConfigData
+    public sealed record AppConfigData
     {
         /// <summary>
         /// 前回のフォルダパス

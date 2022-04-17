@@ -5,7 +5,7 @@ namespace Kchary.PhotoViewer.Model
     /// <summary>
     /// Exif表示用クラス
     /// </summary>
-    public sealed class ExifInfo : INotifyPropertyChanged
+    public sealed record ExifInfo : INotifyPropertyChanged
     {
         private string exifParameterValue;
 
