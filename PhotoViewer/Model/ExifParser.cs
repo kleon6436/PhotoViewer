@@ -209,7 +209,7 @@ namespace Kchary.PhotoViewer.Model
                             FileExtensionType.Unknown => throw new ArgumentOutOfRangeException(exifInfo.ExifPropertyType.ToString(), nameof(exifInfo.ExifPropertyType)),
                             _ => throw new ArgumentOutOfRangeException(exifInfo.ExifPropertyType.ToString(), nameof(exifInfo.ExifPropertyType)),
                         };
-                        exifInfo.ExifParameterValue = bitDepth.ToString();
+                        exifInfo.ExifParameterValue = $"{bitDepth.ToString()} bits";
                         break;
 
                     case PropertyType.ShutterSpeed:

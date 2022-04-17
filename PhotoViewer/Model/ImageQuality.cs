@@ -3,7 +3,7 @@
     /// <summary>
     /// 編集画面に表示する画質設定メニュークラス
     /// </summary>
-    public sealed class ImageQuality
+    public sealed record ImageQuality
     {
         /// <summary>
         /// 画質名

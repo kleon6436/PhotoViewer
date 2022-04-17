@@ -7,7 +7,7 @@ namespace Kchary.PhotoViewer.Model
     /// <summary>
     /// メディア情報クラス
     /// </summary>
-    public sealed class MediaInfo
+    public sealed record MediaInfo
     {
         /// <summary>
         /// メディアのタイプ
