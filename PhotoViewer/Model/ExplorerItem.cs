@@ -181,7 +181,15 @@ namespace Kchary.PhotoViewer.Model
             fileSystemWatcher.Renamed += FileSystemWatcher_Changed;
 
             // 監視開始
-            fileSystemWatcher.EnableRaisingEvents = true;
+            try
+            {
+                fileSystemWatcher.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                // 監視できるフォルダだけ監視するので、ログだけ収集して終了
+                App.LogException(ex);
+            }
         }
 
         /// <summary>
