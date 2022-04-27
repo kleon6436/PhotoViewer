@@ -2,16 +2,16 @@
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class ExplorerViewModel : BindableBase
     {
-        private ExplorerItem selectedItem;
-
         /// <summary>
         /// アイテム選択を変更したときのイベント
         /// </summary>
@@ -20,7 +20,47 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// ツリーに表示するアイテムリスト
         /// </summary>
-        public List<ExplorerItem> ExplorerItems { get; } = new();
+        public ObservableCollection<ExplorerItem> ExplorerItems { get; } = new();
+
+        /// <summary>
+        /// ファイルシステム管理のウォッチャー
+        /// </summary>
+        public FileSystemWatcher FileWatcher { get; }
+
+        /// <summary>
+        /// 監視しているドライブ情報
+        /// </summary>
+        public string PreviousWatchDrive { get; private set; }
+
+        /// <summary>
+        /// 表示中のフォルダパス
+        /// </summary>
+        public string ShowExplorerPath { get; private set; }
+
+        private ExplorerItem selectedItem;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ExplorerViewModel()
+        {
+            // 監視設定
+            FileWatcher = new FileSystemWatcher
+            {
+                Filter = "*",
+                IncludeSubdirectories = true,
+                NotifyFilter = NotifyFilters.DirectoryName
+            };
+
+            FileWatcher.Changed += FileSystemWatcher_Changed;
+            FileWatcher.Created += FileSystemWatcher_Changed;
+            FileWatcher.Deleted += FileSystemWatcher_Changed;
+            FileWatcher.Renamed += FileSystemWatcher_Changed;
+
+            // 初期値設定
+            PreviousWatchDrive = "";
+            ShowExplorerPath = "";
+        }
 
         /// <summary>
         /// 選択したアイテム情報
@@ -30,21 +70,31 @@ namespace Kchary.PhotoViewer.ViewModels
             get => selectedItem;
             set
             {
-                if (selectedItem == value)
+                // 同じアイテムを選択している、もしくは、表示中のパスと同じだった場合は更新しない
+                if (selectedItem == value || ShowExplorerPath == value.ExplorerItemPath)
                 {
                     return;
                 }
 
                 selectedItem = value;
+                var drive = Path.GetPathRoot(selectedItem.ExplorerItemPath);
+                ShowExplorerPath = selectedItem.ExplorerItemPath;
+                if (PreviousWatchDrive != drive)
+                {
+                    UpdateWatcher(drive);
+                    PreviousWatchDrive = drive;
+                }
+
                 ChangeSelectItemEvent?.Invoke(this, EventArgs.Empty);
             }
         }
 
         /// <summary>
-        /// ドライブツリーを作成する
+        /// ドライブツリーを作成(更新)する
         /// </summary>
-        public void CreateDriveTreeItem()
+        public void UpdateDriveTreeItem()
         {
+            ExplorerItems.Clear();
             var allDriveList = DriveInfo.GetDrives();
 
             foreach (var drive in allDriveList)
@@ -87,6 +137,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
                 else if (count == parentPathList.Count - 1)
                 {
+                    // 末尾のフォルダは選択状態にする
                     var directoryItem = GetDirectoryItem(parentPath, previousItem);
                     if (directoryItem == null)
                     {
@@ -149,6 +200,44 @@ namespace Kchary.PhotoViewer.ViewModels
             explorerItemList.AddRange(previousItem.Items.OfType<ExplorerItem>());
 
             return explorerItemList.First(item => item.ExplorerItemPath == previousDirectory);
+        }
+
+        /// <summary>
+        /// フォルダの変更などの監視対象のパスを更新する
+        /// </summary>
+        /// <param name="drive">監視対象のドライブパス</param>
+        private void UpdateWatcher(string drive)
+        {
+            FileWatcher.EnableRaisingEvents = false;
+            FileWatcher.Path = drive;
+
+            // 監視開始
+            try
+            {
+                FileWatcher.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            {
+                // 監視できるフォルダだけ監視するので、ログだけ収集して終了
+                App.LogException(ex);
+            }
+        }
+
+        /// <summary>
+        /// ファイルシステムのウォッチャが変更検知したときの動作
+        /// </summary>
+        /// <remarks>
+        /// ディレクトリツリーの表示を更新する
+        /// </remarks>
+        /// <param name="sender">FileSystemWatcher</param>
+        /// <param name="e">引数情報</param>
+        private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                UpdateDriveTreeItem();
+                ExpandPreviousPath(ShowExplorerPath);
+            });
         }
     }
 }
