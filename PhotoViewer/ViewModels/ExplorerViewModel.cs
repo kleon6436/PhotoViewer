@@ -37,6 +37,9 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public string ShowExplorerPath { get; private set; }
 
+        /// <summary>
+        /// 選択中のツリーアイテム
+        /// </summary>
         private ExplorerItem selectedItem;
 
         /// <summary>
