@@ -77,8 +77,9 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
 
                 selectedItem = value;
-                var drive = Path.GetPathRoot(selectedItem.ExplorerItemPath);
                 ShowExplorerPath = selectedItem.ExplorerItemPath;
+
+                var drive = Path.GetPathRoot(ShowExplorerPath);
                 if (PreviousWatchDrive != drive)
                 {
                     UpdateWatcher(drive);
