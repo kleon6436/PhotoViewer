@@ -1,6 +1,5 @@
 ﻿using Kchary.PhotoViewer.Model;
 using Kchary.PhotoViewer.ViewModels;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
