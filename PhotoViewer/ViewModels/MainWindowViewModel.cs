@@ -361,6 +361,9 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 SelectFolderPath.Value = Path.GetDirectoryName(SelectFolderPath.Value);
             }
+
+            ExplorerViewModel.UpdateDriveTreeItem();
+            ExplorerViewModel.ExpandPreviousPath(ExplorerViewModel.ShowExplorerPath);
             UpdateContents();
         }
 
@@ -493,13 +496,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void UpdateExplorerTree()
         {
-            ExplorerViewModel.CreateDriveTreeItem();
-
             var previousFolderPath = DefaultPicturePath;
             if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath) && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
             {
                 previousFolderPath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
             }
+            ExplorerViewModel.UpdateDriveTreeItem();
             ExplorerViewModel.ExpandPreviousPath(previousFolderPath);
         }
 

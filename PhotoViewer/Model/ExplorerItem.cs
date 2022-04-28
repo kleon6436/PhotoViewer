@@ -29,11 +29,6 @@ namespace Kchary.PhotoViewer.Model
         private bool isExpand;
 
         /// <summary>
-        /// ファイルシステム管理のウォッチャー
-        /// </summary>
-        private FileSystemWatcher fileSystemWatcher;
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="path">パス</param>
@@ -63,9 +58,6 @@ namespace Kchary.PhotoViewer.Model
             {
                 App.LogException(ex);
             }
-
-            // 監視開始
-            StartWatcher(path);
         }
 
         /// <summary>
@@ -158,43 +150,6 @@ namespace Kchary.PhotoViewer.Model
             }
 
             isExpand = true;
-        }
-
-        /// <summary>
-        /// フォルダの変更などの監視を開始する
-        /// </summary>
-        /// <param name="path">監視対象のフォルダパス</param>
-        private void StartWatcher(string path)
-        {
-            // 監視対象のフォルダを設定
-            fileSystemWatcher = new FileSystemWatcher
-            {
-                Path = path,
-                Filter = "*",
-                IncludeSubdirectories = false,
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName
-            };
-
-            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
-            fileSystemWatcher.Created += FileSystemWatcher_Changed;
-            fileSystemWatcher.Deleted += FileSystemWatcher_Changed;
-            fileSystemWatcher.Renamed += FileSystemWatcher_Changed;
-
-            // 監視開始
-            fileSystemWatcher.EnableRaisingEvents = true;
-        }
-
-        /// <summary>
-        /// ファイルシステムのウォッチャが変更検知したときの動作
-        /// </summary>
-        /// <remarks>
-        /// ディレクトリツリーの表示を更新する
-        /// </remarks>
-        /// <param name="sender">FileSystemWatcher</param>
-        /// <param name="e">引数情報</param>
-        private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
-        {
-            Application.Current.Dispatcher.Invoke(UpdateDirectoryTree);
         }
     }
 }
