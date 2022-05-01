@@ -31,6 +31,7 @@ namespace Kchary.PhotoViewer.Views
             selectedExplorerItem.BringIntoView();
             selectedExplorerItem.Focus();
 
+            // 選択したアイテムをVMに通知
             if (DataContext is ExplorerViewModel vm && vm.SelectedItem != selectedExplorerItem)
             {
                 vm.SelectedItem = selectedExplorerItem;

@@ -20,6 +20,11 @@ namespace Kchary::ImageController::RawImageControl
 		RawImageController() = default;
 
 		/*!
+		* @brief デストラクタ
+		*/
+		~RawImageController() = default;
+
+		/*!
 		 * @brief	LibRawライブラリを用いて画像データを取得する
 		 * @param	path: 画像ファイルパス
 		 * @param	imageData: 画像データ

@@ -241,7 +241,7 @@ namespace Kchary.PhotoViewer.ViewModels
             double scale = 1;
             if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
             {
-                // Magnification factor is calculated (if the vertical dimension is longer, the magnification factor is calculated for the vertical dimension).
+                // 倍率計算(この値をもとにリサイズする)
                 scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Width;
                 if (ReadImageSize.Width < ReadImageSize.Height)
                 {
