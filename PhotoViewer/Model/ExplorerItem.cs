@@ -36,7 +36,7 @@ namespace Kchary.PhotoViewer.Model
         public ExplorerItem(string path, bool isDrive)
         {
             // 初期値の設定
-            Expanded += ExplorerItem_Expanded;
+            Expanded += ItemExpanded;
             isExpand = false;
             ExplorerItemPath = path;
 
@@ -139,7 +139,7 @@ namespace Kchary.PhotoViewer.Model
         /// </summary>
         /// <param name="sender">TreeView</param>
         /// <param name="e">引数情報</param>
-        private void ExplorerItem_Expanded(object sender, RoutedEventArgs e)
+        private void ItemExpanded(object sender, RoutedEventArgs e)
         {
             // キーボードフォーカスを外す
             Keyboard.ClearFocus();
