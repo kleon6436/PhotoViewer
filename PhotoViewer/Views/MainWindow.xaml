@@ -40,7 +40,7 @@
                 <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Path: " FontWeight="Medium"/>
                 <TextBox FontSize="16" Style="{StaticResource PathTextStyle}"
                          Text="{Binding SelectFolderPath.Value, Mode=OneWay}"
-                         ToolTip="{Binding SelectFolderPath, Mode=OneWay}"/>
+                         ToolTip="{Binding SelectFolderPath.Value, Mode=OneWay}"/>
             </StackPanel>
 
             <Grid Grid.Column="1" Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Right">
