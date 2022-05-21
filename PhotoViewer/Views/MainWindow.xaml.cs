@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
-using Kchary.PhotoViewer.Model;
+using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.ViewModels;
 
 namespace Kchary.PhotoViewer.Views

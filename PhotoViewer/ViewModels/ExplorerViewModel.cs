@@ -1,4 +1,4 @@
-﻿using Kchary.PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Models;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -55,10 +55,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 NotifyFilter = NotifyFilters.DirectoryName
             };
 
-            FileWatcher.Changed += FileSystemWatcher_Changed;
-            FileWatcher.Created += FileSystemWatcher_Changed;
-            FileWatcher.Deleted += FileSystemWatcher_Changed;
-            FileWatcher.Renamed += FileSystemWatcher_Changed;
+            FileWatcher.Changed += FolderOrFileChanged;
+            FileWatcher.Created += FolderOrFileChanged;
+            FileWatcher.Deleted += FolderOrFileChanged;
+            FileWatcher.Renamed += FolderOrFileChanged;
 
             // 初期値設定
             PreviousWatchDrive = "";
@@ -235,7 +235,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </remarks>
         /// <param name="sender">FileSystemWatcher</param>
         /// <param name="e">引数情報</param>
-        private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        private void FolderOrFileChanged(object sender, FileSystemEventArgs e)
         {
             Application.Current.Dispatcher.BeginInvoke(() =>
             {

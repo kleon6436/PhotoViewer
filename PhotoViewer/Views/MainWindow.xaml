@@ -6,7 +6,7 @@
         xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
         xmlns:view="clr-namespace:Kchary.PhotoViewer.Views"
         xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
-        xmlns:model="clr-namespace:Kchary.PhotoViewer.Model"
+        xmlns:model="clr-namespace:Kchary.PhotoViewer.Models"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewmodel:MainWindowViewModel}"
         Icon="/Images/PhotoExifViewerIcon.ico"
@@ -40,7 +40,7 @@
                 <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Path: " FontWeight="Medium"/>
                 <TextBox FontSize="16" Style="{StaticResource PathTextStyle}"
                          Text="{Binding SelectFolderPath.Value, Mode=OneWay}"
-                         ToolTip="{Binding SelectFolderPath, Mode=OneWay}"/>
+                         ToolTip="{Binding SelectFolderPath.Value, Mode=OneWay}"/>
             </StackPanel>
 
             <Grid Grid.Column="1" Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Right">

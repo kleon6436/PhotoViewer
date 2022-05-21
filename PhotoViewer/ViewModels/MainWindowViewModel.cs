@@ -1,4 +1,4 @@
-﻿using Kchary.PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.Views;
 using Prism.Mvvm;
 using Reactive.Bindings;
@@ -161,15 +161,15 @@ namespace Kchary.PhotoViewer.ViewModels
             SelectedMedia.Subscribe(LoadMediaAsync).AddTo(disposables);
 
             // バックグラウンドスレッドの設定
-            LoadContentsBackgroundWorker.DoWork += LoadContentsWorker_DoWork;
-            LoadContentsBackgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
+            LoadContentsBackgroundWorker.DoWork += LoadContentsDoWork;
+            LoadContentsBackgroundWorker.RunWorkerCompleted += RunWorkerCompleted;
 
             // 設定ファイルの読み込み
             AppConfigManager.GetInstance().Import();
 
             // エクスプローラーツリーの設定
             ExplorerViewModel = new ExplorerViewModel();
-            ExplorerViewModel.ChangeSelectItemEvent += ExplorerViewModel_ChangeSelectItemEvent;
+            ExplorerViewModel.ChangeSelectItemEvent += ChangeSelectItemEvent;
             UpdateExplorerTree();
 
             // Exif情報表示の設定
@@ -480,7 +480,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="sender">ExplorerViewModel</param>
         /// <param name="e">引数情報</param>
-        private void ExplorerViewModel_ChangeSelectItemEvent(object sender, EventArgs e)
+        private void ChangeSelectItemEvent(object sender, EventArgs e)
         {
             SelectedMedia.Value = null;
             PictureImageSource.Value = null;
@@ -551,7 +551,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="sender">BackgroundWorker</param>
         /// <param name="e">引数情報</param>
-        private void LoadContentsWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void LoadContentsDoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
@@ -572,7 +572,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="sender">LoadContentsWorker</param>
         /// <param name="e">引数情報</param>
-        private void LoadContentsWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
             {
