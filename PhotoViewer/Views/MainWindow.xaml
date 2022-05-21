@@ -6,7 +6,7 @@
         xmlns:wpftk="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
         xmlns:view="clr-namespace:Kchary.PhotoViewer.Views"
         xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
-        xmlns:model="clr-namespace:Kchary.PhotoViewer.Model"
+        xmlns:model="clr-namespace:Kchary.PhotoViewer.Models"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewmodel:MainWindowViewModel}"
         Icon="/Images/PhotoExifViewerIcon.ico"

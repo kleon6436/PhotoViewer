@@ -1,4 +1,4 @@
-﻿using Kchary.PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.ViewModels;
 using System.Windows;
 using System.Windows.Controls;

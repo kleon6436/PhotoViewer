@@ -1,4 +1,4 @@
-﻿using Kchary.PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
