@@ -532,10 +532,7 @@ namespace Kchary.PhotoViewer.ViewModels
             catch (Exception ex)
             {
                 App.LogException(ex);
-
-                const string MediaReadErrorMessage = "Failed to load media file.";
-                const string MediaReadErrorTitle = "File read error";
-                App.ShowErrorMessageBox(MediaReadErrorMessage, MediaReadErrorTitle);
+                App.ShowErrorMessageBox("Failed to load media file.", "File read error");
             }
         }
 
