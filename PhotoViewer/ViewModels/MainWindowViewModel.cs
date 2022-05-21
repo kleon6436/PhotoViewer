@@ -14,7 +14,6 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
@@ -158,7 +157,7 @@ namespace Kchary.PhotoViewer.ViewModels
             ContextMenuCommand = new ReactiveCommand<string>().WithSubscribe(ContextMenuClicked).AddTo(disposables);
 
             // プロパティ変更に紐づく処理の設定
-            SelectedMedia.Subscribe(LoadMediaAsync).AddTo(disposables);
+            SelectedMedia.Subscribe(LoadMedia).AddTo(disposables);
 
             // バックグラウンドスレッドの設定
             LoadContentsBackgroundWorker.DoWork += LoadContentsDoWork;
@@ -226,7 +225,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 非同期で画像を読み込む
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
-        public async void LoadMediaAsync(MediaInfo mediaInfo)
+        public void LoadMedia(MediaInfo mediaInfo)
         {
             if (mediaInfo == null)
             {
@@ -258,7 +257,7 @@ namespace Kchary.PhotoViewer.ViewModels
             switch (mediaInfo.ContentMediaType)
             {
                 case MediaInfo.MediaType.Picture:
-                    await LoadPictureImageAsync(mediaInfo);
+                    LoadPictureImage(mediaInfo);
                     break;
 
                 case MediaInfo.MediaType.Movie:
@@ -290,20 +289,11 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private static void BluetoothButtonClicked()
         {
-            try
+            App.CallMouseBlockMethod(() =>
             {
-                Mouse.OverrideCursor = Cursors.Wait;
                 Process.Start("fsquirt.exe", "-send");
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-                App.ShowErrorMessageBox("Not support Bluetooth transmission.", "Bluetooth transmission error");
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
+            },
+            "Bluetooth transmission error", "Not support Bluetooth transmission.");
         }
 
         /// <summary>
@@ -316,11 +306,9 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            try
+            App.CallMouseBlockMethod(() => 
             {
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                var selectPath = (File.GetAttributes(SelectFolderPath.Value) & FileAttributes.Directory) == FileAttributes.Directory 
+                var selectPath = (File.GetAttributes(SelectFolderPath.Value) & FileAttributes.Directory) == FileAttributes.Directory
                     ? SelectFolderPath.Value : Path.GetDirectoryName(SelectFolderPath.Value);
 
                 const string Explorer = "EXPLORER.EXE";
@@ -332,15 +320,8 @@ namespace Kchary.PhotoViewer.ViewModels
                 {
                     App.ShowErrorMessageBox("Select path is not found.", "Process start error");
                 }
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
+            }, 
+            "Open folder error", "Explorer is not started.");
         }
 
         /// <summary>
@@ -416,10 +397,8 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            try
+            App.CallMouseBlockMethod(() => 
             {
-                Mouse.OverrideCursor = Cursors.Wait;
-
                 var appPath = linkageAppList.Find(x => x.AppName == appName)?.AppPath;
                 if (!string.IsNullOrEmpty(appPath))
                 {
@@ -429,15 +408,8 @@ namespace Kchary.PhotoViewer.ViewModels
                 {
                     App.ShowErrorMessageBox("Linkage app path is not found.", "Process start error");
                 }
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
+            },
+            "Process start error", "Linked app is not started.");
         }
 
         /// <summary>
@@ -560,10 +532,7 @@ namespace Kchary.PhotoViewer.ViewModels
             catch (Exception ex)
             {
                 App.LogException(ex);
-
-                const string MediaReadErrorMessage = "Failed to load media file.";
-                const string MediaReadErrorTitle = "File read error";
-                App.ShowErrorMessageBox(MediaReadErrorMessage, MediaReadErrorTitle);
+                App.ShowErrorMessageBox("Failed to load media file.", "File read error");
             }
         }
 
@@ -701,12 +670,10 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
         /// <returns>読み込み成功: True、読み込み失敗: False</returns>
-        private async Task LoadPictureImageAsync(MediaInfo mediaInfo)
+        private void LoadPictureImage(MediaInfo mediaInfo)
         {
-            try
+            App.CallMouseBlockMethod(async () =>
             {
-                Mouse.OverrideCursor = Cursors.Wait;
-
                 // 画像とExifを読み込むタスクを作成する
                 var loadPictureTask = Task.Run(() =>
                 {
@@ -734,16 +701,8 @@ namespace Kchary.PhotoViewer.ViewModels
 
                 // パス表示を更新
                 SelectFolderPath.Value = mediaInfo.FilePath;
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-                App.ShowErrorMessageBox("File access error occurred", "File access error");
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
+            },
+            "File access error", "File access error occurred");
         }
     }
 }

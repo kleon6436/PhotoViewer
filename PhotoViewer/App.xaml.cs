@@ -3,11 +3,14 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Kchary.PhotoViewer
 {
     public partial class App
     {
+        private static Mutex Mutex = new(false, "PhotoViewer");
+
         internal class NativeMethods
         {
             [DllImport("user32.dll", CharSet=CharSet.Unicode)]
@@ -24,11 +27,69 @@ namespace Kchary.PhotoViewer
             internal static extern bool SetForegroundWindow(IntPtr hWnd);
         }
 
-        private static Mutex Mutex = new(false, "PhotoViewer");
-
         public App()
         {
             DispatcherUnhandledException += AppDispatcherUnhandledException;
+        }
+
+        /// <summary>
+        /// ログ出力する
+        /// </summary>
+        /// <param name="ex">The message of exception.</param>
+        /// <param name="callerFilePath">CallerFilePath</param>
+        /// <param name="callerLineNumber">CallerLineNumber</param>
+        public static void LogException(Exception ex,
+            [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
+        {
+            Debug.WriteLine($"ERROR -> {ex.Message}, LineNumber: {callerLineNumber}, FilePath: {callerFilePath}");
+        }
+
+        /// <summary>
+        /// エラーメッセージボックスを表示する
+        /// </summary>
+        /// <param name="message">メッセージ</param>
+        /// <param name="caption">タイトル</param>
+        public static void ShowErrorMessageBox(string message, string caption)
+        {
+            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        /// <summary>
+        /// 成功メッセージボックスを表示する
+        /// </summary>
+        /// <param name="message">メッセージ</param>
+        /// <param name="caption">タイトル</param>
+        public static void ShowSuccessMessageBox(string message, string caption)
+        {
+            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        /// <summary>
+        /// マウスをブロックした状態で処理を実行する
+        /// </summary>
+        /// <remarks>
+        /// エラー時は、エラーメッセージボックスを表示する
+        /// </remarks>
+        /// <param name="action">処理</param>
+        /// <param name="errorCaption">エラー時のキャプション</param>
+        /// <param name="errorMessage">エラー時のメッセージ</param>
+        public static void CallMouseBlockMethod(Action action, string errorCaption, string errorMessage)
+        {
+            try
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+                action.Invoke();
+            }
+            catch (Exception ex)
+            {
+                LogException(ex);
+                ShowErrorMessageBox(errorMessage, errorCaption);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+            }
         }
 
         /// <summary>
@@ -94,39 +155,6 @@ namespace Kchary.PhotoViewer
         {
             LogException(e.Exception);
             ShowErrorMessageBox("File access error occurred", "File access error");
-        }
-
-        /// <summary>
-        /// ログ出力する
-        /// </summary>
-        /// <param name="ex">The message of exception.</param>
-        /// <param name="callerFilePath">CallerFilePath</param>
-        /// <param name="callerLineNumber">CallerLineNumber</param>
-        public static void LogException(Exception ex,
-            [System.Runtime.CompilerServices.CallerFilePath] string callerFilePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int callerLineNumber = 0)
-        {
-            Debug.WriteLine($"ERROR -> {ex.Message}, LineNumber: {callerLineNumber}, FilePath: {callerFilePath}");
-        }
-
-        /// <summary>
-        /// エラーメッセージボックスを表示する
-        /// </summary>
-        /// <param name="message">Message</param>
-        /// <param name="caption">Title</param>
-        public static void ShowErrorMessageBox(string message, string caption)
-        {
-            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        /// <summary>
-        /// 成功メッセージボックスを表示する
-        /// </summary>
-        /// <param name="message">Message</param>
-        /// <param name="caption">Title</param>
-        public static void ShowSuccessMessageBox(string message, string caption)
-        {
-            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
