@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Reactive.Bindings;
+using Reactive.Bindings.Schedulers;
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -102,6 +104,8 @@ namespace Kchary.PhotoViewer
         /// <param name="e">引数情報</param>
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
+            ReactivePropertyScheduler.SetDefault(new ReactivePropertyWpfScheduler(Dispatcher));
+
             if (Mutex.WaitOne(0, false))
             {
                 return;

@@ -132,6 +132,11 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose() => disposable.Dispose();
+
+        /// <summary>
         /// 編集対象の保存ファイルパスをViewModelに設定する
         /// </summary>
         /// <param name="filePath">編集対象のファイルパス</param>
@@ -151,11 +156,6 @@ namespace Kchary.PhotoViewer.ViewModels
             SelectedForm.Value = ImageFormItems[0];
             IsEnableImageSaveQuality.Value = true;
         }
-
-        /// <summary>
-        /// Dispose
-        /// </summary>
-        public void Dispose() => disposable.Dispose();
 
         /// <summary>
         /// 保存ボタンを押下時の処理

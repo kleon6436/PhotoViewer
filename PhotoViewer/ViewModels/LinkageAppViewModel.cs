@@ -1,12 +1,13 @@
 ﻿using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
-using Prism.Commands;
 using Prism.Mvvm;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Windows.Input;
+using System.Reactive.Disposables;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
@@ -17,18 +18,14 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private const int MaxLinkAppNum = 10;
 
-        #region UI binding parameter
+        private readonly CompositeDisposable disposables = new();
 
-        private string linkAppPath;
+        #region UI binding parameter
 
         /// <summary>
         /// 登録アプリのパス
         /// </summary>
-        public string LinkAppPath
-        {
-            get => linkAppPath;
-            set => SetProperty(ref linkAppPath, value);
-        }
+        public ReactivePropertySlim<string> LinkAppPath { get; } = new();
 
         /// <summary>
         /// 登録アプリリスト
@@ -42,17 +39,17 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 参照ボタンのコマンド
         /// </summary>
-        public ICommand LinkAppReferenceCommand { get; }
+        public ReactiveCommand LinkAppReferenceCommand { get; }
         
         /// <summary>
         /// 登録ボタンのコマンド
         /// </summary>
-        public ICommand RegisterLinkAppCommand { get; }
+        public ReactiveCommand RegisterLinkAppCommand { get; }
         
         /// <summary>
         /// 削除ボタンのコマンド
         /// </summary>
-        public ICommand DeleteLinkAppCommand { get; }
+        public ReactiveCommand<ExtraAppSetting> DeleteLinkAppCommand { get; }
 
         #endregion Command
 
@@ -66,9 +63,9 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public LinkageAppViewModel()
         {
-            LinkAppReferenceCommand = new DelegateCommand(LinkAppReferenceButtonClicked);
-            RegisterLinkAppCommand  = new DelegateCommand(RegisterLinkAppButtonClicked);
-            DeleteLinkAppCommand    = new DelegateCommand<ExtraAppSetting>(DeleteLinkAppButtonClicked);
+            LinkAppReferenceCommand = new ReactiveCommand().WithSubscribe(LinkAppReferenceButtonClicked).AddTo(disposables);
+            RegisterLinkAppCommand  = new ReactiveCommand().WithSubscribe(RegisterLinkAppButtonClicked).AddTo(disposables);
+            DeleteLinkAppCommand    = new ReactiveCommand<ExtraAppSetting>().WithSubscribe(DeleteLinkAppButtonClicked).AddTo(disposables);
 
             var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
             if (linkageAppList == null || !linkageAppList.Any())
@@ -81,11 +78,16 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose() => disposables.Dispose();
+
+        /// <summary>
         /// 参照ボタンを押下時の処理
         /// </summary>
         private void LinkAppReferenceButtonClicked()
         {
-            var previousLinkAppPath = LinkAppPath;
+            var previousLinkAppPath = LinkAppPath.Value;
 
             const string DialogTitle = "Linked application selection";
             const string DialogDefaultExt = ".exe";
@@ -102,11 +104,11 @@ namespace Kchary.PhotoViewer.ViewModels
 
             if (dialog.ShowDialog() != true)
             {
-                LinkAppPath = previousLinkAppPath;
+                LinkAppPath.Value = previousLinkAppPath;
                 return;
             }
 
-            LinkAppPath = dialog.FileName;
+            LinkAppPath.Value = dialog.FileName;
         }
 
         /// <summary>
@@ -114,12 +116,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void RegisterLinkAppButtonClicked()
         {
-            if (LinkageAppList.Count > MaxLinkAppNum || string.IsNullOrEmpty(LinkAppPath))
+            if (LinkageAppList.Count > MaxLinkAppNum || string.IsNullOrEmpty(LinkAppPath.Value))
             {
                 return;
             }
 
-            var linkageApp = new ExtraAppSetting { AppName = Path.GetFileNameWithoutExtension(LinkAppPath), AppPath = LinkAppPath };
+            var linkageApp = new ExtraAppSetting { AppName = Path.GetFileNameWithoutExtension(LinkAppPath.Value), AppPath = LinkAppPath.Value };
             if (LinkageAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))
             {
                 return;
@@ -132,7 +134,7 @@ namespace Kchary.PhotoViewer.ViewModels
             applicationManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
-            LinkAppPath = "";
+            LinkAppPath.Value = "";
         }
 
         /// <summary>

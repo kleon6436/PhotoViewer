@@ -7,7 +7,7 @@
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance viewmodel:LinkageAppViewModel}"
       d:DesignHeight="550" d:DesignWidth="600"
-      Title="LinkageAppView">
+      Title="LinkageAppView" Unloaded="Page_Unloaded">
     <Page.Background>
         <SolidColorBrush Color="#F0F0F0" />
     </Page.Background>
@@ -32,7 +32,7 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBox VerticalAlignment="Center" VerticalContentAlignment="Center" Focusable="False" 
-                     ToolTip="{Binding LinkAppPath, Mode=OneWay}" IsReadOnly="True" Text="{Binding LinkAppPath, Mode=OneWay}"
+                     ToolTip="{Binding LinkAppPath.Value, Mode=OneWay}" IsReadOnly="True" Text="{Binding LinkAppPath.Value, Mode=OneWay}"
                      Height="40" Width="350" FontSize="14" />
             <Button Command="{Binding LinkAppReferenceCommand, Mode=OneTime}"
                     Style="{StaticResource ButtonStyle}">
