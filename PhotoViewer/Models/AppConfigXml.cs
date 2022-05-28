@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using FastEnumUtility;
+using Kchary.PhotoViewer.Data;
 using Kchary.PhotoViewer.Views;
 
 namespace Kchary.PhotoViewer.Models

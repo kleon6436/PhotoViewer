@@ -1,6 +1,7 @@
-﻿using System.ComponentModel;
+﻿using Kchary.PhotoViewer.Models;
+using System.ComponentModel;
 
-namespace Kchary.PhotoViewer.Models
+namespace Kchary.PhotoViewer.Data
 {
     /// <summary>
     /// Exif表示用クラス

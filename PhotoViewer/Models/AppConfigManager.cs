@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kchary.PhotoViewer.Data;
+using System;
 using System.IO;
 
 namespace Kchary.PhotoViewer.Models

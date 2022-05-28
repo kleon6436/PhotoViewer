@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Kchary.PhotoViewer.Views;
 
-namespace Kchary.PhotoViewer.Models
+namespace Kchary.PhotoViewer.Data
 {
     /// <summary>
     /// アプリケーションデータクラス
