@@ -636,19 +636,19 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        MediaInfoList.AddRange(queue);
+                        foreach(var queueData in queue)
+                        {
+                            MediaInfoList.Add(queueData);
+
+                            // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
+                            if (SelectedMedia.Value == null)
+                            {
+                                SelectedMedia.Value = MediaInfoList.First();
+                            }
+                        }
                         queue.Clear();
                         tick = Environment.TickCount;
-
-                        // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
-                        if (!MediaInfoList.Any() || SelectedMedia.Value != null)
-                        {
-                            return;
-                        }
-
-                        var firstImageData = MediaInfoList.First();
-                        SelectedMedia.Value = firstImageData;
-                    });
+                   });
                 }
             }
 
