@@ -8,7 +8,7 @@ using Reactive.Bindings.Extensions;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class SettingViewModel : BindableBase
+    public sealed class SettingViewModel : BindableBase, IDisposable
     {
         private readonly CompositeDisposable disposable = new();
         private ReactivePropertySlim<SelectPage> selectPageButtonValue;

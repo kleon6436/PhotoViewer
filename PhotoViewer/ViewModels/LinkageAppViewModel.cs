@@ -12,7 +12,7 @@ using System.Reactive.Disposables;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class LinkageAppViewModel : BindableBase
+    public sealed class LinkageAppViewModel : BindableBase, IDisposable
     {
         /// <summary>
         /// 登録アプリ数の最大値
