@@ -8,8 +8,6 @@ namespace Kchary.PhotoViewer.Data
     /// </summary>
     public sealed record ExifInfo : INotifyPropertyChanged
     {
-        private string exifParameterValue;
-
         /// <summary>
         /// Exif情報のプロパティタイプ
         /// </summary>
@@ -32,6 +30,7 @@ namespace Kchary.PhotoViewer.Data
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExifParameterValue)));
             }
         }
+        private string exifParameterValue;
 
         /// <summary>
         /// コンストラクタ

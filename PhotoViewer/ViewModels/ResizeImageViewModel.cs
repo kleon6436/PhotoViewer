@@ -14,18 +14,6 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class ResizeImageViewModel : BindableBase, IDisposable
     {
-        private readonly CompositeDisposable disposable = new();
-
-        /// <summary>
-        /// リサイズ対象のファイルパス
-        /// </summary>
-        private string ResizeFilePath { get; set; }
-        
-        /// <summary>
-        /// 読み込んだ画像のサイズ
-        /// </summary>
-        private Size ReadImageSize { get; set; }
-
         #region UI binding parameter
 
         /// <summary>
@@ -98,6 +86,21 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 画面を閉じるイベント
         /// </summary>
         public EventHandler CloseView { get; set; }
+
+        /// <summary>
+        /// IDisposableをまとめるCompositeDisposable
+        /// </summary>
+        private readonly CompositeDisposable disposable = new();
+
+        /// <summary>
+        /// リサイズ対象のファイルパス
+        /// </summary>
+        private string ResizeFilePath { get; set; }
+
+        /// <summary>
+        /// 読み込んだ画像のサイズ
+        /// </summary>
+        private Size ReadImageSize { get; set; }
 
         /// <summary>
         /// コンストラクタ

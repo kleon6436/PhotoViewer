@@ -261,7 +261,7 @@ namespace Kchary.PhotoViewer.Models
         /// <param name="metaData">Metadata</param>
         /// <param name="image">BitmapSource</param>
         /// <returns>BitmapSource</returns>
-        public static BitmapSource RotateImage(BitmapMetadata metaData, BitmapSource image)
+        private static BitmapSource RotateImage(BitmapMetadata metaData, BitmapSource image)
         {
             var rotation = GetRotation(metaData);
 

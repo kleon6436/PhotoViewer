@@ -22,8 +22,6 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class MainWindowViewModel : BindableBase, IDisposable
     {
-        private readonly CompositeDisposable disposables = new();
-
         #region ViewModels
 
         /// <summary>
@@ -110,6 +108,11 @@ namespace Kchary.PhotoViewer.ViewModels
         public ReactiveCommand<string> ContextMenuCommand { get; }
 
         #endregion Command
+
+        /// <summary>
+        /// IDisposableをまとめるCompositeDisposable
+        /// </summary>
+        private readonly CompositeDisposable disposables = new();
 
         /// <summary>
         /// バックグラウンドでコンテンツをロードするためのワーカー
