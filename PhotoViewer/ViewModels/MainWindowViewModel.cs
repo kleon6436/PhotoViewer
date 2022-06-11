@@ -626,7 +626,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     }
 
                     var duration = Environment.TickCount - tick;
-                    if ((count > 25 || duration <= 125) && duration <= 250)
+                    if ((count > 100 || duration <= 250) && duration <= 500)
                     {
                         continue;
                     }
