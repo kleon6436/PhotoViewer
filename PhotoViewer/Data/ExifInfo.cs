@@ -1,14 +1,13 @@
-﻿using System.ComponentModel;
+﻿using Kchary.PhotoViewer.Models;
+using System.ComponentModel;
 
-namespace Kchary.PhotoViewer.Models
+namespace Kchary.PhotoViewer.Data
 {
     /// <summary>
     /// Exif表示用クラス
     /// </summary>
     public sealed record ExifInfo : INotifyPropertyChanged
     {
-        private string exifParameterValue;
-
         /// <summary>
         /// Exif情報のプロパティタイプ
         /// </summary>
@@ -31,6 +30,7 @@ namespace Kchary.PhotoViewer.Models
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExifParameterValue)));
             }
         }
+        private string exifParameterValue;
 
         /// <summary>
         /// コンストラクタ

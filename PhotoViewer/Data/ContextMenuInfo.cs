@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media.Imaging;
 
-namespace Kchary.PhotoViewer.Models
+namespace Kchary.PhotoViewer.Data
 {
     /// <summary>
     /// コンテキストメニュークラス

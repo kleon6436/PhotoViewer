@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using FastEnumUtility;
 using Directory = MetadataExtractor.Directory;
+using Kchary.PhotoViewer.Data;
 
 namespace Kchary.PhotoViewer.Models
 {

@@ -1,4 +1,5 @@
-﻿using Kchary.PhotoViewer.Models;
+﻿using Kchary.PhotoViewer.Data;
+using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.Views;
 using Prism.Mvvm;
 using Reactive.Bindings;
@@ -21,8 +22,6 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class MainWindowViewModel : BindableBase, IDisposable
     {
-        private readonly CompositeDisposable disposables = new();
-
         #region ViewModels
 
         /// <summary>
@@ -109,6 +108,11 @@ namespace Kchary.PhotoViewer.ViewModels
         public ReactiveCommand<string> ContextMenuCommand { get; }
 
         #endregion Command
+
+        /// <summary>
+        /// IDisposableをまとめるCompositeDisposable
+        /// </summary>
+        private readonly CompositeDisposable disposables = new();
 
         /// <summary>
         /// バックグラウンドでコンテンツをロードするためのワーカー
@@ -622,7 +626,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     }
 
                     var duration = Environment.TickCount - tick;
-                    if ((count > 25 || duration <= 125) && duration <= 250)
+                    if ((count > 100 || duration <= 250) && duration <= 500)
                     {
                         continue;
                     }
@@ -635,19 +639,19 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        MediaInfoList.AddRange(queue);
+                        foreach(var queueData in queue)
+                        {
+                            MediaInfoList.Add(queueData);
+
+                            // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
+                            if (SelectedMedia.Value == null)
+                            {
+                                SelectedMedia.Value = MediaInfoList.First();
+                            }
+                        }
                         queue.Clear();
                         tick = Environment.TickCount;
-
-                        // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
-                        if (!MediaInfoList.Any() || SelectedMedia.Value != null)
-                        {
-                            return;
-                        }
-
-                        var firstImageData = MediaInfoList.First();
-                        SelectedMedia.Value = firstImageData;
-                    });
+                   });
                 }
             }
 

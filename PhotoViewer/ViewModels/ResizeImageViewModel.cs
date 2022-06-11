@@ -1,4 +1,5 @@
-﻿using Kchary.PhotoViewer.Models;
+﻿using Kchary.PhotoViewer.Data;
+using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
 using Prism.Mvvm;
 using Reactive.Bindings;
@@ -13,18 +14,6 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class ResizeImageViewModel : BindableBase, IDisposable
     {
-        private readonly CompositeDisposable disposable = new();
-
-        /// <summary>
-        /// リサイズ対象のファイルパス
-        /// </summary>
-        private string ResizeFilePath { get; set; }
-        
-        /// <summary>
-        /// 読み込んだ画像のサイズ
-        /// </summary>
-        private Size ReadImageSize { get; set; }
-
         #region UI binding parameter
 
         /// <summary>
@@ -99,6 +88,21 @@ namespace Kchary.PhotoViewer.ViewModels
         public EventHandler CloseView { get; set; }
 
         /// <summary>
+        /// IDisposableをまとめるCompositeDisposable
+        /// </summary>
+        private readonly CompositeDisposable disposable = new();
+
+        /// <summary>
+        /// リサイズ対象のファイルパス
+        /// </summary>
+        private string ResizeFilePath { get; set; }
+
+        /// <summary>
+        /// 読み込んだ画像のサイズ
+        /// </summary>
+        private Size ReadImageSize { get; set; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public ResizeImageViewModel()
@@ -132,6 +136,11 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose() => disposable.Dispose();
+
+        /// <summary>
         /// 編集対象の保存ファイルパスをViewModelに設定する
         /// </summary>
         /// <param name="filePath">編集対象のファイルパス</param>
@@ -151,11 +160,6 @@ namespace Kchary.PhotoViewer.ViewModels
             SelectedForm.Value = ImageFormItems[0];
             IsEnableImageSaveQuality.Value = true;
         }
-
-        /// <summary>
-        /// Dispose
-        /// </summary>
-        public void Dispose() => disposable.Dispose();
 
         /// <summary>
         /// 保存ボタンを押下時の処理

@@ -23,7 +23,7 @@ namespace Kchary.PhotoViewer.Models
     /// </summary>
     public static class MediaChecker
     {
-        private static readonly Dictionary<string, FileExtensionType> SupportExtensionMap = new()
+        private static readonly IDictionary<string, FileExtensionType> SupportExtensionMap = new Dictionary<string, FileExtensionType>()
         {
             { ".jpg", FileExtensionType.Jpeg },
             { ".bmp", FileExtensionType.Bmp },

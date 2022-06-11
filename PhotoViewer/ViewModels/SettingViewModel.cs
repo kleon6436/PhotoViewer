@@ -8,11 +8,8 @@ using Reactive.Bindings.Extensions;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class SettingViewModel : BindableBase
+    public sealed class SettingViewModel : BindableBase, IDisposable
     {
-        private readonly CompositeDisposable disposable = new();
-        private ReactivePropertySlim<SelectPage> selectPageButtonValue;
-
         /// <summary>
         /// コンテキストメニューの再読み込みイベント
         /// </summary>
@@ -26,6 +23,11 @@ namespace Kchary.PhotoViewer.ViewModels
             LinkageAppPage,
             InformationPage,
         }
+
+        /// <summary>
+        /// 表示する画面
+        /// </summary>
+        public ReactivePropertySlim<Page> DisplayPage { get; set; } = new();
 
         /// <summary>
         /// ラジオボタンで設定された読み込むページの情報
@@ -61,11 +63,12 @@ namespace Kchary.PhotoViewer.ViewModels
                 return selectPageButtonValue ??= new ReactivePropertySlim<SelectPage>().AddTo(disposable);
             }
         }
+        private ReactivePropertySlim<SelectPage> selectPageButtonValue;
 
         /// <summary>
-        /// 表示する画面
+        /// IDisposableをまとめるCompositeDisposable
         /// </summary>
-        public ReactivePropertySlim<Page> DisplayPage { get; set; } = new();
+        private readonly CompositeDisposable disposable = new();
 
         /// <summary>
         /// Dispose

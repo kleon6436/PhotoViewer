@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Kchary.PhotoViewer.Models;
+using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace Kchary.PhotoViewer.Models
+namespace Kchary.PhotoViewer.Data
 {
     /// <summary>
     /// メディア情報クラス
