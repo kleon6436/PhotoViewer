@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Kchary.PhotoViewer.Views;
+﻿using Kchary.PhotoViewer.Views;
+using System.Collections.Generic;
 
 namespace Kchary.PhotoViewer.Data
 {

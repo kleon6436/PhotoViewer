@@ -13,19 +13,19 @@ namespace Kchary.PhotoViewer
     {
         private static Mutex Mutex = new(false, "PhotoViewer");
 
-        internal class NativeMethods
+        internal static class NativeMethods
         {
-            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             internal static extern bool IsWindow(IntPtr hWnd);
-            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             internal static extern bool IsWindowVisible(IntPtr hWnd);
-            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             internal static extern IntPtr GetLastActivePopup(IntPtr hWnd);
-            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             internal static extern int ShowWindow(IntPtr hWnd, int nCmdShow);
-            [DllImport("user32.dll", CharSet=CharSet.Unicode)]
+            [DllImport("user32.dll", CharSet = CharSet.Unicode)]
             internal static extern bool SetForegroundWindow(IntPtr hWnd);
         }
 
@@ -112,7 +112,7 @@ namespace Kchary.PhotoViewer
             }
 
             var hMWnd = NativeMethods.FindWindow(null, "PhotoViewer");
-            if (!NativeMethods.IsWindow((hMWnd)))
+            if (!NativeMethods.IsWindow(hMWnd))
             {
                 return;
             }

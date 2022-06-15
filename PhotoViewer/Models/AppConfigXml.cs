@@ -1,9 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Xml.Linq;
-using FastEnumUtility;
+﻿using FastEnumUtility;
 using Kchary.PhotoViewer.Data;
 using Kchary.PhotoViewer.Views;
+using System;
+using System.Runtime.InteropServices;
+using System.Xml.Linq;
 
 namespace Kchary.PhotoViewer.Models
 {

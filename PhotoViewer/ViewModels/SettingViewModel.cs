@@ -1,10 +1,10 @@
-﻿using System;
-using System.Reactive.Disposables;
-using System.Windows.Controls;
-using Kchary.PhotoViewer.Views;
+﻿using Kchary.PhotoViewer.Views;
 using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using System;
+using System.Reactive.Disposables;
+using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {

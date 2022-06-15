@@ -1,17 +1,17 @@
-﻿using MetadataExtractor;
-using MetadataExtractor.Formats.Exif;
-using MetadataExtractor.Formats.Jpeg;
+﻿using FastEnumUtility;
+using Kchary.PhotoViewer.Data;
+using MetadataExtractor;
 using MetadataExtractor.Formats.Bmp;
+using MetadataExtractor.Formats.Exif;
+using MetadataExtractor.Formats.Gif;
+using MetadataExtractor.Formats.Jpeg;
 using MetadataExtractor.Formats.Png;
 using MetadataExtractor.Formats.Tiff;
-using MetadataExtractor.Formats.Gif;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FastEnumUtility;
 using Directory = MetadataExtractor.Directory;
-using Kchary.PhotoViewer.Data;
 
 namespace Kchary.PhotoViewer.Models
 {

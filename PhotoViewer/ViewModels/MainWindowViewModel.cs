@@ -81,7 +81,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// Bluetoothボタンのコマンド
         /// </summary>
         public ReactiveCommand BluetoothButtonCommand { get; }
-        
+
         /// <summary>
         /// エクスプローラー表示ボタンのコマンド
         /// </summary>
@@ -96,7 +96,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 設定ボタンのコマンド
         /// </summary>
         public ReactiveCommand SettingButtonCommand { get; }
-        
+
         /// <summary>
         /// 編集ボタンのコマンド
         /// </summary>
@@ -137,7 +137,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// コンテンツをリロードするためのフラグ
         /// </summary>
-        private static bool IsReloadContents { get; set; } 
+        private static bool IsReloadContents { get; set; }
 
         /// <summary>
         /// 既定のピクチャフォルダパス
@@ -153,11 +153,11 @@ namespace Kchary.PhotoViewer.ViewModels
         public MainWindowViewModel()
         {
             // コマンドの設定
-            BluetoothButtonCommand  = new ReactiveCommand().WithSubscribe(BluetoothButtonClicked).AddTo(disposables);
+            BluetoothButtonCommand = new ReactiveCommand().WithSubscribe(BluetoothButtonClicked).AddTo(disposables);
             OpenFolderButtonCommand = new ReactiveCommand().WithSubscribe(OpenFolderButtonClicked).AddTo(disposables);
-            ReloadButtonCommand     = new ReactiveCommand().WithSubscribe(ReloadButtonClicked).AddTo(disposables);
-            SettingButtonCommand    = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
-            ImageEditButtonCommand  = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
+            ReloadButtonCommand = new ReactiveCommand().WithSubscribe(ReloadButtonClicked).AddTo(disposables);
+            SettingButtonCommand = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
+            ImageEditButtonCommand = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
             ContextMenuCommand = new ReactiveCommand<string>().WithSubscribe(ContextMenuClicked).AddTo(disposables);
 
             // プロパティ変更に紐づく処理の設定
@@ -193,7 +193,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public void InitViewFolder()
         {
             var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList != null && linkageAppList.Any())
+            if (linkageAppList?.Any() == true)
             {
                 // リンク先がないものはすべて削除
                 linkageAppList.RemoveAll(x => !File.Exists(x.AppPath));
@@ -217,7 +217,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // 画像フォルダの読み込み
             var picturePath = DefaultPicturePath;
-            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath) 
+            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath)
                 && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
             {
                 picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
@@ -285,7 +285,6 @@ namespace Kchary.PhotoViewer.ViewModels
 
             LoadContentsBackgroundWorker.CancelAsync();
             return false;
-
         }
 
         /// <summary>
@@ -293,10 +292,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private static void BluetoothButtonClicked()
         {
-            App.CallMouseBlockMethod(() =>
-            {
-                Process.Start("fsquirt.exe", "-send");
-            },
+            App.CallMouseBlockMethod(() => Process.Start("fsquirt.exe", "-send"),
             "Bluetooth transmission error", "Not support Bluetooth transmission.");
         }
 
@@ -310,7 +306,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            App.CallMouseBlockMethod(() => 
+            App.CallMouseBlockMethod(() =>
             {
                 var selectPath = (File.GetAttributes(SelectFolderPath.Value) & FileAttributes.Directory) == FileAttributes.Directory
                     ? SelectFolderPath.Value : Path.GetDirectoryName(SelectFolderPath.Value);
@@ -324,7 +320,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 {
                     App.ShowErrorMessageBox("Select path is not found.", "Process start error");
                 }
-            }, 
+            },
             "Open folder error", "Explorer is not started.");
         }
 
@@ -401,7 +397,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            App.CallMouseBlockMethod(() => 
+            App.CallMouseBlockMethod(() =>
             {
                 var appPath = linkageAppList.Find(x => x.AppName == appName)?.AppPath;
                 if (!string.IsNullOrEmpty(appPath))
@@ -429,7 +425,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // 登録アプリをコンテキストメニューに再登録
             var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList == null || !linkageAppList.Any())
+            if (linkageAppList?.Any() != true)
             {
                 return;
             }
@@ -620,7 +616,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     queue.AddLast(mediaInfo);
                     count++;
 
-                    if (!queue.Any())
+                    if (queue.Count == 0)
                     {
                         continue;
                     }
@@ -639,7 +635,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        foreach(var queueData in queue)
+                        foreach (var queueData in queue)
                         {
                             MediaInfoList.Add(queueData);
 
@@ -651,7 +647,7 @@ namespace Kchary.PhotoViewer.ViewModels
                         }
                         queue.Clear();
                         tick = Environment.TickCount;
-                   });
+                    });
                 }
             }
 
@@ -661,11 +657,11 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            if (!queue.Any())
+            if (queue.Count == 0)
             {
                 return;
             }
-            Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
+            Application.Current.Dispatcher.Invoke(() => MediaInfoList.AddRange(queue));
             queue.Clear();
         }
 

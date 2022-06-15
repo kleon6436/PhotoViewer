@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Kchary.PhotoViewer.Models;
+using Kchary.PhotoViewer.ViewModels;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
-using Kchary.PhotoViewer.Models;
-using Kchary.PhotoViewer.ViewModels;
 
 namespace Kchary.PhotoViewer.Views
 {

@@ -20,7 +20,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// リサイズカテゴリの表示用リスト
         /// </summary>
         public ResizeImageCategory[] ResizeCategoryItems { get; }
-        
+
         /// <summary>
         /// 画質カテゴリの表示用リスト
         /// </summary>
@@ -55,7 +55,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 選択した保存形式
         /// </summary>
         public ReactivePropertySlim<ImageForm> SelectedForm { get; } = new();
-        
+
         /// <summary>
         /// 選択したリサイズサイズ(幅)
         /// </summary>
@@ -188,7 +188,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // 保存する画像の作成
             // デフォルトでは、リサイズなしとする
-            var scale = 1.0; 
+            var scale = 1.0;
             if (ResizeCategoryItem.Value.Category != ResizeImageCategory.ResizeCategory.None)
             {
                 scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Width;
@@ -202,9 +202,9 @@ namespace Kchary.PhotoViewer.ViewModels
             // 選択された保存形式と同じエンコーダーを用意
             BitmapEncoder encoder = SelectedForm.Value.Form switch
             {
-                ImageForm.ImageForms.Bmp  => new BmpBitmapEncoder(),
-                ImageForm.ImageForms.Jpeg => new JpegBitmapEncoder {QualityLevel = SelectedQuality.Value.QualityValue},
-                ImageForm.ImageForms.Png  => new PngBitmapEncoder(),
+                ImageForm.ImageForms.Bmp => new BmpBitmapEncoder(),
+                ImageForm.ImageForms.Jpeg => new JpegBitmapEncoder { QualityLevel = SelectedQuality.Value.QualityValue },
+                ImageForm.ImageForms.Png => new PngBitmapEncoder(),
                 ImageForm.ImageForms.Tiff => new TiffBitmapEncoder(),
                 _ => throw new ArgumentOutOfRangeException()
             };
@@ -257,7 +257,7 @@ namespace Kchary.PhotoViewer.ViewModels
             var resizeHeight = (int)(ReadImageSize.Height * scale);
 
             ResizeSizeWidthText.Value = $"Width: {resizeWidth} [pixel]";
-            ResizeSizeHeightText.Value =  $"Height: {resizeHeight} [pixel]";
+            ResizeSizeHeightText.Value = $"Height: {resizeHeight} [pixel]";
         }
     }
 }

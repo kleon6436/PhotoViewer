@@ -1,6 +1,6 @@
-using System.IO;
 using Kchary.PhotoViewer.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace PhotoViewerUnitTest
 {
