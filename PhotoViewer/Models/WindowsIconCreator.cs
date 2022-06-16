@@ -21,7 +21,7 @@ namespace Kchary.PhotoViewer.Models
         [DllImport("User32.dll")]
         private static extern bool DestroyIcon(IntPtr hIcon);
 
-        [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         public struct StockIconInfo
         {
             public uint cbSize;        // Size of structure (number of bytes)

@@ -172,6 +172,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // エクスプローラーツリーの設定
             ExplorerViewModel = new ExplorerViewModel();
+            disposables.Add(ExplorerViewModel);
             ExplorerViewModel.ChangeSelectItemEvent += ChangeSelectItemEvent;
             UpdateExplorerTree();
 
@@ -264,7 +265,6 @@ namespace Kchary.PhotoViewer.ViewModels
                     LoadPictureImage(mediaInfo);
                     break;
 
-                case MediaInfo.MediaType.Movie:
                 default:
                     throw new ArgumentOutOfRangeException(mediaInfo.ContentMediaType.ToString(), nameof(mediaInfo.ContentMediaType));
             }

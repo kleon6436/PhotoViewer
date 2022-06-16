@@ -27,7 +27,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 表示する画面
         /// </summary>
-        public ReactivePropertySlim<Page> DisplayPage { get; set; } = new();
+        public ReactivePropertySlim<Page> DisplayPage { get; }
 
         /// <summary>
         /// ラジオボタンで設定された読み込むページの情報
@@ -36,11 +36,6 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             get
             {
-                if (selectPageButtonValue == null)
-                {
-                    return selectPageButtonValue ??= new ReactivePropertySlim<SelectPage>().AddTo(disposable);
-                }
-
                 switch (selectPageButtonValue.Value)
                 {
                     case SelectPage.LinkageAppPage:
@@ -62,6 +57,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
                 return selectPageButtonValue ??= new ReactivePropertySlim<SelectPage>().AddTo(disposable);
             }
+            private set => selectPageButtonValue = value;
         }
         private ReactivePropertySlim<SelectPage> selectPageButtonValue;
 
@@ -69,6 +65,15 @@ namespace Kchary.PhotoViewer.ViewModels
         /// IDisposableをまとめるCompositeDisposable
         /// </summary>
         private readonly CompositeDisposable disposable = new();
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public SettingViewModel()
+        {
+            DisplayPage = new ReactivePropertySlim<Page>().AddTo(disposable);
+            SelectPageButtonValue = new ReactivePropertySlim<SelectPage>().AddTo(disposable);
+        }
 
         /// <summary>
         /// Dispose

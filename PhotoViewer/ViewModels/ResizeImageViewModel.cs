@@ -166,17 +166,17 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void SaveButtonClicked()
         {
-            var dialog = new SaveFileDialog();
-            const string DialogTitle = "Save as...";
-            dialog.Title = DialogTitle;
-
-            dialog.Filter = SelectedForm.Value.Form switch
+            var dialog = new SaveFileDialog
             {
-                ImageForm.ImageForms.Bmp => "Bmp file(*.bmp)|*.bmp",
-                ImageForm.ImageForms.Jpeg => "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg",
-                ImageForm.ImageForms.Png => "Png file(*.png)|*.png",
-                ImageForm.ImageForms.Tiff => "Tiff file(*.tif)|*.tif",
-                _ => throw new ArgumentOutOfRangeException(),
+                Title = "Save as...",
+                Filter = SelectedForm.Value.Form switch
+                {
+                    ImageForm.ImageForms.Bmp => "Bmp file(*.bmp)|*.bmp",
+                    ImageForm.ImageForms.Jpeg => "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg",
+                    ImageForm.ImageForms.Png => "Png file(*.png)|*.png",
+                    ImageForm.ImageForms.Tiff => "Tiff file(*.tif)|*.tif",
+                    _ => throw new ArgumentOutOfRangeException(),
+                }
             };
 
             if (dialog.ShowDialog() == false)
