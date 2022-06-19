@@ -680,7 +680,11 @@ namespace Kchary.PhotoViewer.ViewModels
                 });
 
                 // タスクを実行し、処理完了まで待つ
-                LoadMediaTasks = new[] { loadPictureTask, setExifInfoTask };
+                LoadMediaTasks = new[]
+                {
+                    loadPictureTask,
+                    setExifInfoTask
+                };
                 await Task.WhenAll(LoadMediaTasks);
 
                 // 編集ボタンの状態を更新(Raw画像以外は活性状態とする)
