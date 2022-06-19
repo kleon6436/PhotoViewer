@@ -1,6 +1,5 @@
-﻿using Kchary.PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Data;
 using Kchary.PhotoViewer.ViewModels;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -32,10 +31,8 @@ namespace Kchary.PhotoViewer.Views
             selectedExplorerItem.BringIntoView();
             selectedExplorerItem.Focus();
 
-            var vm = DataContext as ExplorerViewModel;
-            Debug.Assert(vm != null);
-
-            if (vm != null && vm.SelectedItem != selectedExplorerItem)
+            // 選択したアイテムをVMに通知
+            if (DataContext is ExplorerViewModel vm && vm.SelectedItem != selectedExplorerItem)
             {
                 vm.SelectedItem = selectedExplorerItem;
             }

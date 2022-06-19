@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Kchary.PhotoViewer.Models;
+using Kchary.PhotoViewer.ViewModels;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Interop;
-using Kchary.PhotoViewer.Model;
-using Kchary.PhotoViewer.ViewModels;
 
 namespace Kchary.PhotoViewer.Views
 {
@@ -81,9 +80,7 @@ namespace Kchary.PhotoViewer.Views
             var timer = new Stopwatch();
             timer.Start();
 
-            var vm = new MainWindowViewModel();
-            vm.InitViewFolder();
-            DataContext = vm;
+            DataContext = new MainWindowViewModel();
 
             timer.Stop();
 
@@ -104,13 +101,16 @@ namespace Kchary.PhotoViewer.Views
         /// <param name="e">引数情報</param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (DataContext is not MainWindowViewModel vm || vm.SelectedMedia != null || !vm.MediaInfoList.Any())
+            if (DataContext is not MainWindowViewModel { SelectedMedia: null } vm || !vm.MediaInfoList.Any())
             {
                 return;
             }
 
             var firstImageData = vm.MediaInfoList.First();
-            vm.SelectedMedia.Value = firstImageData;
+            if (vm.SelectedMedia != null)
+            {
+                vm.SelectedMedia.Value = firstImageData;
+            }
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Kchary.PhotoViewer.Views
             AppConfigManager.ConfigData.PlaceData = placement;
             AppConfigManager.Export();
 
-            vm.Dispose();
+            vm?.Dispose();
         }
 
         /// <summary>
@@ -149,50 +149,6 @@ namespace Kchary.PhotoViewer.Views
             if (selectedItem != null)
             {
                 MediaListBox.ScrollIntoView(selectedItem);
-            }
-
-            // Run GC.
-            App.RunGc();
-        }
-
-        /// <summary>
-        /// リストボックスで選択されたアイテムが変更されたとき
-        /// </summary>
-        /// <param name="sender">mediaListBox</param>
-        /// <param name="e">引数情報</param>
-        private async void MediaListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (sender is not ListBox listBox)
-            {
-                return;
-            }
-
-            if (listBox.SelectedItem is not MediaInfo mediaInfo)
-            {
-                return;
-            }
-
-            if (DataContext is MainWindowViewModel vm)
-            {
-                await vm.LoadMediaAsync(mediaInfo);
-            }
-        }
-
-        /// <summary>
-        /// コンテキストメニューがクリックされたとき
-        /// </summary>
-        /// <param name="sender">MenuItem</param>
-        /// <param name="e">引数情報</param>
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not MenuItem menuItem)
-            {
-                return;
-            }
-
-            if (DataContext is MainWindowViewModel vm)
-            {
-                vm.ExecuteContextMenu(Convert.ToString(menuItem.Header));
             }
         }
 

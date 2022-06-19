@@ -1,18 +1,15 @@
-﻿using System;
-using System.Reactive.Disposables;
-using System.Windows.Controls;
-using Kchary.PhotoViewer.Views;
+﻿using Kchary.PhotoViewer.Views;
 using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using System;
+using System.Reactive.Disposables;
+using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class SettingViewModel : BindableBase
+    public sealed class SettingViewModel : BindableBase, IDisposable
     {
-        private readonly CompositeDisposable disposable = new();
-        private ReactivePropertySlim<SelectPage> selectPageButtonValue;
-
         /// <summary>
         /// コンテキストメニューの再読み込みイベント
         /// </summary>
@@ -28,17 +25,17 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
+        /// 表示する画面
+        /// </summary>
+        public ReactivePropertySlim<Page> DisplayPage { get; }
+
+        /// <summary>
         /// ラジオボタンで設定された読み込むページの情報
         /// </summary>
         public ReactivePropertySlim<SelectPage> SelectPageButtonValue
         {
             get
             {
-                if (selectPageButtonValue == null)
-                {
-                    return selectPageButtonValue ??= new ReactivePropertySlim<SelectPage>().AddTo(disposable);
-                }
-
                 switch (selectPageButtonValue.Value)
                 {
                     case SelectPage.LinkageAppPage:
@@ -60,12 +57,23 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
                 return selectPageButtonValue ??= new ReactivePropertySlim<SelectPage>().AddTo(disposable);
             }
+            private set => selectPageButtonValue = value;
         }
+        private ReactivePropertySlim<SelectPage> selectPageButtonValue;
 
         /// <summary>
-        /// 表示する画面
+        /// IDisposableをまとめるCompositeDisposable
         /// </summary>
-        public ReactivePropertySlim<Page> DisplayPage { get; set; } = new();
+        private readonly CompositeDisposable disposable = new();
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public SettingViewModel()
+        {
+            DisplayPage = new ReactivePropertySlim<Page>().AddTo(disposable);
+            SelectPageButtonValue = new ReactivePropertySlim<SelectPage>().AddTo(disposable);
+        }
 
         /// <summary>
         /// Dispose

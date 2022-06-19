@@ -1,4 +1,5 @@
-﻿using Kchary.PhotoViewer.Model;
+﻿using Kchary.PhotoViewer.Data;
+using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.Views;
 using Prism.Mvvm;
 using Reactive.Bindings;
@@ -14,7 +15,6 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
@@ -22,8 +22,6 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class MainWindowViewModel : BindableBase, IDisposable
     {
-        private readonly CompositeDisposable disposables = new();
-
         #region ViewModels
 
         /// <summary>
@@ -83,7 +81,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// Bluetoothボタンのコマンド
         /// </summary>
         public ReactiveCommand BluetoothButtonCommand { get; }
-        
+
         /// <summary>
         /// エクスプローラー表示ボタンのコマンド
         /// </summary>
@@ -98,13 +96,23 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 設定ボタンのコマンド
         /// </summary>
         public ReactiveCommand SettingButtonCommand { get; }
-        
+
         /// <summary>
         /// 編集ボタンのコマンド
         /// </summary>
         public ReactiveCommand ImageEditButtonCommand { get; }
 
+        /// <summary>
+        /// コンテキストメニューのコマンド
+        /// </summary>
+        public ReactiveCommand<string> ContextMenuCommand { get; }
+
         #endregion Command
+
+        /// <summary>
+        /// IDisposableをまとめるCompositeDisposable
+        /// </summary>
+        private readonly CompositeDisposable disposables = new();
 
         /// <summary>
         /// バックグラウンドでコンテンツをロードするためのワーカー
@@ -112,9 +120,24 @@ namespace Kchary.PhotoViewer.ViewModels
         private static BackgroundWorker LoadContentsBackgroundWorker { get; } = new() { WorkerSupportsCancellation = true };
 
         /// <summary>
+        /// メディアロードタスクリスト
+        /// </summary>
+        private static Task[] LoadMediaTasks;
+
+        /// <summary>
+        /// ロード停止フラグ
+        /// </summary>
+        private static volatile bool StopLoading;
+
+        /// <summary>
+        /// メディアのロード中フラグ
+        /// </summary>
+        private static bool LoadingMedia;
+
+        /// <summary>
         /// コンテンツをリロードするためのフラグ
         /// </summary>
-        private static bool IsReloadContents { get; set; } 
+        private static bool IsReloadContents { get; set; }
 
         /// <summary>
         /// 既定のピクチャフォルダパス
@@ -130,26 +153,43 @@ namespace Kchary.PhotoViewer.ViewModels
         public MainWindowViewModel()
         {
             // コマンドの設定
-            BluetoothButtonCommand  = new ReactiveCommand().WithSubscribe(BluetoothButtonClicked).AddTo(disposables);
+            BluetoothButtonCommand = new ReactiveCommand().WithSubscribe(BluetoothButtonClicked).AddTo(disposables);
             OpenFolderButtonCommand = new ReactiveCommand().WithSubscribe(OpenFolderButtonClicked).AddTo(disposables);
-            ReloadButtonCommand     = new ReactiveCommand().WithSubscribe(ReloadButtonClicked).AddTo(disposables);
-            SettingButtonCommand    = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
-            ImageEditButtonCommand  = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
+            ReloadButtonCommand = new ReactiveCommand().WithSubscribe(ReloadButtonClicked).AddTo(disposables);
+            SettingButtonCommand = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
+            ImageEditButtonCommand = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
+            ContextMenuCommand = new ReactiveCommand<string>().WithSubscribe(ContextMenuClicked).AddTo(disposables);
+
+            // プロパティ変更に紐づく処理の設定
+            SelectedMedia.Subscribe(LoadMedia).AddTo(disposables);
 
             // バックグラウンドスレッドの設定
-            LoadContentsBackgroundWorker.DoWork += LoadContentsWorker_DoWork;
-            LoadContentsBackgroundWorker.RunWorkerCompleted += LoadContentsWorker_RunWorkerCompleted;
+            LoadContentsBackgroundWorker.DoWork += LoadContentsDoWork;
+            LoadContentsBackgroundWorker.RunWorkerCompleted += RunWorkerCompleted;
 
             // 設定ファイルの読み込み
             AppConfigManager.GetInstance().Import();
 
             // エクスプローラーツリーの設定
             ExplorerViewModel = new ExplorerViewModel();
-            ExplorerViewModel.ChangeSelectItemEvent += ExplorerViewModel_ChangeSelectItemEvent;
+            disposables.Add(ExplorerViewModel);
+            ExplorerViewModel.ChangeSelectItemEvent += ChangeSelectItemEvent;
             UpdateExplorerTree();
 
             // Exif情報表示の設定
             ExifInfoViewModel = new ExifInfoViewModel();
+
+            // 画像フォルダの読み込み
+            var picturePath = DefaultPicturePath;
+            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath)
+                && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
+            {
+                picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
+            }
+            ChangeContents(picturePath);
+
+            // コンテキストメニューの設定
+            SetContextMenuFromConfigData();
         }
 
         /// <summary>
@@ -158,107 +198,49 @@ namespace Kchary.PhotoViewer.ViewModels
         public void Dispose() => disposables.Dispose();
 
         /// <summary>
-        /// 表示を初期化する
+        /// 非同期で画像を読み込む
         /// </summary>
-        /// <remarks>
-        /// 画像一覧への読み込み処理の開始などを実施する
-        /// </remarks>
-        public void InitViewFolder()
+        /// <param name="mediaInfo">選択されたメディア情報</param>
+        public void LoadMedia(MediaInfo mediaInfo)
         {
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList != null && linkageAppList.Any())
-            {
-                // リンク先がないものはすべて削除
-                linkageAppList.RemoveAll(x => !File.Exists(x.AppPath));
-
-                foreach (var linkageApp in linkageAppList)
-                {
-                    // アプリケーションアイコンをロード
-                    var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                    if (appIcon != null)
-                    {
-                        var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-                        // コンテキストメニューに追加
-                        var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
-                        ContextMenuCollection.Add(contextMenu);
-                    }
-
-                    IsShowContextMenu.Value = true;
-                }
-            }
-
-            // 画像フォルダの読み込み
-            var picturePath = DefaultPicturePath;
-            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath) 
-                && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
-            {
-                picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
-            }
-            ChangeContents(picturePath);
-        }
-
-        /// <summary>
-        /// コンテキストメニューを実行したときの処理
-        /// </summary>
-        /// <param name="appName">Application name</param>
-        public void ExecuteContextMenu(string appName)
-        {
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList.All(x => x.AppName != appName))
+            if (mediaInfo == null)
             {
                 return;
             }
 
-            try
+            if (LoadingMedia)
             {
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                var appPath = linkageAppList.Find(x => x.AppName == appName)?.AppPath;
-                if (!string.IsNullOrEmpty(appPath))
+                StopLoading = true;
+                if (LoadMediaTasks is not null)
                 {
-                    Process.Start(appPath, SelectedMedia.Value.FilePath);
+                    foreach (var task in LoadMediaTasks)
+                    {
+                        task.Wait();
+                    }
                 }
-                else
-                {
-                    App.ShowErrorMessageBox("Linkage app path is not found.", "Process start error");
-                }
+                StopLoading = false;
             }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
-        }
 
-        /// <summary>
-        /// 非同期で画像を読み込む
-        /// </summary>
-        /// <param name="mediaInfo">選択されたメディア情報</param>
-        public async Task LoadMediaAsync(MediaInfo mediaInfo)
-        {
             if (!File.Exists(mediaInfo.FilePath))
             {
                 App.ShowErrorMessageBox("File not exist.", "File access error");
+                return;
             }
 
             IsEnableImageEditButton.Value = false;
+            LoadingMedia = true;
 
             switch (mediaInfo.ContentMediaType)
             {
                 case MediaInfo.MediaType.Picture:
-                    await LoadPictureImageAsync(mediaInfo);
+                    LoadPictureImage(mediaInfo);
                     break;
 
-                case MediaInfo.MediaType.Movie:
-                    throw new NotImplementedException();
-
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(mediaInfo.ContentMediaType.ToString(), nameof(mediaInfo.ContentMediaType));
             }
+
+            LoadingMedia = false;
         }
 
         /// <summary>
@@ -274,7 +256,44 @@ namespace Kchary.PhotoViewer.ViewModels
 
             LoadContentsBackgroundWorker.CancelAsync();
             return false;
+        }
 
+        /// <summary>
+        /// コンテキストメニューを読み込む
+        /// </summary>
+        /// <param name="linkageApp">連携アプリ情報</param>
+        private void LoadContextMenu(ExtraAppSetting linkageApp)
+        {
+            var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
+            if (appIcon != null)
+            {
+                var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+                // コンテキストメニューに追加
+                var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
+                ContextMenuCollection.Add(contextMenu);
+            }
+
+            IsShowContextMenu.Value = ContextMenuCollection.Any();
+        }
+
+        /// <summary>
+        /// 設定ファイルのコンテキストメニューを設定する
+        /// </summary>
+        private void SetContextMenuFromConfigData()
+        {
+            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
+            if (linkageAppList?.Any() != true)
+            {
+                return;
+            }
+
+            // リンク先がないものはすべて削除
+            linkageAppList.RemoveAll(x => !File.Exists(x.AppPath));
+            foreach (var linkageApp in linkageAppList)
+            {
+                LoadContextMenu(linkageApp);
+            }
         }
 
         /// <summary>
@@ -282,20 +301,8 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private static void BluetoothButtonClicked()
         {
-            try
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-                Process.Start("fsquirt.exe", "-send");
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-                App.ShowErrorMessageBox("Not support Bluetooth transmission.", "Bluetooth transmission error");
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
+            App.CallMouseBlockMethod(() => Process.Start("fsquirt.exe", "-send"),
+            "Bluetooth transmission error", "Not support Bluetooth transmission.");
         }
 
         /// <summary>
@@ -308,11 +315,9 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            try
+            App.CallMouseBlockMethod(() =>
             {
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                var selectPath = (File.GetAttributes(SelectFolderPath.Value) & FileAttributes.Directory) == FileAttributes.Directory 
+                var selectPath = (File.GetAttributes(SelectFolderPath.Value) & FileAttributes.Directory) == FileAttributes.Directory
                     ? SelectFolderPath.Value : Path.GetDirectoryName(SelectFolderPath.Value);
 
                 const string Explorer = "EXPLORER.EXE";
@@ -324,15 +329,8 @@ namespace Kchary.PhotoViewer.ViewModels
                 {
                     App.ShowErrorMessageBox("Select path is not found.", "Process start error");
                 }
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
+            },
+            "Open folder error", "Explorer is not started.");
         }
 
         /// <summary>
@@ -353,6 +351,9 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 SelectFolderPath.Value = Path.GetDirectoryName(SelectFolderPath.Value);
             }
+
+            ExplorerViewModel.UpdateDriveTreeItem();
+            ExplorerViewModel.ExpandPreviousPath(ExplorerViewModel.ShowExplorerPath);
             UpdateContents();
         }
 
@@ -382,7 +383,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            var vm = new ImageEditToolViewModel();
+            var vm = new ResizeImageViewModel();
             vm.SetEditFileData(SelectedMedia.Value.FilePath);
 
             var imageEditToolDialog = new ImageEditToolView
@@ -391,6 +392,33 @@ namespace Kchary.PhotoViewer.ViewModels
                 Owner = Application.Current.MainWindow
             };
             imageEditToolDialog.ShowDialog();
+        }
+
+        /// <summary>
+        /// コンテキストメニューを押下時の処理
+        /// </summary>
+        /// <param name="appName">アプリ名</param>
+        private void ContextMenuClicked(string appName)
+        {
+            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
+            if (linkageAppList.All(x => x.AppName != appName))
+            {
+                return;
+            }
+
+            App.CallMouseBlockMethod(() =>
+            {
+                var appPath = linkageAppList.Find(x => x.AppName == appName)?.AppPath;
+                if (!string.IsNullOrEmpty(appPath))
+                {
+                    Process.Start(appPath, SelectedMedia.Value.FilePath);
+                }
+                else
+                {
+                    App.ShowErrorMessageBox("Linkage app path is not found.", "Process start error");
+                }
+            },
+            "Process start error", "Linked app is not started.");
         }
 
         /// <summary>
@@ -405,27 +433,7 @@ namespace Kchary.PhotoViewer.ViewModels
             IsShowContextMenu.Value = false;
 
             // 登録アプリをコンテキストメニューに再登録
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList == null || !linkageAppList.Any())
-            {
-                return;
-            }
-
-            foreach (var linkageApp in linkageAppList)
-            {
-                // 登録アプリのアイコンを取得
-                var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                if (appIcon != null)
-                {
-                    var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-                    // Set context menu.
-                    var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
-                    ContextMenuCollection.Add(contextMenu);
-                }
-
-                IsShowContextMenu.Value = true;
-            }
+            SetContextMenuFromConfigData();
         }
 
         /// <summary>
@@ -433,7 +441,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="sender">ExplorerViewModel</param>
         /// <param name="e">引数情報</param>
-        private void ExplorerViewModel_ChangeSelectItemEvent(object sender, EventArgs e)
+        private void ChangeSelectItemEvent(object sender, EventArgs e)
         {
             SelectedMedia.Value = null;
             PictureImageSource.Value = null;
@@ -449,13 +457,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void UpdateExplorerTree()
         {
-            ExplorerViewModel.CreateDriveTreeItem();
-
             var previousFolderPath = DefaultPicturePath;
             if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath) && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
             {
                 previousFolderPath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
             }
+            ExplorerViewModel.UpdateDriveTreeItem();
             ExplorerViewModel.ExpandPreviousPath(previousFolderPath);
         }
 
@@ -505,7 +512,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="sender">BackgroundWorker</param>
         /// <param name="e">引数情報</param>
-        private void LoadContentsWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void LoadContentsDoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
@@ -514,13 +521,8 @@ namespace Kchary.PhotoViewer.ViewModels
             catch (Exception ex)
             {
                 App.LogException(ex);
-
-                const string MediaReadErrorMessage = "Failed to load media file.";
-                const string MediaReadErrorTitle = "File read error";
-                App.ShowErrorMessageBox(MediaReadErrorMessage, MediaReadErrorTitle);
+                App.ShowErrorMessageBox("Failed to load media file.", "File read error");
             }
-
-            App.RunGc();
         }
 
         /// <summary>
@@ -528,7 +530,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="sender">LoadContentsWorker</param>
         /// <param name="e">引数情報</param>
-        private void LoadContentsWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Cancelled)
             {
@@ -562,24 +564,24 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="e">引数情報</param>
         private void LoadContentsWorker(object sender, CancelEventArgs e)
         {
-            var queue = new LinkedList<MediaInfo>();
+            var folderPath = SelectFolderPath.Value;
+            if ((File.GetAttributes(folderPath) & FileAttributes.Directory) != FileAttributes.Directory)
+            {
+                folderPath = Path.GetDirectoryName(folderPath);
+            }
+
+            if (string.IsNullOrEmpty(folderPath))
+            {
+                return;
+            }
+
+            var queue = new List<MediaInfo>();
             var tick = Environment.TickCount;
             var count = 0;
 
             // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
             foreach (var supportExtension in MediaChecker.GetSupportExtentions())
             {
-                var folderPath = SelectFolderPath.Value;
-                if ((File.GetAttributes(folderPath) & FileAttributes.Directory) != FileAttributes.Directory)
-                {
-                    folderPath = Path.GetDirectoryName(folderPath);
-                }
-
-                if (string.IsNullOrEmpty(folderPath))
-                {
-                    continue;
-                }
-
                 // サポート対象のファイルを順番に読み込む
                 foreach (var supportFile in Directory.EnumerateFiles(folderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
                 {
@@ -591,49 +593,42 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     var mediaInfo = new MediaInfo
                     {
-                        FilePath = supportFile
+                        FilePath = supportFile,
+                        FileName = Path.GetFileName(supportFile)
                     };
-                    mediaInfo.FileName = Path.GetFileName(mediaInfo.FilePath);
 
                     if (!mediaInfo.CreateThumbnailImage())
                     {
                         continue;
                     }
 
-                    queue.AddLast(mediaInfo);
+                    queue.Add(mediaInfo);
                     count++;
 
-                    if (!queue.Any())
-                    {
-                        continue;
-                    }
-
                     var duration = Environment.TickCount - tick;
-                    if ((count > 25 || duration <= 125) && duration <= 250)
+                    if ((count > 100 || duration <= 250) && duration <= 500)
                     {
                         continue;
-                    }
-
-                    if (sender is BackgroundWorker { CancellationPending: true })
-                    {
-                        e.Cancel = true;
-                        return;
                     }
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        MediaInfoList.AddRange(queue);
-                        queue.Clear();
-                        tick = Environment.TickCount;
-
-                        // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
-                        if (!MediaInfoList.Any() || SelectedMedia.Value != null)
+                        if (sender is BackgroundWorker { CancellationPending: true })
                         {
+                            e.Cancel = true;
                             return;
                         }
 
-                        var firstImageData = MediaInfoList.First();
-                        SelectedMedia.Value = firstImageData;
+                        MediaInfoList.AddRange(queue);
+
+                        // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
+                        if (SelectedMedia.Value == null)
+                        {
+                            SelectedMedia.Value = MediaInfoList.First();
+                        }
+
+                        queue.Clear();
+                        tick = Environment.TickCount;
                     });
                 }
             }
@@ -644,11 +639,13 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            if (queue.Any())
+            if (queue.Count == 0)
             {
-                Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
-                queue.Clear();
+                return;
             }
+
+            Application.Current.Dispatcher.Invoke(() => MediaInfoList.AddRange(queue));
+            queue.Clear();
         }
 
         /// <summary>
@@ -656,38 +653,39 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
         /// <returns>読み込み成功: True、読み込み失敗: False</returns>
-        private async Task LoadPictureImageAsync(MediaInfo mediaInfo)
+        private void LoadPictureImage(MediaInfo mediaInfo)
         {
-            try
+            App.CallMouseBlockMethod(async () =>
             {
-                Mouse.OverrideCursor = Cursors.Wait;
-
                 // 画像とExifを読み込むタスクを作成する
-                var loadPictureTask = Task.Run(() => { PictureImageSource.Value = ImageController.CreatePictureViewImage(mediaInfo.FilePath); });
-                var setExifInfoTask = Task.Run(() => { ExifInfoViewModel.SetExif(mediaInfo.FilePath); });
+                var loadPictureTask = Task.Run(() =>
+                {
+                    if (StopLoading)
+                    {
+                        return;
+                    }
+                    PictureImageSource.Value = ImageController.CreatePictureViewImage(mediaInfo.FilePath, StopLoading);
+                });
+                var setExifInfoTask = Task.Run(() =>
+                {
+                    if (StopLoading)
+                    {
+                        return;
+                    }
+                    ExifInfoViewModel.SetExif(mediaInfo.FilePath, StopLoading);
+                });
 
                 // タスクを実行し、処理完了まで待つ
-                await Task.WhenAll(new Task[] { loadPictureTask, setExifInfoTask });
+                LoadMediaTasks = new[] { loadPictureTask, setExifInfoTask };
+                await Task.WhenAll(LoadMediaTasks);
 
                 // 編集ボタンの状態を更新(Raw画像以外は活性状態とする)
                 IsEnableImageEditButton.Value = !MediaChecker.CheckRawFileExtension(Path.GetExtension(mediaInfo.FilePath)?.ToLower());
 
                 // パス表示を更新
                 SelectFolderPath.Value = mediaInfo.FilePath;
-                SelectedMedia.Value = mediaInfo;
-
-                // WritableBitmapのメモリを解放
-                App.RunGc();
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-                App.ShowErrorMessageBox("File access error occurred", "File access error");
-            }
-            finally
-            {
-                Mouse.OverrideCursor = null;
-            }
+            },
+            "File access error", "File access error occurred");
         }
     }
 }

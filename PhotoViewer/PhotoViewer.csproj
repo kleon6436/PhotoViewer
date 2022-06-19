@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows7.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <PackageIcon>PhotoExifViewerIcon.ico</PackageIcon>
     <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
     <ApplicationIcon>PhotoExifViewerIcon.ico</ApplicationIcon>
     <AssemblyName>PhotoViewer</AssemblyName>
-    <Version>3.2.0</Version>
-    <Authors>Kchary</Authors>
+    <Version>3.4.0</Version>
+    <Authors>Kleon</Authors>
     <RootNamespace>Kchary.PhotoViewer</RootNamespace>
-    <AssemblyVersion>3.2.0.0</AssemblyVersion>
-    <FileVersion>3.2.0.0</FileVersion>
+    <AssemblyVersion>3.4.0.0</AssemblyVersion>
+    <FileVersion>3.4.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -23,41 +23,37 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\Bluetooth.png" />
-    <None Remove="Images\DeleteIcon.png" />
-    <None Remove="Images\ExifCleanIcon.png" />
-    <None Remove="Images\Folder_open.png" />
-    <None Remove="Images\Folder_small.png" />
-    <None Remove="Images\Gear_small.png" />
+    <None Remove="Images\bluetooth.png" />
+    <None Remove="Images\edit.png" />
+    <None Remove="Images\folder.png" />
     <None Remove="Images\reload.png" />
+    <None Remove="Images\settings.png" />
     <None Remove="Images\SplashScreen.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.2.0" />
-    <PackageReference Include="MetadataExtractor" Version="2.7.1" />
+    <PackageReference Include="FastEnum" Version="1.7.0" />
+    <PackageReference Include="MetadataExtractor" Version="2.7.2" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
-    <PackageReference Include="ReactiveProperty" Version="8.0.3" />
+    <PackageReference Include="ReactiveProperty" Version="8.1.2" />
+    <PackageReference Include="ReactiveProperty.WPF" Version="8.1.2" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.7" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\Bluetooth.png" />
+    <Resource Include="Images\bluetooth.png" />
+    <Resource Include="Images\edit.png" />
+    <Resource Include="Images\folder.png" />
     <Resource Include="Images\PhotoExifViewerIcon.ico">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </Resource>
+    <Resource Include="Images\reload.png" />
+    <Resource Include="Images\settings.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\DeleteIcon.png" />
-    <Resource Include="Images\ExifCleanIcon.png" />
-    <Resource Include="Images\Folder_open.png" />
-    <Resource Include="Images\Folder_small.png" />
-    <Resource Include="Images\Gear_small.png" />
-    <Resource Include="Images\reload.png" />
     <Resource Include="Images\SplashScreen.png" />
   </ItemGroup>
-
 </Project>
