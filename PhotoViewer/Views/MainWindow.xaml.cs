@@ -80,9 +80,7 @@ namespace Kchary.PhotoViewer.Views
             var timer = new Stopwatch();
             timer.Start();
 
-            var vm = new MainWindowViewModel();
-            vm.InitViewFolder();
-            DataContext = vm;
+            DataContext = new MainWindowViewModel();
 
             timer.Stop();
 

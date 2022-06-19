@@ -178,43 +178,6 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // Exif情報表示の設定
             ExifInfoViewModel = new ExifInfoViewModel();
-        }
-
-        /// <summary>
-        /// Dispose
-        /// </summary>
-        public void Dispose() => disposables.Dispose();
-
-        /// <summary>
-        /// 表示を初期化する
-        /// </summary>
-        /// <remarks>
-        /// 画像一覧への読み込み処理の開始などを実施する
-        /// </remarks>
-        public void InitViewFolder()
-        {
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList?.Any() == true)
-            {
-                // リンク先がないものはすべて削除
-                linkageAppList.RemoveAll(x => !File.Exists(x.AppPath));
-
-                foreach (var linkageApp in linkageAppList)
-                {
-                    // アプリケーションアイコンをロード
-                    var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                    if (appIcon != null)
-                    {
-                        var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-                        // コンテキストメニューに追加
-                        var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
-                        ContextMenuCollection.Add(contextMenu);
-                    }
-
-                    IsShowContextMenu.Value = true;
-                }
-            }
 
             // 画像フォルダの読み込み
             var picturePath = DefaultPicturePath;
@@ -224,7 +187,15 @@ namespace Kchary.PhotoViewer.ViewModels
                 picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
             }
             ChangeContents(picturePath);
+
+            // コンテキストメニューの設定
+            SetContextMenuFromConfigData();
         }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose() => disposables.Dispose();
 
         /// <summary>
         /// 非同期で画像を読み込む
@@ -285,6 +256,44 @@ namespace Kchary.PhotoViewer.ViewModels
 
             LoadContentsBackgroundWorker.CancelAsync();
             return false;
+        }
+
+        /// <summary>
+        /// コンテキストメニューを読み込む
+        /// </summary>
+        /// <param name="linkageApp">連携アプリ情報</param>
+        private void LoadContextMenu(ExtraAppSetting linkageApp)
+        {
+            var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
+            if (appIcon != null)
+            {
+                var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+                // コンテキストメニューに追加
+                var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
+                ContextMenuCollection.Add(contextMenu);
+            }
+
+            IsShowContextMenu.Value = ContextMenuCollection.Any();
+        }
+
+        /// <summary>
+        /// 設定ファイルのコンテキストメニューを設定する
+        /// </summary>
+        private void SetContextMenuFromConfigData()
+        {
+            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
+            if (linkageAppList?.Any() != true)
+            {
+                return;
+            }
+
+            // リンク先がないものはすべて削除
+            linkageAppList.RemoveAll(x => !File.Exists(x.AppPath));
+            foreach (var linkageApp in linkageAppList)
+            {
+                LoadContextMenu(linkageApp);
+            }
         }
 
         /// <summary>
@@ -424,27 +433,7 @@ namespace Kchary.PhotoViewer.ViewModels
             IsShowContextMenu.Value = false;
 
             // 登録アプリをコンテキストメニューに再登録
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList?.Any() != true)
-            {
-                return;
-            }
-
-            foreach (var linkageApp in linkageAppList)
-            {
-                // 登録アプリのアイコンを取得
-                var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                if (appIcon != null)
-                {
-                    var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-                    // Set context menu.
-                    var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
-                    ContextMenuCollection.Add(contextMenu);
-                }
-
-                IsShowContextMenu.Value = true;
-            }
+            SetContextMenuFromConfigData();
         }
 
         /// <summary>
@@ -586,7 +575,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            var queue = new LinkedList<MediaInfo>();
+            var queue = new List<MediaInfo>();
             var tick = Environment.TickCount;
             var count = 0;
 
@@ -604,22 +593,17 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     var mediaInfo = new MediaInfo
                     {
-                        FilePath = supportFile
+                        FilePath = supportFile,
+                        FileName = Path.GetFileName(supportFile)
                     };
-                    mediaInfo.FileName = Path.GetFileName(mediaInfo.FilePath);
 
                     if (!mediaInfo.CreateThumbnailImage())
                     {
                         continue;
                     }
 
-                    queue.AddLast(mediaInfo);
+                    queue.Add(mediaInfo);
                     count++;
-
-                    if (queue.Count == 0)
-                    {
-                        continue;
-                    }
 
                     var duration = Environment.TickCount - tick;
                     if ((count > 100 || duration <= 250) && duration <= 500)
@@ -627,24 +611,22 @@ namespace Kchary.PhotoViewer.ViewModels
                         continue;
                     }
 
-                    if (sender is BackgroundWorker { CancellationPending: true })
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        foreach (var queueData in queue)
+                        if (sender is BackgroundWorker { CancellationPending: true })
                         {
-                            MediaInfoList.Add(queueData);
-
-                            // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
-                            if (SelectedMedia.Value == null)
-                            {
-                                SelectedMedia.Value = MediaInfoList.First();
-                            }
+                            e.Cancel = true;
+                            return;
                         }
+
+                        MediaInfoList.AddRange(queue);
+
+                        // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
+                        if (SelectedMedia.Value == null)
+                        {
+                            SelectedMedia.Value = MediaInfoList.First();
+                        }
+
                         queue.Clear();
                         tick = Environment.TickCount;
                     });
@@ -661,6 +643,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 return;
             }
+
             Application.Current.Dispatcher.Invoke(() => MediaInfoList.AddRange(queue));
             queue.Clear();
         }
