@@ -270,7 +270,11 @@ namespace Kchary.PhotoViewer.ViewModels
                 var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                 // コンテキストメニューに追加
-                var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
+                var contextMenu = new ContextMenuInfo 
+                {
+                    DisplayName = linkageApp.AppName,
+                    ContextIcon = iconBitmapSource
+                };
                 ContextMenuCollection.Add(contextMenu);
             }
 
