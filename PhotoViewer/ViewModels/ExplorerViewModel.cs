@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class ExplorerViewModel : BindableBase
+    public sealed class ExplorerViewModel : BindableBase, IDisposable
     {
         /// <summary>
         /// アイテム選択を変更したときのイベント
@@ -66,6 +66,11 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
+        /// Dispose処理
+        /// </summary>
+        public void Dispose() => FileWatcher.Dispose();
+
+        /// <summary>
         /// 選択したアイテム情報
         /// </summary>
         public ExplorerItem SelectedItem
@@ -99,9 +104,7 @@ namespace Kchary.PhotoViewer.ViewModels
         public void UpdateDriveTreeItem()
         {
             ExplorerItems.Clear();
-            var allDriveList = DriveInfo.GetDrives();
-
-            foreach (var drive in allDriveList)
+            foreach (var drive in DriveInfo.GetDrives())
             {
                 if (!drive.IsReady)
                 {

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FastEnumUtility;
+using Kchary.PhotoViewer.ViewModels;
+using System;
 using System.Globalization;
 using System.Windows.Data;
-using FastEnumUtility;
-using Kchary.PhotoViewer.ViewModels;
 
 namespace Kchary.PhotoViewer.Converter
 {
@@ -20,7 +20,7 @@ namespace Kchary.PhotoViewer.Converter
                 return System.Windows.DependencyProperty.UnsetValue;
             }
 
-            if (FastEnum.IsDefined<SettingViewModel.SelectPage>(parameterString) == false)
+            if (!FastEnum.IsDefined<SettingViewModel.SelectPage>(parameterString))
             {
                 return System.Windows.DependencyProperty.UnsetValue;
             }

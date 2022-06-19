@@ -34,12 +34,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 参照ボタンのコマンド
         /// </summary>
         public ReactiveCommand LinkAppReferenceCommand { get; }
-        
+
         /// <summary>
         /// 登録ボタンのコマンド
         /// </summary>
         public ReactiveCommand RegisterLinkAppCommand { get; }
-        
+
         /// <summary>
         /// 削除ボタンのコマンド
         /// </summary>
@@ -68,11 +68,11 @@ namespace Kchary.PhotoViewer.ViewModels
         public LinkageAppViewModel()
         {
             LinkAppReferenceCommand = new ReactiveCommand().WithSubscribe(LinkAppReferenceButtonClicked).AddTo(disposables);
-            RegisterLinkAppCommand  = new ReactiveCommand().WithSubscribe(RegisterLinkAppButtonClicked).AddTo(disposables);
-            DeleteLinkAppCommand    = new ReactiveCommand<ExtraAppSetting>().WithSubscribe(DeleteLinkAppButtonClicked).AddTo(disposables);
+            RegisterLinkAppCommand = new ReactiveCommand().WithSubscribe(RegisterLinkAppButtonClicked).AddTo(disposables);
+            DeleteLinkAppCommand = new ReactiveCommand<ExtraAppSetting>().WithSubscribe(DeleteLinkAppButtonClicked).AddTo(disposables);
 
             var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList == null || !linkageAppList.Any())
+            if (linkageAppList?.Any() != true)
             {
                 return;
             }
@@ -104,7 +104,6 @@ namespace Kchary.PhotoViewer.ViewModels
                     ? Environment.SpecialFolder.ProgramFiles
                     : Environment.SpecialFolder.ProgramFilesX86)
             };
-
 
             if (dialog.ShowDialog() != true)
             {
@@ -146,7 +145,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void DeleteLinkAppButtonClicked(ExtraAppSetting deleteAppSetting)
         {
-            if (LinkageAppList == null || !LinkageAppList.Any() || deleteAppSetting == null)
+            if (LinkageAppList?.Any() != true || deleteAppSetting == null)
             {
                 return;
             }

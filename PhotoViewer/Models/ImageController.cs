@@ -224,7 +224,7 @@ namespace Kchary.PhotoViewer.Models
         /// <param name="imageData">画像データ情報</param>
         /// <param name="stopLoading">ロード停止フラグ</param>
         /// <returns>BitmapSource</returns>
-        private static BitmapSource CreateBitmapSourceFromImageStruct(in NativeMethods.ImageData imageData, bool stopLoading = false)
+        private static BitmapSource CreateBitmapSourceFromImageStruct(NativeMethods.ImageData imageData, bool stopLoading = false)
         {
             try
             {

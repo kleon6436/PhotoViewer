@@ -61,6 +61,6 @@ namespace Kchary::ImageController::Library
 		size_t convertedCharSize = 0;
 		wcstombs_s(&convertedCharSize, path.get(), requestBufferSize, imagePath, _TRUNCATE);
 
-		return std::move(path);
+		return path;
 	}
 }

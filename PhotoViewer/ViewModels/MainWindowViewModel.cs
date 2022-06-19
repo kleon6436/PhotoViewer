@@ -81,7 +81,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// Bluetoothボタンのコマンド
         /// </summary>
         public ReactiveCommand BluetoothButtonCommand { get; }
-        
+
         /// <summary>
         /// エクスプローラー表示ボタンのコマンド
         /// </summary>
@@ -96,7 +96,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 設定ボタンのコマンド
         /// </summary>
         public ReactiveCommand SettingButtonCommand { get; }
-        
+
         /// <summary>
         /// 編集ボタンのコマンド
         /// </summary>
@@ -137,7 +137,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// コンテンツをリロードするためのフラグ
         /// </summary>
-        private static bool IsReloadContents { get; set; } 
+        private static bool IsReloadContents { get; set; }
 
         /// <summary>
         /// 既定のピクチャフォルダパス
@@ -153,11 +153,11 @@ namespace Kchary.PhotoViewer.ViewModels
         public MainWindowViewModel()
         {
             // コマンドの設定
-            BluetoothButtonCommand  = new ReactiveCommand().WithSubscribe(BluetoothButtonClicked).AddTo(disposables);
+            BluetoothButtonCommand = new ReactiveCommand().WithSubscribe(BluetoothButtonClicked).AddTo(disposables);
             OpenFolderButtonCommand = new ReactiveCommand().WithSubscribe(OpenFolderButtonClicked).AddTo(disposables);
-            ReloadButtonCommand     = new ReactiveCommand().WithSubscribe(ReloadButtonClicked).AddTo(disposables);
-            SettingButtonCommand    = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
-            ImageEditButtonCommand  = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
+            ReloadButtonCommand = new ReactiveCommand().WithSubscribe(ReloadButtonClicked).AddTo(disposables);
+            SettingButtonCommand = new ReactiveCommand().WithSubscribe(SettingButtonClicked).AddTo(disposables);
+            ImageEditButtonCommand = new ReactiveCommand().WithSubscribe(ImageEditButtonClicked).AddTo(disposables);
             ContextMenuCommand = new ReactiveCommand<string>().WithSubscribe(ContextMenuClicked).AddTo(disposables);
 
             // プロパティ変更に紐づく処理の設定
@@ -172,58 +172,30 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // エクスプローラーツリーの設定
             ExplorerViewModel = new ExplorerViewModel();
+            disposables.Add(ExplorerViewModel);
             ExplorerViewModel.ChangeSelectItemEvent += ChangeSelectItemEvent;
             UpdateExplorerTree();
 
             // Exif情報表示の設定
             ExifInfoViewModel = new ExifInfoViewModel();
+
+            // 画像フォルダの読み込み
+            var picturePath = DefaultPicturePath;
+            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath)
+                && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
+            {
+                picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
+            }
+            ChangeContents(picturePath);
+
+            // コンテキストメニューの設定
+            SetContextMenuFromConfigData();
         }
 
         /// <summary>
         /// Dispose
         /// </summary>
         public void Dispose() => disposables.Dispose();
-
-        /// <summary>
-        /// 表示を初期化する
-        /// </summary>
-        /// <remarks>
-        /// 画像一覧への読み込み処理の開始などを実施する
-        /// </remarks>
-        public void InitViewFolder()
-        {
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList != null && linkageAppList.Any())
-            {
-                // リンク先がないものはすべて削除
-                linkageAppList.RemoveAll(x => !File.Exists(x.AppPath));
-
-                foreach (var linkageApp in linkageAppList)
-                {
-                    // アプリケーションアイコンをロード
-                    var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                    if (appIcon != null)
-                    {
-                        var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-                        // コンテキストメニューに追加
-                        var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
-                        ContextMenuCollection.Add(contextMenu);
-                    }
-
-                    IsShowContextMenu.Value = true;
-                }
-            }
-
-            // 画像フォルダの読み込み
-            var picturePath = DefaultPicturePath;
-            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath) 
-                && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
-            {
-                picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
-            }
-            ChangeContents(picturePath);
-        }
 
         /// <summary>
         /// 非同期で画像を読み込む
@@ -264,7 +236,6 @@ namespace Kchary.PhotoViewer.ViewModels
                     LoadPictureImage(mediaInfo);
                     break;
 
-                case MediaInfo.MediaType.Movie:
                 default:
                     throw new ArgumentOutOfRangeException(mediaInfo.ContentMediaType.ToString(), nameof(mediaInfo.ContentMediaType));
             }
@@ -285,7 +256,44 @@ namespace Kchary.PhotoViewer.ViewModels
 
             LoadContentsBackgroundWorker.CancelAsync();
             return false;
+        }
 
+        /// <summary>
+        /// コンテキストメニューを読み込む
+        /// </summary>
+        /// <param name="linkageApp">連携アプリ情報</param>
+        private void LoadContextMenu(ExtraAppSetting linkageApp)
+        {
+            var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
+            if (appIcon != null)
+            {
+                var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+                // コンテキストメニューに追加
+                var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
+                ContextMenuCollection.Add(contextMenu);
+            }
+
+            IsShowContextMenu.Value = ContextMenuCollection.Any();
+        }
+
+        /// <summary>
+        /// 設定ファイルのコンテキストメニューを設定する
+        /// </summary>
+        private void SetContextMenuFromConfigData()
+        {
+            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
+            if (linkageAppList?.Any() != true)
+            {
+                return;
+            }
+
+            // リンク先がないものはすべて削除
+            linkageAppList.RemoveAll(x => !File.Exists(x.AppPath));
+            foreach (var linkageApp in linkageAppList)
+            {
+                LoadContextMenu(linkageApp);
+            }
         }
 
         /// <summary>
@@ -293,10 +301,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private static void BluetoothButtonClicked()
         {
-            App.CallMouseBlockMethod(() =>
-            {
-                Process.Start("fsquirt.exe", "-send");
-            },
+            App.CallMouseBlockMethod(() => Process.Start("fsquirt.exe", "-send"),
             "Bluetooth transmission error", "Not support Bluetooth transmission.");
         }
 
@@ -310,7 +315,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            App.CallMouseBlockMethod(() => 
+            App.CallMouseBlockMethod(() =>
             {
                 var selectPath = (File.GetAttributes(SelectFolderPath.Value) & FileAttributes.Directory) == FileAttributes.Directory
                     ? SelectFolderPath.Value : Path.GetDirectoryName(SelectFolderPath.Value);
@@ -324,7 +329,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 {
                     App.ShowErrorMessageBox("Select path is not found.", "Process start error");
                 }
-            }, 
+            },
             "Open folder error", "Explorer is not started.");
         }
 
@@ -401,7 +406,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            App.CallMouseBlockMethod(() => 
+            App.CallMouseBlockMethod(() =>
             {
                 var appPath = linkageAppList.Find(x => x.AppName == appName)?.AppPath;
                 if (!string.IsNullOrEmpty(appPath))
@@ -428,27 +433,7 @@ namespace Kchary.PhotoViewer.ViewModels
             IsShowContextMenu.Value = false;
 
             // 登録アプリをコンテキストメニューに再登録
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
-            if (linkageAppList == null || !linkageAppList.Any())
-            {
-                return;
-            }
-
-            foreach (var linkageApp in linkageAppList)
-            {
-                // 登録アプリのアイコンを取得
-                var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-                if (appIcon != null)
-                {
-                    var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-                    // Set context menu.
-                    var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
-                    ContextMenuCollection.Add(contextMenu);
-                }
-
-                IsShowContextMenu.Value = true;
-            }
+            SetContextMenuFromConfigData();
         }
 
         /// <summary>
@@ -590,7 +575,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            var queue = new LinkedList<MediaInfo>();
+            var queue = new List<MediaInfo>();
             var tick = Environment.TickCount;
             var count = 0;
 
@@ -608,22 +593,17 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     var mediaInfo = new MediaInfo
                     {
-                        FilePath = supportFile
+                        FilePath = supportFile,
+                        FileName = Path.GetFileName(supportFile)
                     };
-                    mediaInfo.FileName = Path.GetFileName(mediaInfo.FilePath);
 
                     if (!mediaInfo.CreateThumbnailImage())
                     {
                         continue;
                     }
 
-                    queue.AddLast(mediaInfo);
+                    queue.Add(mediaInfo);
                     count++;
-
-                    if (!queue.Any())
-                    {
-                        continue;
-                    }
 
                     var duration = Environment.TickCount - tick;
                     if ((count > 100 || duration <= 250) && duration <= 500)
@@ -631,27 +611,25 @@ namespace Kchary.PhotoViewer.ViewModels
                         continue;
                     }
 
-                    if (sender is BackgroundWorker { CancellationPending: true })
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        foreach(var queueData in queue)
+                        if (sender is BackgroundWorker { CancellationPending: true })
                         {
-                            MediaInfoList.Add(queueData);
-
-                            // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
-                            if (SelectedMedia.Value == null)
-                            {
-                                SelectedMedia.Value = MediaInfoList.First();
-                            }
+                            e.Cancel = true;
+                            return;
                         }
+
+                        MediaInfoList.AddRange(queue);
+
+                        // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
+                        if (SelectedMedia.Value == null)
+                        {
+                            SelectedMedia.Value = MediaInfoList.First();
+                        }
+
                         queue.Clear();
                         tick = Environment.TickCount;
-                   });
+                    });
                 }
             }
 
@@ -661,11 +639,12 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            if (!queue.Any())
+            if (queue.Count == 0)
             {
                 return;
             }
-            Application.Current.Dispatcher.Invoke(() => { MediaInfoList.AddRange(queue); });
+
+            Application.Current.Dispatcher.Invoke(() => MediaInfoList.AddRange(queue));
             queue.Clear();
         }
 

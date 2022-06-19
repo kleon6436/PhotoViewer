@@ -17,10 +17,7 @@ namespace Kchary.PhotoViewer.Views
             {
                 if (DataContext is ResizeImageViewModel vm)
                 {
-                    vm.CloseView += (_, _) =>
-                    {
-                        Close();
-                    };
+                    vm.CloseView += (_, _) => Close();
                 }
             };
         }

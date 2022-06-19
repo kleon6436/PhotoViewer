@@ -99,9 +99,7 @@ namespace Kchary.PhotoViewer.Data
             Items.Clear();
 
             // 自然ソート順でディレクトリリストをソート
-            var sortDirectoryInfos = innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer());
-
-            foreach (var directory in sortDirectoryInfos)
+            foreach (var directory in innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer()))
             {
                 // 1文字目の文字を確認
                 var fileNameFirst = Path.GetFileName(directory.FullName)[..1];
@@ -125,13 +123,11 @@ namespace Kchary.PhotoViewer.Data
         {
             if (isDrive)
             {
-                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SiidDrivefixed);
-                return iconImage;
+                return WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SiidDrivefixed);
             }
             else
             {
-                var iconImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SiidFolder);
-                return iconImage;
+                return WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SiidFolder);
             }
         }
 

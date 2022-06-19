@@ -1,17 +1,17 @@
-﻿using MetadataExtractor;
-using MetadataExtractor.Formats.Exif;
-using MetadataExtractor.Formats.Jpeg;
+﻿using FastEnumUtility;
+using Kchary.PhotoViewer.Data;
+using MetadataExtractor;
 using MetadataExtractor.Formats.Bmp;
+using MetadataExtractor.Formats.Exif;
+using MetadataExtractor.Formats.Gif;
+using MetadataExtractor.Formats.Jpeg;
 using MetadataExtractor.Formats.Png;
 using MetadataExtractor.Formats.Tiff;
-using MetadataExtractor.Formats.Gif;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FastEnumUtility;
 using Directory = MetadataExtractor.Directory;
-using Kchary.PhotoViewer.Data;
 
 namespace Kchary.PhotoViewer.Models
 {
@@ -128,7 +128,6 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// Exif情報表示の値なしのリストを作成する
         /// </summary>
-        /// <returns></returns>
         public static void CreateExifDefaultList(ExifInfo[] exifDataList)
         {
             var count = 0;
@@ -261,7 +260,7 @@ namespace Kchary.PhotoViewer.Models
         /// <returns>メタデータの構造データ</returns>
         private static IEnumerable<Directory> GetMetadataDirectories(string filePath, FileExtensionType fileExtensionType)
         {
-            var directories = fileExtensionType switch
+            return fileExtensionType switch
             {
                 FileExtensionType.Jpeg => JpegMetadataReader.ReadMetadata(filePath),
                 FileExtensionType.Bmp => BmpMetadataReader.ReadMetadata(filePath),
@@ -270,8 +269,6 @@ namespace Kchary.PhotoViewer.Models
                 FileExtensionType.Tiff or FileExtensionType.Dng or FileExtensionType.Nef => TiffMetadataReader.ReadMetadata(filePath),
                 FileExtensionType.Unknown or _ => throw new ArgumentOutOfRangeException(nameof(fileExtensionType)),
             };
-
-            return directories;
         }
 
         /// <summary>
