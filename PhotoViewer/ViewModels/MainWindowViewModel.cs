@@ -170,15 +170,6 @@ namespace Kchary.PhotoViewer.ViewModels
             // 設定ファイルの読み込み
             AppConfigManager.GetInstance().Import();
 
-            // エクスプローラーツリーの設定
-            ExplorerViewModel = new ExplorerViewModel();
-            disposables.Add(ExplorerViewModel);
-            ExplorerViewModel.ChangeSelectItemEvent += ChangeSelectItemEvent;
-            UpdateExplorerTree();
-
-            // Exif情報表示の設定
-            ExifInfoViewModel = new ExifInfoViewModel();
-
             // 画像フォルダの読み込み
             var picturePath = DefaultPicturePath;
             if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath)
@@ -187,6 +178,15 @@ namespace Kchary.PhotoViewer.ViewModels
                 picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
             }
             ChangeContents(picturePath);
+
+            // エクスプローラーツリーの設定
+            ExplorerViewModel = new ExplorerViewModel();
+            disposables.Add(ExplorerViewModel);
+            ExplorerViewModel.ChangeSelectItemEvent += ChangeSelectItemEvent;
+            UpdateExplorerTree();
+
+            // Exif情報表示の設定
+            ExifInfoViewModel = new ExifInfoViewModel();
 
             // コンテキストメニューの設定
             SetContextMenuFromConfigData();
@@ -270,7 +270,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                 // コンテキストメニューに追加
-                var contextMenu = new ContextMenuInfo 
+                var contextMenu = new ContextMenuInfo
                 {
                     DisplayName = linkageApp.AppName,
                     ContextIcon = iconBitmapSource
