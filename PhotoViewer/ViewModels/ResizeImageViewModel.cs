@@ -109,10 +109,10 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ResizeCategoryItems = new ResizeImageCategory[]
             {
-                new() { Name = "No resize" , Category = ResizeImageCategory.ResizeCategory.None },
-                new() { Name = "Print size", Category = ResizeImageCategory.ResizeCategory.Print  , ResizeLongSideValue = 2500 },
-                new() { Name = "Blog size" , Category = ResizeImageCategory.ResizeCategory.Blog   , ResizeLongSideValue = 1500 },
-                new() { Name = "SNS size"  , Category = ResizeImageCategory.ResizeCategory.Twitter, ResizeLongSideValue = 1000 }
+                new() { Name = "No resize" , Category = ResizeCategory.None },
+                new() { Name = "Print size", Category = ResizeCategory.Print  , ResizeLongSideValue = 2500 },
+                new() { Name = "Blog size" , Category = ResizeCategory.Blog   , ResizeLongSideValue = 1500 },
+                new() { Name = "SNS size"  , Category = ResizeCategory.Twitter, ResizeLongSideValue = 1000 }
             };
 
             ImageSaveQualityItems = new ImageQuality[]
@@ -124,10 +124,10 @@ namespace Kchary.PhotoViewer.ViewModels
 
             ImageFormItems = new ImageForm[]
             {
-                new() { Name = "Jpeg", Form = ImageForm.ImageForms.Jpeg },
-                new() { Name = "Png" , Form = ImageForm.ImageForms.Png },
-                new() { Name = "Bmp" , Form = ImageForm.ImageForms.Bmp },
-                new() { Name = "Tiff", Form = ImageForm.ImageForms.Tiff }
+                new() { Name = "Jpeg", Form = ImageForms.Jpeg },
+                new() { Name = "Png" , Form = ImageForms.Png },
+                new() { Name = "Bmp" , Form = ImageForms.Bmp },
+                new() { Name = "Tiff", Form = ImageForms.Tiff }
             };
 
             ResizeCategoryItem.Subscribe(OnResizeCategoryItemChanged).AddTo(disposable);
@@ -171,10 +171,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 Title = "Save as...",
                 Filter = SelectedForm.Value.Form switch
                 {
-                    ImageForm.ImageForms.Bmp => "Bmp file(*.bmp)|*.bmp",
-                    ImageForm.ImageForms.Jpeg => "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg",
-                    ImageForm.ImageForms.Png => "Png file(*.png)|*.png",
-                    ImageForm.ImageForms.Tiff => "Tiff file(*.tif)|*.tif",
+                    ImageForms.Bmp => "Bmp file(*.bmp)|*.bmp",
+                    ImageForms.Jpeg => "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg",
+                    ImageForms.Png => "Png file(*.png)|*.png",
+                    ImageForms.Tiff => "Tiff file(*.tif)|*.tif",
                     _ => throw new ArgumentOutOfRangeException(),
                 }
             };
@@ -189,7 +189,7 @@ namespace Kchary.PhotoViewer.ViewModels
             // 保存する画像の作成
             // デフォルトでは、リサイズなしとする
             var scale = 1.0;
-            if (ResizeCategoryItem.Value.Category != ResizeImageCategory.ResizeCategory.None)
+            if (ResizeCategoryItem.Value.Category != ResizeCategory.None)
             {
                 scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Width;
                 if (ReadImageSize.Width < ReadImageSize.Height)
@@ -202,10 +202,10 @@ namespace Kchary.PhotoViewer.ViewModels
             // 選択された保存形式と同じエンコーダーを用意
             BitmapEncoder encoder = SelectedForm.Value.Form switch
             {
-                ImageForm.ImageForms.Bmp => new BmpBitmapEncoder(),
-                ImageForm.ImageForms.Jpeg => new JpegBitmapEncoder { QualityLevel = SelectedQuality.Value.QualityValue },
-                ImageForm.ImageForms.Png => new PngBitmapEncoder(),
-                ImageForm.ImageForms.Tiff => new TiffBitmapEncoder(),
+                ImageForms.Bmp => new BmpBitmapEncoder(),
+                ImageForms.Jpeg => new JpegBitmapEncoder { QualityLevel = SelectedQuality.Value.QualityValue },
+                ImageForms.Png => new PngBitmapEncoder(),
+                ImageForms.Tiff => new TiffBitmapEncoder(),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -243,7 +243,7 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             double scale = 1;
-            if (resizeCategoryItem.Category != ResizeImageCategory.ResizeCategory.None)
+            if (resizeCategoryItem.Category != ResizeCategory.None)
             {
                 // 倍率計算(この値をもとにリサイズする)
                 scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Width;

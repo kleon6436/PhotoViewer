@@ -6,19 +6,19 @@ using System.Windows.Media.Imaging;
 namespace Kchary.PhotoViewer.Data
 {
     /// <summary>
+    /// メディアのタイプ
+    /// </summary>
+    public enum MediaType
+    {
+        Picture,
+        Movie,
+    }
+
+    /// <summary>
     /// メディア情報クラス
     /// </summary>
     public sealed record MediaInfo
     {
-        /// <summary>
-        /// メディアのタイプ
-        /// </summary>
-        public enum MediaType
-        {
-            Picture,
-            Movie,
-        }
-
         #region Media Parameters
 
         /// <summary>

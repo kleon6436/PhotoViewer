@@ -232,7 +232,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             switch (mediaInfo.ContentMediaType)
             {
-                case MediaInfo.MediaType.Picture:
+                case MediaType.Picture:
                     LoadPictureImage(mediaInfo);
                     break;
 
