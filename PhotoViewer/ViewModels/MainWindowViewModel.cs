@@ -579,13 +579,13 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            var queue = new List<MediaInfo>();
-            var tick = Environment.TickCount;
-            var count = 0;
-
             // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
             foreach (var supportExtension in MediaChecker.GetSupportExtentions())
             {
+                var queue = new List<MediaInfo>();
+                var tick = Environment.TickCount;
+                var count = 0;
+
                 // サポート対象のファイルを順番に読み込む
                 foreach (var supportFile in Directory.EnumerateFiles(folderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
                 {
@@ -635,21 +635,19 @@ namespace Kchary.PhotoViewer.ViewModels
                         tick = Environment.TickCount;
                     });
                 }
-            }
 
-            if (sender is BackgroundWorker { CancellationPending: true })
-            {
-                e.Cancel = true;
-                return;
-            }
+                if (sender is BackgroundWorker { CancellationPending: true })
+                {
+                    e.Cancel = true;
+                    return;
+                }
 
-            if (queue.Count == 0)
-            {
-                return;
+                if (queue.Count != 0)
+                {
+                    Application.Current.Dispatcher.Invoke(() => MediaInfoList.AddRange(queue));
+                    queue.Clear();
+                }
             }
-
-            Application.Current.Dispatcher.Invoke(() => MediaInfoList.AddRange(queue));
-            queue.Clear();
         }
 
         /// <summary>
