@@ -580,9 +580,9 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
+            var queue = new List<MediaInfo>();
             foreach (var supportExtension in MediaChecker.GetSupportExtentions())
             {
-                var queue = new List<MediaInfo>();
                 var tick = Environment.TickCount;
                 var count = 0;
 
