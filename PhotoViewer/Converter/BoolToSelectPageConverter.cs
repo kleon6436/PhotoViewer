@@ -15,23 +15,23 @@ namespace Kchary.PhotoViewer.Converter
                 return System.Windows.DependencyProperty.UnsetValue;
             }
 
-            if (value is not SettingViewModel.SelectPage selectPageValue)
+            if (value is not SelectPage selectPageValue)
             {
                 return System.Windows.DependencyProperty.UnsetValue;
             }
 
-            if (!FastEnum.IsDefined<SettingViewModel.SelectPage>(parameterString))
+            if (!FastEnum.IsDefined<SelectPage>(parameterString))
             {
                 return System.Windows.DependencyProperty.UnsetValue;
             }
 
-            var parameterValue = FastEnum.Parse<SettingViewModel.SelectPage>(parameterString);
+            var parameterValue = FastEnum.Parse<SelectPage>(parameterString);
             return parameterValue == selectPageValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return parameter is not string parameterString ? System.Windows.DependencyProperty.UnsetValue : FastEnum.Parse<SettingViewModel.SelectPage>(parameterString);
+            return parameter is not string parameterString ? System.Windows.DependencyProperty.UnsetValue : FastEnum.Parse<SelectPage>(parameterString);
         }
     }
 }

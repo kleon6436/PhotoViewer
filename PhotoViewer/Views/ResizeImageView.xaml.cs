@@ -45,7 +45,7 @@ namespace Kchary.PhotoViewer.Views
             }
 
             // 保存形式に応じて、品質設定の表示を切り替え
-            vm.IsEnableImageSaveQuality.Value = vm.SelectedForm.Value.Form == ImageForm.ImageForms.Jpeg;
+            vm.IsEnableImageSaveQuality.Value = vm.SelectedForm.Value.Form == ImageForms.Jpeg;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
