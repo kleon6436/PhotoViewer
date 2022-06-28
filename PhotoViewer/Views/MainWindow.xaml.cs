@@ -2,7 +2,6 @@
 using Kchary.PhotoViewer.ViewModels;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
