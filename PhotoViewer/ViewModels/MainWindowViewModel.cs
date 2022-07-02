@@ -170,15 +170,6 @@ namespace Kchary.PhotoViewer.ViewModels
             // 設定ファイルの読み込み
             AppConfigManager.GetInstance().Import();
 
-            // エクスプローラーツリーの設定
-            ExplorerViewModel = new ExplorerViewModel();
-            disposables.Add(ExplorerViewModel);
-            ExplorerViewModel.ChangeSelectItemEvent += ChangeSelectItemEvent;
-            UpdateExplorerTree();
-
-            // Exif情報表示の設定
-            ExifInfoViewModel = new ExifInfoViewModel();
-
             // 画像フォルダの読み込み
             var picturePath = DefaultPicturePath;
             if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath)
@@ -187,6 +178,15 @@ namespace Kchary.PhotoViewer.ViewModels
                 picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
             }
             ChangeContents(picturePath);
+
+            // エクスプローラーツリーの設定
+            ExplorerViewModel = new ExplorerViewModel();
+            disposables.Add(ExplorerViewModel);
+            ExplorerViewModel.ChangeSelectItemEvent += ChangeSelectItemEvent;
+            UpdateExplorerTree();
+
+            // Exif情報表示の設定
+            ExifInfoViewModel = new ExifInfoViewModel();
 
             // コンテキストメニューの設定
             SetContextMenuFromConfigData();
@@ -228,18 +228,9 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             IsEnableImageEditButton.Value = false;
+
             LoadingMedia = true;
-
-            switch (mediaInfo.ContentMediaType)
-            {
-                case MediaInfo.MediaType.Picture:
-                    LoadPictureImage(mediaInfo);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(mediaInfo.ContentMediaType.ToString(), nameof(mediaInfo.ContentMediaType));
-            }
-
+            LoadPictureImage(mediaInfo);
             LoadingMedia = false;
         }
 
@@ -270,7 +261,11 @@ namespace Kchary.PhotoViewer.ViewModels
                 var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                 // コンテキストメニューに追加
-                var contextMenu = new ContextMenuInfo { DisplayName = linkageApp.AppName, ContextIcon = iconBitmapSource };
+                var contextMenu = new ContextMenuInfo
+                {
+                    DisplayName = linkageApp.AppName,
+                    ContextIcon = iconBitmapSource
+                };
                 ContextMenuCollection.Add(contextMenu);
             }
 
@@ -575,13 +570,13 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            var queue = new List<MediaInfo>();
-            var tick = Environment.TickCount;
-            var count = 0;
-
             // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
+            var queue = new List<MediaInfo>();
             foreach (var supportExtension in MediaChecker.GetSupportExtentions())
             {
+                var tick = Environment.TickCount;
+                var count = 0;
+
                 // サポート対象のファイルを順番に読み込む
                 foreach (var supportFile in Directory.EnumerateFiles(folderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
                 {
@@ -631,21 +626,19 @@ namespace Kchary.PhotoViewer.ViewModels
                         tick = Environment.TickCount;
                     });
                 }
-            }
 
-            if (sender is BackgroundWorker { CancellationPending: true })
-            {
-                e.Cancel = true;
-                return;
-            }
+                if (sender is BackgroundWorker { CancellationPending: true })
+                {
+                    e.Cancel = true;
+                    return;
+                }
 
-            if (queue.Count == 0)
-            {
-                return;
+                if (queue.Count != 0)
+                {
+                    Application.Current.Dispatcher.Invoke(() => MediaInfoList.AddRange(queue));
+                    queue.Clear();
+                }
             }
-
-            Application.Current.Dispatcher.Invoke(() => MediaInfoList.AddRange(queue));
-            queue.Clear();
         }
 
         /// <summary>
@@ -676,7 +669,11 @@ namespace Kchary.PhotoViewer.ViewModels
                 });
 
                 // タスクを実行し、処理完了まで待つ
-                LoadMediaTasks = new[] { loadPictureTask, setExifInfoTask };
+                LoadMediaTasks = new[]
+                {
+                    loadPictureTask,
+                    setExifInfoTask
+                };
                 await Task.WhenAll(LoadMediaTasks);
 
                 // 編集ボタンの状態を更新(Raw画像以外は活性状態とする)

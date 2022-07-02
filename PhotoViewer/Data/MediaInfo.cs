@@ -10,21 +10,7 @@ namespace Kchary.PhotoViewer.Data
     /// </summary>
     public sealed record MediaInfo
     {
-        /// <summary>
-        /// メディアのタイプ
-        /// </summary>
-        public enum MediaType
-        {
-            Picture,
-            Movie,
-        }
-
         #region Media Parameters
-
-        /// <summary>
-        /// メディアタイプ
-        /// </summary>
-        public MediaType ContentMediaType => CheckMediaType(FilePath);
 
         /// <summary>
         /// サムネイル画像
@@ -56,11 +42,7 @@ namespace Kchary.PhotoViewer.Data
                     return false;
                 }
 
-                ThumbnailImage = ContentMediaType switch
-                {
-                    MediaType.Picture => ImageController.CreatePictureThumbnailImage(FilePath),
-                    _ => throw new ArgumentOutOfRangeException(nameof(ContentMediaType), ContentMediaType.ToString()),
-                };
+                ThumbnailImage = ImageController.CreatePictureThumbnailImage(FilePath);
                 return true;
             }
             catch (Exception ex)
@@ -68,23 +50,6 @@ namespace Kchary.PhotoViewer.Data
                 App.LogException(ex);
                 return false;
             }
-        }
-
-        /// <summary>
-        /// ファイルのタイプを確認する
-        /// </summary>
-        /// <param name="filePath">確認するファイルパス</param>
-        /// <returns>メディアタイプ</returns>
-        private static MediaType CheckMediaType(string filePath)
-        {
-            var extension = Path.GetExtension(filePath).ToLower();
-
-            if (MediaChecker.CheckPictureExtensions(extension))
-            {
-                return MediaType.Picture;
-            }
-
-            throw new FileFormatException();
         }
     }
 }

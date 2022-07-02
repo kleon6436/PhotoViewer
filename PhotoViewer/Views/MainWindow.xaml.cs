@@ -2,7 +2,6 @@
 using Kchary.PhotoViewer.ViewModels;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
@@ -92,25 +91,6 @@ namespace Kchary.PhotoViewer.Views
             splashScreen.Close();
 
             InitializeComponent();
-        }
-
-        /// <summary>
-        /// ウィンドウオープン処理
-        /// </summary>
-        /// <param name="sender">Window</param>
-        /// <param name="e">引数情報</param>
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is not MainWindowViewModel { SelectedMedia: null } vm || !vm.MediaInfoList.Any())
-            {
-                return;
-            }
-
-            var firstImageData = vm.MediaInfoList.First();
-            if (vm.SelectedMedia != null)
-            {
-                vm.SelectedMedia.Value = firstImageData;
-            }
         }
 
         /// <summary>

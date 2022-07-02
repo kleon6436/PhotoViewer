@@ -8,21 +8,21 @@ using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
+    /// <summary>
+    /// 読み込むページのEnum
+    /// </summary>
+    public enum SelectPage
+    {
+        LinkageAppPage,
+        InformationPage,
+    }
+
     public sealed class SettingViewModel : BindableBase, IDisposable
     {
         /// <summary>
         /// コンテキストメニューの再読み込みイベント
         /// </summary>
         public event EventHandler ReloadContextMenuEvent;
-
-        /// <summary>
-        /// 読み込むページのEnum
-        /// </summary>
-        public enum SelectPage
-        {
-            LinkageAppPage,
-            InformationPage,
-        }
 
         /// <summary>
         /// 表示する画面
