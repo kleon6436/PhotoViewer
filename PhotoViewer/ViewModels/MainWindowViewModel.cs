@@ -228,18 +228,9 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             IsEnableImageEditButton.Value = false;
+
             LoadingMedia = true;
-
-            switch (mediaInfo.ContentMediaType)
-            {
-                case MediaType.Picture:
-                    LoadPictureImage(mediaInfo);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(mediaInfo.ContentMediaType.ToString(), nameof(mediaInfo.ContentMediaType));
-            }
-
+            LoadPictureImage(mediaInfo);
             LoadingMedia = false;
         }
 
