@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Kchary.PhotoViewer.Models
+namespace Kchary.PhotoViewer.Helper
 {
     /// <summary>
     /// サポート対象のファイル拡張子のタイプ定義

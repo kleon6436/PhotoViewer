@@ -1,4 +1,4 @@
-﻿namespace Kchary.PhotoViewer.Data
+﻿namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
     /// 画像保存形式

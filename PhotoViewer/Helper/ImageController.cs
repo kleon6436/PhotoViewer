@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Kchary.PhotoViewer.Models
+namespace Kchary.PhotoViewer.Helper
 {
     /// <summary>
     /// 画像を管理するクラス

@@ -1,5 +1,5 @@
 ﻿using FastEnumUtility;
-using Kchary.PhotoViewer.Data;
+using Kchary.PhotoViewer.Models;
 using MetadataExtractor;
 using MetadataExtractor.Formats.Bmp;
 using MetadataExtractor.Formats.Exif;
@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using Directory = MetadataExtractor.Directory;
 
-namespace Kchary.PhotoViewer.Models
+namespace Kchary.PhotoViewer.Helper
 {
     // https://developer.adobe.com/xmp/docs/XMPNamespaces/exif/
     /// <summary>

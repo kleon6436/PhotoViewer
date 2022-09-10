@@ -1,4 +1,4 @@
-﻿namespace Kchary.PhotoViewer.Data
+﻿namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
     /// 編集画面に表示する画質設定メニュークラス

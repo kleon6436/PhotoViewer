@@ -1,17 +1,40 @@
 ﻿using FastEnumUtility;
-using Kchary.PhotoViewer.Data;
 using Kchary.PhotoViewer.Views;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
 namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
-    /// アプリケーション設定ファイル用のXML管理クラス
+    /// アプリケーションデータクラス
     /// </summary>
-    public sealed class AppConfigXml
+    public sealed class AppConfigData
     {
+        /// <summary>
+        /// 前回のフォルダパス
+        /// </summary>
+        public string PreviousFolderPath { get; set; }
+
+        /// <summary>
+        /// 登録アプリリスト
+        /// </summary>
+        /// <remarks>
+        /// 登録アプリの一覧表示に使用される
+        /// </remarks>
+        public List<ExtraAppSetting> LinkageAppList { get; set; } = new();
+
+        /// <summary>
+        /// Windowの設定情報
+        /// </summary>
+        /// <remarks>
+        /// 位置、表示状態などが保持されている
+        /// </remarks>
+        public MainWindow.NativeMethods.Placement PlaceData;
+
+        #region XMLに記述する要素名
+
         private const string PreviousFolderElemName = "previous_folder";
         private const string PreviousPathElemName = "previous_path";
         private const string LinkAppElemName = "linkage_app";
@@ -30,33 +53,33 @@ namespace Kchary.PhotoViewer.Models
         private const string PlacementFlagElemName = "windowFlag";
         private const string PlacementSwElemName = "sw";
 
+        #endregion
+
         /// <summary>
         /// アプリケーション設定情報をXMLファイルからインポートする
         /// </summary>
         /// <param name="filePath">XMLファイルパス</param>
-        /// <param name="configData">アプリケーション設定データ</param>
-        public static void Import(string filePath, AppConfigData configData)
+        public void Import(string filePath)
         {
             var doc = XDocument.Load(filePath);
 
-            ParsePreviousPathXml(doc, configData);
-            ParseLinkageAppXml(doc, configData);
-            ParseWindowPlacementXml(doc, configData);
+            ParsePreviousPathXml(doc);
+            ParseLinkageAppXml(doc);
+            ParseWindowPlacementXml(doc);
         }
 
         /// <summary>
         /// アプリケーション設定情報を既定XMLファイルに出力する
         /// </summary>
         /// <param name="filePath">XMLファイルパス</param>
-        /// <param name="configData">アプリケーション設定データ</param>
-        public static void Export(string filePath, AppConfigData configData)
+        public void Export(string filePath)
         {
             var doc = new XDocument(new XDeclaration("1.0", "utf-8", null));
             var data = new XElement("data");
 
-            data.Add(CreatePreviousPathXml(configData));
-            data.Add(CreateLinkageAppXml(configData));
-            data.Add(CreateWindowPlacementXml(configData));
+            data.Add(CreatePreviousPathXml());
+            data.Add(CreateLinkageAppXml());
+            data.Add(CreateWindowPlacementXml());
             doc.Add(data);
 
             doc.Save(filePath);
@@ -65,11 +88,13 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// 前回のフォルダパスのXMLデータを作成する
         /// </summary>
-        /// <param name="configData">アプリケーション設定データ</param>
-        private static XElement CreatePreviousPathXml(AppConfigData configData)
+        /// <returns>
+        /// XMLの要素
+        /// </returns>
+        private XElement CreatePreviousPathXml()
         {
             var dataElement = new XElement(PreviousFolderElemName);
-            var previousPath = new XElement(PreviousPathElemName, configData.PreviousFolderPath == null ? new XText("") : new XText(configData.PreviousFolderPath));
+            var previousPath = new XElement(PreviousPathElemName, PreviousFolderPath == null ? new XText("") : new XText(PreviousFolderPath));
 
             dataElement.Add(previousPath);
             return dataElement;
@@ -79,8 +104,7 @@ namespace Kchary.PhotoViewer.Models
         /// 前回のフォルダパスをXMLから読み込む
         /// </summary>
         /// <param name="doc">XMLデータ</param>
-        /// <param name="configData">アプリケーション設定データ</param>
-        private static void ParsePreviousPathXml(XDocument doc, AppConfigData configData)
+        private void ParsePreviousPathXml(XDocument doc)
         {
             var dataElement = doc.Root?.Element(PreviousFolderElemName);
             var previousPath = dataElement?.Element(PreviousPathElemName);
@@ -89,19 +113,20 @@ namespace Kchary.PhotoViewer.Models
             {
                 return;
             }
-            configData.PreviousFolderPath = previousPath.Value;
+            PreviousFolderPath = previousPath.Value;
         }
 
         /// <summary>
         /// 登録アプリリストのXMLデータを作成する
         /// </summary>
-        /// <param name="configData">アプリケーション設定データ</param>
-        private static XElement CreateLinkageAppXml(AppConfigData configData)
+        /// <returns>
+        /// XMLの要素
+        /// </returns>
+        private XElement CreateLinkageAppXml()
         {
             var linkageElement = new XElement(LinkAppElemName);
 
-            var linkageAppList = configData.LinkageAppList;
-            foreach (var linkageApp in linkageAppList)
+            foreach (var linkageApp in LinkageAppList)
             {
                 var dataElement = new XElement(LinkAppDataName);
                 var appNameElement = new XElement(LinkAppNameElemName, linkageApp == null ? new XText("") : new XText(linkageApp.AppName));
@@ -120,8 +145,7 @@ namespace Kchary.PhotoViewer.Models
         /// 登録アプリリストをXMLデータから取得する
         /// </summary>
         /// <param name="doc">XMLデータ</param>
-        /// <param name="configData">アプリケーション設定データ</param>
-        private static void ParseLinkageAppXml(XDocument doc, AppConfigData configData)
+        private void ParseLinkageAppXml(XDocument doc)
         {
             var linkageElement = doc.Root?.Element(LinkAppElemName);
             var dataElements = linkageElement?.Elements(LinkAppDataName);
@@ -143,27 +167,29 @@ namespace Kchary.PhotoViewer.Models
                 }
 
                 var linkageApp = new ExtraAppSetting { AppName = appNameElement?.Value, AppPath = appPathElement?.Value };
-                configData.LinkageAppList.Add(linkageApp);
+                LinkageAppList.Add(linkageApp);
             }
         }
 
         /// <summary>
         /// ウィンドウサイズ、位置などの情報のXMLデータを作成する
         /// </summary>
-        /// <param name="configData">アプリケーション設定データ</param>
-        private static XElement CreateWindowPlacementXml(AppConfigData configData)
+        /// <returns>
+        /// XMLの要素
+        /// </returns>
+        private XElement CreateWindowPlacementXml()
         {
             var dataElement = new XElement(PlacementElemName);
-            var windowPlaceTopElement = new XElement(PlacementTopElemName, new XText(configData.PlaceData.normalPosition.Top.ToString()));
-            var windowPlaceLeftElement = new XElement(PlacementLeftElemName, new XText(configData.PlaceData.normalPosition.Left.ToString()));
-            var windowPlaceRightElement = new XElement(PlacementRightElemName, new XText(configData.PlaceData.normalPosition.Right.ToString()));
-            var windowPlaceButtonElement = new XElement(PlacementBottomElemName, new XText(configData.PlaceData.normalPosition.Bottom.ToString()));
-            var windowMaxPositionX = new XElement(PlacementMaxPosXElemName, new XText(configData.PlaceData.maxPosition.X.ToString()));
-            var windowMaxPositionY = new XElement(PlacementMaxPosYElemName, new XText(configData.PlaceData.maxPosition.Y.ToString()));
-            var windowMinPositionX = new XElement(PlacementMinPosXElemName, new XText(configData.PlaceData.minPosition.X.ToString()));
-            var windowMinPositionY = new XElement(PlacementMinPosYElemName, new XText(configData.PlaceData.minPosition.Y.ToString()));
-            var windowFlag = new XElement(PlacementFlagElemName, new XText(configData.PlaceData.flags.ToString()));
-            var windowSwElement = new XElement(PlacementSwElemName, new XText(configData.PlaceData.showCmd.ToString()));
+            var windowPlaceTopElement = new XElement(PlacementTopElemName, new XText(PlaceData.normalPosition.Top.ToString()));
+            var windowPlaceLeftElement = new XElement(PlacementLeftElemName, new XText(PlaceData.normalPosition.Left.ToString()));
+            var windowPlaceRightElement = new XElement(PlacementRightElemName, new XText(PlaceData.normalPosition.Right.ToString()));
+            var windowPlaceButtonElement = new XElement(PlacementBottomElemName, new XText(PlaceData.normalPosition.Bottom.ToString()));
+            var windowMaxPositionX = new XElement(PlacementMaxPosXElemName, new XText(PlaceData.maxPosition.X.ToString()));
+            var windowMaxPositionY = new XElement(PlacementMaxPosYElemName, new XText(PlaceData.maxPosition.Y.ToString()));
+            var windowMinPositionX = new XElement(PlacementMinPosXElemName, new XText(PlaceData.minPosition.X.ToString()));
+            var windowMinPositionY = new XElement(PlacementMinPosYElemName, new XText(PlaceData.minPosition.Y.ToString()));
+            var windowFlag = new XElement(PlacementFlagElemName, new XText(PlaceData.flags.ToString()));
+            var windowSwElement = new XElement(PlacementSwElemName, new XText(PlaceData.showCmd.ToString()));
 
             dataElement.Add(windowPlaceTopElement);
             dataElement.Add(windowPlaceLeftElement);
@@ -183,8 +209,7 @@ namespace Kchary.PhotoViewer.Models
         /// ウィンドウサイズ、位置などの情報をXMLデータから取得する
         /// </summary>
         /// <param name="doc">XMLデータ</param>
-        /// <param name="configData">アプリケーション設定データ</param>
-        private static void ParseWindowPlacementXml(XDocument doc, AppConfigData configData)
+        private void ParseWindowPlacementXml(XDocument doc)
         {
             var dataElement = doc.Root?.Element(PlacementElemName);
             var windowPlaceTopElement = dataElement?.Element(PlacementTopElemName);
@@ -198,17 +223,17 @@ namespace Kchary.PhotoViewer.Models
             var windowFlag = dataElement?.Element(PlacementFlagElemName);
             var windowSwElement = dataElement?.Element(PlacementSwElemName);
 
-            configData.PlaceData.normalPosition.Top = Convert.ToInt32(windowPlaceTopElement?.Value);
-            configData.PlaceData.normalPosition.Left = Convert.ToInt32(windowPlaceLeftElement?.Value);
-            configData.PlaceData.normalPosition.Right = Convert.ToInt32(windowPlaceRightElement?.Value);
-            configData.PlaceData.normalPosition.Bottom = Convert.ToInt32(windowPlaceBottomElement?.Value);
-            configData.PlaceData.maxPosition.X = Convert.ToInt32(windowMaxPositionX?.Value);
-            configData.PlaceData.maxPosition.Y = Convert.ToInt32(windowMaxPositionY?.Value);
-            configData.PlaceData.minPosition.X = Convert.ToInt32(windowMinPositionX?.Value);
-            configData.PlaceData.minPosition.Y = Convert.ToInt32(windowMinPositionY?.Value);
-            configData.PlaceData.length = Marshal.SizeOf(typeof(MainWindow.NativeMethods.Placement));
-            configData.PlaceData.flags = Convert.ToInt32(windowFlag?.Value);
-            configData.PlaceData.showCmd = windowSwElement == null ? MainWindow.NativeMethods.Sw.ShowNormal : FastEnum.Parse<MainWindow.NativeMethods.Sw>(windowSwElement.Value);
+            PlaceData.normalPosition.Top = Convert.ToInt32(windowPlaceTopElement?.Value);
+            PlaceData.normalPosition.Left = Convert.ToInt32(windowPlaceLeftElement?.Value);
+            PlaceData.normalPosition.Right = Convert.ToInt32(windowPlaceRightElement?.Value);
+            PlaceData.normalPosition.Bottom = Convert.ToInt32(windowPlaceBottomElement?.Value);
+            PlaceData.maxPosition.X = Convert.ToInt32(windowMaxPositionX?.Value);
+            PlaceData.maxPosition.Y = Convert.ToInt32(windowMaxPositionY?.Value);
+            PlaceData.minPosition.X = Convert.ToInt32(windowMinPositionX?.Value);
+            PlaceData.minPosition.Y = Convert.ToInt32(windowMinPositionY?.Value);
+            PlaceData.length = Marshal.SizeOf(typeof(MainWindow.NativeMethods.Placement));
+            PlaceData.flags = Convert.ToInt32(windowFlag?.Value);
+            PlaceData.showCmd = windowSwElement == null ? MainWindow.NativeMethods.Sw.ShowNormal : FastEnum.Parse<MainWindow.NativeMethods.Sw>(windowSwElement.Value);
         }
     }
 }

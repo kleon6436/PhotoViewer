@@ -1,5 +1,4 @@
-﻿using Kchary.PhotoViewer.Data;
-using System;
+﻿using System;
 using System.IO;
 
 namespace Kchary.PhotoViewer.Models
@@ -39,7 +38,7 @@ namespace Kchary.PhotoViewer.Models
         {
             try
             {
-                AppConfigXml.Import(AppConfigFilePath, ConfigData);
+                ConfigData.Import(AppConfigFilePath);
             }
             catch (Exception ex)
             {
@@ -62,7 +61,7 @@ namespace Kchary.PhotoViewer.Models
 
             try
             {
-                AppConfigXml.Export(AppConfigFilePath, ConfigData);
+                ConfigData.Export(AppConfigFilePath);
             }
             catch (Exception ex)
             {
@@ -86,6 +85,16 @@ namespace Kchary.PhotoViewer.Models
         public void RemoveLinkageApp(ExtraAppSetting linkageApp)
         {
             ConfigData.LinkageAppList.Remove(linkageApp);
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <remarks>
+        /// コンストラクタによるインスタンス化を抑制
+        /// </remarks>
+        private AppConfigManager()
+        {
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
-namespace Kchary.PhotoViewer.Models
+namespace Kchary.PhotoViewer.Helper
 {
     /// <summary>
     /// Windows APIを用いたアイコン生成クラス

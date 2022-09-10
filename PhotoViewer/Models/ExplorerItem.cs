@@ -1,4 +1,4 @@
-﻿using Kchary.PhotoViewer.Models;
+﻿using Kchary.PhotoViewer.Helper;
 using System;
 using System.IO;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace Kchary.PhotoViewer.Data
+namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
     /// エクスプローラーツリー情報表示用クラス
