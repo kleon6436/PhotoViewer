@@ -1,4 +1,4 @@
-﻿using Kchary.PhotoViewer.Helper;
+﻿using Kchary.PhotoViewer.ViewModels;
 using System.ComponentModel;
 
 namespace Kchary.PhotoViewer.Models
@@ -19,6 +19,12 @@ namespace Kchary.PhotoViewer.Models
         public string ExifParameterText { get; init; }
 
         /// <summary>
+        /// プロパティ変更ハンドラー
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private string exifParameterValue;
+        /// <summary>
         /// Exifパラメータ値
         /// </summary>
         public string ExifParameterValue
@@ -30,7 +36,6 @@ namespace Kchary.PhotoViewer.Models
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExifParameterValue)));
             }
         }
-        private string exifParameterValue;
 
         /// <summary>
         /// コンストラクタ
@@ -44,7 +49,5 @@ namespace Kchary.PhotoViewer.Models
             ExifParameterValue = exifValue;
             ExifPropertyType = propertyType;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
