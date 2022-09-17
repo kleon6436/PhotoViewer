@@ -36,6 +36,9 @@
     <ClInclude Include="ImageData.h">
       <Filter>Header files</Filter>
     </ClInclude>
+    <ClInclude Include="ImageReader.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="NormalImageController.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageReader.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>

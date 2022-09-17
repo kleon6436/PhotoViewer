@@ -5,8 +5,10 @@
 
 #pragma once
 
+#include <iostream>
+
 /*!
- * @brief 画像データ構造体
+ * @brief 画像データ
  */
 typedef struct ImageData
 {
@@ -16,3 +18,13 @@ typedef struct ImageData
 	int width;
 	int height;
 } ImageData;
+
+/*!
+* @brief 画像読み込み設定
+*/
+typedef struct ImageReadSettings
+{
+	int isRawImage;
+	int isThumbnailMode;
+	int resizeLongSideLength;
+} ImageReadSettings;

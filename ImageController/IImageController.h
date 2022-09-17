@@ -21,19 +21,25 @@ public:
 	virtual ~IImageController() = default;
 
 	/*!
+	* @brief 画像を読み込み、画像サイズを取得する
+	* @param path: 画像ファイルパス
+	* @param imageReadSettings	画像読み込み設定
+	* @param imageSize	画像サイズ(out)
+	* @return 成功: True, 失敗: False
+	*/
+	virtual bool LoadImageAndGetImageSize(const char* path, const ImageReadSettings& imageReadSettings, int& imageSize) = 0;
+
+	/*!
 	 * @brief	画像データを取得する
-	 * @param	path: 画像ファイルパス
 	 * @param	imageData: 画像データ(out)
-	 * @return	成功: 0, 失敗: -1
+	 * @return	成功: True, 失敗: False
 	 */
-	virtual int GetImageData(const char* path, ImageData& imageData) const = 0;
+	virtual bool GetImageData(ImageData& imageData) = 0;
 
 	/*!
 	 * @brief	サムネイル画像を取得する
-	 * @param	path: 画像ファイルパス
-	 * @param	resizeLongSideLength: リサイズする長辺の長さ
 	 * @param	imageData: 画像データ(out)
-	 * @return	成功: 0, 失敗: -1
+	 * @return	成功: True, 失敗: False
 	 */
-	virtual int GetThumbnailImageData(const char* path, int resizeLongSideLength, ImageData& imageData) const = 0;
+	virtual bool GetThumbnailImageData(ImageData& imageData) = 0;
 };

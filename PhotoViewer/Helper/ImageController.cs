@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -12,55 +13,38 @@ namespace Kchary.PhotoViewer.Helper
     /// </summary>
     public static class ImageController
     {
+        private static Mutex mutex = new();
+
         /// <summary>
         /// 画像処理を行うネイティブメソッドを管理するクラス
         /// </summary>
         internal static class NativeMethods
         {
             /// <summary>
-            /// Raw画像データを取得する
+            /// 画像を読み込み、画像サイズを取得する
             /// </summary>
-            /// <param name="path">画像ファイルパス</param>
-            /// <param name="imageData">画像データ</param>
-            /// <returns>0: 成功、1: 失敗</returns>
+            /// <param name="imagePath">画像ファイルパス</param>
+            /// <param name="imageReadSettingPtr">画像読み込み設定</param>
+            /// <param name="imageSize">画像サイズ</param>
+            /// <returns>成功: True, 失敗: False</returns>
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-            internal static extern int GetRawImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, out ImageData imageData);
+            internal static extern bool LoadImageAndGetImageSize([MarshalAs(UnmanagedType.LPWStr), In] string imagePath, [In] IntPtr imageReadSettingPtr, out int imageSize);
 
             /// <summary>
-            /// Raw画像のサムネイルデータを取得する
+            /// 画像データを取得する
             /// </summary>
-            /// <param name="path">画像ファイルパス</param>
-            /// <param name="longSideLength">長辺の長さ(この長さにリサイズされる)</param>
             /// <param name="imageData">画像データ</param>
-            /// <returns>0: 成功、1: 失敗</returns>
+            /// <returns>成功: True, 失敗: False</returns>
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-            internal static extern int GetRawThumbnailImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, [In] int longSideLength, out ImageData imageData);
+            internal static extern bool GetImageData(ref ImageData imageData);
 
             /// <summary>
-            /// 画像データを取得する(Raw画像以外のJpeg画像などで使用)
+            /// サムネイルデータを取得する
             /// </summary>
-            /// <param name="path">画像ファイルパス</param>
             /// <param name="imageData">画像データ</param>
-            /// <returns>0: 成功、1: 失敗</returns>
+            /// <returns>成功: True, 失敗: False</returns>
             [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-            internal static extern int GetNormalImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, out ImageData imageData);
-
-            /// <summary>
-            /// 画像のサムネイルデータを取得する(Raw画像以外のJpeg画像などで使用)
-            /// </summary>
-            /// <param name="path">画像ファイルパス</param>
-            /// <param name="longSideLength">長辺の長さ(この長さにリサイズされる)</param>
-            /// <param name="imageData">画像データ</param>
-            /// <returns>0: 成功、1: 失敗</returns>
-            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-            internal static extern int GetNormalThumbnailImageData([MarshalAs(UnmanagedType.LPWStr), In] string path, [In] int longSideLength, out ImageData imageData);
-
-            /// <summary>
-            /// メモリを解放する
-            /// </summary>
-            /// <param name="buffer">解放するメモリバッファ</param>
-            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall)]
-            internal static extern void FreeBuffer(IntPtr buffer);
+            internal static extern bool GetThumbnailImageData(ref ImageData imageData);
 
             /// <summary>
             /// 画像データ
@@ -73,6 +57,14 @@ namespace Kchary.PhotoViewer.Helper
                 public int stride;
                 public int width;
                 public int height;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal struct ImageReadSettings
+            {
+                public int isRawImage;
+                public int isThumbnailMode;
+                public int resizeLongSideLength;
             }
         }
 
@@ -198,23 +190,62 @@ namespace Kchary.PhotoViewer.Helper
         /// <returns>BitmapSource</returns>
         private static BitmapSource DecodePicture(string filePath, int longSideLength, bool stopLoading = false)
         {
-            if (MediaChecker.CheckRawFileExtension(Path.GetExtension(filePath).ToLower()))
+            try
             {
-                if (NativeMethods.GetRawThumbnailImageData(filePath, longSideLength, out var imageData) != 0)
+                if (!mutex.WaitOne(1000, false))
                 {
-                    throw new FileFormatException("File format is wrong.");
+                    return null;
+                }
+                NativeMethods.ImageData imageData = new();
+                var imageReadSettingPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(NativeMethods.ImageReadSettings)));
+                BitmapSource image = null;
+
+                try
+                {
+                    // 画像を読み込む
+                    var isRawImage = MediaChecker.CheckRawFileExtension(Path.GetExtension(filePath).ToLower());
+                    var isThumbnailMode = true;
+                    NativeMethods.ImageReadSettings imageReadSettings = new()
+                    {
+                        isRawImage = Convert.ToInt32(isRawImage),
+                        isThumbnailMode = Convert.ToInt32(isThumbnailMode),
+                        resizeLongSideLength = longSideLength,
+                    };
+                    Marshal.StructureToPtr(imageReadSettings, imageReadSettingPtr, false);
+                    NativeMethods.LoadImageAndGetImageSize(filePath, imageReadSettingPtr, out int imageSize);
+
+                    // 必要なバッファを準備
+                    imageData.buffer = Marshal.AllocCoTaskMem(imageSize);
+
+                    // 画像データの取得
+                    if (isThumbnailMode)
+                    {
+                        NativeMethods.GetThumbnailImageData(ref imageData);
+                    }
+                    else
+                    {
+                        NativeMethods.GetImageData(ref imageData);
+                    }
+
+                    image = CreateBitmapSourceFromImageStruct(imageData, stopLoading);
+                }
+                catch (Exception ex)
+                {
+                    App.LogException(ex);
+                    App.ShowErrorMessageBox("Cannot decode picture.", "Picture decode error");
+                    image = null;
+                }
+                finally
+                {
+                    Marshal.FreeCoTaskMem(imageData.buffer);
+                    Marshal.FreeCoTaskMem(imageReadSettingPtr);
                 }
 
-                return CreateBitmapSourceFromImageStruct(imageData);
+                return image;
             }
-            else
+            finally
             {
-                if (NativeMethods.GetNormalThumbnailImageData(filePath, longSideLength, out var imageData) != 0)
-                {
-                    throw new FileFormatException("File format is wrong.");
-                }
-
-                return CreateBitmapSourceFromImageStruct(imageData, stopLoading);
+                mutex.ReleaseMutex();
             }
         }
 
@@ -242,16 +273,9 @@ namespace Kchary.PhotoViewer.Helper
 
                 return bitmap;
             }
-            catch (Exception ex)
+            catch
             {
-                App.LogException(ex);
-                App.ShowErrorMessageBox("Cannot decode picture.", "Picture decode error");
-
-                return null;
-            }
-            finally
-            {
-                NativeMethods.FreeBuffer(imageData.buffer);
+                throw;
             }
         }
 

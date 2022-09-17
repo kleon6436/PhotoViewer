@@ -8,52 +8,70 @@
 
 namespace Kchary::ImageController::NormalImageControl
 {
-	int NormalImageController::GetImageData(const char* path, ImageData& imageData) const
+	bool NormalImageController::LoadImageAndGetImageSize(const char* path, const ImageReadSettings& imageReadSettings, int& imageSize)
 	{
-		// Read image data to mat.
-		auto img = cv::imread(path, cv::ImreadModes::IMREAD_COLOR);
+		const auto pathStr = std::string(path);
 
-		const auto dataSize = img.total() * img.elemSize();
-		imageData.buffer = new std::uint8_t[dataSize];
-		memcpy(imageData.buffer, img.data, dataSize * sizeof(std::uint8_t));
+		if (imageReadSettings.isThumbnailMode)
+		{
+			// Read image data to mat.
+			auto image = cv::imread(path, GetImreadMode(imageReadSettings.resizeLongSideLength));
 
-		// Translate data to C#
-		imageData.size = static_cast<unsigned int>(dataSize);
-		imageData.stride = static_cast<int>(img.step);
-		imageData.width = img.cols;
-		imageData.height = img.rows;
+			// Resize image data.
+			const auto longSideLength = image.cols > image.rows ? image.cols : image.rows;
+			const auto ratio = (static_cast<double>(imageReadSettings.resizeLongSideLength) / static_cast<double>(longSideLength));
+			cv::Mat resizeImg;
+			cv::resize(image, resizeImg, cv::Size(), ratio, ratio, cv::INTER_AREA);
 
-		img.release();
+			m_image = resizeImg;
+			imageSize = static_cast<int>(resizeImg.total() * resizeImg.elemSize() * sizeof(std::uint8_t));
+		}
+		else
+		{
+			// Read image data to mat.
+			m_image = cv::imread(path, cv::ImreadModes::IMREAD_COLOR);
+			imageSize = static_cast<int>(m_image.total() * m_image.elemSize() * sizeof(std::uint8_t));
+		}
 
-		return 0;
+		return true;
 	}
 
-	int NormalImageController::GetThumbnailImageData(const char* path, const int resizeLongSideLength, ImageData& imageData) const
+	bool NormalImageController::GetImageData(ImageData& imageData)
 	{
-		// Read image data to mat.
-		const auto imreadMode = GetImreadMode(resizeLongSideLength);
-		auto img = cv::imread(path, imreadMode);
+		if (m_image.empty())
+		{
+			return false;
+		}
 
-		// Resize image data.
-		const auto longSideLength = img.cols > img.rows ? img.cols : img.rows;
-		const auto ratio = (static_cast<double>(resizeLongSideLength) / static_cast<double>(longSideLength));
-		cv::Mat resizeImg;
-		cv::resize(img, resizeImg, cv::Size(), ratio, ratio, cv::INTER_AREA);
-
-		const auto dataSize = resizeImg.total() * resizeImg.elemSize();
-		imageData.buffer = new std::uint8_t[dataSize];
-		memcpy(imageData.buffer, resizeImg.data, dataSize * sizeof(std::uint8_t));
+		const auto dataSize = m_image.total() * m_image.elemSize();
+		memcpy(imageData.buffer, m_image.data, dataSize * sizeof(std::uint8_t));
 
 		// Translate data to C#
 		imageData.size = static_cast<unsigned int>(dataSize);
-		imageData.stride = static_cast<int>(resizeImg.step);
-		imageData.width = resizeImg.cols;
-		imageData.height = resizeImg.rows;
+		imageData.stride = static_cast<int>(m_image.step);
+		imageData.width = m_image.cols;
+		imageData.height = m_image.rows;
 
-		img.release();
-		resizeImg.release();
+		return true;
+	}
 
-		return 0;
+	bool NormalImageController::GetThumbnailImageData(ImageData& imageData)
+	{
+		if (m_image.empty())
+		{
+			return false;
+		}
+
+		const auto dataSize = m_image.total() * m_image.elemSize();
+		memcpy(imageData.buffer, m_image.data, dataSize * sizeof(std::uint8_t));
+
+		// Translate data to C#
+		imageData.size = static_cast<unsigned int>(dataSize);
+		imageData.stride = static_cast<int>(m_image.step);
+		imageData.width = m_image.cols;
+		imageData.height = m_image.rows;
+
+		return true;
 	}
 
 	cv::ImreadModes NormalImageController::GetImreadMode(const int resizeLongSideLength)
