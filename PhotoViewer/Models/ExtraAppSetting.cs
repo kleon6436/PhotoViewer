@@ -1,4 +1,4 @@
-﻿namespace Kchary.PhotoViewer.Data
+﻿namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
     /// 登録アプリ情報クラス

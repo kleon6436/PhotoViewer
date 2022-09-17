@@ -64,7 +64,8 @@
       <OpenMPSupport>
       </OpenMPSupport>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <DisableSpecificWarnings>26451;26495;26812;4819;4251;5054;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>26451;26495;26812;4819;4251;5054;6387;6294;6201;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -90,10 +91,11 @@ copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x64
       <LanguageStandard>stdcpp20</LanguageStandard>
       <CallingConvention>StdCall</CallingConvention>
       <Optimization>Full</Optimization>
-      <DisableSpecificWarnings>26451;26495;26812;4819;4251;5054;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>26451;26495;26812;4819;4251;5054;6387;6294;6201;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <OpenMPSupport>
       </OpenMPSupport>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -111,6 +113,7 @@ copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x64
     <ClInclude Include="IImageController.h" />
     <ClInclude Include="ImageControlLibrary.h" />
     <ClInclude Include="ImageData.h" />
+    <ClInclude Include="ImageReader.h" />
     <ClInclude Include="NormalImageController.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RawImageController.h" />
@@ -118,6 +121,7 @@ copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x64
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="ImageControlLibrary.cpp" />
+    <ClCompile Include="ImageReader.cpp" />
     <ClCompile Include="NormalImageController.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

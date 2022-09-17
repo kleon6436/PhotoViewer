@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <opencv2/opencv.hpp>
 #include "IImageController.h"
+#include <opencv2/opencv.hpp>
 
 namespace Kchary::ImageController::NormalImageControl
 {
@@ -24,28 +24,36 @@ namespace Kchary::ImageController::NormalImageControl
 		~NormalImageController() = default;
 
 		/*!
+		* @brief 画像を読み込み、画像サイズを取得する
+		* @param path: 画像ファイルパス
+		* @param imageReadSettings	画像読み込み設定
+		* @param imageSize	画像サイズ(out)
+		* @return 成功: True, 失敗: False
+		*/
+		bool LoadImageAndGetImageSize(const char* path, const ImageReadSettings& imageReadSettings, int& imageSize) override;
+
+		/*!
 		 * @brief	画像データを取得する
-		 * @param	path: 画像ファイルパス
 		 * @param	imageData: 画像データ
-		 * @return	成功: 0, 失敗: -1
+		 * @return	成功: True, 失敗: False
 		 */
-		int GetImageData(const char* path, ImageData& imageData) const override;
+		bool GetImageData(ImageData& imageData) override;
 
 		/*!
 		 * @brief	画像のサムネイルデータを取得する
-		 * @param	path: ファイルパス
-		 * @param	resizeLongSideLength: リサイズする長辺の長さ
 		 * @param	imageData: 画像データ
-		 * @return	成功: 0, 失敗: -1
+		 * @return	成功: True, 失敗: False
 		 */
-		int GetThumbnailImageData(const char* path, const int resizeLongSideLength, ImageData& imageData) const override;
+		bool GetThumbnailImageData(ImageData& imageData) override;
 
 	private:
 		/*!
-		 * @brief	画像取得モード(OpenCV)を取得する
-		 * @param	resizeLongSideLength: リサイズする長辺の長さ
-		 * @return	ImreadModes
+		 * @brief    画像取得モード(OpenCV)を取得する
+		 * @param    resizeLongSideLength: リサイズする長辺の長さ
+		 * @return    ImreadModes
 		 */
 		static cv::ImreadModes GetImreadMode(const int resizeLongSideLength);
+
+		cv::Mat m_image;	//!< 画像
 	};
 }

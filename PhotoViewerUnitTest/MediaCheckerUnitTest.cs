@@ -1,4 +1,4 @@
-﻿using Kchary.PhotoViewer.Models;
+﻿using Kchary.PhotoViewer.Helper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 

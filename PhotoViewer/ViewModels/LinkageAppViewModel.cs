@@ -1,5 +1,4 @@
-﻿using Kchary.PhotoViewer.Data;
-using Kchary.PhotoViewer.Models;
+﻿using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
 using Prism.Mvvm;
 using Reactive.Bindings;
