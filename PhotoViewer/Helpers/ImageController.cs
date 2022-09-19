@@ -13,7 +13,7 @@ namespace Kchary.PhotoViewer.Helper
     /// </summary>
     public static class ImageController
     {
-        private static Mutex mutex = new();
+        private static readonly Mutex mutex = new();
 
         /// <summary>
         /// 画像処理を行うネイティブメソッドを管理するクラス
