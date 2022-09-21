@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 namespace Kchary.PhotoViewer.Helper
 {
     /// <summary>
-    /// 画像を管理するクラス
+    /// 画像を管理するユーティリティクラス
     /// </summary>
     public static class ImageController
     {
