@@ -1,5 +1,4 @@
-﻿using Kchary.PhotoViewer.Helper;
-using Kchary.PhotoViewer.Models;
+﻿using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
 using Prism.Mvvm;
 using Reactive.Bindings;
@@ -69,7 +68,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// リサイズする画像ファイル名
         /// </summary>
-        public string ResizeImageName { get; set; }
+        public MediaInfo ResizeMediaInfo { get; set; }
 
         #endregion UI binding parameter
 
@@ -91,11 +90,6 @@ namespace Kchary.PhotoViewer.ViewModels
         /// IDisposableをまとめるCompositeDisposable
         /// </summary>
         private readonly CompositeDisposable disposable = new();
-
-        /// <summary>
-        /// リサイズ対象のファイルパス
-        /// </summary>
-        private string ResizeFilePath { get; set; }
 
         /// <summary>
         /// 読み込んだ画像のサイズ
@@ -143,13 +137,11 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 編集対象の保存ファイルパスをViewModelに設定する
         /// </summary>
-        /// <param name="filePath">編集対象のファイルパス</param>
-        public void SetEditFileData(string filePath)
+        /// <param name="resizeMediaInfo">リサイズ対象のメディア情報</param>
+        public void SetEditFileData(MediaInfo resizeMediaInfo)
         {
-            ResizeFilePath = filePath;
-            ResizeImageName = Path.GetFileName(filePath);
-
-            EditImage.Value = ImageController.CreatePictureEditViewThumbnail(ResizeFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
+            ResizeMediaInfo = resizeMediaInfo;
+            EditImage.Value = ResizeMediaInfo.CreateEditViewImage(out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
 
             ReadImageSize = rotation is 5 or 6 or 7 or 8
                 ? new Size { Width = defaultPictureHeight, Height = defaultPictureWidth }
@@ -197,7 +189,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Height;
                 }
             }
-            var saveImageSource = ImageController.CreateSavePicture(ResizeFilePath, scale);
+            var saveImageSource = ResizeMediaInfo.CreateSaveImage(scale);
 
             // 選択された保存形式と同じエンコーダーを用意
             BitmapEncoder encoder = SelectedForm.Value.Form switch

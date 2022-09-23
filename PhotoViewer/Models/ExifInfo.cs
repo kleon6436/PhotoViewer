@@ -1,12 +1,12 @@
 ﻿using Kchary.PhotoViewer.ViewModels;
-using System.ComponentModel;
+using Prism.Mvvm;
 
 namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
     /// Exif表示用クラス
     /// </summary>
-    public sealed record ExifInfo : INotifyPropertyChanged
+    public sealed class ExifInfo : BindableBase
     {
         /// <summary>
         /// Exif情報のプロパティタイプ
@@ -18,11 +18,6 @@ namespace Kchary.PhotoViewer.Models
         /// </summary>
         public string ExifParameterText { get; init; }
 
-        /// <summary>
-        /// プロパティ変更ハンドラー
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private string exifParameterValue;
         /// <summary>
         /// Exifパラメータ値
@@ -30,11 +25,7 @@ namespace Kchary.PhotoViewer.Models
         public string ExifParameterValue
         {
             get => exifParameterValue;
-            set
-            {
-                exifParameterValue = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ExifParameterValue)));
-            }
+            set => SetProperty(ref exifParameterValue, value);
         }
 
         /// <summary>

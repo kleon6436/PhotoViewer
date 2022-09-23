@@ -1,4 +1,4 @@
-﻿using Kchary.PhotoViewer.Helper;
+﻿using Kchary.PhotoViewer.Helpers;
 using System;
 using System.IO;
 using System.Linq;

@@ -1,5 +1,4 @@
 ﻿using FastEnumUtility;
-using Kchary.PhotoViewer.Helper;
 using Kchary.PhotoViewer.Models;
 using MetadataExtractor;
 using MetadataExtractor.Formats.Bmp;
@@ -123,11 +122,11 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// Exif情報を設定する
         /// </summary>
-        /// <param name="filePath">画像ファイルパス</param>
+        /// <param name="mediaInfo">画像情報</param>
         /// <param name="stopLoading">ロード停止フラグ</param>
-        public static void SetExif(string filePath, bool stopLoading)
+        public static void SetExif(MediaInfo mediaInfo, bool stopLoading)
         {
-            SetExifDataFromFile(filePath, stopLoading);
+            SetExifDataFromFile(mediaInfo, stopLoading);
         }
 
         /// <summary>
@@ -182,12 +181,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// ファイルからExif情報を取得してリストに設定する
         /// </summary>
-        /// <param name="filePath">画像のファイルパス</param>
+        /// <param name="mediaInfo">画像情報</param>
         /// <param name="stopLoading">ロード停止フラグ</param>
-        public static void SetExifDataFromFile(string filePath, bool stopLoading)
+        public static void SetExifDataFromFile(MediaInfo mediaInfo, bool stopLoading)
         {
-            var extension = Path.GetExtension(filePath);
-            var fileExtensionType = MediaChecker.GetFileExtensionType(extension.ToLower());
+            var filePath = mediaInfo.FilePath;
+            var fileExtensionType = mediaInfo.FileExtensionType;
             var directories = GetMetadataDirectories(filePath, fileExtensionType).ToArray();
             var subIfdDirectories = directories.OfType<ExifSubIfdDirectory>().ToArray();
 
@@ -217,13 +216,13 @@ namespace Kchary.PhotoViewer.ViewModels
                         break;
 
                     case PropertyType.ImageWidth:
-                        exifInfo.ExifParameterValue = MediaChecker.CheckRawFileExtension(extension.ToLower())
+                        exifInfo.ExifParameterValue = mediaInfo.IsRawImage
                             ? $"{GetExifDataFromMetadata(subIfdDirectories, ExifDirectoryBase.TagImageWidth)} pixel"
                             : $"{GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExifImageWidth)} pixel";
                         break;
 
                     case PropertyType.ImageHeight:
-                        exifInfo.ExifParameterValue = MediaChecker.CheckRawFileExtension(extension.ToLower())
+                        exifInfo.ExifParameterValue = mediaInfo.IsRawImage
                             ? $"{GetExifDataFromMetadata(subIfdDirectories, ExifDirectoryBase.TagImageHeight)} pixel"
                             : $"{GetExifDataFromMetadata(directories, ExifDirectoryBase.TagExifImageHeight)} pixel";
                         break;

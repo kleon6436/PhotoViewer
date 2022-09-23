@@ -1,4 +1,4 @@
-﻿using Kchary.PhotoViewer.Helper;
+﻿using Kchary.PhotoViewer.Helpers;
 using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.Views;
 using Prism.Mvvm;
@@ -172,8 +172,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // 画像フォルダの読み込み
             var picturePath = DefaultPicturePath;
-            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath)
-                && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
+            if (FileUtil.CheckFolderPath(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
             {
                 picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
             }
@@ -221,7 +220,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 StopLoading = false;
             }
 
-            if (!File.Exists(mediaInfo.FilePath))
+            if (!FileUtil.CheckFilePath(mediaInfo.FilePath))
             {
                 App.ShowErrorMessageBox("File not exist.", "File access error");
                 return;
@@ -284,7 +283,7 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             // リンク先がないものはすべて削除
-            linkageAppList.RemoveAll(x => !File.Exists(x.AppPath));
+            linkageAppList.RemoveAll(x => !FileUtil.CheckFilePath(x.AppPath));
             foreach (var linkageApp in linkageAppList)
             {
                 LoadContextMenu(linkageApp);
@@ -379,7 +378,7 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             var vm = new ResizeImageViewModel();
-            vm.SetEditFileData(SelectedMedia.Value.FilePath);
+            vm.SetEditFileData(SelectedMedia.Value);
 
             var imageEditToolDialog = new ImageEditToolView
             {
@@ -453,7 +452,7 @@ namespace Kchary.PhotoViewer.ViewModels
         private void UpdateExplorerTree()
         {
             var previousFolderPath = DefaultPicturePath;
-            if (!string.IsNullOrEmpty(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath) && Directory.Exists(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
+            if (FileUtil.CheckFolderPath(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
             {
                 previousFolderPath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
             }
@@ -565,14 +564,14 @@ namespace Kchary.PhotoViewer.ViewModels
                 folderPath = Path.GetDirectoryName(folderPath);
             }
 
-            if (string.IsNullOrEmpty(folderPath))
+            if (!FileUtil.CheckFolderPath(folderPath))
             {
                 return;
             }
 
             // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
             var queue = new List<MediaInfo>();
-            foreach (var supportExtension in MediaChecker.GetSupportExtentions())
+            foreach (var supportExtension in AppConfigManager.GetSupportExtentions())
             {
                 var tick = Environment.TickCount;
                 var count = 0;
@@ -657,7 +656,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     {
                         return;
                     }
-                    PictureImageSource.Value = ImageController.CreatePictureViewImage(mediaInfo.FilePath, StopLoading);
+                    PictureImageSource.Value = mediaInfo.CreatePictureViewImage(StopLoading);
                 });
                 var setExifInfoTask = Task.Run(() =>
                 {
@@ -665,7 +664,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     {
                         return;
                     }
-                    ExifInfoViewModel.SetExif(mediaInfo.FilePath, StopLoading);
+                    ExifInfoViewModel.SetExif(mediaInfo, StopLoading);
                 });
 
                 // タスクを実行し、処理完了まで待つ
@@ -677,7 +676,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 await Task.WhenAll(LoadMediaTasks);
 
                 // 編集ボタンの状態を更新(Raw画像以外は活性状態とする)
-                IsEnableImageEditButton.Value = !MediaChecker.CheckRawFileExtension(Path.GetExtension(mediaInfo.FilePath)?.ToLower());
+                IsEnableImageEditButton.Value = !mediaInfo.IsRawImage;
 
                 // パス表示を更新
                 SelectFolderPath.Value = mediaInfo.FilePath;

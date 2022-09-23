@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Kchary.PhotoViewer.Helpers;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Kchary.PhotoViewer.Models
@@ -8,6 +10,16 @@ namespace Kchary.PhotoViewer.Models
     /// </summary>
     public sealed class AppConfigManager
     {
+        /// <summary>
+        /// サポートする画像の拡張子名
+        /// </summary>
+        public static readonly string[] SupportPictureExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng", ".nef" };
+
+        /// <summary>
+        /// サポートするRaw画像の拡張子名
+        /// </summary>
+        public static readonly string[] SupportRawPictureExtensions = { ".dng", ".nef" };
+
         /// <summary>
         /// アプリケーション情報インスタンス
         /// </summary>
@@ -54,7 +66,7 @@ namespace Kchary.PhotoViewer.Models
         {
             // 既定ディレクトリが存在しない場合は、ディレクトリも作成
             var appConfigDirectory = Path.GetDirectoryName(AppConfigFilePath);
-            if (!Directory.Exists(appConfigDirectory))
+            if (!FileUtil.CheckFolderPath(appConfigDirectory))
             {
                 Directory.CreateDirectory(appConfigDirectory ?? throw new InvalidOperationException());
             }
@@ -85,6 +97,15 @@ namespace Kchary.PhotoViewer.Models
         public void RemoveLinkageApp(ExtraAppSetting linkageApp)
         {
             ConfigData.LinkageAppList.Remove(linkageApp);
+        }
+
+        /// <summary>
+        /// サポートする画像の拡張子名リストを取得する
+        /// </summary>
+        /// <returns>サポートする画像の拡張子名リスト</returns>
+        public static IEnumerable<string> GetSupportExtentions()
+        {
+            return SupportPictureExtensions;
         }
 
         /// <summary>

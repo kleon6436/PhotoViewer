@@ -41,7 +41,7 @@
                        Width="{Binding RelativeSource={RelativeSource Self}, Path=Source.Width}" RenderOptions.BitmapScalingMode="NearestNeighbor" UseLayoutRounding="True"
                        Height="{Binding RelativeSource={RelativeSource Self}, Path=Source.Height}" />
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" 
-                           Text="{Binding ResizeImageName}" Margin="0,10,0,0"
+                           Text="{Binding ResizeMediaInfo.FileName}" Margin="0,10,0,0"
                            FontSize="15"/>
             </StackPanel>
 

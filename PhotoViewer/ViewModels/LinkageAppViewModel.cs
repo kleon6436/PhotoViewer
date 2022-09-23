@@ -1,4 +1,5 @@
-﻿using Kchary.PhotoViewer.Models;
+﻿using Kchary.PhotoViewer.Helpers;
+using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
 using Prism.Mvvm;
 using Reactive.Bindings;
@@ -118,12 +119,16 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void RegisterLinkAppButtonClicked()
         {
-            if (LinkageAppList.Count > MaxLinkAppNum || string.IsNullOrEmpty(LinkAppPath.Value))
+            if (LinkageAppList.Count > MaxLinkAppNum || !FileUtil.CheckFilePath(LinkAppPath.Value))
             {
                 return;
             }
 
-            var linkageApp = new ExtraAppSetting { AppName = Path.GetFileNameWithoutExtension(LinkAppPath.Value), AppPath = LinkAppPath.Value };
+            var linkageApp = new ExtraAppSetting
+            {
+                AppName = Path.GetFileNameWithoutExtension(LinkAppPath.Value),
+                AppPath = LinkAppPath.Value
+            };
             if (LinkageAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))
             {
                 return;
