@@ -1,6 +1,7 @@
 ﻿using Kchary.PhotoViewer.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
@@ -87,7 +88,7 @@ namespace Kchary.PhotoViewer.Models
             }
         }
 
-        private static readonly IDictionary<string, FileExtensionType> SupportExtensionMap = new Dictionary<string, FileExtensionType>()
+        private static readonly IReadOnlyDictionary<string, FileExtensionType> SupportExtensionMap = new Dictionary<string, FileExtensionType>()
         {
             { ".jpg", FileExtensionType.Jpeg },
             { ".bmp", FileExtensionType.Bmp },
