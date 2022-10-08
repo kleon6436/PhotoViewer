@@ -15,11 +15,6 @@ namespace Kchary.PhotoViewer.Helpers
         // handle の値が 0 の場合、無効として扱う
         public override bool IsInvalid => IntPtr.Zero == handle;
 
-        public ImageReaderHandle(IntPtr handle) : base(handle, true)
-        {
-            SetHandle(handle);
-        }
-
         /// <summary>
         /// ImageReaderハンドルを生成する
         /// </summary>
@@ -37,6 +32,15 @@ namespace Kchary.PhotoViewer.Helpers
         {
             ImageReadLibrary.DeleteInstance(handle);
             return true;
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="handle">ハンドル</param>
+        private ImageReaderHandle(IntPtr handle) : base(handle, true)
+        {
+            SetHandle(handle);
         }
     }
 }
