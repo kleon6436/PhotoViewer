@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoViewerUnitTest", "Phot
 		{AE1E20A0-3AE8-46CA-B5B8-491E1C117D03} = {AE1E20A0-3AE8-46CA-B5B8-491E1C117D03}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageControllerDllUnitTest", "ImageControllerDllUnitTest\ImageControllerDllUnitTest.csproj", "{B7B01549-743F-4C73-A3DF-9196B688B470}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageReadLibraryWrapperUnitTest", "ImageReadLibraryWrapperUnitTest\ImageReadLibraryWrapperUnitTest.csproj", "{B7B01549-743F-4C73-A3DF-9196B688B470}"
 	ProjectSection(ProjectDependencies) = postProject
 		{171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C} = {171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C}
 	EndProjectSection
