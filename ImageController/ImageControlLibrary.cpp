@@ -9,20 +9,28 @@
 
 namespace Kchary::ImageController::Library
 {
-	static ImageReader Reader;	//!< 画像読み込み用インスタンス
-
-	bool LoadImageAndGetImageSize(const wchar_t* imagePath, const ImageReadSettings& imageReadSettings, int& imageSize)
+	ImageReader* CreateInstance()
 	{
-		return Reader.LoadImageAndGetImageSize(imagePath, imageReadSettings, imageSize);
+		return new ImageReader();
 	}
 
-	bool GetImageData(ImageData& imageData)
+	void DeleteInstance(ImageReader* reader)
 	{
-		return Reader.GetImageData(imageData);
+		delete reader;
 	}
 
-	bool GetThumbnailImageData(ImageData& imageData)
+	bool LoadImageAndGetImageSize(ImageReader* reader, const wchar_t* imagePath, const ImageReadSettings& imageReadSettings, int& imageSize)
 	{
-		return Reader.GetThumbnailImageData(imageData);
+		return reader->LoadImageAndGetImageSize(imagePath, imageReadSettings, imageSize);
+	}
+
+	bool GetImageData(ImageReader* reader, ImageData& imageData)
+	{
+		return reader->GetImageData(imageData);
+	}
+
+	bool GetThumbnailImageData(ImageReader* reader, ImageData& imageData)
+	{
+		return reader->GetThumbnailImageData(imageData);
 	}
 }

@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -14,61 +13,6 @@ namespace Kchary.PhotoViewer.Helpers
     /// </summary>
     public static class ImageUtil
     {
-        private static readonly Mutex mutex = new();
-
-        /// <summary>
-        /// 画像処理を行うネイティブメソッドを管理するクラス
-        /// </summary>
-        internal static class NativeMethods
-        {
-            /// <summary>
-            /// 画像を読み込み、画像サイズを取得する
-            /// </summary>
-            /// <param name="imagePath">画像ファイルパス</param>
-            /// <param name="imageReadSettingPtr">画像読み込み設定</param>
-            /// <param name="imageSize">画像サイズ</param>
-            /// <returns>成功: True, 失敗: False</returns>
-            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-            internal static extern bool LoadImageAndGetImageSize([MarshalAs(UnmanagedType.LPWStr), In] string imagePath, [In] IntPtr imageReadSettingPtr, out int imageSize);
-
-            /// <summary>
-            /// 画像データを取得する
-            /// </summary>
-            /// <param name="imageData">画像データ</param>
-            /// <returns>成功: True, 失敗: False</returns>
-            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-            internal static extern bool GetImageData(ref ImageData imageData);
-
-            /// <summary>
-            /// サムネイルデータを取得する
-            /// </summary>
-            /// <param name="imageData">画像データ</param>
-            /// <returns>成功: True, 失敗: False</returns>
-            [DllImport("ImageController.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-            internal static extern bool GetThumbnailImageData(ref ImageData imageData);
-
-            /// <summary>
-            /// 画像データ
-            /// </summary>
-            [StructLayout(LayoutKind.Sequential)]
-            internal struct ImageData
-            {
-                public IntPtr buffer;
-                public uint size;
-                public int stride;
-                public int width;
-                public int height;
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            internal struct ImageReadSettings
-            {
-                public int isRawImage;
-                public int isThumbnailMode;
-                public int resizeLongSideLength;
-            }
-        }
-
         /// <summary>
         /// 画像一覧に表示するサムネイル画像を作成する
         /// </summary>
@@ -127,62 +71,53 @@ namespace Kchary.PhotoViewer.Helpers
         /// <returns>BitmapSource</returns>
         public static BitmapSource DecodePicture(string filePath, int longSideLength, bool isRawImage = false, bool stopLoading = false)
         {
+            ImageData imageData = new();
+            ImageReadLibraryWrapper imageReadLibraryWrapper = new();
+            BitmapSource image = null;
+            var imageReadSettingPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(ImageReadSettings)));
+
             try
             {
-                if (!mutex.WaitOne(1000, false))
+                // 画像を読み込む
+                var isThumbnailMode = true;
+                ImageReadSettings imageReadSettings = new()
                 {
-                    return null;
+                    isRawImage = Convert.ToInt32(isRawImage),
+                    isThumbnailMode = Convert.ToInt32(isThumbnailMode),
+                    resizeLongSideLength = longSideLength,
+                };
+                Marshal.StructureToPtr(imageReadSettings, imageReadSettingPtr, false);
+                imageReadLibraryWrapper.LoadImageAndGetImageSize(filePath, imageReadSettingPtr, out int imageSize);
+
+                // 必要なバッファを準備
+                imageData.buffer = Marshal.AllocCoTaskMem(imageSize);
+
+                // 画像データの取得
+                if (isThumbnailMode)
+                {
+                    imageReadLibraryWrapper.GetThumbnailImageData(ref imageData);
                 }
-                NativeMethods.ImageData imageData = new();
-                var imageReadSettingPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(NativeMethods.ImageReadSettings)));
-                BitmapSource image = null;
-
-                try
+                else
                 {
-                    // 画像を読み込む
-                    var isThumbnailMode = true;
-                    NativeMethods.ImageReadSettings imageReadSettings = new()
-                    {
-                        isRawImage = Convert.ToInt32(isRawImage),
-                        isThumbnailMode = Convert.ToInt32(isThumbnailMode),
-                        resizeLongSideLength = longSideLength,
-                    };
-                    Marshal.StructureToPtr(imageReadSettings, imageReadSettingPtr, false);
-                    NativeMethods.LoadImageAndGetImageSize(filePath, imageReadSettingPtr, out int imageSize);
-
-                    // 必要なバッファを準備
-                    imageData.buffer = Marshal.AllocCoTaskMem(imageSize);
-
-                    // 画像データの取得
-                    if (isThumbnailMode)
-                    {
-                        NativeMethods.GetThumbnailImageData(ref imageData);
-                    }
-                    else
-                    {
-                        NativeMethods.GetImageData(ref imageData);
-                    }
-
-                    image = CreateBitmapSourceFromImageStruct(imageData, stopLoading);
-                }
-                catch (Exception ex)
-                {
-                    App.LogException(ex);
-                    App.ShowErrorMessageBox("Cannot decode picture.", "Picture decode error");
-                    image = null;
-                }
-                finally
-                {
-                    Marshal.FreeCoTaskMem(imageData.buffer);
-                    Marshal.FreeCoTaskMem(imageReadSettingPtr);
+                    imageReadLibraryWrapper.GetImageData(ref imageData);
                 }
 
-                return image;
+                image = CreateBitmapSourceFromImageStruct(imageData, stopLoading);
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+                App.ShowErrorMessageBox("Cannot decode picture.", "Picture decode error");
+                image = null;
             }
             finally
             {
-                mutex.ReleaseMutex();
+                Marshal.FreeCoTaskMem(imageData.buffer);
+                Marshal.FreeCoTaskMem(imageReadSettingPtr);
+                imageReadLibraryWrapper.Dispose();
             }
+
+            return image;
         }
 
         /// <summary>
@@ -226,7 +161,7 @@ namespace Kchary.PhotoViewer.Helpers
         /// <param name="imageData">画像データ情報</param>
         /// <param name="stopLoading">ロード停止フラグ</param>
         /// <returns>BitmapSource</returns>
-        private static BitmapSource CreateBitmapSourceFromImageStruct(NativeMethods.ImageData imageData, bool stopLoading = false)
+        private static BitmapSource CreateBitmapSourceFromImageStruct(ImageData imageData, bool stopLoading = false)
         {
             try
             {
