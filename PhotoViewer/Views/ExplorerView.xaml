@@ -9,9 +9,19 @@
              d:DesignHeight="450" d:DesignWidth="500">
     <Grid>
         <TreeView ItemsSource="{Binding ExplorerItems, Mode=OneWay}" SelectedItemChanged="TreeView_SelectedItemChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <TreeView.Resources>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <!-- データ変更時のBindingエラー対策 -->
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                </Style>
+            </TreeView.Resources>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="FontSize" Value="12" />
+                    <!-- データ変更時のBindingエラー対策 -->
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
                 </Style>
             </TreeView.ItemContainerStyle>
         </TreeView>
