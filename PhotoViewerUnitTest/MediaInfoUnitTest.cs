@@ -1,6 +1,5 @@
 using Kchary.PhotoViewer.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 
 namespace PhotoViewerUnitTest
 {
@@ -13,14 +12,10 @@ namespace PhotoViewerUnitTest
             const string FilePath = @".\..\..\..\..\TestData\Mountain.jpg";
             const string FileName = "Mountain.jpg";
 
-            var mediaInfo = new MediaInfo()
-            {
-                FilePath = FilePath
-            };
-            mediaInfo.FileName = Path.GetFileName(mediaInfo.FilePath);
+            var mediaInfo = new MediaInfo(FilePath);
 
-            // Create thumbnail image test.
-            Assert.IsTrue(mediaInfo.CreateThumbnailImage());
+            // Check thumbnail image.
+            Assert.IsTrue(mediaInfo.ThumbnailImage != null);
 
             // Check filePath and fileName.
             Assert.AreEqual(FilePath, mediaInfo.FilePath);

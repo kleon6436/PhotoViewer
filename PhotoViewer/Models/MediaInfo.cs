@@ -26,7 +26,7 @@ namespace Kchary.PhotoViewer.Models
     /// <summary>
     /// メディア情報クラス
     /// </summary>
-    public sealed record MediaInfo
+    public sealed class MediaInfo
     {
         #region Media Parameters
 
@@ -46,6 +46,22 @@ namespace Kchary.PhotoViewer.Models
         public string FilePath { get; set; }
 
         #endregion Media Parameters
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="filePath">ファイルパス</param>
+        public MediaInfo(string filePath)
+        {
+            FilePath = filePath;
+            FileName = Path.GetFileName(filePath);
+
+            // サムネイルも初期化時に作る
+            if (!CreateThumbnailImage())
+            {
+                throw new FileNotFoundException();
+            }
+        }
 
         /// <summary>
         /// サポート画像フラグ
@@ -98,29 +114,6 @@ namespace Kchary.PhotoViewer.Models
             { ".dng", FileExtensionType.Dng },
             { ".nef", FileExtensionType.Nef }
         };
-
-        /// <summary>
-        /// サムネイル画像を作成する
-        /// </summary>
-        /// <returns>True: 成功、False: 失敗</returns>
-        public bool CreateThumbnailImage()
-        {
-            try
-            {
-                if (!FileUtil.CheckFilePath(FilePath))
-                {
-                    return false;
-                }
-
-                ThumbnailImage = ImageUtil.CreatePictureThumbnailImage(this);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-                return false;
-            }
-        }
 
         /// <summary>
         /// ピクチャビューに表示する画像を作成する
@@ -182,6 +175,29 @@ namespace Kchary.PhotoViewer.Models
             decodeImage.Freeze();
 
             return decodeImage;
+        }
+
+        /// <summary>
+        /// サムネイル画像を作成する
+        /// </summary>
+        /// <returns>True: 成功、False: 失敗</returns>
+        private bool CreateThumbnailImage()
+        {
+            try
+            {
+                if (!FileUtil.CheckFilePath(FilePath))
+                {
+                    return false;
+                }
+
+                ThumbnailImage = ImageUtil.CreatePictureThumbnailImage(this);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+                return false;
+            }
         }
     }
 }

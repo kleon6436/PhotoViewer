@@ -585,19 +585,17 @@ namespace Kchary.PhotoViewer.ViewModels
                         return;
                     }
 
-                    var mediaInfo = new MediaInfo
+                    try
                     {
-                        FilePath = supportFile,
-                        FileName = Path.GetFileName(supportFile)
-                    };
-
-                    if (!mediaInfo.CreateThumbnailImage())
+                        var mediaInfo = new MediaInfo(supportFile);
+                        queue.Add(mediaInfo);
+                        count++;
+                    }
+                    catch
                     {
+                        // 読み込み失敗時は、その画像の読み込みはスキップする
                         continue;
                     }
-
-                    queue.Add(mediaInfo);
-                    count++;
 
                     var duration = Environment.TickCount - tick;
                     if ((count > 100 || duration <= 250) && duration <= 500)
@@ -607,12 +605,6 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        if (sender is BackgroundWorker { CancellationPending: true })
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-
                         MediaInfoList.AddRange(queue);
 
                         // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
@@ -624,12 +616,6 @@ namespace Kchary.PhotoViewer.ViewModels
                         queue.Clear();
                         tick = Environment.TickCount;
                     });
-                }
-
-                if (sender is BackgroundWorker { CancellationPending: true })
-                {
-                    e.Cancel = true;
-                    return;
                 }
 
                 if (queue.Count != 0)

@@ -16,35 +16,5 @@ namespace PhotoViewerUnitTest
             // Check support extensions
             Assert.IsTrue(supportExtentions.SequenceEqual(truthSupportExtensions));
         }
-
-        [TestMethod]
-        public void CheckPictureExtensions()
-        {
-            string[] truthSupportExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng", ".nef" };
-            foreach (var extension in truthSupportExtensions)
-            {
-                var mediaInfo = new MediaInfo
-                {
-                    FilePath = $"test.{extension}"
-                };
-
-                Assert.IsTrue(mediaInfo.IsSupportImage);
-            }
-        }
-
-        [TestMethod]
-        public void CheckRawFileExtension()
-        {
-            string[] truthSupportRawExtensions = { ".dng", ".nef" };
-            foreach (var extension in truthSupportRawExtensions)
-            {
-                var mediaInfo = new MediaInfo
-                {
-                    FilePath = $"test.{extension}"
-                };
-
-                Assert.IsTrue(mediaInfo.IsRawImage);
-            }
-        }
     }
 }
