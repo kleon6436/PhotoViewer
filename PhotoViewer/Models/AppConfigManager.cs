@@ -26,14 +26,14 @@ namespace Kchary.PhotoViewer.Models
         public AppConfigData ConfigData { get; private init; }
 
         /// <summary>
-        /// アプリケーション設定ファイルの絶対パス
-        /// </summary>
-        private static readonly string AppConfigFilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KcharyPhotoViewer\\Setting.conf";
-
-        /// <summary>
         /// アプリケーション設定クラスのシングルトン
         /// </summary>
         private static readonly AppConfigManager SingleInstance = new() { ConfigData = new AppConfigData() };
+
+        /// <summary>
+        /// アプリケーション設定ファイルの絶対パス
+        /// </summary>
+        private readonly string appConfigFilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KcharyPhotoViewer\\Setting.conf";
 
         /// <summary>
         /// アプリケーション設定インスタンスを取得する
@@ -50,7 +50,7 @@ namespace Kchary.PhotoViewer.Models
         {
             try
             {
-                ConfigData.Import(AppConfigFilePath);
+                ConfigData.Import(appConfigFilePath);
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace Kchary.PhotoViewer.Models
         public void Export()
         {
             // 既定ディレクトリが存在しない場合は、ディレクトリも作成
-            var appConfigDirectory = Path.GetDirectoryName(AppConfigFilePath);
+            var appConfigDirectory = Path.GetDirectoryName(appConfigFilePath);
             if (!FileUtil.CheckFolderPath(appConfigDirectory))
             {
                 Directory.CreateDirectory(appConfigDirectory ?? throw new InvalidOperationException());
@@ -73,7 +73,7 @@ namespace Kchary.PhotoViewer.Models
 
             try
             {
-                ConfigData.Export(AppConfigFilePath);
+                ConfigData.Export(appConfigFilePath);
             }
             catch (Exception ex)
             {

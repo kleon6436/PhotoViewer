@@ -12,27 +12,6 @@ namespace Kchary.PhotoViewer.Models
     /// </summary>
     public sealed class AppConfigData
     {
-        /// <summary>
-        /// 前回のフォルダパス
-        /// </summary>
-        public string PreviousFolderPath { get; set; }
-
-        /// <summary>
-        /// 登録アプリリスト
-        /// </summary>
-        /// <remarks>
-        /// 登録アプリの一覧表示に使用される
-        /// </remarks>
-        public List<ExtraAppSetting> LinkageAppList { get; set; } = new();
-
-        /// <summary>
-        /// Windowの設定情報
-        /// </summary>
-        /// <remarks>
-        /// 位置、表示状態などが保持されている
-        /// </remarks>
-        public MainWindow.NativeMethods.Placement PlaceData;
-
         #region XMLに記述する要素名
 
         private const string PreviousFolderElemName = "previous_folder";
@@ -54,6 +33,27 @@ namespace Kchary.PhotoViewer.Models
         private const string PlacementSwElemName = "sw";
 
         #endregion
+
+        /// <summary>
+        /// 前回のフォルダパス
+        /// </summary>
+        public string PreviousFolderPath { get; set; }
+
+        /// <summary>
+        /// 登録アプリリスト
+        /// </summary>
+        /// <remarks>
+        /// 登録アプリの一覧表示に使用される
+        /// </remarks>
+        public List<ExtraAppSetting> LinkageAppList { get; set; } = new();
+
+        /// <summary>
+        /// Windowの設定情報
+        /// </summary>
+        /// <remarks>
+        /// 位置、表示状態などが保持されている
+        /// </remarks>
+        public MainWindow.NativeMethods.Placement PlaceData;
 
         /// <summary>
         /// アプリケーション設定情報をXMLファイルからインポートする

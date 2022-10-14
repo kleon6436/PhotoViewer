@@ -22,7 +22,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// コンテキストメニューの再読み込みイベント
         /// </summary>
-        public event EventHandler ReloadContextMenuEvent;
+        public EventHandler ReloadContextMenuEvent { get; set; }
 
         /// <summary>
         /// 表示する画面

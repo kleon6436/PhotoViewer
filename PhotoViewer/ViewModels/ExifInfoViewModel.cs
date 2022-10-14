@@ -101,49 +101,6 @@ namespace Kchary.PhotoViewer.ViewModels
 
     public sealed class ExifInfoViewModel : BindableBase
     {
-        /// <summary>
-        /// Exif情報データを保持するリスト
-        /// </summary>
-        /// <remarks>
-        /// Exif情報に表示するプロパティ要素数だけ配列を準備する
-        /// </remarks>
-        public static ExifInfo[] ExifDataList { get; } = new ExifInfo[FastEnum.GetNames<PropertyType>().Count];
-
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        public ExifInfoViewModel()
-        {
-            // Exif情報の基礎部分を作っておく。
-            // 各Exif情報の値は、画像読み込み時に設定する
-            CreateExifDefaultList();
-        }
-
-        /// <summary>
-        /// Exif情報を設定する
-        /// </summary>
-        /// <param name="mediaInfo">画像情報</param>
-        /// <param name="stopLoading">ロード停止フラグ</param>
-        public static void SetExif(MediaInfo mediaInfo, bool stopLoading)
-        {
-            SetExifDataFromFile(mediaInfo, stopLoading);
-        }
-
-        /// <summary>
-        /// リストのデータからExif情報を削除
-        /// </summary>
-        /// <remarks>
-        /// リストに含まれるExifプロパティ名は削除しない
-        /// したがって、中身のパラメータだけを空文字にする
-        /// </remarks>
-        public static void ClearExif()
-        {
-            foreach (var exifData in ExifDataList)
-            {
-                exifData.ExifParameterValue = "";
-            }
-        }
-
         #region ExifInfoに表示するパラメータ名
 
         private const string FileNameProperty = "File name";
@@ -166,9 +123,52 @@ namespace Kchary.PhotoViewer.ViewModels
         #endregion
 
         /// <summary>
+        /// Exif情報データを保持するリスト
+        /// </summary>
+        /// <remarks>
+        /// Exif情報に表示するプロパティ要素数だけ配列を準備する
+        /// </remarks>
+        public ExifInfo[] ExifDataList { get; } = new ExifInfo[FastEnum.GetNames<PropertyType>().Count];
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ExifInfoViewModel()
+        {
+            // Exif情報の基礎部分を作っておく。
+            // 各Exif情報の値は、画像読み込み時に設定する
+            CreateExifDefaultList();
+        }
+
+        /// <summary>
+        /// Exif情報を設定する
+        /// </summary>
+        /// <param name="mediaInfo">画像情報</param>
+        /// <param name="stopLoading">ロード停止フラグ</param>
+        public void SetExif(MediaInfo mediaInfo, bool stopLoading)
+        {
+            SetExifDataFromFile(mediaInfo, stopLoading);
+        }
+
+        /// <summary>
+        /// リストのデータからExif情報を削除
+        /// </summary>
+        /// <remarks>
+        /// リストに含まれるExifプロパティ名は削除しない
+        /// したがって、中身のパラメータだけを空文字にする
+        /// </remarks>
+        public void ClearExif()
+        {
+            foreach (var exifData in ExifDataList)
+            {
+                exifData.ExifParameterValue = "";
+            }
+        }
+
+        /// <summary>
         /// Exif情報表示の値なしのリストを作成する
         /// </summary>
-        public static void CreateExifDefaultList()
+        public void CreateExifDefaultList()
         {
             var count = 0;
             foreach (var propertyType in FastEnum.GetValues<PropertyType>())
@@ -183,7 +183,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">画像情報</param>
         /// <param name="stopLoading">ロード停止フラグ</param>
-        public static void SetExifDataFromFile(MediaInfo mediaInfo, bool stopLoading)
+        public void SetExifDataFromFile(MediaInfo mediaInfo, bool stopLoading)
         {
             var filePath = mediaInfo.FilePath;
             var fileExtensionType = mediaInfo.FileExtensionType;

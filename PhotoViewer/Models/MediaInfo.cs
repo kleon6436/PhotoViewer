@@ -103,6 +103,9 @@ namespace Kchary.PhotoViewer.Models
             }
         }
 
+        /// <summary>
+        /// サポートしている拡張子の文字列とEnumのマップ
+        /// </summary>
         private static readonly IReadOnlyDictionary<string, FileExtensionType> SupportExtensionMap = new Dictionary<string, FileExtensionType>()
         {
             { ".jpg", FileExtensionType.Jpeg },
