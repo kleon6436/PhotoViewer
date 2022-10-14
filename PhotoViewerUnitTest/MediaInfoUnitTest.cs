@@ -9,7 +9,7 @@ namespace PhotoViewerUnitTest
         [TestMethod]
         public void CreateThumbnailImage()
         {
-            const string FilePath = @".\..\..\..\..\TestData\Mountain.jpg";
+            const string FilePath = @"..\..\..\..\TestData\Mountain.jpg";
             const string FileName = "Mountain.jpg";
 
             var mediaInfo = new MediaInfo(FilePath);
