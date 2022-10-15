@@ -15,7 +15,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// アイテム選択を変更したときのイベント
         /// </summary>
-        public event EventHandler ChangeSelectItemEvent;
+        public EventHandler ChangeSelectItemEvent { get; set; }
 
         /// <summary>
         /// ツリーに表示するアイテムリスト
@@ -23,19 +23,19 @@ namespace Kchary.PhotoViewer.ViewModels
         public ObservableCollection<ExplorerItem> ExplorerItems { get; } = new();
 
         /// <summary>
+        /// 表示中のフォルダパス
+        /// </summary>
+        public string ShowExplorerPath { get; private set; }
+
+        /// <summary>
         /// ファイルシステム管理のウォッチャー
         /// </summary>
-        public FileSystemWatcher FileWatcher { get; }
+        private readonly FileSystemWatcher fileWatcher;
 
         /// <summary>
         /// 監視しているドライブ情報
         /// </summary>
-        public string PreviousWatchDrive { get; private set; }
-
-        /// <summary>
-        /// 表示中のフォルダパス
-        /// </summary>
-        public string ShowExplorerPath { get; private set; }
+        private string previousWatchDrive;
 
         /// <summary>
         /// 選択中のツリーアイテム
@@ -48,27 +48,27 @@ namespace Kchary.PhotoViewer.ViewModels
         public ExplorerViewModel()
         {
             // 監視設定
-            FileWatcher = new FileSystemWatcher
+            fileWatcher = new FileSystemWatcher
             {
                 Filter = "*",
                 IncludeSubdirectories = true,
                 NotifyFilter = NotifyFilters.DirectoryName
             };
 
-            FileWatcher.Changed += FolderOrFileChanged;
-            FileWatcher.Created += FolderOrFileChanged;
-            FileWatcher.Deleted += FolderOrFileChanged;
-            FileWatcher.Renamed += FolderOrFileChanged;
+            fileWatcher.Changed += FolderOrFileChanged;
+            fileWatcher.Created += FolderOrFileChanged;
+            fileWatcher.Deleted += FolderOrFileChanged;
+            fileWatcher.Renamed += FolderOrFileChanged;
 
             // 初期値設定
-            PreviousWatchDrive = "";
+            previousWatchDrive = "";
             ShowExplorerPath = "";
         }
 
         /// <summary>
         /// Dispose処理
         /// </summary>
-        public void Dispose() => FileWatcher.Dispose();
+        public void Dispose() => fileWatcher.Dispose();
 
         /// <summary>
         /// 選択したアイテム情報
@@ -88,10 +88,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 ShowExplorerPath = selectedItem.ExplorerItemPath;
 
                 var drive = Path.GetPathRoot(ShowExplorerPath);
-                if (PreviousWatchDrive != drive)
+                if (previousWatchDrive != drive)
                 {
                     UpdateWatcher(drive);
-                    PreviousWatchDrive = drive;
+                    previousWatchDrive = drive;
                 }
 
                 ChangeSelectItemEvent?.Invoke(this, EventArgs.Empty);
@@ -215,13 +215,13 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="drive">監視対象のドライブパス</param>
         private void UpdateWatcher(string drive)
         {
-            FileWatcher.EnableRaisingEvents = false;
-            FileWatcher.Path = drive;
+            fileWatcher.EnableRaisingEvents = false;
+            fileWatcher.Path = drive;
 
             // 監視開始
             try
             {
-                FileWatcher.EnableRaisingEvents = true;
+                fileWatcher.EnableRaisingEvents = true;
             }
             catch (Exception ex)
             {

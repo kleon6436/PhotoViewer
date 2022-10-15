@@ -74,8 +74,7 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewer\bin\x64\Debug\net6.0-windows
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewerUnitTest\bin\x64\Debug\net6.0-windows
-copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)ImageControllerDllUnitTest\bin\x64\Debug\net6.0-windows</Command>
+copy "$(OutDirFullPath)*.dll" ""$(SolutionDir)PhotoViewerUnitTest\bin\x64\Debug\net6.0-windows</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

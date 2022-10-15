@@ -162,7 +162,12 @@
                           VirtualizingPanel.IsVirtualizing="True"
                           VirtualizingPanel.VirtualizationMode="Recycling">
                     <ListView.Resources>
-                        <ContextMenu x:Key="ListBoxItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
+                        <!-- データ変更時のBindingエラー対策 -->
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        </Style>
+                        <ContextMenu x:Key="ListViewItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
                             <ContextMenu.ItemContainerStyle>
                                 <Style TargetType="{x:Type MenuItem}">
                                     <Setter Property="Header" Value="{Binding Path=DisplayName, Mode=OneTime}" />
@@ -180,22 +185,23 @@
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}">
+                        <Style TargetType="{x:Type ListViewItem}">
                             <Setter Property="ToolTip" Value="{Binding FileName, Mode=OneTime}" />
                             <Setter Property="ContextMenu" Value="{x:Null}" />
+                            <!-- データ変更時のBindingエラー対策 -->
                             <Setter Property="HorizontalContentAlignment" Value="Center" />
                             <Setter Property="VerticalContentAlignment" Value="Center" />
                             <Setter Property="HorizontalAlignment" Value="Center" />
                             <Setter Property="VerticalAlignment" Value="Center" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=DataContext.IsShowContextMenu.Value, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}" Value="True">
-                                    <Setter Property="ContextMenu" Value="{StaticResource ListBoxItemMenu}" />
+                                <DataTrigger Binding="{Binding Path=DataContext.IsShowContextMenu.Value, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}" Value="True">
+                                    <Setter Property="ContextMenu" Value="{StaticResource ListViewItemMenu}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Style>
-                        <Style TargetType="{x:Type ListBox}">
+                        <Style TargetType="{x:Type ListView}">
                             <Setter Property="ItemTemplate">
                                 <Setter.Value>
                                     <DataTemplate>

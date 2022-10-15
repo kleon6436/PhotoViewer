@@ -15,11 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoViewerUnitTest", "Phot
 		{AE1E20A0-3AE8-46CA-B5B8-491E1C117D03} = {AE1E20A0-3AE8-46CA-B5B8-491E1C117D03}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageControllerDllUnitTest", "ImageControllerDllUnitTest\ImageControllerDllUnitTest.csproj", "{B7B01549-743F-4C73-A3DF-9196B688B470}"
-	ProjectSection(ProjectDependencies) = postProject
-		{171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C} = {171FDEE9-18EA-4E77-A2B8-7F6B17E3A06C}
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F44EF9FB-7F9F-4C01-B7FD-67003C339BDC}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
@@ -43,9 +38,6 @@ Global
 		{4B9FEA8F-B669-4F8C-BF22-B2AAE4ADD064}.Debug|x64.ActiveCfg = Debug|x64
 		{4B9FEA8F-B669-4F8C-BF22-B2AAE4ADD064}.Debug|x64.Build.0 = Debug|x64
 		{4B9FEA8F-B669-4F8C-BF22-B2AAE4ADD064}.Release|x64.ActiveCfg = Release|x64
-		{B7B01549-743F-4C73-A3DF-9196B688B470}.Debug|x64.ActiveCfg = Debug|x64
-		{B7B01549-743F-4C73-A3DF-9196B688B470}.Debug|x64.Build.0 = Debug|x64
-		{B7B01549-743F-4C73-A3DF-9196B688B470}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,4 @@
-﻿using Kchary.PhotoViewer.Helper;
-using Kchary.PhotoViewer.Models;
+﻿using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
 using Prism.Mvvm;
 using Reactive.Bindings;
@@ -69,7 +68,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// リサイズする画像ファイル名
         /// </summary>
-        public string ResizeImageName { get; set; }
+        public MediaInfo ResizeMediaInfo { get; set; }
 
         #endregion UI binding parameter
 
@@ -93,14 +92,9 @@ namespace Kchary.PhotoViewer.ViewModels
         private readonly CompositeDisposable disposable = new();
 
         /// <summary>
-        /// リサイズ対象のファイルパス
-        /// </summary>
-        private string ResizeFilePath { get; set; }
-
-        /// <summary>
         /// 読み込んだ画像のサイズ
         /// </summary>
-        private Size ReadImageSize { get; set; }
+        private Size readImageSize;
 
         /// <summary>
         /// コンストラクタ
@@ -143,15 +137,13 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 編集対象の保存ファイルパスをViewModelに設定する
         /// </summary>
-        /// <param name="filePath">編集対象のファイルパス</param>
-        public void SetEditFileData(string filePath)
+        /// <param name="resizeMediaInfo">リサイズ対象のメディア情報</param>
+        public void SetEditFileData(MediaInfo resizeMediaInfo)
         {
-            ResizeFilePath = filePath;
-            ResizeImageName = Path.GetFileName(filePath);
+            ResizeMediaInfo = resizeMediaInfo;
+            EditImage.Value = ResizeMediaInfo.CreateEditViewImage(out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
 
-            EditImage.Value = ImageController.CreatePictureEditViewThumbnail(ResizeFilePath, out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
-
-            ReadImageSize = rotation is 5 or 6 or 7 or 8
+            readImageSize = rotation is 5 or 6 or 7 or 8
                 ? new Size { Width = defaultPictureHeight, Height = defaultPictureWidth }
                 : new Size { Width = defaultPictureWidth, Height = defaultPictureHeight };
 
@@ -191,13 +183,13 @@ namespace Kchary.PhotoViewer.ViewModels
             var scale = 1.0;
             if (ResizeCategoryItem.Value.Category != ResizeCategory.None)
             {
-                scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Width;
-                if (ReadImageSize.Width < ReadImageSize.Height)
+                scale = ResizeCategoryItem.Value.ResizeLongSideValue / readImageSize.Width;
+                if (readImageSize.Width < readImageSize.Height)
                 {
-                    scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Height;
+                    scale = ResizeCategoryItem.Value.ResizeLongSideValue / readImageSize.Height;
                 }
             }
-            var saveImageSource = ImageController.CreateSavePicture(ResizeFilePath, scale);
+            var saveImageSource = ResizeMediaInfo.CreateSaveImage(scale);
 
             // 選択された保存形式と同じエンコーダーを用意
             BitmapEncoder encoder = SelectedForm.Value.Form switch
@@ -246,15 +238,15 @@ namespace Kchary.PhotoViewer.ViewModels
             if (resizeCategoryItem.Category != ResizeCategory.None)
             {
                 // 倍率計算(この値をもとにリサイズする)
-                scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Width;
-                if (ReadImageSize.Width < ReadImageSize.Height)
+                scale = ResizeCategoryItem.Value.ResizeLongSideValue / readImageSize.Width;
+                if (readImageSize.Width < readImageSize.Height)
                 {
-                    scale = ResizeCategoryItem.Value.ResizeLongSideValue / ReadImageSize.Height;
+                    scale = ResizeCategoryItem.Value.ResizeLongSideValue / readImageSize.Height;
                 }
             }
 
-            var resizeWidth = (int)(ReadImageSize.Width * scale);
-            var resizeHeight = (int)(ReadImageSize.Height * scale);
+            var resizeWidth = (int)(readImageSize.Width * scale);
+            var resizeHeight = (int)(readImageSize.Height * scale);
 
             ResizeSizeWidthText.Value = $"Width: {resizeWidth} [pixel]";
             ResizeSizeHeightText.Value = $"Height: {resizeHeight} [pixel]";
