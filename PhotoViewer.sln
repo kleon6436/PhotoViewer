@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		third_party.txt = third_party.txt
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PhotoViewerInstaller", "PhotoViewerInstaller\PhotoViewerInstaller.vdproj", "{1BFE2631-7DCC-4AEC-8684-69ED15F9A0A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -38,6 +40,8 @@ Global
 		{4B9FEA8F-B669-4F8C-BF22-B2AAE4ADD064}.Debug|x64.ActiveCfg = Debug|x64
 		{4B9FEA8F-B669-4F8C-BF22-B2AAE4ADD064}.Debug|x64.Build.0 = Debug|x64
 		{4B9FEA8F-B669-4F8C-BF22-B2AAE4ADD064}.Release|x64.ActiveCfg = Release|x64
+		{1BFE2631-7DCC-4AEC-8684-69ED15F9A0A8}.Debug|x64.ActiveCfg = Debug
+		{1BFE2631-7DCC-4AEC-8684-69ED15F9A0A8}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
