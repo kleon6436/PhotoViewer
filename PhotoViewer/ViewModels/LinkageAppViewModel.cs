@@ -6,7 +6,6 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 
@@ -50,7 +49,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 登録アプリを変更した場合のイベント
         /// </summary>
-        public event EventHandler ChangeLinkageAppEvent;
+        public EventHandler ChangeLinkageAppEvent { get; set; }
 
         /// <summary>
         /// 登録アプリ数の最大値
@@ -126,7 +125,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             var linkageApp = new ExtraAppSetting
             {
-                AppName = Path.GetFileNameWithoutExtension(LinkAppPath.Value),
+                AppName = FileUtil.GetFileName(LinkAppPath.Value, true),
                 AppPath = LinkAppPath.Value
             };
             if (LinkageAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))

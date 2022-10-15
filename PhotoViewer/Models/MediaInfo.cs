@@ -54,7 +54,7 @@ namespace Kchary.PhotoViewer.Models
         public MediaInfo(string filePath)
         {
             FilePath = filePath;
-            FileName = Path.GetFileName(filePath);
+            FileName = FileUtil.GetFileName(filePath, false);
 
             // サムネイルも初期化時に作る
             if (!CreateThumbnailImage())
@@ -84,7 +84,7 @@ namespace Kchary.PhotoViewer.Models
         /// </summary>
         public string FileExtension
         {
-            get { return Path.GetExtension(FilePath)?.ToLower(); }
+            get { return FileUtil.GetFileExtensions(FilePath); }
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using FastEnumUtility;
+using Kchary.PhotoViewer.Helpers;
 using Kchary.PhotoViewer.Models;
 using MetadataExtractor;
 using MetadataExtractor.Formats.Bmp;
@@ -10,7 +11,6 @@ using MetadataExtractor.Formats.Tiff;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Directory = MetadataExtractor.Directory;
 
@@ -200,7 +200,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 switch (exifInfo.ExifPropertyType)
                 {
                     case PropertyType.FileName:
-                        exifInfo.ExifParameterValue = Path.GetFileName(filePath);
+                        exifInfo.ExifParameterValue = FileUtil.GetFileName(filePath, false);
                         break;
 
                     case PropertyType.Date:

@@ -42,7 +42,7 @@ namespace Kchary.PhotoViewer.Models
             ExplorerItemPath = path;
 
             // エクスプローラーツリーに表示するヘッダー情報を作成
-            Header = isDrive ? CreateExplorerItemHeader(ExplorerItemPath, true) : CreateExplorerItemHeader(Path.GetFileName(ExplorerItemPath), false);
+            Header = isDrive ? CreateExplorerItemHeader(ExplorerItemPath, true) : CreateExplorerItemHeader(FileUtil.GetFileName(ExplorerItemPath, false), false);
 
             // ドライブ内のディレクトリを作成
             // 展開時にツリーを作成することで、メモリ消費を抑える
@@ -102,7 +102,7 @@ namespace Kchary.PhotoViewer.Models
             foreach (var directory in innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer()))
             {
                 // 1文字目の文字を確認
-                var fileNameFirst = Path.GetFileName(directory.FullName)[..1];
+                var fileNameFirst = FileUtil.GetFileName(directory.FullName, false)[..1];
 
                 // Windowsの特殊フォルダ以外を表示する
                 if (fileNameFirst == "$" ||

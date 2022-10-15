@@ -311,7 +311,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             App.CallMouseBlockMethod(() =>
             {
-                var selectPath = (File.GetAttributes(SelectFolderPath.Value) & FileAttributes.Directory) == FileAttributes.Directory
+                var selectPath = FileUtil.IsDirectory(SelectFolderPath.Value)
                     ? SelectFolderPath.Value : Path.GetDirectoryName(SelectFolderPath.Value);
 
                 const string Explorer = "EXPLORER.EXE";
@@ -341,7 +341,7 @@ namespace Kchary.PhotoViewer.ViewModels
             IsEnableImageEditButton.Value = false;
 
             // ディレクトリパスを表示する
-            if ((File.GetAttributes(SelectFolderPath.Value) & FileAttributes.Directory) != FileAttributes.Directory)
+            if (!FileUtil.IsDirectory(SelectFolderPath.Value))
             {
                 SelectFolderPath.Value = Path.GetDirectoryName(SelectFolderPath.Value);
             }
@@ -466,7 +466,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="folderPath">画像フォルダパス</param>
         private void ChangeContents(string folderPath)
         {
-            if (!Directory.Exists(folderPath) || SelectFolderPath.Value == folderPath)
+            if (!FileUtil.CheckFolderPath(folderPath) || SelectFolderPath.Value == folderPath)
             {
                 return;
             }
@@ -559,7 +559,7 @@ namespace Kchary.PhotoViewer.ViewModels
         private void LoadContentsWorker(object sender, CancelEventArgs e)
         {
             var folderPath = SelectFolderPath.Value;
-            if ((File.GetAttributes(folderPath) & FileAttributes.Directory) != FileAttributes.Directory)
+            if (!FileUtil.IsDirectory(folderPath))
             {
                 folderPath = Path.GetDirectoryName(folderPath);
             }
