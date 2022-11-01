@@ -51,6 +51,7 @@ namespace Kchary.PhotoViewer.Helpers
         {
             SiidFolder = 3,
             SiidDrivefixed = 8,
+            SiidImageFiles = 72,
         }
 
         /// <summary>

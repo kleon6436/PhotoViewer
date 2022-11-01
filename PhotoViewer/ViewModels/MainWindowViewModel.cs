@@ -569,6 +569,8 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
+            var folder = new DirectoryInfo(folderPath);
+
             // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
             var queue = new List<MediaInfo>();
             foreach (var supportExtension in AppConfigManager.GetSupportExtentions())
@@ -577,7 +579,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 var count = 0;
 
                 // サポート対象のファイルを順番に読み込む
-                foreach (var supportFile in Directory.EnumerateFiles(folderPath, $"*{supportExtension}").OrderBy(Path.GetFileName))
+                foreach (var supportFile in folder.EnumerateFiles($"*{supportExtension}"))
                 {
                     if (sender is BackgroundWorker { CancellationPending: true })
                     {
@@ -587,8 +589,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     try
                     {
-                        var mediaInfo = new MediaInfo(supportFile);
-                        queue.Add(mediaInfo);
+                        queue.Add(new MediaInfo(supportFile.FullName));
                         count++;
                     }
                     catch
@@ -612,10 +613,10 @@ namespace Kchary.PhotoViewer.ViewModels
                         {
                             SelectedMedia.Value = MediaInfoList.First();
                         }
-
-                        queue.Clear();
-                        tick = Environment.TickCount;
                     });
+
+                    queue.Clear();
+                    tick = Environment.TickCount;
                 }
 
                 if (queue.Count != 0)
