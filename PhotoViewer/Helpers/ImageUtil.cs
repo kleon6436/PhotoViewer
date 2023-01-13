@@ -26,39 +26,30 @@ namespace Kchary.PhotoViewer.Helpers
             {
                 return DecodePicture(mediaInfo.FilePath, LongSideLength, mediaInfo.IsRawImage);
             }
-            else
+
+            using var sourceStream = new FileStream(mediaInfo.FilePath, FileMode.Open, FileAccess.Read);
+            sourceStream.Seek(0, SeekOrigin.Begin);
+
+            var bitmapFrame = BitmapFrame.Create(sourceStream);
+            var metadata = bitmapFrame.Metadata as BitmapMetadata;
+            var thumbnail = bitmapFrame.Thumbnail;
+
+            if (thumbnail == null)
             {
-                using var sourceStream = new FileStream(mediaInfo.FilePath, FileMode.Open, FileAccess.Read);
-
-                sourceStream.Seek(0, SeekOrigin.Begin);
-                var bitmapFrame = BitmapFrame.Create(sourceStream);
-                var metadata = bitmapFrame.Metadata as BitmapMetadata;
-                var thumbnail = bitmapFrame.Thumbnail;
-
-                if (thumbnail != null)
-                {
-                    // リサイズ処理
-                    var scale = LongSideLength / (double)thumbnail.PixelWidth;
-                    if (thumbnail.PixelWidth < thumbnail.PixelHeight)
-                    {
-                        scale = LongSideLength / (double)thumbnail.PixelHeight;
-                    }
-                    thumbnail = new TransformedBitmap(thumbnail, new ScaleTransform(scale, scale));
-
-                    // リサイズ後に回転
-                    thumbnail = RotateImage(metadata, thumbnail);
-
-                    // リサイズ、回転した画像を書き出す
-                    var decodeImage = new WriteableBitmap(thumbnail);
-                    decodeImage.Freeze();
-
-                    return decodeImage;
-                }
-                else
-                {
-                    return DecodePicture(mediaInfo.FilePath, LongSideLength, mediaInfo.IsRawImage);
-                }
+                return DecodePicture(mediaInfo.FilePath, LongSideLength, mediaInfo.IsRawImage);
             }
+
+            // リサイズ処理してから回転
+            var scale = LongSideLength / (double)thumbnail.PixelWidth;
+            if (thumbnail.PixelWidth < thumbnail.PixelHeight)
+            {
+                scale = LongSideLength / (double)thumbnail.PixelHeight;
+            }
+            thumbnail = new TransformedBitmap(thumbnail, new ScaleTransform(scale, scale));
+            thumbnail = RotateImage(metadata, thumbnail);
+
+            thumbnail.Freeze();
+            return thumbnail;
         }
 
         /// <summary>
@@ -79,7 +70,7 @@ namespace Kchary.PhotoViewer.Helpers
             try
             {
                 // 画像を読み込む
-                var isThumbnailMode = true;
+                const bool isThumbnailMode = true;
                 ImageReadSettings imageReadSettings = new()
                 {
                     isRawImage = Convert.ToInt32(isRawImage),
@@ -93,14 +84,7 @@ namespace Kchary.PhotoViewer.Helpers
                 imageData.buffer = Marshal.AllocCoTaskMem(imageSize);
 
                 // 画像データの取得
-                if (isThumbnailMode)
-                {
-                    imageReadLibraryWrapper.GetThumbnailImageData(ref imageData);
-                }
-                else
-                {
-                    imageReadLibraryWrapper.GetImageData(ref imageData);
-                }
+                imageReadLibraryWrapper.GetThumbnailImageData(ref imageData);
 
                 image = CreateBitmapSourceFromImageStruct(imageData, stopLoading);
             }

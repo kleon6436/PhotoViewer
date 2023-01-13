@@ -12,6 +12,7 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Directory = MetadataExtractor.Directory;
 
 namespace Kchary.PhotoViewer.ViewModels
@@ -190,7 +191,7 @@ namespace Kchary.PhotoViewer.ViewModels
             var directories = GetMetadataDirectories(filePath, fileExtensionType).ToArray();
             var subIfdDirectories = directories.OfType<ExifSubIfdDirectory>().ToArray();
 
-            foreach (var exifInfo in ExifDataList)
+            Parallel.ForEach(ExifDataList, exifInfo =>
             {
                 if (stopLoading)
                 {
@@ -288,7 +289,7 @@ namespace Kchary.PhotoViewer.ViewModels
                     default:
                         throw new ArgumentOutOfRangeException(exifInfo.ExifPropertyType.ToString(), nameof(exifInfo.ExifPropertyType));
                 }
-            }
+            });
         }
 
         /// <summary>

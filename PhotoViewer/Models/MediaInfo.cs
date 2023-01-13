@@ -1,8 +1,11 @@
 ﻿using Kchary.PhotoViewer.Helpers;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -26,14 +29,19 @@ namespace Kchary.PhotoViewer.Models
     /// <summary>
     /// メディア情報クラス
     /// </summary>
-    public sealed class MediaInfo
+    public sealed class MediaInfo : BindableBase
     {
         #region Media Parameters
 
+        private BitmapSource thumbnailImage;
         /// <summary>
         /// サムネイル画像
         /// </summary>
-        public BitmapSource ThumbnailImage { get; set; }
+        public BitmapSource ThumbnailImage
+        {
+            get { return thumbnailImage; }
+            set { SetProperty(ref thumbnailImage, value); }
+        }
 
         /// <summary>
         /// ファイル名
@@ -53,14 +61,18 @@ namespace Kchary.PhotoViewer.Models
         /// <param name="filePath">ファイルパス</param>
         public MediaInfo(string filePath)
         {
+            if (!FileUtil.CheckFilePath(filePath))
+            {
+                throw new FileNotFoundException();
+            }
+
             FilePath = filePath;
             FileName = FileUtil.GetFileName(filePath, false);
 
             // サムネイルも初期化時に作る
-            if (!CreateThumbnailImage())
-            {
-                throw new FileNotFoundException();
-            }
+            // 最初は、Windows標準アイコンを用い、画像が読み込めたら上書きする
+            Application.Current.Dispatcher.Invoke(() => ThumbnailImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SiidImageFiles));
+            CreateThumbnailImageAsync();
         }
 
         /// <summary>
@@ -184,22 +196,15 @@ namespace Kchary.PhotoViewer.Models
         /// サムネイル画像を作成する
         /// </summary>
         /// <returns>True: 成功、False: 失敗</returns>
-        private bool CreateThumbnailImage()
+        private async void CreateThumbnailImageAsync()
         {
             try
             {
-                if (!FileUtil.CheckFilePath(FilePath))
-                {
-                    return false;
-                }
-
-                ThumbnailImage = ImageUtil.CreatePictureThumbnailImage(this);
-                return true;
+                ThumbnailImage = await Task.Run(() => ImageUtil.CreatePictureThumbnailImage(this));
             }
             catch (Exception ex)
             {
                 App.LogException(ex);
-                return false;
             }
         }
     }
