@@ -573,7 +573,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
             var queue = new List<MediaInfo>();
-            foreach (var supportExtension in AppConfigManager.GetSupportExtentions())
+            foreach (var supportExtension in Const.SupportPictureExtensions)
             {
                 var tick = Environment.TickCount;
                 var count = 0;

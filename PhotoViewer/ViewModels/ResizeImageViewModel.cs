@@ -118,10 +118,10 @@ namespace Kchary.PhotoViewer.ViewModels
 
             ImageFormItems = new ImageForm[]
             {
-                new() { Name = "Jpeg", Form = ImageForms.Jpeg },
-                new() { Name = "Png" , Form = ImageForms.Png },
-                new() { Name = "Bmp" , Form = ImageForms.Bmp },
-                new() { Name = "Tiff", Form = ImageForms.Tiff }
+                new() { Name = "Jpeg", Form = FileExtensionType.Jpeg },
+                new() { Name = "Png" , Form = FileExtensionType.Png },
+                new() { Name = "Bmp" , Form = FileExtensionType.Bmp },
+                new() { Name = "Tiff", Form = FileExtensionType.Tiff }
             };
 
             ResizeCategoryItem.Subscribe(OnResizeCategoryItemChanged).AddTo(disposable);
@@ -163,10 +163,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 Title = "Save as...",
                 Filter = SelectedForm.Value.Form switch
                 {
-                    ImageForms.Bmp => "Bmp file(*.bmp)|*.bmp",
-                    ImageForms.Jpeg => "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg",
-                    ImageForms.Png => "Png file(*.png)|*.png",
-                    ImageForms.Tiff => "Tiff file(*.tif)|*.tif",
+                    FileExtensionType.Bmp => "Bmp file(*.bmp)|*.bmp",
+                    FileExtensionType.Jpeg => "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg",
+                    FileExtensionType.Png => "Png file(*.png)|*.png",
+                    FileExtensionType.Tiff => "Tiff file(*.tif)|*.tif",
                     _ => throw new ArgumentOutOfRangeException(),
                 }
             };
@@ -194,10 +194,10 @@ namespace Kchary.PhotoViewer.ViewModels
             // 選択された保存形式と同じエンコーダーを用意
             BitmapEncoder encoder = SelectedForm.Value.Form switch
             {
-                ImageForms.Bmp => new BmpBitmapEncoder(),
-                ImageForms.Jpeg => new JpegBitmapEncoder { QualityLevel = SelectedQuality.Value.QualityValue },
-                ImageForms.Png => new PngBitmapEncoder(),
-                ImageForms.Tiff => new TiffBitmapEncoder(),
+                FileExtensionType.Bmp => new BmpBitmapEncoder(),
+                FileExtensionType.Jpeg => new JpegBitmapEncoder { QualityLevel = SelectedQuality.Value.QualityValue },
+                FileExtensionType.Png => new PngBitmapEncoder(),
+                FileExtensionType.Tiff => new TiffBitmapEncoder(),
                 _ => throw new ArgumentOutOfRangeException()
             };
 

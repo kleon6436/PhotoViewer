@@ -12,28 +12,6 @@ namespace Kchary.PhotoViewer.Models
     /// </summary>
     public sealed class AppConfigData
     {
-        #region XMLに記述する要素名
-
-        private const string PreviousFolderElemName = "previous_folder";
-        private const string PreviousPathElemName = "previous_path";
-        private const string LinkAppElemName = "linkage_app";
-        private const string LinkAppDataName = "linkage_app_data";
-        private const string LinkAppNameElemName = "name";
-        private const string LinkAppPathElemName = "path";
-        private const string PlacementElemName = "window_placement";
-        private const string PlacementTopElemName = "top";
-        private const string PlacementLeftElemName = "left";
-        private const string PlacementRightElemName = "right";
-        private const string PlacementBottomElemName = "buttom";
-        private const string PlacementMaxPosXElemName = "maxPosX";
-        private const string PlacementMaxPosYElemName = "maxPosY";
-        private const string PlacementMinPosXElemName = "minPosX";
-        private const string PlacementMinPosYElemName = "minPosY";
-        private const string PlacementFlagElemName = "windowFlag";
-        private const string PlacementSwElemName = "sw";
-
-        #endregion
-
         /// <summary>
         /// 前回のフォルダパス
         /// </summary>
@@ -93,8 +71,8 @@ namespace Kchary.PhotoViewer.Models
         /// </returns>
         private XElement CreatePreviousPathXml()
         {
-            var dataElement = new XElement(PreviousFolderElemName);
-            var previousPath = new XElement(PreviousPathElemName, PreviousFolderPath == null ? new XText("") : new XText(PreviousFolderPath));
+            var dataElement = new XElement(Const.PreviousFolderElemName);
+            var previousPath = new XElement(Const.PreviousPathElemName, PreviousFolderPath == null ? new XText("") : new XText(PreviousFolderPath));
 
             dataElement.Add(previousPath);
             return dataElement;
@@ -106,8 +84,8 @@ namespace Kchary.PhotoViewer.Models
         /// <param name="doc">XMLデータ</param>
         private void ParsePreviousPathXml(XDocument doc)
         {
-            var dataElement = doc.Root?.Element(PreviousFolderElemName);
-            var previousPath = dataElement?.Element(PreviousPathElemName);
+            var dataElement = doc.Root?.Element(Const.PreviousFolderElemName);
+            var previousPath = dataElement?.Element(Const.PreviousPathElemName);
 
             if (previousPath == null)
             {
@@ -124,17 +102,16 @@ namespace Kchary.PhotoViewer.Models
         /// </returns>
         private XElement CreateLinkageAppXml()
         {
-            var linkageElement = new XElement(LinkAppElemName);
+            var linkageElement = new XElement(Const.LinkAppElemName);
 
             foreach (var linkageApp in LinkageAppList)
             {
-                var dataElement = new XElement(LinkAppDataName);
-                var appNameElement = new XElement(LinkAppNameElemName, linkageApp == null ? new XText("") : new XText(linkageApp.AppName));
-                var appPathElement = new XElement(LinkAppPathElemName, linkageApp == null ? new XText("") : new XText(linkageApp.AppPath));
+                var dataElement = new XElement(Const.LinkAppDataName);
+                var appNameElement = new XElement(Const.LinkAppNameElemName, linkageApp == null ? new XText("") : new XText(linkageApp.AppName));
+                var appPathElement = new XElement(Const.LinkAppPathElemName, linkageApp == null ? new XText("") : new XText(linkageApp.AppPath));
 
                 dataElement.Add(appNameElement);
                 dataElement.Add(appPathElement);
-
                 linkageElement.Add(dataElement);
             }
 
@@ -147,8 +124,8 @@ namespace Kchary.PhotoViewer.Models
         /// <param name="doc">XMLデータ</param>
         private void ParseLinkageAppXml(XDocument doc)
         {
-            var linkageElement = doc.Root?.Element(LinkAppElemName);
-            var dataElements = linkageElement?.Elements(LinkAppDataName);
+            var linkageElement = doc.Root?.Element(Const.LinkAppElemName);
+            var dataElements = linkageElement?.Elements(Const.LinkAppDataName);
 
             if (dataElements == null)
             {
@@ -157,8 +134,8 @@ namespace Kchary.PhotoViewer.Models
 
             foreach (var dataElement in dataElements)
             {
-                var appNameElement = dataElement.Element(LinkAppNameElemName);
-                var appPathElement = dataElement.Element(LinkAppPathElemName);
+                var appNameElement = dataElement.Element(Const.LinkAppNameElemName);
+                var appPathElement = dataElement.Element(Const.LinkAppPathElemName);
 
                 if (appPathElement != null && appNameElement != null &&
                     (string.IsNullOrEmpty(appNameElement.Value) || string.IsNullOrEmpty(appPathElement.Value)))
@@ -179,17 +156,17 @@ namespace Kchary.PhotoViewer.Models
         /// </returns>
         private XElement CreateWindowPlacementXml()
         {
-            var dataElement = new XElement(PlacementElemName);
-            var windowPlaceTopElement = new XElement(PlacementTopElemName, new XText(PlaceData.normalPosition.Top.ToString()));
-            var windowPlaceLeftElement = new XElement(PlacementLeftElemName, new XText(PlaceData.normalPosition.Left.ToString()));
-            var windowPlaceRightElement = new XElement(PlacementRightElemName, new XText(PlaceData.normalPosition.Right.ToString()));
-            var windowPlaceButtonElement = new XElement(PlacementBottomElemName, new XText(PlaceData.normalPosition.Bottom.ToString()));
-            var windowMaxPositionX = new XElement(PlacementMaxPosXElemName, new XText(PlaceData.maxPosition.X.ToString()));
-            var windowMaxPositionY = new XElement(PlacementMaxPosYElemName, new XText(PlaceData.maxPosition.Y.ToString()));
-            var windowMinPositionX = new XElement(PlacementMinPosXElemName, new XText(PlaceData.minPosition.X.ToString()));
-            var windowMinPositionY = new XElement(PlacementMinPosYElemName, new XText(PlaceData.minPosition.Y.ToString()));
-            var windowFlag = new XElement(PlacementFlagElemName, new XText(PlaceData.flags.ToString()));
-            var windowSwElement = new XElement(PlacementSwElemName, new XText(PlaceData.showCmd.ToString()));
+            var dataElement = new XElement(Const.PlacementElemName);
+            var windowPlaceTopElement = new XElement(Const.PlacementTopElemName, new XText(PlaceData.normalPosition.Top.ToString()));
+            var windowPlaceLeftElement = new XElement(Const.PlacementLeftElemName, new XText(PlaceData.normalPosition.Left.ToString()));
+            var windowPlaceRightElement = new XElement(Const.PlacementRightElemName, new XText(PlaceData.normalPosition.Right.ToString()));
+            var windowPlaceButtonElement = new XElement(Const.PlacementBottomElemName, new XText(PlaceData.normalPosition.Bottom.ToString()));
+            var windowMaxPositionX = new XElement(Const.PlacementMaxPosXElemName, new XText(PlaceData.maxPosition.X.ToString()));
+            var windowMaxPositionY = new XElement(Const.PlacementMaxPosYElemName, new XText(PlaceData.maxPosition.Y.ToString()));
+            var windowMinPositionX = new XElement(Const.PlacementMinPosXElemName, new XText(PlaceData.minPosition.X.ToString()));
+            var windowMinPositionY = new XElement(Const.PlacementMinPosYElemName, new XText(PlaceData.minPosition.Y.ToString()));
+            var windowFlag = new XElement(Const.PlacementFlagElemName, new XText(PlaceData.flags.ToString()));
+            var windowSwElement = new XElement(Const.PlacementSwElemName, new XText(PlaceData.showCmd.ToString()));
 
             dataElement.Add(windowPlaceTopElement);
             dataElement.Add(windowPlaceLeftElement);
@@ -211,17 +188,17 @@ namespace Kchary.PhotoViewer.Models
         /// <param name="doc">XMLデータ</param>
         private void ParseWindowPlacementXml(XDocument doc)
         {
-            var dataElement = doc.Root?.Element(PlacementElemName);
-            var windowPlaceTopElement = dataElement?.Element(PlacementTopElemName);
-            var windowPlaceLeftElement = dataElement?.Element(PlacementLeftElemName);
-            var windowPlaceRightElement = dataElement?.Element(PlacementRightElemName);
-            var windowPlaceBottomElement = dataElement?.Element(PlacementBottomElemName);
-            var windowMaxPositionX = dataElement?.Element(PlacementMaxPosXElemName);
-            var windowMaxPositionY = dataElement?.Element(PlacementMaxPosYElemName);
-            var windowMinPositionX = dataElement?.Element(PlacementMinPosXElemName);
-            var windowMinPositionY = dataElement?.Element(PlacementMinPosYElemName);
-            var windowFlag = dataElement?.Element(PlacementFlagElemName);
-            var windowSwElement = dataElement?.Element(PlacementSwElemName);
+            var dataElement = doc.Root?.Element(Const.PlacementElemName);
+            var windowPlaceTopElement = dataElement?.Element(Const.PlacementTopElemName);
+            var windowPlaceLeftElement = dataElement?.Element(Const.PlacementLeftElemName);
+            var windowPlaceRightElement = dataElement?.Element(Const.PlacementRightElemName);
+            var windowPlaceBottomElement = dataElement?.Element(Const.PlacementBottomElemName);
+            var windowMaxPositionX = dataElement?.Element(Const.PlacementMaxPosXElemName);
+            var windowMaxPositionY = dataElement?.Element(Const.PlacementMaxPosYElemName);
+            var windowMinPositionX = dataElement?.Element(Const.PlacementMinPosXElemName);
+            var windowMinPositionY = dataElement?.Element(Const.PlacementMinPosYElemName);
+            var windowFlag = dataElement?.Element(Const.PlacementFlagElemName);
+            var windowSwElement = dataElement?.Element(Const.PlacementSwElemName);
 
             PlaceData.normalPosition.Top = Convert.ToInt32(windowPlaceTopElement?.Value);
             PlaceData.normalPosition.Left = Convert.ToInt32(windowPlaceLeftElement?.Value);
