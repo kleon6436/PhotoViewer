@@ -70,7 +70,7 @@ namespace Kchary.PhotoViewer.ViewModels
             RegisterLinkAppCommand = new ReactiveCommand().WithSubscribe(RegisterLinkAppButtonClicked).AddTo(disposables);
             DeleteLinkAppCommand = new ReactiveCommand<ExtraAppSetting>().WithSubscribe(DeleteLinkAppButtonClicked).AddTo(disposables);
 
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
+            var linkageAppList = AppConfig.GetInstance().LinkageAppList;
             if (linkageAppList?.Any() != true)
             {
                 return;
@@ -135,7 +135,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             LinkageAppList.Add(linkageApp);
 
-            var applicationManager = AppConfigManager.GetInstance();
+            var applicationManager = AppConfig.GetInstance();
             applicationManager.AddLinkageApp(linkageApp);
             applicationManager.Export();
 
@@ -159,7 +159,7 @@ namespace Kchary.PhotoViewer.ViewModels
             }
             LinkageAppList.Remove(deleteAppSetting);
 
-            var applicationManager = AppConfigManager.GetInstance();
+            var applicationManager = AppConfig.GetInstance();
             applicationManager.RemoveLinkageApp(deleteAppSetting);
             applicationManager.Export();
 

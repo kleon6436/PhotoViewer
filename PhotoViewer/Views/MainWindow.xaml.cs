@@ -67,7 +67,7 @@ namespace Kchary.PhotoViewer.Views
         /// <summary>
         /// Application configuration manager
         /// </summary>
-        private static readonly AppConfigManager AppConfigManager = AppConfigManager.GetInstance();
+        private static readonly AppConfig AppConfigManager = AppConfig.GetInstance();
 
         public MainWindow()
         {
@@ -111,7 +111,7 @@ namespace Kchary.PhotoViewer.Views
             var hwnd = new WindowInteropHelper(this).Handle;
             NativeMethods.GetWindowPlacement(hwnd, out var placement);
 
-            AppConfigManager.ConfigData.PlaceData = placement;
+            AppConfigManager.PlaceData = placement;
             AppConfigManager.Export();
 
             vm?.Dispose();
@@ -140,7 +140,7 @@ namespace Kchary.PhotoViewer.Views
         {
             base.OnSourceInitialized(e);
 
-            var windowPlacement = AppConfigManager.ConfigData.PlaceData;
+            var windowPlacement = AppConfigManager.PlaceData;
             windowPlacement.showCmd = (windowPlacement.showCmd == NativeMethods.Sw.ShowMinimized) ? NativeMethods.Sw.ShowNormal : windowPlacement.showCmd;
 
             var hwnd = new WindowInteropHelper(this).Handle;

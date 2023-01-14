@@ -168,13 +168,13 @@ namespace Kchary.PhotoViewer.ViewModels
             loadContentsWorker.RunWorkerCompleted += RunWorkerCompleted;
 
             // 設定ファイルの読み込み
-            AppConfigManager.GetInstance().Import();
+            AppConfig.GetInstance().Import();
 
             // 画像フォルダの読み込み
             var picturePath = defaultPicturePath;
-            if (FileUtil.CheckFolderPath(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
+            if (FileUtil.CheckFolderPath(AppConfig.GetInstance().PreviousFolderPath))
             {
-                picturePath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
+                picturePath = AppConfig.GetInstance().PreviousFolderPath;
             }
             ChangeContents(picturePath);
 
@@ -276,7 +276,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void SetContextMenuFromConfigData()
         {
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
+            var linkageAppList = AppConfig.GetInstance().LinkageAppList;
             if (linkageAppList?.Any() != true)
             {
                 return;
@@ -394,7 +394,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="appName">アプリ名</param>
         private void ContextMenuClicked(string appName)
         {
-            var linkageAppList = AppConfigManager.GetInstance().ConfigData.LinkageAppList;
+            var linkageAppList = AppConfig.GetInstance().LinkageAppList;
             if (linkageAppList.All(x => x.AppName != appName))
             {
                 return;
@@ -452,9 +452,9 @@ namespace Kchary.PhotoViewer.ViewModels
         private void UpdateExplorerTree()
         {
             var previousFolderPath = defaultPicturePath;
-            if (FileUtil.CheckFolderPath(AppConfigManager.GetInstance().ConfigData.PreviousFolderPath))
+            if (FileUtil.CheckFolderPath(AppConfig.GetInstance().PreviousFolderPath))
             {
-                previousFolderPath = AppConfigManager.GetInstance().ConfigData.PreviousFolderPath;
+                previousFolderPath = AppConfig.GetInstance().PreviousFolderPath;
             }
             ExplorerViewModel.UpdateDriveTreeItem();
             ExplorerViewModel.ExpandPreviousPath(previousFolderPath);
@@ -474,7 +474,7 @@ namespace Kchary.PhotoViewer.ViewModels
             SelectFolderPath.Value = folderPath;
             UpdateContents();
 
-            AppConfigManager.GetInstance().ConfigData.PreviousFolderPath = SelectFolderPath.Value;
+            AppConfig.GetInstance().PreviousFolderPath = SelectFolderPath.Value;
         }
 
         /// <summary>

@@ -1,17 +1,24 @@
 ﻿using FastEnumUtility;
+using Kchary.PhotoViewer.Helpers;
 using Kchary.PhotoViewer.Views;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 
 namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
-    /// アプリケーションデータクラス
+    /// アプリケーション設定情報クラス
     /// </summary>
-    public sealed class AppConfigData
+    public sealed class AppConfig
     {
+        /// <summary>
+        /// アプリケーション設定クラスのシングルトン
+        /// </summary>
+        private static readonly AppConfig SingleInstance = new();
+
         /// <summary>
         /// 前回のフォルダパス
         /// </summary>
@@ -23,7 +30,7 @@ namespace Kchary.PhotoViewer.Models
         /// <remarks>
         /// 登録アプリの一覧表示に使用される
         /// </remarks>
-        public List<ExtraAppSetting> LinkageAppList { get; set; } = new();
+        public List<ExtraAppSetting> LinkageAppList { get;  } = new();
 
         /// <summary>
         /// Windowの設定情報
@@ -34,33 +41,89 @@ namespace Kchary.PhotoViewer.Models
         public MainWindow.NativeMethods.Placement PlaceData;
 
         /// <summary>
+        /// アプリケーション設定インスタンスを取得する
+        /// </summary>
+        public static AppConfig GetInstance()
+        {
+            return SingleInstance;
+        }
+
+        /// <summary>
         /// アプリケーション設定情報をXMLファイルからインポートする
         /// </summary>
-        /// <param name="filePath">XMLファイルパス</param>
-        public void Import(string filePath)
+        public void Import()
         {
-            var doc = XDocument.Load(filePath);
-
-            ParsePreviousPathXml(doc);
-            ParseLinkageAppXml(doc);
-            ParseWindowPlacementXml(doc);
+            try
+            {
+                var doc = XDocument.Load(Const.AppConfigFilePath);
+                ParsePreviousPathXml(doc);
+                ParseLinkageAppXml(doc);
+                ParseWindowPlacementXml(doc);
+            }
+            catch (Exception ex)
+            {
+                // 設定値読み込み時の例外はログに出力するのみ
+                App.LogException(ex);
+            }
         }
 
         /// <summary>
         /// アプリケーション設定情報を既定XMLファイルに出力する
         /// </summary>
-        /// <param name="filePath">XMLファイルパス</param>
-        public void Export(string filePath)
+        public void Export()
         {
-            var doc = new XDocument(new XDeclaration("1.0", "utf-8", null));
-            var data = new XElement("data");
+            // 既定ディレクトリが存在しない場合は、ディレクトリも作成
+            var appConfigDirectory = Path.GetDirectoryName(Const.AppConfigFilePath);
+            if (!FileUtil.CheckFolderPath(appConfigDirectory))
+            {
+                Directory.CreateDirectory(appConfigDirectory ?? throw new InvalidOperationException());
+            }
 
-            data.Add(CreatePreviousPathXml());
-            data.Add(CreateLinkageAppXml());
-            data.Add(CreateWindowPlacementXml());
-            doc.Add(data);
+            try
+            {
+                var doc = new XDocument(new XDeclaration("1.0", "utf-8", null));
+                var data = new XElement("data");
 
-            doc.Save(filePath);
+                data.Add(CreatePreviousPathXml());
+                data.Add(CreateLinkageAppXml());
+                data.Add(CreateWindowPlacementXml());
+                doc.Add(data);
+
+                doc.Save(Const.AppConfigFilePath);
+            }
+            catch (Exception ex)
+            {
+                // 設定値書き込み時の例外はログに出力するのみ
+                App.LogException(ex);
+            }
+        }
+
+        /// <summary>
+        /// 連携アプリをリストに追加する
+        /// </summary>
+        /// <param name="linkageApp">登録する連携アプリ</param>
+        public void AddLinkageApp(ExtraAppSetting linkageApp)
+        {
+            LinkageAppList.Add(linkageApp);
+        }
+
+        /// <summary>
+        /// 連携アプリをリストから削除する
+        /// </summary>
+        /// <param name="linkageApp">削除する連携アプリ</param>
+        public void RemoveLinkageApp(ExtraAppSetting linkageApp)
+        {
+            LinkageAppList.Remove(linkageApp);
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <remarks>
+        /// コンストラクタによるインスタンス化を抑制
+        /// </remarks>
+        private AppConfig()
+        {
         }
 
         /// <summary>
