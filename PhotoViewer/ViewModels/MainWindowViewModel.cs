@@ -276,14 +276,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void SetContextMenuFromConfigData()
         {
-            var linkageAppList = AppConfig.GetInstance().LinkageAppList;
+            var linkageAppList = AppConfig.GetInstance().GetAvailableLinkageApps();
             if (linkageAppList?.Any() != true)
             {
                 return;
             }
 
-            // リンク先がないものはすべて削除
-            linkageAppList.RemoveAll(x => !FileUtil.CheckFilePath(x.AppPath));
             foreach (var linkageApp in linkageAppList)
             {
                 LoadContextMenu(linkageApp);
@@ -394,7 +392,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="appName">アプリ名</param>
         private void ContextMenuClicked(string appName)
         {
-            var linkageAppList = AppConfig.GetInstance().LinkageAppList;
+            var linkageAppList = AppConfig.GetInstance().GetAvailableLinkageApps();
             if (linkageAppList.All(x => x.AppName != appName))
             {
                 return;
@@ -402,7 +400,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             App.CallMouseBlockMethod(() =>
             {
-                var appPath = linkageAppList.Find(x => x.AppName == appName)?.AppPath;
+                var appPath = Array.Find(linkageAppList, x => x.AppName == appName)?.AppPath;
                 if (!string.IsNullOrEmpty(appPath))
                 {
                     Process.Start(appPath, SelectedMedia.Value.FilePath);

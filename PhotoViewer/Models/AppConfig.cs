@@ -20,17 +20,17 @@ namespace Kchary.PhotoViewer.Models
         private static readonly AppConfig SingleInstance = new();
 
         /// <summary>
-        /// 前回のフォルダパス
-        /// </summary>
-        public string PreviousFolderPath { get; set; }
-
-        /// <summary>
         /// 登録アプリリスト
         /// </summary>
         /// <remarks>
         /// 登録アプリの一覧表示に使用される
         /// </remarks>
-        public List<ExtraAppSetting> LinkageAppList { get;  } = new();
+        private readonly List<ExtraAppSetting> LinkageAppList = new();
+
+        /// <summary>
+        /// 前回のフォルダパス
+        /// </summary>
+        public string PreviousFolderPath { get; set; }
 
         /// <summary>
         /// Windowの設定情報
@@ -114,6 +114,17 @@ namespace Kchary.PhotoViewer.Models
         public void RemoveLinkageApp(ExtraAppSetting linkageApp)
         {
             LinkageAppList.Remove(linkageApp);
+        }
+
+        /// <summary>
+        /// 有効な連携アプリ一覧を取得する
+        /// </summary>
+        /// <returns>連携アプリ一覧</returns>
+        public ExtraAppSetting[] GetAvailableLinkageApps()
+        {
+            // リンク先がないものはすべて削除して、 有効な連携アプリ一覧を作成
+            LinkageAppList.RemoveAll(x => !FileUtil.CheckFilePath(x.AppPath));
+            return LinkageAppList.ToArray();
         }
 
         /// <summary>

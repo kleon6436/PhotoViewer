@@ -38,11 +38,6 @@ namespace Kchary.PhotoViewer.ViewModels
         private string previousWatchDrive;
 
         /// <summary>
-        /// 選択中のツリーアイテム
-        /// </summary>
-        private ExplorerItem selectedItem;
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         public ExplorerViewModel()
@@ -69,6 +64,11 @@ namespace Kchary.PhotoViewer.ViewModels
         /// Dispose処理
         /// </summary>
         public void Dispose() => fileWatcher.Dispose();
+
+        /// <summary>
+        /// 選択中のツリーアイテム
+        /// </summary>
+        private ExplorerItem selectedItem;
 
         /// <summary>
         /// 選択したアイテム情報

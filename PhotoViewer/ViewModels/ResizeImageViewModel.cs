@@ -125,7 +125,6 @@ namespace Kchary.PhotoViewer.ViewModels
             };
 
             ResizeCategoryItem.Subscribe(OnResizeCategoryItemChanged).AddTo(disposable);
-
             SaveButtonCommand = new ReactiveCommand().WithSubscribe(SaveButtonClicked).AddTo(disposable);
         }
 
@@ -234,7 +233,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            double scale = 1;
+            var scale = 1.0;
             if (resizeCategoryItem.Category != ResizeCategory.None)
             {
                 // 倍率計算(この値をもとにリサイズする)
