@@ -45,9 +45,9 @@ namespace Kchary.PhotoViewer.ViewModels
                 switch (selectPageButtonValue.Value)
                 {
                     case SelectPage.LinkageAppPage:
-                        var vm = new LinkageAppViewModel();
+                        var vm = new RegisterAppViewModel();
                         vm.ChangeLinkageAppEvent += ChangeLinkageApp;
-                        DisplayPage.Value = new LinkageAppView
+                        DisplayPage.Value = new RegisterAppView
                         {
                             DataContext = vm
                         };
@@ -87,7 +87,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="e">引数情報</param>
         private void ChangeLinkageApp(object sender, EventArgs e)
         {
-            if (sender is not LinkageAppViewModel)
+            if (sender is not RegisterAppViewModel)
             {
                 return;
             }

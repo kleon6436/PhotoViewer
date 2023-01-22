@@ -146,7 +146,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">画像情報</param>
         /// <param name="stopLoading">ロード停止フラグ</param>
-        public void SetExif(MediaInfo mediaInfo, bool stopLoading)
+        public void SetExif(PhotoInfo mediaInfo, bool stopLoading)
         {
             SetExifDataFromFile(mediaInfo, stopLoading);
         }
@@ -184,7 +184,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">画像情報</param>
         /// <param name="stopLoading">ロード停止フラグ</param>
-        public void SetExifDataFromFile(MediaInfo mediaInfo, bool stopLoading)
+        public void SetExifDataFromFile(PhotoInfo mediaInfo, bool stopLoading)
         {
             var filePath = mediaInfo.FilePath;
             var fileExtensionType = mediaInfo.FileExtensionType;

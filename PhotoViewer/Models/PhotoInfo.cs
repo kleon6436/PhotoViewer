@@ -11,9 +11,9 @@ using System.Windows.Media.Imaging;
 namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
-    /// メディア情報クラス
+    /// 写真情報クラス
     /// </summary>
-    public sealed class MediaInfo : BindableBase
+    public sealed class PhotoInfo : BindableBase
     {
         #region Media Parameters
 
@@ -43,7 +43,7 @@ namespace Kchary.PhotoViewer.Models
         /// コンストラクタ
         /// </summary>
         /// <param name="filePath">ファイルパス</param>
-        public MediaInfo(string filePath)
+        public PhotoInfo(string filePath)
         {
             if (!FileUtil.CheckFilePath(filePath))
             {

@@ -68,7 +68,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// リサイズする画像ファイル名
         /// </summary>
-        public MediaInfo ResizeMediaInfo { get; set; }
+        public PhotoInfo ResizeMediaInfo { get; set; }
 
         #endregion UI binding parameter
 
@@ -137,7 +137,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 編集対象の保存ファイルパスをViewModelに設定する
         /// </summary>
         /// <param name="resizeMediaInfo">リサイズ対象のメディア情報</param>
-        public void SetEditFileData(MediaInfo resizeMediaInfo)
+        public void SetEditFileData(PhotoInfo resizeMediaInfo)
         {
             ResizeMediaInfo = resizeMediaInfo;
             EditImage.Value = ResizeMediaInfo.CreateEditViewImage(out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);

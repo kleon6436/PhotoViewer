@@ -63,7 +63,7 @@
             </Grid.ColumnDefinitions>
             <Rectangle Grid.Column="0" Fill="#D4D4D4" />
             <StackPanel Grid.Column="0" Orientation="Vertical">
-                <RadioButton Content="Linked app settings" Style="{StaticResource RadioButtonStyle}" FontSize="14"
+                <RadioButton Content="Register link apps" Style="{StaticResource RadioButtonStyle}" FontSize="14"
                              IsChecked="{Binding SelectPageButtonValue.Value, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterParameter=LinkageAppPage}" />
                 <RadioButton Content="Information" Style="{StaticResource RadioButtonStyle}" FontSize="14"
                              IsChecked="{Binding SelectPageButtonValue.Value, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterParameter=InformationPage}" />

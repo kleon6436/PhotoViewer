@@ -41,7 +41,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// メディアリスト(画像一覧で表示される)
         /// </summary>
-        public ObservableCollection<MediaInfo> MediaInfoList { get; } = new();
+        public ObservableCollection<PhotoInfo> MediaInfoList { get; } = new();
 
         /// <summary>
         /// コンテキストメニューに表示するリスト
@@ -56,7 +56,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 選択した画像ファイルデータ
         /// </summary>
-        public ReactivePropertySlim<MediaInfo> SelectedMedia { get; } = new();
+        public ReactivePropertySlim<PhotoInfo> SelectedMedia { get; } = new();
 
         /// <summary>
         /// 表示する画像データ
@@ -200,7 +200,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 非同期で画像を読み込む
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
-        public void LoadMedia(MediaInfo mediaInfo)
+        public void LoadMedia(PhotoInfo mediaInfo)
         {
             if (mediaInfo == null)
             {
@@ -570,7 +570,7 @@ namespace Kchary.PhotoViewer.ViewModels
             var folder = new DirectoryInfo(folderPath);
 
             // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
-            var queue = new List<MediaInfo>();
+            var queue = new List<PhotoInfo>();
             foreach (var supportExtension in Const.SupportPictureExtensions)
             {
                 var tick = Environment.TickCount;
@@ -587,7 +587,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
                     try
                     {
-                        queue.Add(new MediaInfo(supportFile.FullName));
+                        queue.Add(new PhotoInfo(supportFile.FullName));
                         count++;
                     }
                     catch
@@ -630,7 +630,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         /// <param name="mediaInfo">選択されたメディア情報</param>
         /// <returns>読み込み成功: True、読み込み失敗: False</returns>
-        private void LoadPictureImage(MediaInfo mediaInfo)
+        private void LoadPictureImage(PhotoInfo mediaInfo)
         {
             App.CallMouseBlockMethod(async () =>
             {
