@@ -13,6 +13,16 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class LinkageAppViewModel : BindableBase, IDisposable
     {
+        /// <summary>
+        /// 登録アプリ数の最大値
+        /// </summary>
+        private const int MaxLinkAppNum = 10;
+
+        /// <summary>
+        /// IDisposableをまとめるCompositeDisposable
+        /// </summary>
+        private readonly CompositeDisposable disposables = new();
+
         #region UI binding parameter
 
         /// <summary>
@@ -50,16 +60,6 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 登録アプリを変更した場合のイベント
         /// </summary>
         public EventHandler ChangeLinkageAppEvent { get; set; }
-
-        /// <summary>
-        /// 登録アプリ数の最大値
-        /// </summary>
-        private const int MaxLinkAppNum = 10;
-
-        /// <summary>
-        /// IDisposableをまとめるCompositeDisposable
-        /// </summary>
-        private readonly CompositeDisposable disposables = new();
 
         /// <summary>
         /// コンストラクタ

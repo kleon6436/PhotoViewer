@@ -20,6 +20,11 @@ namespace Kchary.PhotoViewer.ViewModels
     public sealed class SettingViewModel : BindableBase, IDisposable
     {
         /// <summary>
+        /// IDisposableをまとめるCompositeDisposable
+        /// </summary>
+        private readonly CompositeDisposable disposable = new();
+
+        /// <summary>
         /// コンテキストメニューの再読み込みイベント
         /// </summary>
         public EventHandler ReloadContextMenuEvent { get; set; }
@@ -29,6 +34,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public ReactivePropertySlim<Page> DisplayPage { get; }
 
+        private ReactivePropertySlim<SelectPage> selectPageButtonValue;
         /// <summary>
         /// ラジオボタンで設定された読み込むページの情報
         /// </summary>
@@ -59,12 +65,6 @@ namespace Kchary.PhotoViewer.ViewModels
             }
             private set => selectPageButtonValue = value;
         }
-        private ReactivePropertySlim<SelectPage> selectPageButtonValue;
-
-        /// <summary>
-        /// IDisposableをまとめるCompositeDisposable
-        /// </summary>
-        private readonly CompositeDisposable disposable = new();
 
         /// <summary>
         /// コンストラクタ
