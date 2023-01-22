@@ -252,7 +252,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// コンテキストメニューを読み込む
         /// </summary>
         /// <param name="linkageApp">連携アプリ情報</param>
-        private void LoadContextMenu(ExtraAppSetting linkageApp)
+        private void LoadContextMenu(RegisterApp linkageApp)
         {
             var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
             if (appIcon != null)
@@ -276,7 +276,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void SetContextMenuFromConfigData()
         {
-            var linkageAppList = AppConfig.GetInstance().GetAvailableLinkageApps();
+            var linkageAppList = AppConfig.GetInstance().GetAvailableRegisterApps();
             if (linkageAppList?.Any() != true)
             {
                 return;
@@ -392,7 +392,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <param name="appName">アプリ名</param>
         private void ContextMenuClicked(string appName)
         {
-            var linkageAppList = AppConfig.GetInstance().GetAvailableLinkageApps();
+            var linkageAppList = AppConfig.GetInstance().GetAvailableRegisterApps();
             if (linkageAppList.All(x => x.AppName != appName))
             {
                 return;

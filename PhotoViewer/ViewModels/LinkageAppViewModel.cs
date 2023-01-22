@@ -28,12 +28,12 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 登録アプリのパス
         /// </summary>
-        public ReactivePropertySlim<string> LinkAppPath { get; } = new();
+        public ReactivePropertySlim<string> RegisterAppPath { get; } = new();
 
         /// <summary>
         /// 登録アプリリスト
         /// </summary>
-        public ObservableCollection<ExtraAppSetting> LinkageAppList { get; } = new();
+        public ObservableCollection<RegisterApp> RegisterAppList { get; } = new();
 
         #endregion UI binding parameter
 
@@ -52,7 +52,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 削除ボタンのコマンド
         /// </summary>
-        public ReactiveCommand<ExtraAppSetting> DeleteLinkAppCommand { get; }
+        public ReactiveCommand<RegisterApp> DeleteLinkAppCommand { get; }
 
         #endregion Command
 
@@ -68,16 +68,16 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             LinkAppReferenceCommand = new ReactiveCommand().WithSubscribe(LinkAppReferenceButtonClicked).AddTo(disposables);
             RegisterLinkAppCommand = new ReactiveCommand().WithSubscribe(RegisterLinkAppButtonClicked).AddTo(disposables);
-            DeleteLinkAppCommand = new ReactiveCommand<ExtraAppSetting>().WithSubscribe(DeleteLinkAppButtonClicked).AddTo(disposables);
+            DeleteLinkAppCommand = new ReactiveCommand<RegisterApp>().WithSubscribe(DeleteLinkAppButtonClicked).AddTo(disposables);
 
-            var linkageAppList = AppConfig.GetInstance().GetAvailableLinkageApps();
-            if (linkageAppList?.Any() != true)
+            var registerAppList = AppConfig.GetInstance().GetAvailableRegisterApps();
+            if (registerAppList?.Any() != true)
             {
                 return;
             }
 
-            LinkageAppList.Clear();
-            LinkageAppList.AddRange(linkageAppList);
+            RegisterAppList.Clear();
+            RegisterAppList.AddRange(registerAppList);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void LinkAppReferenceButtonClicked()
         {
-            var previousLinkAppPath = LinkAppPath.Value;
+            var previousLinkAppPath = RegisterAppPath.Value;
 
             const string DialogTitle = "Linked application selection";
             const string DialogDefaultExt = ".exe";
@@ -106,11 +106,11 @@ namespace Kchary.PhotoViewer.ViewModels
 
             if (dialog.ShowDialog() != true)
             {
-                LinkAppPath.Value = previousLinkAppPath;
+                RegisterAppPath.Value = previousLinkAppPath;
                 return;
             }
 
-            LinkAppPath.Value = dialog.FileName;
+            RegisterAppPath.Value = dialog.FileName;
         }
 
         /// <summary>
@@ -118,49 +118,49 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void RegisterLinkAppButtonClicked()
         {
-            if (LinkageAppList.Count > MaxLinkAppNum || !FileUtil.CheckFilePath(LinkAppPath.Value))
+            if (RegisterAppList.Count > MaxLinkAppNum || !FileUtil.CheckFilePath(RegisterAppPath.Value))
             {
                 return;
             }
 
-            var linkageApp = new ExtraAppSetting
+            var linkageApp = new RegisterApp
             {
-                AppName = FileUtil.GetFileName(LinkAppPath.Value, true),
-                AppPath = LinkAppPath.Value
+                AppName = FileUtil.GetFileName(RegisterAppPath.Value, true),
+                AppPath = RegisterAppPath.Value
             };
-            if (LinkageAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))
+            if (RegisterAppList.Any(x => x.AppName == linkageApp.AppName || x.AppPath == linkageApp.AppPath))
             {
                 return;
             }
 
-            LinkageAppList.Add(linkageApp);
+            RegisterAppList.Add(linkageApp);
 
             var applicationManager = AppConfig.GetInstance();
-            applicationManager.AddLinkageApp(linkageApp);
+            applicationManager.AddRegisterApp(linkageApp);
             applicationManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);
-            LinkAppPath.Value = "";
+            RegisterAppPath.Value = "";
         }
 
         /// <summary>
         /// 削除ボタンを押下時の処理
         /// </summary>
-        private void DeleteLinkAppButtonClicked(ExtraAppSetting deleteAppSetting)
+        private void DeleteLinkAppButtonClicked(RegisterApp deleteAppSetting)
         {
-            if (LinkageAppList?.Any() != true || deleteAppSetting == null)
+            if (RegisterAppList?.Any() != true || deleteAppSetting == null)
             {
                 return;
             }
 
-            if (LinkageAppList.All(x => x != deleteAppSetting))
+            if (RegisterAppList.All(x => x != deleteAppSetting))
             {
                 return;
             }
-            LinkageAppList.Remove(deleteAppSetting);
+            RegisterAppList.Remove(deleteAppSetting);
 
             var applicationManager = AppConfig.GetInstance();
-            applicationManager.RemoveLinkageApp(deleteAppSetting);
+            applicationManager.RemoveRegisterApp(deleteAppSetting);
             applicationManager.Export();
 
             ChangeLinkageAppEvent?.Invoke(this, EventArgs.Empty);

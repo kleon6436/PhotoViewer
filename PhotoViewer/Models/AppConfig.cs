@@ -25,7 +25,7 @@ namespace Kchary.PhotoViewer.Models
         /// <remarks>
         /// 登録アプリの一覧表示に使用される
         /// </remarks>
-        private readonly List<ExtraAppSetting> LinkageAppList = new();
+        private readonly List<RegisterApp> RegisterAppList = new();
 
         /// <summary>
         /// 前回のフォルダパス
@@ -102,29 +102,29 @@ namespace Kchary.PhotoViewer.Models
         /// 連携アプリをリストに追加する
         /// </summary>
         /// <param name="linkageApp">登録する連携アプリ</param>
-        public void AddLinkageApp(ExtraAppSetting linkageApp)
+        public void AddRegisterApp(RegisterApp linkageApp)
         {
-            LinkageAppList.Add(linkageApp);
+            RegisterAppList.Add(linkageApp);
         }
 
         /// <summary>
         /// 連携アプリをリストから削除する
         /// </summary>
         /// <param name="linkageApp">削除する連携アプリ</param>
-        public void RemoveLinkageApp(ExtraAppSetting linkageApp)
+        public void RemoveRegisterApp(RegisterApp linkageApp)
         {
-            LinkageAppList.Remove(linkageApp);
+            RegisterAppList.Remove(linkageApp);
         }
 
         /// <summary>
         /// 有効な連携アプリ一覧を取得する
         /// </summary>
         /// <returns>連携アプリ一覧</returns>
-        public ExtraAppSetting[] GetAvailableLinkageApps()
+        public RegisterApp[] GetAvailableRegisterApps()
         {
             // リンク先がないものはすべて削除して、 有効な連携アプリ一覧を作成
-            LinkageAppList.RemoveAll(x => !FileUtil.CheckFilePath(x.AppPath));
-            return LinkageAppList.ToArray();
+            RegisterAppList.RemoveAll(x => !FileUtil.CheckFilePath(x.AppPath));
+            return RegisterAppList.ToArray();
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Kchary.PhotoViewer.Models
         {
             var linkageElement = new XElement(Const.LinkAppElemName);
 
-            foreach (var linkageApp in LinkageAppList)
+            foreach (var linkageApp in RegisterAppList)
             {
                 var dataElement = new XElement(Const.LinkAppDataName);
                 var appNameElement = new XElement(Const.LinkAppNameElemName, linkageApp == null ? new XText("") : new XText(linkageApp.AppName));
@@ -217,8 +217,8 @@ namespace Kchary.PhotoViewer.Models
                     continue;
                 }
 
-                var linkageApp = new ExtraAppSetting { AppName = appNameElement?.Value, AppPath = appPathElement?.Value };
-                LinkageAppList.Add(linkageApp);
+                var linkageApp = new RegisterApp { AppName = appNameElement?.Value, AppPath = appPathElement?.Value };
+                RegisterAppList.Add(linkageApp);
             }
         }
 
