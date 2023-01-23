@@ -98,6 +98,9 @@ namespace Kchary.PhotoViewer.Models
         Other = 255
     }
 
+    /// <summary>
+    /// Exif情報を写真情報から読み込むクラス
+    /// </summary>
     public sealed class ExifLoader
     {
         #region ExifInfoに表示するパラメータ名

@@ -6,6 +6,9 @@ using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Models
 {
+    /// <summary>
+    /// 1枚の写真情報から写真・Exif情報を読み込むクラス
+    /// </summary>
     public sealed class SinglePhotoLoader
     {
         /// <summary>
