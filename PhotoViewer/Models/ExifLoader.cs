@@ -1,6 +1,5 @@
 ﻿using FastEnumUtility;
 using Kchary.PhotoViewer.Helpers;
-using Kchary.PhotoViewer.ViewModels;
 using MetadataExtractor;
 using MetadataExtractor.Formats.Bmp;
 using MetadataExtractor.Formats.Exif;
