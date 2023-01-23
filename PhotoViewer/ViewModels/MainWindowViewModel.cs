@@ -13,7 +13,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
@@ -120,19 +119,14 @@ namespace Kchary.PhotoViewer.ViewModels
         private readonly BackgroundWorker loadContentsWorker = new() { WorkerSupportsCancellation = true };
 
         /// <summary>
-        /// メディアロードタスクリスト
+        /// 1枚の写真をロードするためのクラスインスタンス
         /// </summary>
-        private Task[] loadMediaTasks;
+        private readonly SinglePhotoLoader singlePhotoLoader;
 
         /// <summary>
-        /// ロード停止フラグ
+        /// Exif情報をロードするためのクラスインスタンス
         /// </summary>
-        private volatile bool stopLoading;
-
-        /// <summary>
-        /// メディアのロード中フラグ
-        /// </summary>
-        private bool loadingMedia;
+        private readonly ExifLoader exifLoader;
 
         /// <summary>
         /// コンテンツをリロードするためのフラグ
@@ -170,6 +164,10 @@ namespace Kchary.PhotoViewer.ViewModels
             // 設定ファイルの読み込み
             AppConfig.GetInstance().Import();
 
+            // モデルの準備
+            exifLoader = new ExifLoader();
+            singlePhotoLoader = new SinglePhotoLoader(exifLoader);
+
             // 画像フォルダの読み込み
             var picturePath = defaultPicturePath;
             if (FileUtil.CheckFolderPath(AppConfig.GetInstance().PreviousFolderPath))
@@ -199,38 +197,27 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 非同期で画像を読み込む
         /// </summary>
-        /// <param name="mediaInfo">選択されたメディア情報</param>
-        public void LoadMedia(PhotoInfo mediaInfo)
+        /// <param name="photoInfo">選択されたメディア情報</param>
+        public void LoadMedia(PhotoInfo photoInfo)
         {
-            if (mediaInfo == null)
+            if (photoInfo == null)
             {
                 return;
             }
 
-            if (loadingMedia)
+            App.CallMouseBlockMethod(async () =>
             {
-                stopLoading = true;
-                if (loadMediaTasks is not null)
-                {
-                    foreach (var task in loadMediaTasks)
-                    {
-                        task.Wait();
-                    }
-                }
-                stopLoading = false;
-            }
+                IsEnableImageEditButton.Value = false;
 
-            if (!FileUtil.CheckFilePath(mediaInfo.FilePath))
-            {
-                App.ShowErrorMessageBox("File not exist.", "File access error");
-                return;
-            }
+                singlePhotoLoader.PhotoInfo = photoInfo;
+                (BitmapSource image, ExifInfo[] exifInfos) = await singlePhotoLoader.LoadPhoto();
 
-            IsEnableImageEditButton.Value = false;
+                PictureImageSource.Value = image;
+                IsEnableImageEditButton.Value = !photoInfo.IsRawImage;  // 読み込んだ画像がRaw画像でないときは編集可能
 
-            loadingMedia = true;
-            LoadPictureImage(mediaInfo);
-            loadingMedia = false;
+                ExifInfoViewModel.SetExif(exifInfos);
+            },
+            "File access error", "File access error occured.");
         }
 
         /// <summary>
@@ -623,50 +610,6 @@ namespace Kchary.PhotoViewer.ViewModels
                     queue.Clear();
                 }
             }
-        }
-
-        /// <summary>
-        /// 選択されたメディア情報を非同期で読み込み、画像、Exifを表示する
-        /// </summary>
-        /// <param name="mediaInfo">選択されたメディア情報</param>
-        /// <returns>読み込み成功: True、読み込み失敗: False</returns>
-        private void LoadPictureImage(PhotoInfo mediaInfo)
-        {
-            App.CallMouseBlockMethod(async () =>
-            {
-                // 画像とExifを読み込むタスクを作成する
-                var loadPictureTask = Task.Run(() =>
-                {
-                    if (stopLoading)
-                    {
-                        return;
-                    }
-                    PictureImageSource.Value = mediaInfo.CreatePictureViewImage(stopLoading);
-                });
-                var setExifInfoTask = Task.Run(() =>
-                {
-                    if (stopLoading)
-                    {
-                        return;
-                    }
-                    ExifInfoViewModel.SetExif(mediaInfo, stopLoading);
-                });
-
-                // タスクを実行し、処理完了まで待つ
-                loadMediaTasks = new[]
-                {
-                    loadPictureTask,
-                    setExifInfoTask
-                };
-                await Task.WhenAll(loadMediaTasks);
-
-                // 編集ボタンの状態を更新(Raw画像以外は活性状態とする)
-                IsEnableImageEditButton.Value = !mediaInfo.IsRawImage;
-
-                // パス表示を更新
-                SelectFolderPath.Value = mediaInfo.FilePath;
-            },
-            "File access error", "File access error occurred");
         }
     }
 }
