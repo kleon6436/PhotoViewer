@@ -38,7 +38,7 @@ namespace Kchary.PhotoViewer.Models
         private bool isReloadContents;
 
         /// <summary>
-        /// メディアリスト(画像一覧で表示される)
+        /// 写真一覧リスト
         /// </summary>
         public ObservableCollection<PhotoInfo> PhotoList { get; } = new();
 
