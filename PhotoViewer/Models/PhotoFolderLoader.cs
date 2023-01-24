@@ -59,6 +59,7 @@ namespace Kchary.PhotoViewer.Models
         /// 画像フォルダパスが変更された時に写真リストの画像パスを変更する
         /// </summary>
         /// <param name="folderPath">画像フォルダパス</param>
+        /// <returns>True: フォルダ変更した, False: フォルダ変更していない</returns>
         public bool ChangePhotoFolder(string folderPath)
         {
             if (!FileUtil.CheckFolderPath(folderPath))
@@ -68,6 +69,7 @@ namespace Kchary.PhotoViewer.Models
             
             if (this.folderPath == folderPath)
             {
+                // 同じフォルダの時は、フォルダ変更しない
                 return false;
             }
 
