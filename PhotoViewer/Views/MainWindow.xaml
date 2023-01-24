@@ -144,7 +144,7 @@
                               ResizeBehavior="CurrentAndNext"/>
                 <ListView Grid.Row="0"
                           x:Name="MediaListBox"
-                          ItemsSource="{Binding MediaInfoList, Mode=OneTime}"
+                          ItemsSource="{Binding PhotoFolderLoader.PhotoList, Mode=OneTime}"
                           SelectedItem="{Binding SelectedMedia.Value, Mode=TwoWay, Delay=250}"
                           SelectionMode="Single"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"

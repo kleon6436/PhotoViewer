@@ -101,7 +101,7 @@ namespace Kchary.PhotoViewer.Views
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var vm = DataContext as MainWindowViewModel;
-            if (!vm.StopThreadAndTask())
+            if (!vm.RequestStopThreadAndTask())
             {
                 // 少し待ってからクローズ
                 Thread.Sleep(200);

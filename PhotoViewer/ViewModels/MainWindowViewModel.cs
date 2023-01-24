@@ -5,9 +5,7 @@ using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -34,45 +32,6 @@ namespace Kchary.PhotoViewer.ViewModels
         public ExifInfoViewModel ExifInfoViewModel { get; }
 
         #endregion ViewModels
-
-        #region UI binding parameters
-
-        /// <summary>
-        /// メディアリスト(画像一覧で表示される)
-        /// </summary>
-        public ObservableCollection<PhotoInfo> MediaInfoList { get; } = new();
-
-        /// <summary>
-        /// コンテキストメニューに表示するリスト
-        /// </summary>
-        public ObservableCollection<ContextMenuInfo> ContextMenuCollection { get; } = new();
-
-        /// <summary>
-        /// 選択されたフォルダパス(絶対パス)
-        /// </summary>
-        public ReactivePropertySlim<string> SelectFolderPath { get; } = new();
-
-        /// <summary>
-        /// 選択した画像ファイルデータ
-        /// </summary>
-        public ReactivePropertySlim<PhotoInfo> SelectedMedia { get; } = new();
-
-        /// <summary>
-        /// 表示する画像データ
-        /// </summary>
-        public ReactivePropertySlim<BitmapSource> PictureImageSource { get; } = new();
-
-        /// <summary>
-        /// コンテキストメニューの表示非表示フラグ
-        /// </summary>
-        public ReactivePropertySlim<bool> IsShowContextMenu { get; } = new();
-
-        /// <summary>
-        /// 編集ボタンの有効無効フラグ
-        /// </summary>
-        public ReactivePropertySlim<bool> IsEnableImageEditButton { get; } = new();
-
-        #endregion UI binding parameters
 
         #region Command
 
@@ -108,15 +67,49 @@ namespace Kchary.PhotoViewer.ViewModels
 
         #endregion Command
 
+        #region UI binding parameters
+
+        /// <summary>
+        /// コンテキストメニューに表示するリスト
+        /// </summary>
+        public ObservableCollection<ContextMenuInfo> ContextMenuCollection { get; } = new();
+
+        /// <summary>
+        /// 選択されたフォルダパス(絶対パス)
+        /// </summary>
+        public ReactivePropertySlim<string> SelectFolderPath { get; } = new();
+
+        /// <summary>
+        /// 選択した画像ファイルデータ
+        /// </summary>
+        public ReactivePropertySlim<PhotoInfo> SelectedMedia { get; } = new();
+
+        /// <summary>
+        /// 表示する画像データ
+        /// </summary>
+        public ReactivePropertySlim<BitmapSource> PictureImageSource { get; } = new();
+
+        /// <summary>
+        /// コンテキストメニューの表示非表示フラグ
+        /// </summary>
+        public ReactivePropertySlim<bool> IsShowContextMenu { get; } = new();
+
+        /// <summary>
+        /// 編集ボタンの有効無効フラグ
+        /// </summary>
+        public ReactivePropertySlim<bool> IsEnableImageEditButton { get; } = new();
+
+        #endregion UI binding parameters
+
+        /// <summary>
+        /// 写真フォルダをロードするためのクラスインスタンス
+        /// </summary>
+        public PhotoFolderLoader PhotoFolderLoader { get; } = new();
+
         /// <summary>
         /// IDisposableをまとめるCompositeDisposable
         /// </summary>
         private readonly CompositeDisposable disposables = new();
-
-        /// <summary>
-        /// バックグラウンドでコンテンツをロードするためのワーカー
-        /// </summary>
-        private readonly BackgroundWorker loadContentsWorker = new() { WorkerSupportsCancellation = true };
 
         /// <summary>
         /// 1枚の写真をロードするためのクラスインスタンス
@@ -127,11 +120,6 @@ namespace Kchary.PhotoViewer.ViewModels
         /// Exif情報をロードするためのクラスインスタンス
         /// </summary>
         private readonly ExifLoader exifLoader;
-
-        /// <summary>
-        /// コンテンツをリロードするためのフラグ
-        /// </summary>
-        private bool isReloadContents;
 
         /// <summary>
         /// 既定のピクチャフォルダパス
@@ -157,9 +145,9 @@ namespace Kchary.PhotoViewer.ViewModels
             // プロパティ変更に紐づく処理の設定
             SelectedMedia.Subscribe(LoadMedia).AddTo(disposables);
 
-            // バックグラウンドスレッドの設定
-            loadContentsWorker.DoWork += LoadContentsDoWork;
-            loadContentsWorker.RunWorkerCompleted += RunWorkerCompleted;
+            // 写真フォルダのローダーの設定
+            PhotoFolderLoader.FirstImageLoaded += FirstPhotoReadied;
+            PhotoFolderLoader.FolderLoadCompleted += FirstPhotoReadied;
 
             // 設定ファイルの読み込み
             AppConfig.GetInstance().Import();
@@ -174,7 +162,7 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 picturePath = AppConfig.GetInstance().PreviousFolderPath;
             }
-            ChangeContents(picturePath);
+            ChangePhotoFolder(picturePath);
 
             // エクスプローラーツリーの設定
             ExplorerViewModel = new ExplorerViewModel();
@@ -224,15 +212,9 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 実行中のスレッド、タスクの停止を要請する
         /// </summary>
         /// <returns>まだ実行中: False, 停止完了: True</returns>
-        public bool StopThreadAndTask()
+        public bool RequestStopThreadAndTask()
         {
-            if (loadContentsWorker is not { IsBusy: true })
-            {
-                return true;
-            }
-
-            loadContentsWorker.CancelAsync();
-            return false;
+            return PhotoFolderLoader.RequestStopThreadAndTask();
         }
 
         /// <summary>
@@ -333,7 +315,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             ExplorerViewModel.UpdateDriveTreeItem();
             ExplorerViewModel.ExpandPreviousPath(ExplorerViewModel.ShowExplorerPath);
-            UpdateContents();
+            PhotoFolderLoader.UpdatePhotoList();
         }
 
         /// <summary>
@@ -428,7 +410,7 @@ namespace Kchary.PhotoViewer.ViewModels
             IsEnableImageEditButton.Value = false;
 
             var selectedExplorerItem = ExplorerViewModel.SelectedItem;
-            ChangeContents(selectedExplorerItem.ExplorerItemPath);
+            ChangePhotoFolder(selectedExplorerItem.ExplorerItemPath);
         }
 
         /// <summary>
@@ -446,169 +428,39 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// 画像フォルダパスが変更された時にコンテンツリストの画像パスを変更する
+        /// 画像フォルダパスが変更された時に写真リストの画像パスを変更する
         /// </summary>
         /// <param name="folderPath">画像フォルダパス</param>
-        private void ChangeContents(string folderPath)
-        {
-            if (!FileUtil.CheckFolderPath(folderPath) || SelectFolderPath.Value == folderPath)
-            {
-                return;
-            }
-
-            SelectFolderPath.Value = folderPath;
-            UpdateContents();
-
-            AppConfig.GetInstance().PreviousFolderPath = SelectFolderPath.Value;
-        }
-
-        /// <summary>
-        /// コンテンツリストを更新する
-        /// </summary>
-        private void UpdateContents()
-        {
-            if (loadContentsWorker is { IsBusy: true })
-            {
-                loadContentsWorker.CancelAsync();
-                isReloadContents = true;
-                return;
-            }
-
-            LoadContentsList();
-        }
-
-        /// <summary>
-        /// コンテンツリストの読み込み処理
-        /// </summary>
-        private void LoadContentsList()
-        {
-            MediaInfoList.Clear();
-            loadContentsWorker.RunWorkerAsync();
-        }
-
-        /// <summary>
-        /// コンテンツの読み込み処理(別スレッドで動作する)
-        /// </summary>
-        /// <param name="sender">BackgroundWorker</param>
-        /// <param name="e">引数情報</param>
-        private void LoadContentsDoWork(object sender, DoWorkEventArgs e)
+        private void ChangePhotoFolder(string folderPath)
         {
             try
             {
-                LoadContentsWorker(sender, e);
+                if (PhotoFolderLoader.ChangePhotoFolder(folderPath))
+                {
+                    // フォルダを切り替えたら、フォルダパス情報を更新
+                    SelectFolderPath.Value = folderPath;
+                    AppConfig.GetInstance().PreviousFolderPath = folderPath;
+                }
             }
-            catch (Exception ex)
+            catch
             {
-                App.LogException(ex);
-                App.ShowErrorMessageBox("Failed to load media file.", "File read error");
+                App.ShowErrorMessageBox("Failed to load photo folder.", "Folder load error");
             }
         }
 
         /// <summary>
-        /// 画像読み込み処理が完了、キャンセルした場合の処理
+        /// リストに最初の画像が準備できたときのイベント
         /// </summary>
-        /// <param name="sender">LoadContentsWorker</param>
+        /// <param name="sender">PhotoFolderLoader</param>
         /// <param name="e">引数情報</param>
-        private void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        /// <remarks>
+        /// 最初の1枚を選んで選択状態にする
+        /// </remarks>
+        private void FirstPhotoReadied(object sender, EventArgs e)
         {
-            if (e.Cancelled)
+            if (SelectedMedia.Value == null && PhotoFolderLoader.PhotoList.Any())
             {
-                loadContentsWorker?.Dispose();
-
-                // 再読み込み時は、読み込み処理を再開
-                if (isReloadContents)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        UpdateContents();
-                        isReloadContents = false;
-                    });
-                }
-            }
-            else
-            {
-                loadContentsWorker?.Dispose();
-
-                if (SelectedMedia.Value == null && MediaInfoList.Any())
-                {
-                    SelectedMedia.Value = MediaInfoList.ElementAt(0);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 画像読み込み処理の実処理
-        /// </summary>
-        /// <param name="sender">BackgroundWorker</param>
-        /// <param name="e">引数情報</param>
-        private void LoadContentsWorker(object sender, CancelEventArgs e)
-        {
-            var folderPath = SelectFolderPath.Value;
-            if (!FileUtil.IsDirectory(folderPath))
-            {
-                folderPath = Path.GetDirectoryName(folderPath);
-            }
-
-            if (!FileUtil.CheckFolderPath(folderPath))
-            {
-                return;
-            }
-
-            var folder = new DirectoryInfo(folderPath);
-
-            // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
-            var queue = new List<PhotoInfo>();
-            foreach (var supportExtension in Const.SupportPictureExtensions)
-            {
-                var tick = Environment.TickCount;
-                var count = 0;
-
-                // サポート対象のファイルを順番に読み込む
-                foreach (var supportFile in folder.EnumerateFiles($"*{supportExtension}"))
-                {
-                    if (sender is BackgroundWorker { CancellationPending: true })
-                    {
-                        e.Cancel = true;
-                        return;
-                    }
-
-                    try
-                    {
-                        queue.Add(new PhotoInfo(supportFile.FullName));
-                        count++;
-                    }
-                    catch
-                    {
-                        // 読み込み失敗時は、その画像の読み込みはスキップする
-                        continue;
-                    }
-
-                    var duration = Environment.TickCount - tick;
-                    if ((count > 100 || duration <= 250) && duration <= 500)
-                    {
-                        continue;
-                    }
-
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        MediaInfoList.AddRange(queue);
-
-                        // 選択中のメディアがない場合は、リストの最初のアイテムを選択する
-                        if (SelectedMedia.Value == null)
-                        {
-                            SelectedMedia.Value = MediaInfoList.First();
-                        }
-                    });
-
-                    queue.Clear();
-                    tick = Environment.TickCount;
-                }
-
-                if (queue.Count != 0)
-                {
-                    Application.Current.Dispatcher.Invoke(() => MediaInfoList.AddRange(queue));
-                    queue.Clear();
-                }
+                Application.Current.Dispatcher.BeginInvoke(() => SelectedMedia.Value = PhotoFolderLoader.PhotoList[0]);
             }
         }
     }
