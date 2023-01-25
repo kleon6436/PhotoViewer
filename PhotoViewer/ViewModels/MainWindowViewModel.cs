@@ -114,7 +114,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 1枚の写真をロードするためのクラスインスタンス
         /// </summary>
-        private readonly SinglePhotoLoader singlePhotoLoader;
+        private readonly PhotoLoader photoLoader;
 
         /// <summary>
         /// Exif情報をロードするためのクラスインスタンス
@@ -154,7 +154,7 @@ namespace Kchary.PhotoViewer.ViewModels
 
             // モデルの準備
             exifLoader = new ExifLoader();
-            singlePhotoLoader = new SinglePhotoLoader(exifLoader);
+            photoLoader = new PhotoLoader(exifLoader);
 
             // 画像フォルダの読み込み
             var picturePath = defaultPicturePath;
@@ -197,8 +197,8 @@ namespace Kchary.PhotoViewer.ViewModels
             {
                 IsEnableImageEditButton.Value = false;
 
-                singlePhotoLoader.PhotoInfo = photoInfo;
-                (BitmapSource image, ExifInfo[] exifInfos) = await singlePhotoLoader.LoadPhoto();
+                photoLoader.PhotoInfo = photoInfo;
+                (BitmapSource image, ExifInfo[] exifInfos) = await photoLoader.LoadPhoto();
 
                 PictureImageSource.Value = image;
                 IsEnableImageEditButton.Value = !photoInfo.IsRawImage;  // 読み込んだ画像がRaw画像でないときは編集可能

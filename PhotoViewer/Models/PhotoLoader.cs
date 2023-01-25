@@ -9,7 +9,7 @@ namespace Kchary.PhotoViewer.Models
     /// <summary>
     /// 1枚の写真情報から写真・Exif情報を読み込むクラス
     /// </summary>
-    public sealed class SinglePhotoLoader
+    public sealed class PhotoLoader
     {
         /// <summary>
         /// Exif情報を読み込み用クラスインスタンス
@@ -40,7 +40,7 @@ namespace Kchary.PhotoViewer.Models
         /// コンストラクタ
         /// </summary>
         /// <param name="exifLoader">Exif情報をロードするためのクラスインスタンス</param>
-        public SinglePhotoLoader(ExifLoader exifLoader)
+        public PhotoLoader(ExifLoader exifLoader)
         {
             this.exifLoader = exifLoader;
         }
