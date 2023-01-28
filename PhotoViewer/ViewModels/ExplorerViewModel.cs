@@ -1,4 +1,5 @@
-﻿using Kchary.PhotoViewer.Models;
+﻿using Kchary.PhotoViewer.Helpers;
+using Kchary.PhotoViewer.Models;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,16 @@ namespace Kchary.PhotoViewer.ViewModels
 {
     public sealed class ExplorerViewModel : BindableBase, IDisposable
     {
+        /// <summary>
+        /// ファイルシステム管理のウォッチャー
+        /// </summary>
+        private readonly FileSystemWatcher fileWatcher;
+
+        /// <summary>
+        /// 監視しているドライブ情報
+        /// </summary>
+        private string previousWatchDrive;
+
         /// <summary>
         /// アイテム選択を変更したときのイベント
         /// </summary>
@@ -27,20 +38,34 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public string ShowExplorerPath { get; private set; }
 
-        /// <summary>
-        /// ファイルシステム管理のウォッチャー
-        /// </summary>
-        private readonly FileSystemWatcher fileWatcher;
-
-        /// <summary>
-        /// 監視しているドライブ情報
-        /// </summary>
-        private string previousWatchDrive;
-
-        /// <summary>
-        /// 選択中のツリーアイテム
-        /// </summary>
         private ExplorerItem selectedItem;
+        /// <summary>
+        /// 選択したアイテム情報
+        /// </summary>
+        public ExplorerItem SelectedItem
+        {
+            get => selectedItem;
+            set
+            {
+                // 同じアイテムを選択している、もしくは、表示中のパスと同じだった場合は更新しない
+                if (selectedItem == value || ShowExplorerPath == value.ExplorerItemPath)
+                {
+                    return;
+                }
+
+                selectedItem = value;
+                ShowExplorerPath = selectedItem.ExplorerItemPath;
+
+                var drive = Path.GetPathRoot(ShowExplorerPath);
+                if (previousWatchDrive != drive)
+                {
+                    UpdateWatcher(drive);
+                    previousWatchDrive = drive;
+                }
+
+                ChangeSelectItemEvent?.Invoke(this, EventArgs.Empty);
+            }
+        }
 
         /// <summary>
         /// コンストラクタ
@@ -71,34 +96,6 @@ namespace Kchary.PhotoViewer.ViewModels
         public void Dispose() => fileWatcher.Dispose();
 
         /// <summary>
-        /// 選択したアイテム情報
-        /// </summary>
-        public ExplorerItem SelectedItem
-        {
-            get => selectedItem;
-            set
-            {
-                // 同じアイテムを選択している、もしくは、表示中のパスと同じだった場合は更新しない
-                if (selectedItem == value || ShowExplorerPath == value.ExplorerItemPath)
-                {
-                    return;
-                }
-
-                selectedItem = value;
-                ShowExplorerPath = selectedItem.ExplorerItemPath;
-
-                var drive = Path.GetPathRoot(ShowExplorerPath);
-                if (previousWatchDrive != drive)
-                {
-                    UpdateWatcher(drive);
-                    previousWatchDrive = drive;
-                }
-
-                ChangeSelectItemEvent?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        /// <summary>
         /// ドライブツリーを作成(更新)する
         /// </summary>
         public void UpdateDriveTreeItem()
@@ -124,7 +121,7 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             var parentPathList = new List<string>();
 
-            GetAllParentPathList(previousFolderPath, parentPathList);
+            FileUtil.GetAllParentPathList(previousFolderPath, parentPathList);
             parentPathList.Reverse();
 
             var count = 0;
@@ -170,42 +167,15 @@ namespace Kchary.PhotoViewer.ViewModels
         }
 
         /// <summary>
-        /// すべての親ディレクトリのリストを取得する
-        /// </summary>
-        private static void GetAllParentPathList(string previousFolderPath, ICollection<string> parentPathList)
-        {
-            var directoryInfo = new DirectoryInfo(previousFolderPath);
-            parentPathList.Add(directoryInfo.FullName);
-            GetParentPathList(previousFolderPath, parentPathList);
-        }
-
-        /// <summary>
-        /// 親ディレクトリのパスを取得する
-        /// </summary>
-        private static void GetParentPathList(string directoryPath, ICollection<string> parentPathList)
-        {
-            while (true)
-            {
-                var parentDirectory = Directory.GetParent(directoryPath);
-                if (parentDirectory == null)
-                {
-                    return;
-                }
-
-                parentPathList.Add(parentDirectory.FullName);
-                directoryPath = parentDirectory.FullName;
-            }
-        }
-
-        /// <summary>
         /// ディレクトリに含まれるアイテムを取得する
         /// </summary>
+        /// <param name="parentPath">親ディレクトリのパス</param>
+        /// <param name="previousItem">前回展開したアイテム情報</param>
         private static ExplorerItem GetDirectoryItem(string parentPath, ItemsControl previousItem)
         {
             var previousDirectory = parentPath;
             var explorerItemList = new List<ExplorerItem>();
             explorerItemList.AddRange(previousItem.Items.OfType<ExplorerItem>());
-
             return explorerItemList.First(item => item.ExplorerItemPath == previousDirectory);
         }
 

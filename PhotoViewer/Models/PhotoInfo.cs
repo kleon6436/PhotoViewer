@@ -1,7 +1,6 @@
 ﻿using Kchary.PhotoViewer.Helpers;
 using Prism.Mvvm;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,24 +11,9 @@ using System.Windows.Media.Imaging;
 namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
-    /// サポート対象のファイル拡張子のタイプ定義
+    /// 写真情報クラス
     /// </summary>
-    public enum FileExtensionType
-    {
-        Jpeg,
-        Bmp,
-        Png,
-        Tiff,
-        Gif,
-        Dng,
-        Nef,
-        Unknown
-    }
-
-    /// <summary>
-    /// メディア情報クラス
-    /// </summary>
-    public sealed class MediaInfo : BindableBase
+    public sealed class PhotoInfo : BindableBase
     {
         #region Media Parameters
 
@@ -59,7 +43,7 @@ namespace Kchary.PhotoViewer.Models
         /// コンストラクタ
         /// </summary>
         /// <param name="filePath">ファイルパス</param>
-        public MediaInfo(string filePath)
+        public PhotoInfo(string filePath)
         {
             if (!FileUtil.CheckFilePath(filePath))
             {
@@ -80,7 +64,7 @@ namespace Kchary.PhotoViewer.Models
         /// </summary>
         public bool IsSupportImage
         {
-            get { return AppConfigManager.SupportPictureExtensions.Any(supportExtension => supportExtension == FileExtension); }
+            get { return Const.SupportPictureExtensions.Any(supportExtension => supportExtension == FileExtension); }
         }
 
         /// <summary>
@@ -88,7 +72,7 @@ namespace Kchary.PhotoViewer.Models
         /// </summary>
         public bool IsRawImage
         {
-            get { return AppConfigManager.SupportRawPictureExtensions.Any(x => x == FileExtension); }
+            get { return Const.SupportRawPictureExtensions.Any(x => x == FileExtension); }
         }
 
         /// <summary>
@@ -111,24 +95,9 @@ namespace Kchary.PhotoViewer.Models
                     return FileExtensionType.Unknown;
                 }
 
-                return !SupportExtensionMap.TryGetValue(FileExtension, out var extensionType) ? FileExtensionType.Unknown : extensionType;
+                return !Const.SupportExtensionMap.TryGetValue(FileExtension, out var extensionType) ? FileExtensionType.Unknown : extensionType;
             }
         }
-
-        /// <summary>
-        /// サポートしている拡張子の文字列とEnumのマップ
-        /// </summary>
-        private static readonly IReadOnlyDictionary<string, FileExtensionType> SupportExtensionMap = new Dictionary<string, FileExtensionType>()
-        {
-            { ".jpg", FileExtensionType.Jpeg },
-            { ".bmp", FileExtensionType.Bmp },
-            { ".png", FileExtensionType.Png },
-            { ".tiff", FileExtensionType.Tiff },
-            { ".tif", FileExtensionType.Tiff },
-            { ".gif", FileExtensionType.Gif },
-            { ".dng", FileExtensionType.Dng },
-            { ".nef", FileExtensionType.Nef }
-        };
 
         /// <summary>
         /// ピクチャビューに表示する画像を作成する

@@ -144,7 +144,7 @@
                               ResizeBehavior="CurrentAndNext"/>
                 <ListView Grid.Row="0"
                           x:Name="MediaListBox"
-                          ItemsSource="{Binding MediaInfoList, Mode=OneTime}"
+                          ItemsSource="{Binding PhotoFolderLoader.PhotoList, Mode=OneTime}"
                           SelectedItem="{Binding SelectedMedia.Value, Mode=TwoWay, Delay=250}"
                           SelectionMode="Single"
                           ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -210,8 +210,8 @@
                                                 <RowDefinition Height="75" />
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
-                                            <Image Grid.Row="0" d:DataContext="{d:DesignInstance model:MediaInfo}" Source="{Binding ThumbnailImage, Mode=OneWay}" />
-                                            <TextBlock Grid.Row="1" d:DataContext="{d:DesignInstance model:MediaInfo}" HorizontalAlignment="Center" Text="{Binding FileName, Mode=OneTime}" TextTrimming="CharacterEllipsis" />
+                                            <Image Grid.Row="0" d:DataContext="{d:DesignInstance model:PhotoInfo}" Source="{Binding ThumbnailImage, Mode=OneWay}" />
+                                            <TextBlock Grid.Row="1" d:DataContext="{d:DesignInstance model:PhotoInfo}" HorizontalAlignment="Center" Text="{Binding FileName, Mode=OneTime}" TextTrimming="CharacterEllipsis" />
                                         </Grid>
                                     </DataTemplate>
                                 </Setter.Value>

@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using Kchary.PhotoViewer.Models;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.Helpers
 {
@@ -56,6 +59,38 @@ namespace Kchary.PhotoViewer.Helpers
         public static string GetFileName(string filePath, bool withoutExtension)
         {
             return withoutExtension ? Path.GetFileNameWithoutExtension(filePath) : Path.GetFileName(filePath);
+        }
+
+        /// <summary>
+        /// すべての親ディレクトリのパスリストを取得する
+        /// </summary>
+        /// <param name="folderPath">フォルダパス</param>
+        /// <param name="parentPathList">親ディレクトリのパスリスト</param>
+        public static void GetAllParentPathList(string folderPath, ICollection<string> parentPathList)
+        {
+            var directoryInfo = new DirectoryInfo(folderPath);
+            parentPathList.Add(directoryInfo.FullName);
+            GetParentPathList(folderPath, parentPathList);
+        }
+
+        /// <summary>
+        /// 親ディレクトリのパスリストを取得する
+        /// </summary>
+        /// <param name="folderPath">フォルダパス</param>
+        /// <param name="parentPathList">親ディレクトリのパスリスト</param>
+        public static void GetParentPathList(string folderPath, ICollection<string> parentPathList)
+        {
+            while (true)
+            {
+                var parentDirectory = Directory.GetParent(folderPath);
+                if (parentDirectory == null)
+                {
+                    return;
+                }
+
+                parentPathList.Add(parentDirectory.FullName);
+                folderPath = parentDirectory.FullName;
+            }
         }
     }
 }

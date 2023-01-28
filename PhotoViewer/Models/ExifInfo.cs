@@ -11,12 +11,12 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// Exif情報のプロパティタイプ
         /// </summary>
-        public PropertyType ExifPropertyType { get; init; }
+        public PropertyType ExifPropertyType { get; }
 
         /// <summary>
         /// Exifパラメータ名
         /// </summary>
-        public string ExifParameterText { get; init; }
+        public string ExifParameterText { get; }
 
         private string exifParameterValue;
         /// <summary>

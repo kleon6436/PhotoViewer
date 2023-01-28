@@ -18,7 +18,7 @@ namespace Kchary.PhotoViewer.Helpers
         /// </summary>
         /// <param name="mediaInfo">メディア情報</param>
         /// <returns>BitmapSource</returns>
-        public static BitmapSource CreatePictureThumbnailImage(MediaInfo mediaInfo)
+        public static BitmapSource CreatePictureThumbnailImage(PhotoInfo mediaInfo)
         {
             const int LongSideLength = 100;
 

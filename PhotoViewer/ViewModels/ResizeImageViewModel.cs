@@ -68,7 +68,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// リサイズする画像ファイル名
         /// </summary>
-        public MediaInfo ResizeMediaInfo { get; set; }
+        public PhotoInfo ResizeMediaInfo { get; set; }
 
         #endregion UI binding parameter
 
@@ -118,14 +118,13 @@ namespace Kchary.PhotoViewer.ViewModels
 
             ImageFormItems = new ImageForm[]
             {
-                new() { Name = "Jpeg", Form = ImageForms.Jpeg },
-                new() { Name = "Png" , Form = ImageForms.Png },
-                new() { Name = "Bmp" , Form = ImageForms.Bmp },
-                new() { Name = "Tiff", Form = ImageForms.Tiff }
+                new() { Name = "Jpeg", Form = FileExtensionType.Jpeg },
+                new() { Name = "Png" , Form = FileExtensionType.Png },
+                new() { Name = "Bmp" , Form = FileExtensionType.Bmp },
+                new() { Name = "Tiff", Form = FileExtensionType.Tiff }
             };
 
             ResizeCategoryItem.Subscribe(OnResizeCategoryItemChanged).AddTo(disposable);
-
             SaveButtonCommand = new ReactiveCommand().WithSubscribe(SaveButtonClicked).AddTo(disposable);
         }
 
@@ -138,7 +137,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// 編集対象の保存ファイルパスをViewModelに設定する
         /// </summary>
         /// <param name="resizeMediaInfo">リサイズ対象のメディア情報</param>
-        public void SetEditFileData(MediaInfo resizeMediaInfo)
+        public void SetEditFileData(PhotoInfo resizeMediaInfo)
         {
             ResizeMediaInfo = resizeMediaInfo;
             EditImage.Value = ResizeMediaInfo.CreateEditViewImage(out var defaultPictureWidth, out var defaultPictureHeight, out var rotation);
@@ -163,10 +162,10 @@ namespace Kchary.PhotoViewer.ViewModels
                 Title = "Save as...",
                 Filter = SelectedForm.Value.Form switch
                 {
-                    ImageForms.Bmp => "Bmp file(*.bmp)|*.bmp",
-                    ImageForms.Jpeg => "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg",
-                    ImageForms.Png => "Png file(*.png)|*.png",
-                    ImageForms.Tiff => "Tiff file(*.tif)|*.tif",
+                    FileExtensionType.Bmp => "Bmp file(*.bmp)|*.bmp",
+                    FileExtensionType.Jpeg => "Jpeg file(*.jpg;*.jpeg)|*.jpg;*.jpeg",
+                    FileExtensionType.Png => "Png file(*.png)|*.png",
+                    FileExtensionType.Tiff => "Tiff file(*.tif)|*.tif",
                     _ => throw new ArgumentOutOfRangeException(),
                 }
             };
@@ -194,10 +193,10 @@ namespace Kchary.PhotoViewer.ViewModels
             // 選択された保存形式と同じエンコーダーを用意
             BitmapEncoder encoder = SelectedForm.Value.Form switch
             {
-                ImageForms.Bmp => new BmpBitmapEncoder(),
-                ImageForms.Jpeg => new JpegBitmapEncoder { QualityLevel = SelectedQuality.Value.QualityValue },
-                ImageForms.Png => new PngBitmapEncoder(),
-                ImageForms.Tiff => new TiffBitmapEncoder(),
+                FileExtensionType.Bmp => new BmpBitmapEncoder(),
+                FileExtensionType.Jpeg => new JpegBitmapEncoder { QualityLevel = SelectedQuality.Value.QualityValue },
+                FileExtensionType.Png => new PngBitmapEncoder(),
+                FileExtensionType.Tiff => new TiffBitmapEncoder(),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -234,7 +233,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 return;
             }
 
-            double scale = 1;
+            var scale = 1.0;
             if (resizeCategoryItem.Category != ResizeCategory.None)
             {
                 // 倍率計算(この値をもとにリサイズする)

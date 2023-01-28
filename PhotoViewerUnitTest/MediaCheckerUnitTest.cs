@@ -11,7 +11,7 @@ namespace PhotoViewerUnitTest
         public void GetSupportExtensions()
         {
             string[] truthSupportExtensions = { ".jpg", ".bmp", ".png", ".tiff", ".tif", ".gif", ".dng", ".nef" };
-            var supportExtentions = AppConfigManager.GetSupportExtentions();
+            var supportExtentions = Const.SupportPictureExtensions;
 
             // Check support extensions
             Assert.IsTrue(supportExtentions.SequenceEqual(truthSupportExtensions));

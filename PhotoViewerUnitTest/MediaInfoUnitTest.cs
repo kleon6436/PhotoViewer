@@ -12,7 +12,7 @@ namespace PhotoViewerUnitTest
             const string FilePath = @"..\..\..\..\TestData\Mountain.jpg";
             const string FileName = "Mountain.jpg";
 
-            var mediaInfo = new MediaInfo(FilePath);
+            var mediaInfo = new PhotoInfo(FilePath);
 
             // Check thumbnail image.
             Assert.IsTrue(mediaInfo.ThumbnailImage != null);
