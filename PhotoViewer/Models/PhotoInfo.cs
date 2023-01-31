@@ -1,5 +1,5 @@
-﻿using Kchary.PhotoViewer.Helpers;
-using Prism.Mvvm;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Helpers;
 using System;
 using System.IO;
 using System.Linq;
@@ -13,19 +13,15 @@ namespace Kchary.PhotoViewer.Models
     /// <summary>
     /// 写真情報クラス
     /// </summary>
-    public sealed class PhotoInfo : BindableBase
+    public sealed partial class PhotoInfo : ObservableObject
     {
         #region Media Parameters
 
-        private BitmapSource thumbnailImage;
         /// <summary>
         /// サムネイル画像
         /// </summary>
-        public BitmapSource ThumbnailImage
-        {
-            get { return thumbnailImage; }
-            set { SetProperty(ref thumbnailImage, value); }
-        }
+        [ObservableProperty]
+        private BitmapSource thumbnailImage;
 
         /// <summary>
         /// ファイル名

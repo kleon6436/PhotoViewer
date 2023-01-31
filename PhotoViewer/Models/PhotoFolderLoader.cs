@@ -1,5 +1,5 @@
-﻿using Kchary.PhotoViewer.Helpers;
-using Prism.Mvvm;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +10,7 @@ using System.Windows.Data;
 
 namespace Kchary.PhotoViewer.Models
 {
-    public sealed class PhotoFolderLoader : BindableBase
+    public sealed class PhotoFolderLoader : ObservableObject
     {
         /// <summary>
         /// フォルダ内の最初の画像を追加できたときに発火するイベント
@@ -164,7 +164,15 @@ namespace Kchary.PhotoViewer.Models
                     {
                         continue;
                     }
-                    PhotoList.AddRange(queue);
+                    foreach (var item in queue)
+                    {
+                        if (sender is BackgroundWorker { CancellationPending: true })
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+                        PhotoList.Add(item);
+                    }
 
                     if (PhotoList.Count >= 5 && !firstImageLoadEventCalled)
                     {
@@ -178,7 +186,15 @@ namespace Kchary.PhotoViewer.Models
 
                 if (queue.Count != 0)
                 {
-                    PhotoList.AddRange(queue);
+                    foreach (var item in queue)
+                    {
+                        if (sender is BackgroundWorker { CancellationPending: true })
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+                        PhotoList.Add(item);
+                    }
                     queue.Clear();
                 }
             }

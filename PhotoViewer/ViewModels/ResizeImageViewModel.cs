@@ -1,6 +1,6 @@
-﻿using Kchary.PhotoViewer.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
-using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class ResizeImageViewModel : BindableBase, IDisposable
+    public sealed class ResizeImageViewModel : ObservableObject, IDisposable
     {
         #region UI binding parameter
 

@@ -1,7 +1,7 @@
-﻿using Kchary.PhotoViewer.Helpers;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Helpers;
 using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.Views;
-using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class MainWindowViewModel : BindableBase, IDisposable
+    public sealed class MainWindowViewModel : ObservableObject, IDisposable
     {
         #region ViewModels
 

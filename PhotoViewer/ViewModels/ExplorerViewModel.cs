@@ -1,6 +1,6 @@
-﻿using Kchary.PhotoViewer.Helpers;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Helpers;
 using Kchary.PhotoViewer.Models;
-using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +11,7 @@ using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class ExplorerViewModel : BindableBase, IDisposable
+    public sealed class ExplorerViewModel : ObservableObject, IDisposable
     {
         /// <summary>
         /// ファイルシステム管理のウォッチャー
