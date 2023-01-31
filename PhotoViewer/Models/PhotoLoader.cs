@@ -76,7 +76,7 @@ namespace Kchary.PhotoViewer.Models
             }
 
             loadingPhoto = true;
-            var result= await LoadImageAndExif();
+            var result = await LoadImageAndExif();
             loadingPhoto = false;
 
             if (result.Item1 == null || result.Item2.Length == 0)

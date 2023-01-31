@@ -2,7 +2,6 @@
 using Kchary.PhotoViewer.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -30,7 +29,7 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// バックグラウンドでコンテンツをロードするためのワーカー
         /// </summary>
-        private readonly BackgroundWorker loadPhotoFolderWorker =new() { WorkerSupportsCancellation = true };
+        private readonly BackgroundWorker loadPhotoFolderWorker = new() { WorkerSupportsCancellation = true };
 
         /// <summary>
         /// コンテンツをリロードするためのフラグ
@@ -40,7 +39,7 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// 写真一覧リスト
         /// </summary>
-        public ObservableCollection<PhotoInfo> PhotoList { get; } = new();
+        public ObservableCollectionEx<PhotoInfo> PhotoList { get; } = new();
 
         /// <summary>
         /// コンストラクタ
@@ -66,7 +65,7 @@ namespace Kchary.PhotoViewer.Models
             {
                 throw new Exception("Folder is not found.");
             }
-            
+
             if (this.folderPath == folderPath)
             {
                 // 同じフォルダの時は、フォルダ変更しない
@@ -164,15 +163,7 @@ namespace Kchary.PhotoViewer.Models
                     {
                         continue;
                     }
-                    foreach (var item in queue)
-                    {
-                        if (sender is BackgroundWorker { CancellationPending: true })
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-                        PhotoList.Add(item);
-                    }
+                    PhotoList.AddRange(queue);
 
                     if (PhotoList.Count >= 5 && !firstImageLoadEventCalled)
                     {
@@ -186,15 +177,7 @@ namespace Kchary.PhotoViewer.Models
 
                 if (queue.Count != 0)
                 {
-                    foreach (var item in queue)
-                    {
-                        if (sender is BackgroundWorker { CancellationPending: true })
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-                        PhotoList.Add(item);
-                    }
+                    PhotoList.AddRange(queue);
                     queue.Clear();
                 }
             }
