@@ -19,3 +19,23 @@ bin/
 
 # UI design
 UI design
+PhotoViewerUnitTest/packages/
+UpgradeLog.htm
+/PhotoViewer_MSIX_Package/zlib1.dll
+/PhotoViewer_MSIX_Package/webpdecoder.dll
+/PhotoViewer_MSIX_Package/webp.dll
+/PhotoViewer_MSIX_Package/tiff.dll
+/PhotoViewer_MSIX_Package/raw_r.dll
+/PhotoViewer_MSIX_Package/opencv_imgproc4.dll
+/PhotoViewer_MSIX_Package/opencv_imgcodecs4.dll
+/PhotoViewer_MSIX_Package/opencv_core4.dll
+/PhotoViewer_MSIX_Package/libpng16.dll
+/PhotoViewer_MSIX_Package/liblzma.dll
+/PhotoViewer_MSIX_Package/lcms2.dll
+/PhotoViewer_MSIX_Package/jpeg62.dll
+/PhotoViewer_MSIX_Package/jasper.dll
+/PhotoViewer_MSIX_Package/ImageController.dll
+/PhotoViewer_MSIX_Package/AppPackages/
+/PhotoViewer_MSIX_Package/BundleArtifacts/
+/PhotoViewer_MSIX_Package/bin/
+/PhotoViewer_MSIX_Package/obj/
