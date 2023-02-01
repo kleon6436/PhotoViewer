@@ -159,13 +159,14 @@
     <Content Include="lcms2.dll" />
     <Content Include="liblzma.dll" />
     <Content Include="libpng16.dll" />
+    <Content Include="libsharpyuv.dll" />
+    <Content Include="libwebp.dll" />
+    <Content Include="libwebpdecoder.dll" />
     <Content Include="opencv_core4.dll" />
     <Content Include="opencv_imgcodecs4.dll" />
     <Content Include="opencv_imgproc4.dll" />
     <Content Include="raw_r.dll" />
     <Content Include="tiff.dll" />
-    <Content Include="webp.dll" />
-    <Content Include="webpdecoder.dll" />
     <Content Include="zlib1.dll" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />

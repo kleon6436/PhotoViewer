@@ -39,3 +39,6 @@ UpgradeLog.htm
 /PhotoViewer_MSIX_Package/BundleArtifacts/
 /PhotoViewer_MSIX_Package/bin/
 /PhotoViewer_MSIX_Package/obj/
+/PhotoViewer_MSIX_Package/libwebpdecoder.dll
+/PhotoViewer_MSIX_Package/libwebp.dll
+/PhotoViewer_MSIX_Package/libsharpyuv.dll

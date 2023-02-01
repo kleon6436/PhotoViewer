@@ -63,4 +63,8 @@
   <ItemGroup>
     <Resource Include="Images\SplashScreen.png" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /y $(SolutionDir)x64\$(Configuration)\*.dll $(ProjectDir)$(OutDir)" />
+  </Target>
 </Project>
