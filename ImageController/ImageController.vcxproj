@@ -64,7 +64,7 @@
       <OpenMPSupport>
       </OpenMPSupport>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <DisableSpecificWarnings>26451;26495;26812;4819;4251;5054;6387;6294;6201;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>26451;26495;26812;4819;4127;4251;5054;6387;6294;6201;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>

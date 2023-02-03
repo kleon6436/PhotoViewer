@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Disposables;
 
@@ -32,7 +33,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 登録アプリリスト
         /// </summary>
-        public ObservableCollectionEx<RegisterApp> RegisterAppList { get; } = new();
+        public ObservableCollection<RegisterApp> RegisterAppList { get; } = new();
 
         #endregion UI binding parameter
 
@@ -76,7 +77,10 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             RegisterAppList.Clear();
-            RegisterAppList.AddRange(registerAppList);
+            foreach (var item in registerAppList)
+            {
+                RegisterAppList.Add(item);
+            }
         }
 
         /// <summary>

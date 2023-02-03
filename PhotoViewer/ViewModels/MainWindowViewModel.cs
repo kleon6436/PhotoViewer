@@ -5,14 +5,11 @@ using Kchary.PhotoViewer.Views;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.ViewModels
@@ -70,11 +67,6 @@ namespace Kchary.PhotoViewer.ViewModels
         #region UI binding parameters
 
         /// <summary>
-        /// コンテキストメニューに表示するリスト
-        /// </summary>
-        public ObservableCollection<ContextMenuInfo> ContextMenuCollection { get; } = new();
-
-        /// <summary>
         /// 選択されたフォルダパス(絶対パス)
         /// </summary>
         public ReactivePropertySlim<string> SelectFolderPath { get; } = new();
@@ -90,16 +82,16 @@ namespace Kchary.PhotoViewer.ViewModels
         public ReactivePropertySlim<BitmapSource> PictureImageSource { get; } = new();
 
         /// <summary>
-        /// コンテキストメニューの表示非表示フラグ
-        /// </summary>
-        public ReactivePropertySlim<bool> IsShowContextMenu { get; } = new();
-
-        /// <summary>
         /// 編集ボタンの有効無効フラグ
         /// </summary>
         public ReactivePropertySlim<bool> IsEnableImageEditButton { get; } = new();
 
         #endregion UI binding parameters
+
+        /// <summary>
+        /// コンテキストメニューの管理クラスインスタンス
+        /// </summary>
+        public ContextMenuCollection ContextMenuCollection { get; } = new();
 
         /// <summary>
         /// 写真フォルダをロードするためのクラスインスタンス
@@ -174,7 +166,7 @@ namespace Kchary.PhotoViewer.ViewModels
             ExifInfoViewModel = new ExifInfoViewModel();
 
             // コンテキストメニューの設定
-            SetContextMenuFromConfigData();
+            ContextMenuCollection.SetContextMenuFromConfigData();
         }
 
         /// <summary>
@@ -215,46 +207,6 @@ namespace Kchary.PhotoViewer.ViewModels
         public bool RequestStopThreadAndTask()
         {
             return PhotoFolderLoader.RequestStopThreadAndTask();
-        }
-
-        /// <summary>
-        /// コンテキストメニューを読み込む
-        /// </summary>
-        /// <param name="linkageApp">連携アプリ情報</param>
-        private void LoadContextMenu(RegisterApp linkageApp)
-        {
-            var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-            if (appIcon != null)
-            {
-                var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-                // コンテキストメニューに追加
-                var contextMenu = new ContextMenuInfo
-                {
-                    DisplayName = linkageApp.AppName,
-                    ContextIcon = iconBitmapSource
-                };
-                ContextMenuCollection.Add(contextMenu);
-            }
-
-            IsShowContextMenu.Value = ContextMenuCollection.Any();
-        }
-
-        /// <summary>
-        /// 設定ファイルのコンテキストメニューを設定する
-        /// </summary>
-        private void SetContextMenuFromConfigData()
-        {
-            var linkageAppList = AppConfig.GetInstance().GetAvailableRegisterApps();
-            if (linkageAppList?.Any() != true)
-            {
-                return;
-            }
-
-            foreach (var linkageApp in linkageAppList)
-            {
-                LoadContextMenu(linkageApp);
-            }
         }
 
         /// <summary>
@@ -324,7 +276,7 @@ namespace Kchary.PhotoViewer.ViewModels
         private void SettingButtonClicked()
         {
             var vm = new SettingViewModel();
-            vm.ReloadContextMenuEvent += ReloadContextMenu;
+            vm.ReloadContextMenuEvent += ContextMenuCollection.ReloadContextMenu;
 
             var settingDialog = new SettingView
             {
@@ -380,21 +332,6 @@ namespace Kchary.PhotoViewer.ViewModels
                 }
             },
             "Process start error", "Linked app is not started.");
-        }
-
-        /// <summary>
-        /// コンテキストメニューの再読み込み
-        /// </summary>
-        /// <param name="sender">SettingViewModel</param>
-        /// <param name="e">引数情報</param>
-        private void ReloadContextMenu(object sender, EventArgs e)
-        {
-            // コンテキストメニューをクリア
-            ContextMenuCollection.Clear();
-            IsShowContextMenu.Value = false;
-
-            // 登録アプリをコンテキストメニューに再登録
-            SetContextMenuFromConfigData();
         }
 
         /// <summary>

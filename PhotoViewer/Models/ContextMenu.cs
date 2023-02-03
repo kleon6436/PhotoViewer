@@ -5,7 +5,7 @@ namespace Kchary.PhotoViewer.Models
     /// <summary>
     /// コンテキストメニュークラス
     /// </summary>
-    public sealed record ContextMenuInfo
+    public sealed record ContextMenu
     {
         /// <summary>
         /// 表示名

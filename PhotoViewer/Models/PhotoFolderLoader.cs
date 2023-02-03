@@ -2,6 +2,7 @@
 using Kchary.PhotoViewer.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -39,7 +40,7 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// 写真一覧リスト
         /// </summary>
-        public ObservableCollectionEx<PhotoInfo> PhotoList { get; } = new();
+        public ObservableCollection<PhotoInfo> PhotoList { get; } = new();
 
         /// <summary>
         /// コンストラクタ
@@ -163,7 +164,15 @@ namespace Kchary.PhotoViewer.Models
                     {
                         continue;
                     }
-                    PhotoList.AddRange(queue);
+                    foreach (var item in queue)
+                    {
+                        if (sender is BackgroundWorker { CancellationPending: true })
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+                        PhotoList.Add(item);
+                    }
 
                     if (PhotoList.Count >= 5 && !firstImageLoadEventCalled)
                     {
@@ -177,7 +186,15 @@ namespace Kchary.PhotoViewer.Models
 
                 if (queue.Count != 0)
                 {
-                    PhotoList.AddRange(queue);
+                    foreach (var item in queue)
+                    {
+                        if (sender is BackgroundWorker { CancellationPending: true })
+                        {
+                            e.Cancel = true;
+                            return;
+                        }
+                        PhotoList.Add(item);
+                    }
                     queue.Clear();
                 }
             }
