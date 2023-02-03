@@ -70,7 +70,7 @@ namespace Kchary.PhotoViewer.Models
         private void AddContextMenu(RegisterApp linkageApp)
         {
             var appIcon = Icon.ExtractAssociatedIcon(linkageApp.AppPath);
-            if (appIcon == null) 
+            if (appIcon == null)
             {
                 return;
             }
