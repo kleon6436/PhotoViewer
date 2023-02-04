@@ -13,6 +13,13 @@ namespace Kchary.PhotoViewer.Models
     public sealed class ContextMenuCollection : ObservableObject
     {
         /// <summary>
+        /// コンテキストメニューの情報レコード
+        /// </summary>
+        /// <param name="DisplayName">表示名</param>
+        /// <param name="ContextIcon">アイコン</param>
+        public record ContextMenu(string DisplayName, BitmapSource ContextIcon);
+
+        /// <summary>
         /// コンテキストメニューに表示するリスト
         /// </summary>
         public ObservableCollection<ContextMenu> ContextMenuList { get; } = new();
@@ -78,12 +85,7 @@ namespace Kchary.PhotoViewer.Models
             iconBitmapSource.Freeze();
 
             // コンテキストメニューに追加
-            var contextMenu = new ContextMenu
-            {
-                DisplayName = linkageApp.AppName,
-                ContextIcon = iconBitmapSource
-            };
-
+            var contextMenu = new ContextMenu(linkageApp.AppName, iconBitmapSource);
             ContextMenuList.Add(contextMenu);
         }
     }
