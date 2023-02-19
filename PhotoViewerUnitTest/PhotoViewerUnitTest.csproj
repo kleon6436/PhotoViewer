@@ -67,6 +67,6 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;$(SolutionDir)x64\$(Configuration)\*.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;" />
+    <Exec Command="copy &quot;$(SolutionDir)$(Platform)\$(Configuration)\*.dll&quot; &quot;$(ProjectDir)$(OutDir)&quot;" />
   </Target>
 </Project>
