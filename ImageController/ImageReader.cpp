@@ -26,17 +26,16 @@ namespace Kchary::ImageController::Library
 
 	bool ImageReader::LoadImageAndGetImageSize(const wchar_t* imagePath, const ImageReadSettings& imageReadSettings, int& imageSize)
 	{
-		const auto path = ConvertWcharToString(imagePath);
 		m_imageReadSettings = imageReadSettings;
 
 		bool result;
 		if (imageReadSettings.isRawImage)
 		{
-			result = m_rawImageController->LoadImageAndGetImageSize(path.c_str(), imageReadSettings, imageSize);
+			result = m_rawImageController->LoadImageAndGetImageSize(imagePath, imageReadSettings, imageSize);
 		}
 		else
 		{
-			result = m_normalImageController->LoadImageAndGetImageSize(path.c_str(), imageReadSettings, imageSize);
+			result = m_normalImageController->LoadImageAndGetImageSize(imagePath, imageReadSettings, imageSize);
 		}
 
 		return result;
@@ -75,30 +74,5 @@ namespace Kchary::ImageController::Library
 		}
 
 		return true;
-	}
-
-	std::string ImageReader::ConvertWcharToString(const wchar_t* imagePath)
-	{
-		setlocale(LC_CTYPE, "ja_JP.UTF-8");
-
-		std::wstring wide(imagePath);
-
-		// wstring → SJIS
-		int iBufferSize = WideCharToMultiByte(CP_OEMCP, 0, wide.c_str(), -1, (char*)NULL, 0, NULL, NULL);
-
-		// バッファの取得
-		auto* cpMultiByte = new CHAR[iBufferSize];
-
-		// wstring → SJIS
-		WideCharToMultiByte(CP_OEMCP, 0, wide.c_str(), -1, cpMultiByte, iBufferSize, NULL, NULL);
-
-		// stringの生成
-		std::string imagePathStr(cpMultiByte, cpMultiByte + iBufferSize - 1);
-
-		// バッファの破棄
-		delete[] cpMultiByte;
-
-		// 変換結果を返す
-		return imagePathStr;
 	}
 }

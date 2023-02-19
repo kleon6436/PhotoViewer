@@ -30,7 +30,7 @@ namespace Kchary::ImageController::NormalImageControl
 		* @param imageSize	画像サイズ(out)
 		* @return 成功: True, 失敗: False
 		*/
-		bool LoadImageAndGetImageSize(const char* path, const ImageReadSettings& imageReadSettings, int& imageSize) override;
+		bool LoadImageAndGetImageSize(const wchar_t* path, const ImageReadSettings& imageReadSettings, int& imageSize) override;
 
 		/*!
 		 * @brief	画像データを取得する
@@ -53,6 +53,13 @@ namespace Kchary::ImageController::NormalImageControl
 		 * @return    ImreadModes
 		 */
 		static cv::ImreadModes GetImreadMode(const int resizeLongSideLength);
+
+		/*!
+		 * @brief	wcharを文字列(string)に変換する
+		 * @param	imagePath: wchar配列の画像ファイルパス
+		 * @return 画像ファイルパスの文字列
+		 */
+		std::string ConvertWcharToString(const wchar_t* imagePath);
 
 		cv::Mat m_image;	//!< 画像
 	};
