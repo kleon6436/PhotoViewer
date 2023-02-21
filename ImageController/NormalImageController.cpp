@@ -104,20 +104,11 @@ namespace Kchary::ImageController::NormalImageControl
 		setlocale(LC_CTYPE, "ja_JP.UTF-8");
 
 		std::wstring wide(imagePath);
+		int bufferSize = WideCharToMultiByte(CP_OEMCP, 0, wide.c_str(), -1, (char*)NULL, 0, NULL, NULL);
 
-		// wstring → SJIS
-		int iBufferSize = WideCharToMultiByte(CP_OEMCP, 0, wide.c_str(), -1, (char*)NULL, 0, NULL, NULL);
-
-		// バッファの取得
-		auto* cpMultiByte = new CHAR[iBufferSize];
-
-		// wstring → SJIS
-		WideCharToMultiByte(CP_OEMCP, 0, wide.c_str(), -1, cpMultiByte, iBufferSize, NULL, NULL);
-
-		// stringの生成
-		std::string imagePathStr(cpMultiByte, cpMultiByte + iBufferSize - 1);
-
-		// バッファの破棄
+		auto* cpMultiByte = new CHAR[bufferSize];
+		WideCharToMultiByte(CP_OEMCP, 0, wide.c_str(), -1, cpMultiByte, bufferSize, NULL, NULL);
+		std::string imagePathStr(cpMultiByte, cpMultiByte + bufferSize - 1);
 		delete[] cpMultiByte;
 
 		// 変換結果を返す
