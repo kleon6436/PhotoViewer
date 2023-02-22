@@ -1,5 +1,5 @@
-﻿using Kchary.PhotoViewer.Views;
-using Prism.Mvvm;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Views;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
@@ -17,7 +17,7 @@ namespace Kchary.PhotoViewer.ViewModels
         InformationPage,
     }
 
-    public sealed class SettingViewModel : BindableBase, IDisposable
+    public sealed class SettingViewModel : ObservableObject, IDisposable
     {
         /// <summary>
         /// IDisposableをまとめるCompositeDisposable

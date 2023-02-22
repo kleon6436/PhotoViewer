@@ -10,7 +10,7 @@
 
 namespace Kchary::ImageController::RawImageControl
 {
-	bool RawImageController::LoadImageAndGetImageSize(const char* path, const ImageReadSettings& imageReadSettings, int& imageSize)
+	bool RawImageController::LoadImageAndGetImageSize(const wchar_t* path, const ImageReadSettings& imageReadSettings, int& imageSize)
 	{
 		const auto rawProcessor = std::make_unique<LibRaw>();
 

@@ -1,7 +1,7 @@
-﻿using Kchary.PhotoViewer.Helpers;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Helpers;
 using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
-using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
@@ -11,7 +11,7 @@ using System.Reactive.Disposables;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class RegisterAppViewModel : BindableBase, IDisposable
+    public sealed class RegisterAppViewModel : ObservableObject, IDisposable
     {
         /// <summary>
         /// 登録アプリ数の最大値
@@ -77,7 +77,10 @@ namespace Kchary.PhotoViewer.ViewModels
             }
 
             RegisterAppList.Clear();
-            RegisterAppList.AddRange(registerAppList);
+            foreach (var item in registerAppList)
+            {
+                RegisterAppList.Add(item);
+            }
         }
 
         /// <summary>

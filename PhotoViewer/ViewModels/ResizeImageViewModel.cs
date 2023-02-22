@@ -1,6 +1,6 @@
-﻿using Kchary.PhotoViewer.Models;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Models;
 using Microsoft.Win32;
-using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
@@ -11,8 +11,41 @@ using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class ResizeImageViewModel : BindableBase, IDisposable
+    public sealed class ResizeImageViewModel : ObservableObject, IDisposable
     {
+        /// <summary>
+        /// リサイズカテゴリ
+        /// </summary>
+        public enum ResizeCategory
+        {
+            None,
+            Print,
+            Blog,
+            Twitter,
+        }
+
+        /// <summary>
+        ///  編集画面に表示する画像保存形式レコード
+        /// </summary>
+        /// <param name="Name">画像保存形式名</param>
+        /// <param name="Form">画像保存形式</param>
+        public record ImageForm(string Name, FileExtensionType Form);
+
+        /// <summary>
+        /// 編集画面に表示する画質設定メニューレコード
+        /// </summary>
+        /// <param name="Name">画質名</param>
+        /// <param name="QualityValue">画質に対応する値</param>
+        public record ImageQuality(string Name, int QualityValue);
+
+        /// <summary>
+        /// 編集画面に表示するリサイズカテゴリ情報レコード
+        /// </summary>
+        /// <param name="Name">リサイズカテゴリ名</param>
+        /// <param name="Category">リサイズカテゴリ</param>
+        /// <param name="ResizeLongSideValue">リサイズする長辺の長さ</param>
+        public record ResizeImageCategory(string Name, ResizeCategory Category, int ResizeLongSideValue);
+
         #region UI binding parameter
 
         /// <summary>
@@ -103,25 +136,25 @@ namespace Kchary.PhotoViewer.ViewModels
         {
             ResizeCategoryItems = new ResizeImageCategory[]
             {
-                new() { Name = "No resize" , Category = ResizeCategory.None },
-                new() { Name = "Print size", Category = ResizeCategory.Print  , ResizeLongSideValue = 2500 },
-                new() { Name = "Blog size" , Category = ResizeCategory.Blog   , ResizeLongSideValue = 1500 },
-                new() { Name = "SNS size"  , Category = ResizeCategory.Twitter, ResizeLongSideValue = 1000 }
+                new("No resize" , ResizeCategory.None, 0),
+                new("Print size", ResizeCategory.Print, 2500),
+                new("Blog size", ResizeCategory.Blog, 1500),
+                new("SNS size", ResizeCategory.Twitter, 1000)
             };
 
             ImageSaveQualityItems = new ImageQuality[]
             {
-                new() { Name = "High"    , QualityValue = 90 },
-                new() { Name = "standard", QualityValue = 80 },
-                new() { Name = "Low"     , QualityValue = 60 }
+                new("High", 90),
+                new("standard", 80),
+                new("Low", 60)
             };
 
             ImageFormItems = new ImageForm[]
             {
-                new() { Name = "Jpeg", Form = FileExtensionType.Jpeg },
-                new() { Name = "Png" , Form = FileExtensionType.Png },
-                new() { Name = "Bmp" , Form = FileExtensionType.Bmp },
-                new() { Name = "Tiff", Form = FileExtensionType.Tiff }
+                new("Jpeg", FileExtensionType.Jpeg),
+                new("Png", FileExtensionType.Png),
+                new("Bmp", FileExtensionType.Bmp),
+                new("Tiff", FileExtensionType.Tiff)
             };
 
             ResizeCategoryItem.Subscribe(OnResizeCategoryItemChanged).AddTo(disposable);

@@ -9,7 +9,9 @@
 #include "RawImageController.h"
 #include "NormalImageController.h"
 #include "ImageReader.h"
+#include <locale.h>
 #include <iostream>
+#include <windows.h>
 
 namespace Kchary::ImageController::Library
 {
@@ -24,17 +26,16 @@ namespace Kchary::ImageController::Library
 
 	bool ImageReader::LoadImageAndGetImageSize(const wchar_t* imagePath, const ImageReadSettings& imageReadSettings, int& imageSize)
 	{
-		const auto path = ConvertWcharToChar(imagePath);
 		m_imageReadSettings = imageReadSettings;
 
 		bool result;
 		if (imageReadSettings.isRawImage)
 		{
-			result = m_rawImageController->LoadImageAndGetImageSize(path.get(), imageReadSettings, imageSize);
+			result = m_rawImageController->LoadImageAndGetImageSize(imagePath, imageReadSettings, imageSize);
 		}
 		else
 		{
-			result = m_normalImageController->LoadImageAndGetImageSize(path.get(), imageReadSettings, imageSize);
+			result = m_normalImageController->LoadImageAndGetImageSize(imagePath, imageReadSettings, imageSize);
 		}
 
 		return result;
@@ -73,22 +74,5 @@ namespace Kchary::ImageController::Library
 		}
 
 		return true;
-	}
-
-	std::unique_ptr<char[]> ImageReader::ConvertWcharToChar(const wchar_t* imagePath)
-	{
-		setlocale(LC_CTYPE, "ja_JP.UTF-8");
-
-		// This is the number of null characters.
-		const auto imagePathLen = wcslen(imagePath) + 1;
-
-		// Convert to byte number.
-		const auto requestBufferSize = imagePathLen * 2;
-		auto path = std::make_unique<char[]>(requestBufferSize);
-
-		size_t convertedCharSize = 0;
-		wcstombs_s(&convertedCharSize, path.get(), requestBufferSize, imagePath, _TRUNCATE);
-
-		return path;
 	}
 }

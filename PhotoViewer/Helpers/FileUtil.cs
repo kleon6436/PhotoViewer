@@ -1,7 +1,5 @@
-﻿using Kchary.PhotoViewer.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.Helpers
 {

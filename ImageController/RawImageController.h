@@ -31,7 +31,7 @@ namespace Kchary::ImageController::RawImageControl
 		* @param imageSize	画像サイズ(out)
 		* @return 成功: True, 失敗: False
 		*/
-		bool LoadImageAndGetImageSize(const char* path, const ImageReadSettings& imageReadSettings, int& imageSize) override;
+		bool LoadImageAndGetImageSize(const wchar_t* path, const ImageReadSettings& imageReadSettings, int& imageSize) override;
 
 		/*!
 		 * @brief	画像データを取得する

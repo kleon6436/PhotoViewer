@@ -1,12 +1,11 @@
-﻿using Kchary.PhotoViewer.ViewModels;
-using Prism.Mvvm;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
     /// Exif表示用クラス
     /// </summary>
-    public sealed class ExifInfo : BindableBase
+    public sealed partial class ExifInfo : ObservableObject
     {
         /// <summary>
         /// Exif情報のプロパティタイプ
@@ -18,15 +17,11 @@ namespace Kchary.PhotoViewer.Models
         /// </summary>
         public string ExifParameterText { get; }
 
-        private string exifParameterValue;
         /// <summary>
         /// Exifパラメータ値
         /// </summary>
-        public string ExifParameterValue
-        {
-            get => exifParameterValue;
-            set => SetProperty(ref exifParameterValue, value);
-        }
+        [ObservableProperty]
+        private string exifParameterValue;
 
         /// <summary>
         /// コンストラクタ

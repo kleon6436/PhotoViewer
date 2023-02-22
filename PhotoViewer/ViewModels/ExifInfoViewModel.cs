@@ -1,9 +1,9 @@
-﻿using Kchary.PhotoViewer.Models;
-using Prism.Mvvm;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Models;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
-    public sealed class ExifInfoViewModel : BindableBase
+    public sealed class ExifInfoViewModel : ObservableObject
     {
         /// <summary>
         /// Exif情報データを保持するリスト(UI表示に使用する)

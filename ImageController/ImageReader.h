@@ -40,13 +40,6 @@ namespace Kchary::ImageController::Library
 		bool GetThumbnailImageData(ImageData& imageData);
 
 	private:
-		/*!
-		 * @brief	wcharをchar配列に変換する
-		 * @param	imagePath: wchar配列の画像ファイルパス
-		 * @return	char配列のユニークポインタ(画像ファイルパス)
-		 */
-		std::unique_ptr<char[]> ConvertWcharToChar(const wchar_t* imagePath);
-
 		ImageReadSettings m_imageReadSettings;	//!< 画像読み込み設定
 		std::unique_ptr<IImageController> m_rawImageController;		//!< RAW画像読み込み用インスタンス
 		std::unique_ptr<IImageController> m_normalImageController;	//!< 通常の画像読み込み用インスタンス
