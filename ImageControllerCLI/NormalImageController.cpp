@@ -33,7 +33,7 @@ namespace Kchary::ImageController::NormalImageControl
 			}
 
 			const auto dataSize = m_image.total() * m_image.elemSize() * sizeof(std::byte);
-			imageData.buffer.reserve(dataSize);
+			imageData.buffer.resize(dataSize);
 			memcpy(&imageData.buffer[0], m_image.data, dataSize);
 
 			imageData.size = static_cast<unsigned int>(dataSize);

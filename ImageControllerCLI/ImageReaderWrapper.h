@@ -33,12 +33,12 @@ public:
 	/// 画像を取得する
 	/// </summary>
 	/// <param name="imagePath">ファイルパス</param>
-	/// <param name="imageReaderSettings"></param>
-	/// <param name="imageData"></param>
-	/// <returns></returns>
+	/// <param name="imageReaderSettings">画像読み込み設定</param>
+	/// <param name="imageData">画像データ</param>
+	/// <returns>成否</returns>
 	System::Boolean GetImageData(System::String^ imagePath, ImageReaderSettingsWrapper^ imageReaderSettings, ImageDataWrapper^ imageData);
 
 private:
-	ImageReader *m_imageReaderPtr;
+	ImageReader *m_imageReaderPtr;		//!< 画像リーダーのポインタ
 };
 

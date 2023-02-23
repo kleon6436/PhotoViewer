@@ -1,7 +1,6 @@
 ﻿using Kchary.PhotoViewer.Models;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -62,29 +61,24 @@ namespace Kchary.PhotoViewer.Helpers
         /// <returns>BitmapSource</returns>
         public static BitmapSource DecodePicture(string filePath, int longSideLength, bool isRawImage = false, bool stopLoading = false)
         {
-            ImageData imageData = new();
-            ImageReadLibraryWrapper imageReadLibraryWrapper = new();
-            BitmapSource image = null;
-            var imageReadSettingPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(ImageReadSettings)));
-
+            ImageReaderWrapper imageReaderWrapper = new();
+            BitmapSource image;
             try
             {
                 // 画像を読み込む
                 const bool isThumbnailMode = true;
-                ImageReadSettings imageReadSettings = new()
+                ImageReaderSettingsWrapper imageReadSettings = new()
                 {
-                    isRawImage = Convert.ToInt32(isRawImage),
-                    isThumbnailMode = Convert.ToInt32(isThumbnailMode),
-                    resizeLongSideLength = longSideLength,
+                    IsRawImage = isRawImage,
+                    IsThumbnailMode = isThumbnailMode,
+                    ResizeLongSideLength = longSideLength,
                 };
-                Marshal.StructureToPtr(imageReadSettings, imageReadSettingPtr, false);
-                imageReadLibraryWrapper.LoadImageAndGetImageSize(filePath, imageReadSettingPtr, out int imageSize);
 
-                // 必要なバッファを準備
-                imageData.buffer = Marshal.AllocCoTaskMem(imageSize);
-
-                // 画像データの取得
-                imageReadLibraryWrapper.GetThumbnailImageData(ref imageData);
+                ImageDataWrapper imageData = new();
+                if (!imageReaderWrapper.GetImageData(filePath, imageReadSettings, imageData))
+                {
+                    throw new Exception("Failed to get image");
+                }
 
                 image = CreateBitmapSourceFromImageStruct(imageData, stopLoading);
             }
@@ -93,12 +87,6 @@ namespace Kchary.PhotoViewer.Helpers
                 App.LogException(ex);
                 App.ShowErrorMessageBox("Cannot decode picture.", "Picture decode error");
                 image = null;
-            }
-            finally
-            {
-                Marshal.FreeCoTaskMem(imageData.buffer);
-                Marshal.FreeCoTaskMem(imageReadSettingPtr);
-                imageReadLibraryWrapper.Dispose();
             }
 
             return image;
@@ -145,20 +133,19 @@ namespace Kchary.PhotoViewer.Helpers
         /// <param name="imageData">画像データ情報</param>
         /// <param name="stopLoading">ロード停止フラグ</param>
         /// <returns>BitmapSource</returns>
-        private static BitmapSource CreateBitmapSourceFromImageStruct(ImageData imageData, bool stopLoading = false)
+        private static BitmapSource CreateBitmapSourceFromImageStruct(ImageDataWrapper imageData, bool stopLoading = false)
         {
             try
             {
-                var imgData = new byte[imageData.size];
-                Marshal.Copy(imageData.buffer, imgData, 0, (int)imageData.size);
+                var imgData = imageData.Buffer;
 
                 if (stopLoading)
                 {
                     return null;
                 }
 
-                var bitmap = new WriteableBitmap(imageData.width, imageData.height, 96, 96, PixelFormats.Bgr24, null);
-                bitmap.WritePixels(new Int32Rect(0, 0, imageData.width, imageData.height), imgData, imageData.stride, 0, 0);
+                var bitmap = new WriteableBitmap(imageData.Width, imageData.Height, 96, 96, PixelFormats.Bgr24, null);
+                bitmap.WritePixels(new Int32Rect(0, 0, imageData.Width, imageData.Height), imgData, imageData.Stride, 0, 0);
                 bitmap.Freeze();
 
                 return bitmap;

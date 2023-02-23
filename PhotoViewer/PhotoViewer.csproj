@@ -55,6 +55,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ImageControllerCLI\ImageControllerCLI.vcxproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\bluetooth.png" />
     <Resource Include="Images\edit.png" />
     <Resource Include="Images\folder.png" />
