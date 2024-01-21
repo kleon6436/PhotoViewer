@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Data;
 
@@ -138,7 +139,7 @@ namespace Kchary.PhotoViewer.Models
                 var count = 0;
 
                 // サポート対象のファイルを順番に読み込む
-                foreach (var supportFile in folder.EnumerateFiles($"*{supportExtension}"))
+                foreach (var supportFile in folder.EnumerateFiles($"*{supportExtension}").OrderBy(files => files, new NaturalFileInfoNameComparer()))
                 {
                     Thread.Sleep(50);   // CPU負荷低減のため
 

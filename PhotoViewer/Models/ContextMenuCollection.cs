@@ -4,9 +4,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows;
 
 namespace Kchary.PhotoViewer.Models
 {
@@ -42,7 +42,7 @@ namespace Kchary.PhotoViewer.Models
         public void SetContextMenuFromConfigData()
         {
             var linkageAppList = AppConfig.GetInstance().GetAvailableRegisterApps();
-            if (linkageAppList?.Any() != true)
+            if (linkageAppList.Length == 0)
             {
                 return;
             }

@@ -135,7 +135,7 @@
             <!-- Right side layout -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" MinHeight="200" />
+                    <RowDefinition Height="*" MinHeight="240" />
                     <RowDefinition Height="3*" MinHeight="450" />
                 </Grid.RowDefinitions>
 
@@ -147,15 +147,14 @@
                           ItemsSource="{Binding PhotoFolderLoader.PhotoList, Mode=OneTime}"
                           SelectedItem="{Binding SelectedMedia.Value, Mode=TwoWay, Delay=250}"
                           SelectionMode="Single"
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                           UseLayoutRounding="True"
-                          RenderOptions.BitmapScalingMode="HighQuality"
-                          ScrollViewer.IsDeferredScrollingEnabled="True"
-                          ScrollViewer.PanningMode="VerticalOnly" 
-                          ScrollViewer.CanContentScroll="True"
                           BorderBrush="{x:Null}"
                           Background="#F0F0F0"
+                          RenderOptions.BitmapScalingMode="HighQuality"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.IsDeferredScrollingEnabled="True" 
+                          ScrollViewer.CanContentScroll="True"
                           VirtualizingPanel.ScrollUnit="Item"
                           VirtualizingPanel.CacheLengthUnit="Item"
                           VirtualizingPanel.CacheLength="10, 10"
