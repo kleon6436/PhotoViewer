@@ -17,4 +17,12 @@ namespace Kchary.PhotoViewer.Helpers
             return SafeNativeMethods.StrCmpLogicalW(x?.Name, y?.Name);
         }
     }
+
+    public sealed class NaturalFileInfoNameComparer : IComparer<FileInfo>
+    {
+        public int Compare(FileInfo x, FileInfo y)
+        {
+            return SafeNativeMethods.StrCmpLogicalW(x?.Name, y?.Name);
+        }
+    }
 }

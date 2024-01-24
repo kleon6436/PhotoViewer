@@ -116,11 +116,11 @@ namespace Kchary.PhotoViewer.Models
             });
 
             // タスクを実行し、処理完了まで待つ
-            loadPhotoTasks = new[]
-            {
-                    loadPictureTask,
-                    setExifInfoTask
-            };
+            loadPhotoTasks =
+            [
+                loadPictureTask,
+                setExifInfoTask
+            ];
             await Task.WhenAll(loadPhotoTasks);
 
             return new Tuple<BitmapSource, ExifInfo[]>(image, exifInfos);

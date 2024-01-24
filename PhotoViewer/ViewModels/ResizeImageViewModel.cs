@@ -134,28 +134,28 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         public ResizeImageViewModel()
         {
-            ResizeCategoryItems = new ResizeImageCategory[]
-            {
-                new("No resize" , ResizeCategory.None, 0),
+            ResizeCategoryItems =
+            [
+                new("No resize", ResizeCategory.None, 0),
                 new("Print size", ResizeCategory.Print, 2500),
                 new("Blog size", ResizeCategory.Blog, 1500),
                 new("SNS size", ResizeCategory.Twitter, 1000)
-            };
+            ];
 
-            ImageSaveQualityItems = new ImageQuality[]
-            {
+            ImageSaveQualityItems =
+            [
                 new("High", 90),
                 new("standard", 80),
                 new("Low", 60)
-            };
+            ];
 
-            ImageFormItems = new ImageForm[]
-            {
+            ImageFormItems =
+            [
                 new("Jpeg", FileExtensionType.Jpeg),
                 new("Png", FileExtensionType.Png),
                 new("Bmp", FileExtensionType.Bmp),
                 new("Tiff", FileExtensionType.Tiff)
-            };
+            ];
 
             ResizeCategoryItem.Subscribe(OnResizeCategoryItemChanged).AddTo(disposable);
             SaveButtonCommand = new ReactiveCommand().WithSubscribe(SaveButtonClicked).AddTo(disposable);

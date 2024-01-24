@@ -71,7 +71,7 @@ namespace Kchary.PhotoViewer.ViewModels
             DeleteLinkAppCommand = new ReactiveCommand<RegisterApp>().WithSubscribe(DeleteLinkAppButtonClicked).AddTo(disposables);
 
             var registerAppList = AppConfig.GetInstance().GetAvailableRegisterApps();
-            if (registerAppList?.Any() != true)
+            if (registerAppList.Length == 0)
             {
                 return;
             }
@@ -149,7 +149,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// </summary>
         private void DeleteLinkAppButtonClicked(RegisterApp deleteAppSetting)
         {
-            if (RegisterAppList?.Any() != true || deleteAppSetting == null)
+            if (RegisterAppList.Count == 0 || deleteAppSetting == null)
             {
                 return;
             }

@@ -124,7 +124,7 @@ namespace Kchary.PhotoViewer.Models
         {
             // リンク先がないものはすべて削除して、 有効な連携アプリ一覧を作成
             RegisterAppList.RemoveAll(x => !FileUtil.CheckFilePath(x.AppPath));
-            return RegisterAppList.ToArray();
+            return [.. RegisterAppList];
         }
 
         /// <summary>
