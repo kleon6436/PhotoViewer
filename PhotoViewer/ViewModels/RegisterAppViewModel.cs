@@ -21,7 +21,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// IDisposableをまとめるCompositeDisposable
         /// </summary>
-        private readonly CompositeDisposable disposables = new();
+        private readonly CompositeDisposable disposables = [];
 
         #region UI binding parameter
 

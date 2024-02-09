@@ -151,8 +151,8 @@
                           BorderBrush="{x:Null}"
                           Background="#F0F0F0"
                           RenderOptions.BitmapScalingMode="HighQuality"
-                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                           ScrollViewer.IsDeferredScrollingEnabled="True" 
                           ScrollViewer.CanContentScroll="True"
                           VirtualizingPanel.ScrollUnit="Item"
@@ -180,7 +180,7 @@
                     </ListView.Resources>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <wpftk:VirtualizingWrapPanel Orientation="Vertical" />
+                            <wpftk:VirtualizingWrapPanel Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemContainerStyle>
