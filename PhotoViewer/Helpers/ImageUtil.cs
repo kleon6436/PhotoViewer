@@ -135,25 +135,18 @@ namespace Kchary.PhotoViewer.Helpers
         /// <returns>BitmapSource</returns>
         private static BitmapSource CreateBitmapSourceFromImageStruct(ImageDataWrapper imageData, bool stopLoading = false)
         {
-            try
+            var imgData = imageData.Buffer;
+
+            if (stopLoading)
             {
-                var imgData = imageData.Buffer;
-
-                if (stopLoading)
-                {
-                    return null;
-                }
-
-                var bitmap = new WriteableBitmap(imageData.Width, imageData.Height, 96, 96, PixelFormats.Bgr24, null);
-                bitmap.WritePixels(new Int32Rect(0, 0, imageData.Width, imageData.Height), imgData, imageData.Stride, 0, 0);
-                bitmap.Freeze();
-
-                return bitmap;
+                return null;
             }
-            catch
-            {
-                throw;
-            }
+
+            var bitmap = new WriteableBitmap(imageData.Width, imageData.Height, 96, 96, PixelFormats.Bgr24, null);
+            bitmap.WritePixels(new Int32Rect(0, 0, imageData.Width, imageData.Height), imgData, imageData.Stride, 0, 0);
+            bitmap.Freeze();
+
+            return bitmap;
         }
 
         /// <summary>
