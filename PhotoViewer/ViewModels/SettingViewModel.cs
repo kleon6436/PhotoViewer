@@ -22,7 +22,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// IDisposableをまとめるCompositeDisposable
         /// </summary>
-        private readonly CompositeDisposable disposable = new();
+        private readonly CompositeDisposable disposable = [];
 
         /// <summary>
         /// コンテキストメニューの再読み込みイベント

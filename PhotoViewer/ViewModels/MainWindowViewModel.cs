@@ -101,7 +101,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// IDisposableをまとめるCompositeDisposable
         /// </summary>
-        private readonly CompositeDisposable disposables = new();
+        private readonly CompositeDisposable disposables = [];
 
         /// <summary>
         /// 1枚の写真をロードするためのクラスインスタンス

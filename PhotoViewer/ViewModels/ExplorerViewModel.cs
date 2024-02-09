@@ -31,7 +31,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// ツリーに表示するアイテムリスト
         /// </summary>
-        public ObservableCollection<ExplorerItem> ExplorerItems { get; } = new();
+        public ObservableCollection<ExplorerItem> ExplorerItems { get; } = [];
 
         /// <summary>
         /// 表示中のフォルダパス
