@@ -137,7 +137,7 @@ namespace Kchary.PhotoViewer.Helpers
         {
             var imgData = imageData.Buffer;
 
-            if (stopLoading)
+            if (stopLoading || imgData == null)
             {
                 return null;
             }

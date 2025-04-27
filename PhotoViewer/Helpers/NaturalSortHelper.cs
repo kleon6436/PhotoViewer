@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Kchary.PhotoViewer.Models;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -18,11 +19,11 @@ namespace Kchary.PhotoViewer.Helpers
         }
     }
 
-    public sealed class NaturalFileInfoNameComparer : IComparer<FileInfo>
+    public sealed class NaturalFileInfoNameComparer : IComparer<PhotoInfo>
     {
-        public int Compare(FileInfo x, FileInfo y)
+        public int Compare(PhotoInfo x, PhotoInfo y)
         {
-            return SafeNativeMethods.StrCmpLogicalW(x?.Name, y?.Name);
+            return SafeNativeMethods.StrCmpLogicalW(x?.FileName, y?.FileName);
         }
     }
 }

@@ -1,12 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kchary.PhotoViewer.Helpers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace Kchary.PhotoViewer.Models
@@ -129,74 +132,51 @@ namespace Kchary.PhotoViewer.Models
             }
 
             var folder = new DirectoryInfo(folderPath);
+            var files = Const.SupportPictureExtensions
+                .AsParallel()
+                .WithDegreeOfParallelism(Math.Max(2, Environment.ProcessorCount / 2))
+                .SelectMany(ext => folder.EnumerateFiles($"*{ext}", SearchOption.TopDirectoryOnly))
+                .ToList();
 
-            // 選択されたフォルダ内でサポート対象の拡張子を順番にチェック
-            var firstImageLoadEventCalled = false;
-            var queue = new List<PhotoInfo>();
-            foreach (var supportExtension in Const.SupportPictureExtensions)
+            if (files.Count == 0)
             {
-                var tick = Environment.TickCount;
-                var count = 0;
+                return;
+            }
 
-                // サポート対象のファイルを順番に読み込む
-                foreach (var supportFile in folder.EnumerateFiles($"*{supportExtension}").OrderBy(files => files, new NaturalFileInfoNameComparer()))
+            var photoInfos = files
+                .AsParallel()
+                .WithDegreeOfParallelism(Math.Max(2, Environment.ProcessorCount / 2))
+                .Select(file =>
                 {
-                    Thread.Sleep(50);   // CPU負荷低減のため
-
-                    if (sender is BackgroundWorker { CancellationPending: true })
+                    if (sender is BackgroundWorker worker && worker.CancellationPending)
                     {
-                        e.Cancel = true;
-                        return;
+                        throw new OperationCanceledException();
                     }
 
                     try
                     {
-                        queue.Add(new PhotoInfo(supportFile.FullName));
-                        count++;
+                        return new PhotoInfo(file.FullName);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // 読み込み失敗時は、その画像の読み込みはスキップする
-                        continue;
+                        Debug.WriteLine($"ファイル読み込み失敗: {file.FullName} ({ex.Message})");
+                        return null;
                     }
+                })
+                .Where(photo => photo != null)
+                .ToList();
 
-                    var duration = Environment.TickCount - tick;
-                    if ((count > 100 || duration <= 250) && duration <= 500)
-                    {
-                        continue;
-                    }
-                    foreach (var item in queue)
-                    {
-                        if (sender is BackgroundWorker { CancellationPending: true })
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-                        PhotoList.Add(item);
-                    }
+            photoInfos.Sort(new NaturalFileInfoNameComparer());
 
-                    if (PhotoList.Count >= 5 && !firstImageLoadEventCalled)
-                    {
-                        FirstImageLoaded?.Invoke(this, EventArgs.Empty);
-                        firstImageLoadEventCalled = true;
-                    }
+            bool firstImageLoaded = false;
+            foreach (var photo in photoInfos)
+            {
+                PhotoList.Add(photo);
 
-                    queue.Clear();
-                    tick = Environment.TickCount;
-                }
-
-                if (queue.Count != 0)
+                if (!firstImageLoaded && PhotoList.Count >= 5)
                 {
-                    foreach (var item in queue)
-                    {
-                        if (sender is BackgroundWorker { CancellationPending: true })
-                        {
-                            e.Cancel = true;
-                            return;
-                        }
-                        PhotoList.Add(item);
-                    }
-                    queue.Clear();
+                    FirstImageLoaded?.Invoke(this, EventArgs.Empty);
+                    firstImageLoaded = true;
                 }
             }
         }
