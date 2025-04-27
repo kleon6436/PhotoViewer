@@ -135,13 +135,7 @@ namespace Kchary.PhotoViewer.Models
             var files = Const.SupportPictureExtensions
                 .AsParallel()
                 .WithDegreeOfParallelism(Math.Max(2, Environment.ProcessorCount / 2))
-                .SelectMany(ext => folder.EnumerateFiles($"*{ext}", SearchOption.TopDirectoryOnly))
-                .ToList();
-
-            if (files.Count == 0)
-            {
-                return;
-            }
+                .SelectMany(ext => folder.EnumerateFiles($"*{ext}", SearchOption.TopDirectoryOnly));
 
             var photoInfos = files
                 .AsParallel()
