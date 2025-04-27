@@ -142,7 +142,7 @@ namespace Kchary.PhotoViewer.Models
         /// <returns>Exif情報のデフォルトリスト</returns>
         public static ExifInfo[] CreateExifDefaultList()
         {
-            var exifInfos = new ExifInfo[FastEnum.GetNames<PropertyType>().Count];
+            var exifInfos = new ExifInfo[FastEnum.GetNames<PropertyType>().Length];
 
             var count = 0;
             foreach (var propertyType in FastEnum.GetValues<PropertyType>())

@@ -4,12 +4,12 @@
  *
  */
 
+#include "pch.h"
 #include "RawImageController.h"
 #include "NormalImageController.h"
 #include "ImageReader.h"
 #include <locale.h>
 #include <iostream>
-#include <windows.h>
 
 namespace Kchary::ImageController::Library
 {

@@ -120,50 +120,37 @@ namespace Kchary.PhotoViewer.ViewModels
         public void ExpandPreviousPath(string previousFolderPath)
         {
             var parentPathList = new List<string>();
-
             FileUtil.GetAllParentPathList(previousFolderPath, parentPathList);
+            if (parentPathList.Count == 0)
+            {
+                return;
+            }
+
             parentPathList.Reverse();
 
-            var count = 0;
-            ExplorerItem previousItem = null;
+            ExplorerItem currentItem = null;
 
-            foreach (var parentPath in parentPathList)
+            foreach (var path in parentPathList)
             {
-                if (count == 0)
+                if (currentItem == null)
                 {
-                    // ドライブの情報を確認し、ツリーを展開する
-                    var previousDrive = parentPath;
-                    var driveItem = ExplorerItems.First(item => item.ExplorerItemPath == previousDrive);
-
-                    driveItem.IsExpanded = true;
-
-                    previousItem = driveItem;
-                }
-                else if (count == parentPathList.Count - 1)
-                {
-                    // 末尾のフォルダは選択状態にする
-                    var directoryItem = GetDirectoryItem(parentPath, previousItem);
-                    if (directoryItem == null)
-                    {
-                        return;
-                    }
-
-                    directoryItem.IsSelected = true;
+                    // 最初はドライブを探す
+                    currentItem = ExplorerItems.FirstOrDefault(item => item.ExplorerItemPath == path);
+                    if (currentItem == null) return;
+                    currentItem.IsExpanded = true;
                 }
                 else
                 {
-                    var directoryItem = GetDirectoryItem(parentPath, previousItem);
-                    if (directoryItem == null)
-                    {
-                        return;
-                    }
+                    // それ以外はサブディレクトリを探す
+                    currentItem = GetDirectoryItem(path, currentItem);
+                    if (currentItem == null) return;
 
-                    directoryItem.IsExpanded = true;
-                    previousItem = directoryItem;
+                    currentItem.IsExpanded = true;
                 }
-
-                count++;
             }
+
+            // 最後に選択状態にする
+            currentItem.IsSelected = true;
         }
 
         /// <summary>
