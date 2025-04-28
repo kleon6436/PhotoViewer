@@ -2,12 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Models
 {
-
     /// <summary>
     /// サムネイル品質区分
     /// </summary>
@@ -68,51 +66,6 @@ namespace Kchary.PhotoViewer.Models
             }
 
             return thumbnail;
-        }
-
-        /// <summary>
-        /// サムネイルを非同期で事前取得（プリフェッチ）
-        /// </summary>
-        public static void PrefetchThumbnails(IEnumerable<string> filePaths, ThumbnailQuality quality)
-        {
-            Task.Run(() =>
-            {
-                foreach (var path in filePaths)
-                {
-                    lock (thumbnailLock)
-                    {
-                        if (thumbnailCache.ContainsKey((path, quality)))
-                        {
-                            continue;
-                        }
-                    }
-
-                    var thumb = ImageUtil.GetThumbnail(path, GetSizeForQuality(quality));
-                    if (thumb != null)
-                    {
-                        var sizeBytes = EstimateMemorySize(thumb);
-
-                        lock (thumbnailLock)
-                        {
-                            if (currentCacheSize + sizeBytes > MaxCacheMemoryBytes)
-                            {
-                                TrimCache(sizeBytes);
-                            }
-
-                            if (!thumbnailCache.ContainsKey((path, quality)))
-                            {
-                                thumbnailCache[(path, quality)] = new CacheEntry
-                                {
-                                    Image = thumb,
-                                    Size = sizeBytes,
-                                    LastAccess = DateTime.UtcNow
-                                };
-                                currentCacheSize += sizeBytes;
-                            }
-                        }
-                    }
-                }
-            });
         }
 
         /// <summary>

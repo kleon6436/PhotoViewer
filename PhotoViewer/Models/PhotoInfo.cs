@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -35,6 +36,8 @@ namespace Kchary.PhotoViewer.Models
 
         #endregion Media Parameters
 
+        private readonly SemaphoreSlim thumbnailLoadSemaphore = new(4); // 同時4個までに制限
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -48,9 +51,6 @@ namespace Kchary.PhotoViewer.Models
 
             FilePath = filePath;
             FileName = FileUtil.GetFileName(filePath, false);
-
-            // サムネイルも初期化時に作る
-            CreateThumbnailImage();
         }
 
         /// <summary>
@@ -159,27 +159,28 @@ namespace Kchary.PhotoViewer.Models
         /// サムネイル画像を作成する
         /// </summary>
         /// <returns>True: 成功、False: 失敗</returns>
-        private void CreateThumbnailImage()
+        public async Task LoadThumbnailAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var thumb = ThumbnailCache.GetOrCreate(FilePath, ThumbnailQuality.Small);
-                if (thumb != null)
+                await thumbnailLoadSemaphore.WaitAsync(cancellationToken);
+
+                var thumbnail = await Task.Run(() => ThumbnailCache.GetOrCreate(FilePath, ThumbnailQuality.Small), cancellationToken);
+                if (thumbnail != null)
                 {
-                    var dispatcher = Application.Current.Dispatcher;
-                    if (dispatcher.CheckAccess())
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
                     {
-                        ThumbnailImage = thumb;
-                    }
-                    else
-                    {
-                        dispatcher.Invoke(() => ThumbnailImage = thumb);
-                    }
+                        ThumbnailImage = thumbnail;
+                    }, System.Windows.Threading.DispatcherPriority.Normal, cancellationToken);
                 }
             }
             catch (Exception ex)
             {
                 App.LogException(ex);
+            }
+            finally
+            {
+                thumbnailLoadSemaphore.Release();
             }
         }
     }
