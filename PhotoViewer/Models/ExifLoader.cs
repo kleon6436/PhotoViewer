@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kchary.PhotoViewer.Models
@@ -157,9 +158,9 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// 写真情報からExif情報のリストを作成する
         /// </summary>
-        /// <param name="stopRequest">停止要求フラグ</param>
+        /// <param name="cancellationToken">キャンセルトークン</param>
         /// <returns>Exif情報のリスト</returns>
-        public ExifInfo[] CreateExifInfoList(bool stopRequest)
+        public ExifInfo[] CreateExifInfoList(CancellationToken cancellationToken)
         {
             ExifInfo[] exifInfos = CreateExifDefaultList();
 
@@ -168,12 +169,14 @@ namespace Kchary.PhotoViewer.Models
             var directories = GetMetadataDirectories(fileExtensionType).ToArray();
             var subIfdDirectories = directories.OfType<ExifSubIfdDirectory>().ToArray();
 
-            Parallel.ForEach(exifInfos, exifInfo =>
+            var parallelOptions = new ParallelOptions
             {
-                if (stopRequest)
-                {
-                    throw new OperationCanceledException("Cancelled");
-                }
+                CancellationToken = cancellationToken
+            };
+
+            Parallel.ForEach(exifInfos, parallelOptions, exifInfo =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
 
                 switch (exifInfo.ExifPropertyType)
                 {
@@ -223,10 +226,9 @@ namespace Kchary.PhotoViewer.Models
                             FileExtensionType.Png => GetExifDataFromMetadata(directories, PngDirectory.TagBitsPerSample),
                             FileExtensionType.Gif => GetExifDataFromMetadata(directories, GifHeaderDirectory.TagBitsPerPixel),
                             FileExtensionType.Tiff or FileExtensionType.Dng or FileExtensionType.Nef => GetExifDataFromMetadata(directories, ExifDirectoryBase.TagBitsPerSample).AsSpan(0, 1),
-                            FileExtensionType.Unknown => throw new ArgumentOutOfRangeException(exifInfo.ExifPropertyType.ToString(), nameof(exifInfo.ExifPropertyType)),
-                            _ => throw new ArgumentOutOfRangeException(exifInfo.ExifPropertyType.ToString(), nameof(exifInfo.ExifPropertyType)),
+                            _ => throw new ArgumentOutOfRangeException(nameof(fileExtensionType), $"Unsupported extension: {fileExtensionType}")
                         };
-                        exifInfo.ExifParameterValue = $"{bitDepth.ToString()} bits";
+                        exifInfo.ExifParameterValue = $"{bitDepth} bits";
                         break;
 
                     case PropertyType.ShutterSpeed:
@@ -264,8 +266,7 @@ namespace Kchary.PhotoViewer.Models
                         break;
 
                     default:
-                        throw new ArgumentOutOfRangeException(exifInfo.ExifPropertyType.ToString(), nameof(exifInfo.ExifPropertyType));
-
+                        throw new ArgumentOutOfRangeException(nameof(exifInfo.ExifPropertyType), $"Unsupported property: {exifInfo.ExifPropertyType}");
                 }
             });
 

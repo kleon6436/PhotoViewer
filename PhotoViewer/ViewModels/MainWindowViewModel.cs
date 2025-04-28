@@ -138,8 +138,8 @@ namespace Kchary.PhotoViewer.ViewModels
             SelectedMedia.Subscribe(LoadMedia).AddTo(disposables);
 
             // 写真フォルダのローダーの設定
-            PhotoFolderLoader.FirstImageLoaded += FirstPhotoReadied;
-            PhotoFolderLoader.FolderLoadCompleted += FirstPhotoReadied;
+            PhotoFolderLoader.FirstImageLoaded += FirstPhotoReaded;
+            PhotoFolderLoader.FolderLoadCompleted += FirstPhotoReaded;
 
             // 設定ファイルの読み込み
             AppConfig.GetInstance().Import();
@@ -190,7 +190,7 @@ namespace Kchary.PhotoViewer.ViewModels
                 IsEnableImageEditButton.Value = false;
 
                 photoLoader.PhotoInfo = photoInfo;
-                (BitmapSource image, ExifInfo[] exifInfos) = await photoLoader.LoadPhoto();
+                (BitmapSource image, ExifInfo[] exifInfos) = await photoLoader.LoadPhotoAsync();
 
                 PictureImageSource.Value = image;
                 IsEnableImageEditButton.Value = !photoInfo.IsRawImage;  // 読み込んだ画像がRaw画像でないときは編集可能
@@ -393,7 +393,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <remarks>
         /// 最初の1枚を選んで選択状態にする
         /// </remarks>
-        private void FirstPhotoReadied(object sender, EventArgs e)
+        private void FirstPhotoReaded(object sender, EventArgs e)
         {
             if (SelectedMedia.Value == null && PhotoFolderLoader.PhotoList.Any())
             {

@@ -1,7 +1,8 @@
-﻿using Kchary.PhotoViewer.Models;
-using System;
-using System.IO;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -12,43 +13,71 @@ namespace Kchary.PhotoViewer.Helpers
     /// </summary>
     public static class ImageUtil
     {
+        [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+        private static extern void SHCreateItemFromParsingName(
+            [In] string pszPath,
+            [In] IntPtr pbc,
+            [In] ref Guid riid,
+            [Out] out IShellItemImageFactory ppv);
+
+        [DllImport("gdi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool DeleteObject(IntPtr hObject);
+
+        private static readonly Guid IShellItemImageFactoryGuid = new("bcc18b79-ba16-442f-80c4-8a59c30c463b");
+
         /// <summary>
-        /// 画像一覧に表示するサムネイル画像を作成する
+        /// OS標準のキャッシュされたサムネイル（ThumbCache）を使用してサムネイル画像を作成します
         /// </summary>
-        /// <param name="mediaInfo">メディア情報</param>
-        /// <returns>BitmapSource</returns>
-        public static BitmapSource CreatePictureThumbnailImage(PhotoInfo mediaInfo)
+        /// <param name="filePath">ファイルパス</param>
+        /// <param name="size">画像サイズ</param>
+        /// <returns>サムネイル画像</returns>
+        public static BitmapSource GetThumbnail(string filePath, int size)
         {
-            const int LongSideLength = 100;
+            var localGuid = IShellItemImageFactoryGuid;
+            SHCreateItemFromParsingName(filePath, IntPtr.Zero, ref localGuid, out var factory);
+            if (factory == null) return null;
 
-            if (mediaInfo.IsRawImage)
-            {
-                return DecodePicture(mediaInfo.FilePath, LongSideLength, mediaInfo.IsRawImage);
-            }
+            var sz = new SIZE { cx = size, cy = size };
+            factory.GetImage(sz, SIIGBF.RESIZETOFIT, out var hBitmap);
 
-            using var sourceStream = new FileStream(mediaInfo.FilePath, FileMode.Open, FileAccess.Read);
-            sourceStream.Seek(0, SeekOrigin.Begin);
+            if (hBitmap == IntPtr.Zero) return null;
 
-            var bitmapFrame = BitmapFrame.Create(sourceStream);
-            var metadata = bitmapFrame.Metadata as BitmapMetadata;
-            var thumbnail = bitmapFrame.Thumbnail;
+            var source = Imaging.CreateBitmapSourceFromHBitmap(
+                hBitmap,
+                IntPtr.Zero,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
 
-            if (thumbnail == null)
-            {
-                return DecodePicture(mediaInfo.FilePath, LongSideLength, mediaInfo.IsRawImage);
-            }
+            DeleteObject(hBitmap);
+            source.Freeze();
+            return source;
+        }
 
-            // リサイズ処理してから回転
-            var scale = LongSideLength / (double)thumbnail.PixelWidth;
-            if (thumbnail.PixelWidth < thumbnail.PixelHeight)
-            {
-                scale = LongSideLength / (double)thumbnail.PixelHeight;
-            }
-            thumbnail = new TransformedBitmap(thumbnail, new ScaleTransform(scale, scale));
-            thumbnail = RotateImage(metadata, thumbnail);
+        [ComImport]
+        [Guid("bcc18b79-ba16-442f-80c4-8a59c30c463b")]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        internal interface IShellItemImageFactory
+        {
+            void GetImage(SIZE size, SIIGBF flags, out IntPtr phbm);
+        }
 
-            thumbnail.Freeze();
-            return thumbnail;
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct SIZE
+        {
+            public int cx;
+            public int cy;
+        }
+
+        [Flags]
+        internal enum SIIGBF
+        {
+            RESIZETOFIT = 0x00,
+            BIGGERSIZEOK = 0x01,
+            MEMORYONLY = 0x02,
+            ICONONLY = 0x04,
+            THUMBNAILONLY = 0x08,
+            INCACHEONLY = 0x10,
         }
 
         /// <summary>
@@ -57,9 +86,9 @@ namespace Kchary.PhotoViewer.Helpers
         /// <param name="filePath">画像ファイルパス</param>
         /// <param name="longSideLength">長辺の長さ(この長さにあわせて画像がリサイズされる)</param>
         /// <param name="isRawImage">RAW画像フラグ</param>
-        /// <param name="stopLoading">ロード停止フラグ</param>
+        /// <param name="cancellationToken">キャンセルトークン</param>
         /// <returns>BitmapSource</returns>
-        public static BitmapSource DecodePicture(string filePath, int longSideLength, bool isRawImage = false, bool stopLoading = false)
+        public static BitmapSource DecodePicture(string filePath, int longSideLength, bool isRawImage = false, CancellationToken cancellationToken = default)
         {
             ImageReaderWrapper imageReaderWrapper = new();
             BitmapSource image;
@@ -80,7 +109,12 @@ namespace Kchary.PhotoViewer.Helpers
                     throw new Exception("Failed to get image");
                 }
 
-                image = CreateBitmapSourceFromImageStruct(imageData, stopLoading);
+                image = CreateBitmapSourceFromImageStruct(imageData, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                // 正常キャンセル → nullを返す
+                image = null;
             }
             catch (Exception ex)
             {
@@ -131,13 +165,14 @@ namespace Kchary.PhotoViewer.Helpers
         /// 画像データ情報からBitmapSourceを作成する
         /// </summary>
         /// <param name="imageData">画像データ情報</param>
-        /// <param name="stopLoading">ロード停止フラグ</param>
+        /// <param name="cancellationToken">キャンセルトークン</param>
         /// <returns>BitmapSource</returns>
-        private static BitmapSource CreateBitmapSourceFromImageStruct(ImageDataWrapper imageData, bool stopLoading = false)
+        private static BitmapSource CreateBitmapSourceFromImageStruct(ImageDataWrapper imageData, CancellationToken cancellationToken = default)
         {
-            var imgData = imageData.Buffer;
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (stopLoading || imgData == null)
+            var imgData = imageData.Buffer;
+            if (imgData == null)
             {
                 return null;
             }

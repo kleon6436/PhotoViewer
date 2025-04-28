@@ -3,7 +3,7 @@ using Kchary.PhotoViewer.Helpers;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -50,9 +50,7 @@ namespace Kchary.PhotoViewer.Models
             FileName = FileUtil.GetFileName(filePath, false);
 
             // サムネイルも初期化時に作る
-            // 最初は、Windows標準アイコンを用い、画像が読み込めたら上書きする
-            Application.Current.Dispatcher.Invoke(() => ThumbnailImage = WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SiidImageFiles));
-            CreateThumbnailImageAsync();
+            CreateThumbnailImage();
         }
 
         /// <summary>
@@ -98,12 +96,12 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// ピクチャビューに表示する画像を作成する
         /// </summary>
-        /// <param name="stopLoading">ロード停止フラグ</param>
+        /// <param name="cancellationToken">キャンセルトークン</param>
         /// <returns>BitmapSource</returns>
-        public BitmapSource CreatePictureViewImage(bool stopLoading)
+        public BitmapSource CreatePictureViewImage(CancellationToken cancellationToken)
         {
             const int LongSideLength = 2200;
-            return ImageUtil.DecodePicture(FilePath, LongSideLength, IsRawImage, stopLoading);
+            return ImageUtil.DecodePicture(FilePath, LongSideLength, IsRawImage, cancellationToken);
         }
 
         /// <summary>
@@ -161,11 +159,23 @@ namespace Kchary.PhotoViewer.Models
         /// サムネイル画像を作成する
         /// </summary>
         /// <returns>True: 成功、False: 失敗</returns>
-        private async void CreateThumbnailImageAsync()
+        private void CreateThumbnailImage()
         {
             try
             {
-                ThumbnailImage = await Task.Run(() => ImageUtil.CreatePictureThumbnailImage(this));
+                var thumb = ThumbnailCache.GetOrCreate(FilePath, ThumbnailQuality.Small);
+                if (thumb != null)
+                {
+                    var dispatcher = Application.Current.Dispatcher;
+                    if (dispatcher.CheckAccess())
+                    {
+                        ThumbnailImage = thumb;
+                    }
+                    else
+                    {
+                        dispatcher.Invoke(() => ThumbnailImage = thumb);
+                    }
+                }
             }
             catch (Exception ex)
             {

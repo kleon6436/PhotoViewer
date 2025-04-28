@@ -1,6 +1,7 @@
 ﻿using Kchary.PhotoViewer.Helpers;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
@@ -9,22 +10,16 @@ namespace Kchary.PhotoViewer.Models
     /// <summary>
     /// 1枚の写真情報から写真・Exif情報を読み込むクラス
     /// </summary>
-    public sealed class PhotoLoader
+    /// <remarks>
+    /// コンストラクタ
+    /// </remarks>
+    /// <param name="exifLoader">Exif情報をロードするためのクラスインスタンス</param>
+    public sealed class PhotoLoader(ExifLoader exifLoader)
     {
         /// <summary>
         /// Exif情報を読み込み用クラスインスタンス
         /// </summary>
-        private readonly ExifLoader exifLoader;
-
-        /// <summary>
-        /// 写真ロード中フラグ
-        /// </summary>
-        private bool loadingPhoto;
-
-        /// <summary>
-        /// 停止要求フラグ
-        /// </summary>
-        private volatile bool stopRequest;
+        private readonly ExifLoader exifLoader = exifLoader;
 
         /// <summary>
         /// 写真ロード時のタスクリスト
@@ -37,93 +32,90 @@ namespace Kchary.PhotoViewer.Models
         public PhotoInfo PhotoInfo { private get; set; }
 
         /// <summary>
-        /// コンストラクタ
+        /// キャンセルトークン
         /// </summary>
-        /// <param name="exifLoader">Exif情報をロードするためのクラスインスタンス</param>
-        public PhotoLoader(ExifLoader exifLoader)
-        {
-            this.exifLoader = exifLoader;
-        }
+        private CancellationTokenSource cancellationTokenSource = new();
+
+        /// <summary>
+        /// セマフォ
+        /// </summary>
+        private readonly SemaphoreSlim loadPhotoSemaphore = new(1, 1);
 
         /// <summary>
         /// 写真とExif情報を読み込む
         /// </summary>
         /// <returns>写真とExif情報</returns>
-        public async Task<Tuple<BitmapSource, ExifInfo[]>> LoadPhoto()
+        public async Task<(BitmapSource Image, ExifInfo[] ExifInfos)> LoadPhotoAsync()
         {
             if (PhotoInfo == null)
             {
                 throw new ArgumentNullException(nameof(PhotoInfo));
             }
 
-            if (loadingPhoto)
+            await loadPhotoSemaphore.WaitAsync();
+            try
             {
-                stopRequest = true;
-                if (loadPhotoTasks is not null)
+                // 前回の読み込み中ならキャンセル要求
+                cancellationTokenSource.Cancel();
+                try
                 {
-                    foreach (var task in loadPhotoTasks)
+                    if (loadPhotoTasks is not null)
                     {
-                        // 終了待機
-                        task.Wait();
+                        await Task.WhenAll(loadPhotoTasks);
                     }
                 }
-                stopRequest = false;
-            }
+                finally
+                {
+                    cancellationTokenSource.Dispose();
+                    cancellationTokenSource = new CancellationTokenSource();
+                }
 
-            if (!FileUtil.CheckFilePath(PhotoInfo.FilePath))
+                if (!FileUtil.CheckFilePath(PhotoInfo.FilePath))
+                {
+                    throw new FileNotFoundException($"File not found: {PhotoInfo.FilePath}");
+                }
+
+                var (image, exifInfos) = await LoadImageAndExifAsync(cancellationTokenSource.Token);
+
+                if (image == null || exifInfos == null || exifInfos.Length == 0)
+                {
+                    throw new FieldAccessException("Failed to load image or EXIF information.");
+                }
+
+                return (image, exifInfos);
+            }
+            finally
             {
-                throw new FileNotFoundException();
+                loadPhotoSemaphore.Release();
             }
-
-            loadingPhoto = true;
-            var result = await LoadImageAndExif();
-            loadingPhoto = false;
-
-            if (result.Item1 == null || result.Item2.Length == 0)
-            {
-                throw new FieldAccessException();
-            }
-
-            return result;
         }
 
         /// <summary>
         /// 選択されたメディア情報を非同期で読み込み、画像、Exif情報を取得する
         /// </summary>
         /// <returns>画像とExif情報</returns>
-        private async Task<Tuple<BitmapSource, ExifInfo[]>> LoadImageAndExif()
+        private async Task<(BitmapSource Image, ExifInfo[] ExifInfos)> LoadImageAndExifAsync(CancellationToken cancellationToken)
         {
-            BitmapSource image = null;
-            ExifInfo[] exifInfos = Array.Empty<ExifInfo>();
-
-            // 画像とExifを読み込むタスクを作成する
             var loadPictureTask = Task.Run(() =>
             {
-                if (stopRequest)
-                {
-                    return;
-                }
-                image = PhotoInfo.CreatePictureViewImage(stopRequest);
-            });
-            var setExifInfoTask = Task.Run(() =>
-            {
-                if (stopRequest)
-                {
-                    return;
-                }
-                exifLoader.PhotoInfo = PhotoInfo;
-                exifInfos = exifLoader.CreateExifInfoList(stopRequest);
-            });
+                cancellationToken.ThrowIfCancellationRequested();
+                return PhotoInfo.CreatePictureViewImage(cancellationToken);
+            }, cancellationToken);
 
-            // タスクを実行し、処理完了まで待つ
-            loadPhotoTasks =
-            [
-                loadPictureTask,
-                setExifInfoTask
-            ];
+            var loadExifTask = Task.Run(() =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                exifLoader.PhotoInfo = PhotoInfo;
+                return exifLoader.CreateExifInfoList(cancellationToken);
+            }, cancellationToken);
+
+            loadPhotoTasks = [loadPictureTask, loadExifTask];
             await Task.WhenAll(loadPhotoTasks);
 
-            return new Tuple<BitmapSource, ExifInfo[]>(image, exifInfos);
+            var image = await loadPictureTask;
+            var exifInfos = await loadExifTask;
+
+            return (image, exifInfos);
         }
     }
 }
