@@ -1,11 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kchary.PhotoViewer.Helpers;
-using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -35,8 +32,6 @@ namespace Kchary.PhotoViewer.Models
         public string FilePath { get; set; }
 
         #endregion Media Parameters
-
-        private readonly SemaphoreSlim thumbnailLoadSemaphore = new(4); // 同時4個までに制限
 
         /// <summary>
         /// コンストラクタ
@@ -153,35 +148,6 @@ namespace Kchary.PhotoViewer.Models
             decodeImage.Freeze();
 
             return decodeImage;
-        }
-
-        /// <summary>
-        /// サムネイル画像を作成する
-        /// </summary>
-        /// <returns>True: 成功、False: 失敗</returns>
-        public async Task LoadThumbnailAsync(CancellationToken cancellationToken)
-        {
-            try
-            {
-                await thumbnailLoadSemaphore.WaitAsync(cancellationToken);
-
-                var thumbnail = await Task.Run(() => ThumbnailCache.GetOrCreate(FilePath, ThumbnailQuality.Small), cancellationToken);
-                if (thumbnail != null)
-                {
-                    await Application.Current.Dispatcher.InvokeAsync(() =>
-                    {
-                        ThumbnailImage = thumbnail;
-                    }, System.Windows.Threading.DispatcherPriority.Normal, cancellationToken);
-                }
-            }
-            catch (Exception ex)
-            {
-                App.LogException(ex);
-            }
-            finally
-            {
-                thumbnailLoadSemaphore.Release();
-            }
         }
     }
 }
