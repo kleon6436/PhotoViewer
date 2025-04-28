@@ -50,16 +50,9 @@ namespace Kchary.PhotoViewer.Models
             await loadPhotoSemaphore.WaitAsync();
             try
             {
-                // 前回の読み込み中ならキャンセル要求
-                try
-                {
-                    cancellationTokenSource.Cancel();
-                }
-                finally
-                {
-                    cancellationTokenSource.Dispose();
-                    cancellationTokenSource = new CancellationTokenSource();
-                }
+                cancellationTokenSource.Cancel();
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = new CancellationTokenSource();
 
                 if (!FileUtil.CheckFilePath(PhotoInfo.FilePath))
                 {
@@ -101,7 +94,6 @@ namespace Kchary.PhotoViewer.Models
             }, cancellationToken);
 
             await Task.WhenAll(loadImageTask, loadExifTask);
-
             return (await loadImageTask, await loadExifTask);
         }
     }

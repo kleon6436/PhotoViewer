@@ -206,6 +206,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <returns>まだ実行中: False, 停止完了: True</returns>
         public bool RequestStopThreadAndTask()
         {
+            PhotoFolderLoader.CancelThumbnailLoad();
             return PhotoFolderLoader.RequestStopThreadAndTask();
         }
 

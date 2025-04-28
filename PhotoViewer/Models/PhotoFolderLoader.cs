@@ -8,7 +8,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace Kchary.PhotoViewer.Models
@@ -48,7 +50,7 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// 画像読み込みフラグ
         /// </summary>
-        private bool firstImageLoaded = false;
+        private bool firstImageLoaded;
 
         /// <summary>
         /// サムネイル画像生成処理のキャンセルトークン
@@ -63,17 +65,12 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// サムネイル画像を非同期で作成するためのタイマー処理
         /// </summary>
-        private readonly DispatcherTimer thumbnailTimer;
+        private readonly System.Timers.Timer thumbnailTimer;
 
         /// <summary>
         /// 1フレームあたりのサムネイル生成数
         /// </summary>
-        private const int MaxThumbnailsPerTick = 4;
-
-        /// <summary>
-        /// IO制限4並列
-        /// </summary>
-        private readonly SemaphoreSlim ioSemaphore = new(4);
+        private const int MaxThumbnailsPerTick = 5;
 
         /// <summary>
         /// コンストラクタ
@@ -83,11 +80,9 @@ namespace Kchary.PhotoViewer.Models
             // 複数スレッドからコレクション操作できるようにする
             BindingOperations.EnableCollectionSynchronization(PhotoList, new object());
 
-            thumbnailTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(33) // だいたい1フレーム(30fps想定)
-            };
-            thumbnailTimer.Tick += ThumbnailTimer_TickAsync;
+            // サムネイル読み込み用のタイマースレッドの設定
+            thumbnailTimer = new System.Timers.Timer(150);  // 150msはネットワークドライブからの画像読み込み速度を考慮して設定
+            thumbnailTimer.Elapsed += ThumbnailTimer_Elapsed;
 
             // バックグラウンドスレッドの設定
             loadPhotoFolderWorker.DoWork += LoadPhotoFolderDoWork;
@@ -100,7 +95,7 @@ namespace Kchary.PhotoViewer.Models
         /// </summary>
         /// <param name="sender">タイマー</param>
         /// <param name="e">引数情報</param>
-        private async void ThumbnailTimer_TickAsync(object sender, object e)
+        private async void ThumbnailTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             List<PhotoInfo> itemsToLoad = [];
 
@@ -117,26 +112,47 @@ namespace Kchary.PhotoViewer.Models
                 }
             }
 
+            // 読み込んだサムネイルをためる
+            List<(PhotoInfo photo, BitmapSource thumbnail)> loadedThumbnails = [];
             foreach (var photo in itemsToLoad)
             {
+                if (thumbnailLoadCts.Token.IsCancellationRequested)
+                {
+                    // キャンセルされたらループを即座に抜ける
+                    break;
+                }
+
                 try
                 {
-                    await ioSemaphore.WaitAsync(thumbnailLoadCts.Token);
-                    await photo.LoadThumbnailAsync(thumbnailLoadCts.Token);
+                    var thumbnail = await ImageUtil.LoadThumbnailAsync(photo, thumbnailLoadCts.Token);
+                    if (thumbnail != null)
+                    {
+                        loadedThumbnails.Add((photo, thumbnail));
+                    }
                 }
                 catch (Exception ex)
                 {
                     App.LogException(ex);
                 }
-                finally
-                {
-                    ioSemaphore.Release();
-                }
             }
 
-            if (thumbnailQueue.Count == 0)
+            // ある程度たまったら、UI側で表示処理する
+            if (loadedThumbnails.Count > 0)
             {
-                thumbnailTimer.Stop(); // もうやるものがなければ止める
+                try
+                {
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        foreach (var (photo, thumbnail) in loadedThumbnails)
+                        {
+                            photo.ThumbnailImage = thumbnail;
+                        }
+                    }, DispatcherPriority.Normal, thumbnailLoadCts.Token);
+                }
+                catch (Exception ex)
+                {
+                    App.LogException(ex);
+                }
             }
         }
 
@@ -170,7 +186,6 @@ namespace Kchary.PhotoViewer.Models
         public void UpdatePhotoList()
         {
             CancelThumbnailLoad();
-            firstImageLoaded = false;
 
             if (!RequestStopThreadAndTask())
             {
@@ -179,6 +194,8 @@ namespace Kchary.PhotoViewer.Models
             }
 
             PhotoList.Clear();
+            thumbnailLoadCts?.Dispose();
+            thumbnailLoadCts = new CancellationTokenSource();
             loadPhotoFolderWorker.RunWorkerAsync();
         }
 
@@ -195,6 +212,22 @@ namespace Kchary.PhotoViewer.Models
 
             loadPhotoFolderWorker.CancelAsync();
             return false;
+        }
+
+        /// <summary>
+        /// サムネイル画像の読み込み処理をキャンセル
+        /// </summary>
+        public void CancelThumbnailLoad()
+        {
+            // キャンセルトークンを発行
+            thumbnailLoadCts.Cancel();
+
+            // タイマーを停止し、キューをクリーンアップ
+            thumbnailTimer.Stop();
+            lock (thumbnailQueue)
+            {
+                thumbnailQueue.Clear();
+            }
         }
 
         /// <summary>
@@ -216,16 +249,13 @@ namespace Kchary.PhotoViewer.Models
                 return;
             }
 
-            var folder = new DirectoryInfo(folderPath);
-
             var fileList = Const.SupportPictureExtensions
-                .SelectMany(ext => folder.EnumerateFiles($"*{ext}", SearchOption.TopDirectoryOnly))
+                .SelectMany(ext => new DirectoryInfo(folderPath).EnumerateFiles($"*{ext}", SearchOption.TopDirectoryOnly))
                 .OrderBy(f => f, new NaturalFileInfoNameComparer())
                 .ToList();
 
-            const int batchSize = 5;
+            const int batchSize = 20;
             var batch = new List<PhotoInfo>(batchSize);
-
             foreach (var file in fileList)
             {
                 if (worker.CancellationPending)
@@ -234,24 +264,15 @@ namespace Kchary.PhotoViewer.Models
                     return;
                 }
 
-                PhotoInfo photo;
                 try
                 {
-                    photo = new PhotoInfo(file.FullName);
+                    batch.Add(new PhotoInfo(file.FullName));
                 }
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"ファイル読み込み失敗: {file.FullName} ({ex.Message})");
                     continue;
                 }
-
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-
-                batch.Add(photo);
 
                 if (batch.Count >= batchSize)
                 {
@@ -274,66 +295,44 @@ namespace Kchary.PhotoViewer.Models
         /// <param name="e">引数情報</param>
         private void LoadPhotoFolderProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            if (e.UserState is not List<PhotoInfo> batch)
+            {
+                return;
+            }
+
             var worker = (BackgroundWorker)sender;
-
-            if (e.UserState is List<PhotoInfo> batch)
+            foreach (var photo in batch)
             {
-                foreach (var photo in batch)
+                if (worker.CancellationPending)
                 {
-                    if (worker.CancellationPending)
-                    {
-                        return;
-                    }
-
-                    PhotoList.Add(photo);
-
-                    // サムネイル画像のためのキューに積む
-                    lock (thumbnailQueue)
-                    {
-                        thumbnailQueue.Enqueue(photo);
-                    }
+                    return;
                 }
 
-                if (!firstImageLoaded)
+                PhotoList.Add(photo);
+
+                // サムネイル画像のためのキューに積む
+                lock (thumbnailQueue)
                 {
-                    if (worker.CancellationPending)
-                    {
-                        return;
-                    }
-
-                    firstImageLoaded = true;
-                    FirstImageLoaded?.Invoke(this, EventArgs.Empty);
-                }
-
-                // タイマー起動
-                if (!thumbnailTimer.IsEnabled)
-                {
-                    if (worker.CancellationPending)
-                    {
-                        return;
-                    }
-
-                    thumbnailTimer.Start();
+                    thumbnailQueue.Enqueue(photo);
                 }
             }
-        }
 
-        /// <summary>
-        /// サムネイル画像の読み込み処理をキャンセル
-        /// </summary>
-        private void CancelThumbnailLoad()
-        {
-            // タイマーを停止し、キューをクリーンアップ
-            thumbnailTimer.Stop();
-            lock (thumbnailQueue)
+            if (worker.CancellationPending)
             {
-                thumbnailQueue.Clear();
+                return;
             }
 
-            // キャンセルトークンを発行
-            thumbnailLoadCts.Cancel();
-            thumbnailLoadCts.Dispose();
-            thumbnailLoadCts = new CancellationTokenSource();
+            if (!firstImageLoaded)
+            {
+                firstImageLoaded = true;
+                FirstImageLoaded?.Invoke(this, EventArgs.Empty);
+            }
+
+            // タイマー起動
+            if (!thumbnailTimer.Enabled)
+            {
+                thumbnailTimer.Start();
+            }
         }
 
         /// <summary>

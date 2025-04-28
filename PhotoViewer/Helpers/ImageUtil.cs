@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Kchary.PhotoViewer.Models;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -78,6 +80,23 @@ namespace Kchary.PhotoViewer.Helpers
             ICONONLY = 0x04,
             THUMBNAILONLY = 0x08,
             INCACHEONLY = 0x10,
+        }
+
+        /// <summary>
+        /// サムネイル画像をロードする
+        /// </summary>
+        /// <returns>True: 成功、False: 失敗</returns>
+        public static async Task<BitmapSource> LoadThumbnailAsync(PhotoInfo photo, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await Task.Run(() => ThumbnailCache.GetOrCreate(photo.FilePath, ThumbnailQuality.Small), cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+                return null;
+            }
         }
 
         /// <summary>
@@ -162,12 +181,12 @@ namespace Kchary.PhotoViewer.Helpers
         }
 
         /// <summary>
-        /// 画像データ情報からBitmapSourceを作成する
+        /// 画像データ情報からWriteableBitmapを作成する
         /// </summary>
         /// <param name="imageData">画像データ情報</param>
         /// <param name="cancellationToken">キャンセルトークン</param>
-        /// <returns>BitmapSource</returns>
-        private static BitmapSource CreateBitmapSourceFromImageStruct(ImageDataWrapper imageData, CancellationToken cancellationToken = default)
+        /// <returns>WriteableBitmap</returns>
+        private static WriteableBitmap CreateBitmapSourceFromImageStruct(ImageDataWrapper imageData, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -187,7 +206,7 @@ namespace Kchary.PhotoViewer.Helpers
         /// <summary>
         /// 画像を回転させる
         /// </summary>
-        private static BitmapSource TransformBitmap(BitmapSource source, Transform transform)
+        private static TransformedBitmap TransformBitmap(BitmapSource source, Transform transform)
         {
             var result = new TransformedBitmap();
             result.BeginInit();
