@@ -22,11 +22,6 @@ namespace Kchary.PhotoViewer.Models
         private readonly ExifLoader exifLoader = exifLoader;
 
         /// <summary>
-        /// 写真ロード時のタスクリスト
-        /// </summary>
-        private Task[] loadPhotoTasks;
-
-        /// <summary>
         /// 写真情報
         /// </summary>
         public PhotoInfo PhotoInfo { private get; set; }
@@ -56,13 +51,9 @@ namespace Kchary.PhotoViewer.Models
             try
             {
                 // 前回の読み込み中ならキャンセル要求
-                cancellationTokenSource.Cancel();
                 try
                 {
-                    if (loadPhotoTasks is not null)
-                    {
-                        await Task.WhenAll(loadPhotoTasks);
-                    }
+                    cancellationTokenSource.Cancel();
                 }
                 finally
                 {
@@ -96,7 +87,7 @@ namespace Kchary.PhotoViewer.Models
         /// <returns>画像とExif情報</returns>
         private async Task<(BitmapSource Image, ExifInfo[] ExifInfos)> LoadImageAndExifAsync(CancellationToken cancellationToken)
         {
-            var loadPictureTask = Task.Run(() =>
+            var loadImageTask = Task.Run(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 return PhotoInfo.CreatePictureViewImage(cancellationToken);
@@ -109,13 +100,9 @@ namespace Kchary.PhotoViewer.Models
                 return exifLoader.CreateExifInfoList(cancellationToken);
             }, cancellationToken);
 
-            loadPhotoTasks = [loadPictureTask, loadExifTask];
-            await Task.WhenAll(loadPhotoTasks);
+            await Task.WhenAll(loadImageTask, loadExifTask);
 
-            var image = await loadPictureTask;
-            var exifInfos = await loadExifTask;
-
-            return (image, exifInfos);
+            return (await loadImageTask, await loadExifTask);
         }
     }
 }

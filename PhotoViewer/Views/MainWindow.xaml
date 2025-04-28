@@ -208,7 +208,7 @@
                                                 <RowDefinition Height="75" />
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
-                                            <Image Grid.Row="0" d:DataContext="{d:DesignInstance model:PhotoInfo}" Source="{Binding ThumbnailImage, Mode=OneWay}" />
+                                            <Image Grid.Row="0" d:DataContext="{d:DesignInstance model:PhotoInfo}" Source="{Binding ThumbnailImage, Mode=OneWay, TargetNullValue={StaticResource PlaceholderImage}}" />
                                             <TextBlock Grid.Row="1" d:DataContext="{d:DesignInstance model:PhotoInfo}" HorizontalAlignment="Center" Text="{Binding FileName, Mode=OneTime}" TextTrimming="CharacterEllipsis" />
                                         </Grid>
                                     </DataTemplate>
