@@ -1,15 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kchary.PhotoViewer.Helpers;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace Kchary.PhotoViewer.Models
@@ -34,7 +31,7 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// バックグラウンドでコンテンツをロードするためのワーカー
         /// </summary>
-        private readonly BackgroundWorker loadPhotoFolderWorker = new() { WorkerSupportsCancellation = true };
+        private readonly BackgroundWorker loadPhotoFolderWorker = new() { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
 
         /// <summary>
         /// コンテンツをリロードするためのフラグ
@@ -44,7 +41,17 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// 写真一覧リスト
         /// </summary>
-        public ObservableCollection<PhotoInfo> PhotoList { get; } = new();
+        public ObservableCollection<PhotoInfo> PhotoList { get; } = [];
+
+        /// <summary>
+        /// プリフェッチ
+        /// </summary>
+        private bool prefetchStarted = false;
+
+        /// <summary>
+        /// 画像読み込みフラグ
+        /// </summary>
+        private bool firstImageLoaded = false;
 
         /// <summary>
         /// コンストラクタ
@@ -56,6 +63,7 @@ namespace Kchary.PhotoViewer.Models
 
             // バックグラウンドスレッドの設定
             loadPhotoFolderWorker.DoWork += LoadPhotoFolderDoWork;
+            loadPhotoFolderWorker.ProgressChanged += LoadPhotoFolderProgressChanged;
             loadPhotoFolderWorker.RunWorkerCompleted += RunWorkerCompleted;
         }
 
@@ -95,6 +103,9 @@ namespace Kchary.PhotoViewer.Models
                 return;
             }
 
+            prefetchStarted = false;
+            firstImageLoaded = false;
+
             PhotoList.Clear();
             loadPhotoFolderWorker.RunWorkerAsync();
         }
@@ -121,6 +132,8 @@ namespace Kchary.PhotoViewer.Models
         /// <param name="e">引数情報</param>
         private void LoadPhotoFolderDoWork(object sender, DoWorkEventArgs e)
         {
+            var worker = (BackgroundWorker)sender;
+
             if (!FileUtil.IsDirectory(folderPath))
             {
                 folderPath = Path.GetDirectoryName(folderPath);
@@ -132,48 +145,78 @@ namespace Kchary.PhotoViewer.Models
             }
 
             var folder = new DirectoryInfo(folderPath);
-            var files = Const.SupportPictureExtensions
-                .AsParallel()
-                .WithDegreeOfParallelism(Math.Max(2, Environment.ProcessorCount / 2))
-                .SelectMany(ext => folder.EnumerateFiles($"*{ext}", SearchOption.TopDirectoryOnly));
 
-            var photoInfos = files
-                .AsParallel()
-                .WithDegreeOfParallelism(Math.Max(2, Environment.ProcessorCount / 2))
-                .Select(file =>
-                {
-                    if (sender is BackgroundWorker worker && worker.CancellationPending)
-                    {
-                        throw new OperationCanceledException();
-                    }
-
-                    try
-                    {
-                        return new PhotoInfo(file.FullName);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"ファイル読み込み失敗: {file.FullName} ({ex.Message})");
-                        return null;
-                    }
-                })
-                .Where(photo => photo != null)
+            var fileList = Const.SupportPictureExtensions
+                .SelectMany(ext => folder.EnumerateFiles($"*{ext}", SearchOption.TopDirectoryOnly))
+                .OrderBy(f => f, new NaturalFileInfoNameComparer())
                 .ToList();
 
-            photoInfos.Sort(new NaturalFileInfoNameComparer());
+            const int batchSize = 20;
+            var batch = new List<PhotoInfo>(batchSize);
 
-            bool firstImageLoaded = false;
-            foreach (var photo in photoInfos)
+            foreach (var file in fileList)
             {
-                PhotoList.Add(photo);
-
-                if (!firstImageLoaded && PhotoList.Count >= 5)
+                if (worker.CancellationPending)
                 {
-                    FirstImageLoaded?.Invoke(this, EventArgs.Empty);
-                    firstImageLoaded = true;
+                    e.Cancel = true;
+                    return;
+                }
+
+                PhotoInfo photo;
+                try
+                {
+                    photo = new PhotoInfo(file.FullName);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"ファイル読み込み失敗: {file.FullName} ({ex.Message})");
+                    continue;
+                }
+
+                batch.Add(photo);
+
+                if (batch.Count >= batchSize)
+                {
+                    worker.ReportProgress(0, new List<PhotoInfo>(batch)); // Deep copyして渡す
+                    batch.Clear();
+                }
+            }
+
+            // 最後に残った分を送信
+            if (batch.Count > 0)
+            {
+                worker.ReportProgress(0, new List<PhotoInfo>(batch));
+            }
+        }
+
+        /// <summary>
+        /// スレッドでの読み込み処理が進捗したときのイベント処理
+        /// </summary>
+        /// <param name="sender">BackgroundWorker</param>
+        /// <param name="e">引数情報</param>
+        private void LoadPhotoFolderProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (e.UserState is List<PhotoInfo> batch)
+            {
+                foreach (var photo in batch)
+                {
+                    PhotoList.Add(photo);
+
+                    if (!firstImageLoaded)
+                    {
+                        firstImageLoaded = true;
+                        FirstImageLoaded?.Invoke(this, EventArgs.Empty);
+                    }
+                }
+
+                if (!prefetchStarted && PhotoList.Count >= 20)
+                {
+                    StartPrefetch();
+                    prefetchStarted = true;
                 }
             }
         }
+
 
         /// <summary>
         /// スレッドでの読み込み処理が終了したときのイベント処理
@@ -195,6 +238,20 @@ namespace Kchary.PhotoViewer.Models
             {
                 FolderLoadCompleted?.Invoke(this, EventArgs.Empty);
             }
+        }
+
+        /// <summary>
+        /// サムネイルのプリフェッチを開始する
+        /// </summary>
+        private void StartPrefetch()
+        {
+            var prefetchTargets = PhotoList
+                .Skip(20)
+                .Take(40)
+                .Select(p => p.FilePath)
+                .ToList();
+
+            ThumbnailCache.PrefetchThumbnails(prefetchTargets, ThumbnailQuality.Small);
         }
     }
 }
