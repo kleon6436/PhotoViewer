@@ -99,7 +99,6 @@ namespace Kchary.PhotoViewer.Views
             NativeMethods.SetWindowPlacement(hwnd, windowPlacement);
 
             this.Closed += Window_Closed;
-            this.SizeChanged += Window_SizeChanged;
         }
 
         /// <summary>
@@ -124,21 +123,6 @@ namespace Kchary.PhotoViewer.Views
             AppConfigManager.Export();
 
             vm?.Dispose();
-        }
-
-        /// <summary>
-        /// ウィンドウサイズ切り替え時の処理
-        /// </summary>
-        /// <param name="sender">Window</param>
-        /// <param name="args">引数情報</param>
-        private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs args)
-        {
-            // ListBoxのアイテム選択時は、そのアイテムまでスクロールする
-            var selectedItem = MediaListBox.SelectedItem;
-            if (selectedItem != null)
-            {
-                MediaListBox.ScrollIntoView(selectedItem);
-            }
         }
     }
 }

@@ -16,199 +16,134 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Rectangle Grid.Row="0" Fill="LightSkyBlue"/>
-
-        <Grid Grid.Row="0" Margin="5,0">
+        <!-- Top toolbar -->
+        <Grid Grid.Row="0" Background="LightSkyBlue">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Margin="4,0,10,0" Orientation="Horizontal">
-                <TextBlock FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Path: " FontWeight="Medium"/>
-                <TextBox FontSize="16" Style="{StaticResource PathTextStyle}"
+            <StackPanel Grid.Column="0" Margin="10,0" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock FontSize="16" Text="Path: " FontWeight="Medium" VerticalAlignment="Center"/>
+                <TextBox FontSize="16" IsReadOnly="True" BorderThickness="0" Background="Transparent"
                          Text="{Binding SelectFolderPath.Value, Mode=OneWay}"
-                         ToolTip="{Binding SelectFolderPath.Value, Mode=OneWay}"/>
+                         ToolTip="{Binding SelectFolderPath.Value, Mode=OneWay}" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <Grid Grid.Column="1" Margin="5,0" VerticalAlignment="Center" HorizontalAlignment="Right">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" Style="{StaticResource MenuContainerStyle}"
-                        Command="{Binding BluetoothButtonCommand}">
+            <StackPanel Grid.Column="1" Margin="5,0" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Command="{Binding BluetoothButtonCommand}" Margin="2,0">
                     <StackPanel Orientation="Horizontal">
-                        <Grid Style="{StaticResource MenuIconContainerStyle}">
-                            <Ellipse Fill="#1976d2"/>
-                            <Image Source="../Images/bluetooth.png" Style="{StaticResource MenuImageStyle}"/>
-                        </Grid>
-                        <TextBlock Text="Bluetooth" Style="{StaticResource MenuTextStyle}"/>
+                        <TextBlock Text="📶" FontSize="16" Margin="0,0,5,0"/>
+                        <TextBlock Text="Bluetooth"/>
                     </StackPanel>
                 </Button>
-
-                <Button Grid.Column="1" Style="{StaticResource MenuContainerStyle}"
-                        Command="{Binding OpenFolderButtonCommand}">
+                <Button Command="{Binding OpenFolderButtonCommand}" Margin="2,0">
                     <StackPanel Orientation="Horizontal">
-                        <Grid Style="{StaticResource MenuIconContainerStyle}">
-                            <Ellipse Fill="#1976d2"/>
-                            <Image Source="../Images/folder.png" Style="{StaticResource MenuImageStyle}"/>
-                        </Grid>
-                        <TextBlock Text="Explorer" Style="{StaticResource MenuTextStyle}"/>
+                        <TextBlock Text="📁" FontSize="16" Margin="0,0,5,0"/>
+                        <TextBlock Text="Explorer"/>
                     </StackPanel>
                 </Button>
-
-                <Button Grid.Column="2" Style="{StaticResource MenuContainerStyle}"
-                        Command="{Binding ReloadButtonCommand}">
+                <Button Command="{Binding ReloadButtonCommand}" Margin="2,0">
                     <StackPanel Orientation="Horizontal">
-                        <Grid Style="{StaticResource MenuIconContainerStyle}">
-                            <Ellipse Fill="#1976d2"/>
-                            <Image Source="../Images/reload.png" Style="{StaticResource MenuImageStyle}"/>
-                        </Grid>
-                        <TextBlock Text="Reload" Style="{StaticResource MenuTextStyle}"/>
+                        <TextBlock Text="🔄" FontSize="16" Margin="0,0,5,0"/>
+                        <TextBlock Text="Reload"/>
                     </StackPanel>
                 </Button>
-
-                <Button Grid.Column="3" Style="{StaticResource MenuContainerStyle}"
-                        Command="{Binding ImageEditButtonCommand}">
+                <Button Command="{Binding ImageEditButtonCommand}" Margin="2,0">
                     <StackPanel Orientation="Horizontal">
-                        <Grid Style="{StaticResource MenuIconContainerStyle}">
-                            <Ellipse Fill="#1976d2"/>
-                            <Image Source="../Images/edit.png" Style="{StaticResource MenuImageStyle}"/>
-                        </Grid>
-                        <TextBlock Text="Resize" Style="{StaticResource MenuTextStyle}"/>
+                        <TextBlock Text="✏️" FontSize="16" Margin="0,0,5,0"/>
+                        <TextBlock Text="Resize"/>
                     </StackPanel>
                 </Button>
-
-                <Button Grid.Column="4" Style="{StaticResource MenuContainerStyle}"
-                        Command="{Binding SettingButtonCommand}">
+                <Button Command="{Binding SettingButtonCommand}" Margin="2,0">
                     <StackPanel Orientation="Horizontal">
-                        <Grid Style="{StaticResource MenuIconContainerStyle}">
-                            <Ellipse Fill="#1976d2"/>
-                            <Image Source="../Images/settings.png" Style="{StaticResource MenuImageStyle}"/>
-                        </Grid>
-                        <TextBlock Text="Config" Style="{StaticResource MenuTextStyle}"/>
+                        <TextBlock Text="⚙️" FontSize="16" Margin="0,0,5,0"/>
+                        <TextBlock Text="Config"/>
                     </StackPanel>
                 </Button>
-            </Grid>
+            </StackPanel>
         </Grid>
 
+        <!-- Main content area -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.3*" MaxWidth="500" />
                 <ColumnDefinition Width="0.7*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left side layout -->
+            <!-- Left side: Exif and Folder Explorer -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition MinHeight="400" Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="400" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" Header="Exif" FontSize="16" FontWeight="Medium" 
-                          Style="{StaticResource GroupBoxViewStyle}">
-                    <view:ExifInfoView DataContext="{Binding ExifInfoViewModel, Mode=OneTime}" />
-                </GroupBox>
-                <GroupBox Grid.Row="1" Header="Folder" FontSize="16" FontWeight="Medium"
-                          Style="{StaticResource GroupBoxViewStyle}">
-                    <view:ExplorerView DataContext="{Binding ExplorerViewModel, Mode=OneTime}" />
-                </GroupBox>
+                <Border Grid.Row="0" BorderBrush="LightGray" BorderThickness="1" Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Exif" FontSize="16" FontWeight="Medium" Margin="10,5"/>
+                        <view:ExifInfoView Grid.Row="1" DataContext="{Binding ExifInfoViewModel, Mode=OneTime}" />
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1" BorderBrush="LightGray" BorderThickness="1" Margin="5">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="Folder" FontSize="16" FontWeight="Medium" Margin="10,5"/>
+                        <view:ExplorerView Grid.Row="1" DataContext="{Binding ExplorerViewModel, Mode=OneTime}" />
+                    </Grid>
+                </Border>
             </Grid>
 
-            <!-- Right side layout -->
+            <!-- Right side: Photo grid and viewer -->
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" MinHeight="240" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="3*" MinHeight="450" />
                 </Grid.RowDefinitions>
 
-                <GridSplitter Grid.Row="0" Margin="0,0,0,-2" BorderThickness="0,1,0,0" BorderBrush="#25A0DA"
-                              VerticalAlignment="Bottom" HorizontalAlignment="Stretch" ResizeDirection="Rows" 
-                              ResizeBehavior="CurrentAndNext"/>
-                <ListView Grid.Row="0"
-                          x:Name="MediaListBox"
+                <!-- Photo thumbnail grid using GridView -->
+                <GridView Grid.Row="0"
+                          x:Name="MediaGridView"
                           ItemsSource="{Binding PhotoFolderLoader.PhotoList, Mode=OneTime}"
-                          SelectedItem="{Binding SelectedMedia.Value, Mode=TwoWay, Delay=250}"
+                          SelectedItem="{Binding SelectedMedia.Value, Mode=TwoWay}"
                           SelectionMode="Single"
-                          UseLayoutRounding="True"
-                          BorderBrush="{x:Null}"
                           Background="#F0F0F0"
-                          RenderOptions.BitmapScalingMode="HighQuality"
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                          ScrollViewer.IsDeferredScrollingEnabled="True" 
-                          ScrollViewer.CanContentScroll="True"
-                          VirtualizingPanel.ScrollUnit="Item"
-                          VirtualizingPanel.CacheLengthUnit="Item"
-                          VirtualizingPanel.CacheLength="10, 10"
-                          VirtualizingPanel.IsVirtualizing="True"
-                          VirtualizingPanel.VirtualizationMode="Recycling">
-                    <ListView.Resources>
-                        <!-- データ変更時のBindingエラー対策 -->
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        </Style>
-                        <ContextMenu x:Key="ListViewItemMenu" ItemsSource="{Binding Path=DataContext.ContextMenuCollection.ContextMenuList, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}">
-                            <ContextMenu.ItemContainerStyle>
-                                <Style TargetType="{x:Type MenuItem}">
-                                    <Setter Property="Header" Value="{Binding Path=DisplayName, Mode=OneTime}" />
-                                    <Setter Property="Icon" Value="{DynamicResource MenuIcon}" />
-                                    <Setter Property="Command" Value="{Binding DataContext.ContextMenuCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"/>
-                                    <Setter Property="CommandParameter" Value="{Binding Path=DisplayName, Mode=OneTime}"/>
-                                </Style>
-                            </ContextMenu.ItemContainerStyle>
-                        </ContextMenu>
-                        <Image x:Key="MenuIcon" d:DataContext="{d:DesignInstance model:ContextMenu}"  Source="{Binding Path=ContextIcon, Mode=OneTime}" x:Shared="false" />
-                    </ListView.Resources>
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <wpftk:VirtualizingWrapPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="ToolTip" Value="{Binding FileName, Mode=OneTime}" />
-                            <!-- データ変更時のBindingエラー対策 -->
-                            <Setter Property="HorizontalContentAlignment" Value="Center" />
-                            <Setter Property="VerticalContentAlignment" Value="Center" />
-                            <Setter Property="HorizontalAlignment" Value="Center" />
-                            <Setter Property="VerticalAlignment" Value="Center" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=DataContext.ContextMenuCollection.IsShowContextMenu.Value, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}" Value="True">
-                                    <Setter Property="ContextMenu" Value="{StaticResource ListViewItemMenu}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.Style>
-                        <Style TargetType="{x:Type ListView}">
-                            <Setter Property="ItemTemplate">
-                                <Setter.Value>
-                                    <DataTemplate>
-                                        <Grid Width="100" Height="95">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="75" />
-                                                <RowDefinition Height="*" />
-                                            </Grid.RowDefinitions>
-                                            <Image Grid.Row="0" d:DataContext="{d:DesignInstance model:PhotoInfo}" Source="{Binding ThumbnailImage, Mode=OneWay, TargetNullValue={StaticResource PlaceholderImage}}" />
-                                            <TextBlock Grid.Row="1" d:DataContext="{d:DesignInstance model:PhotoInfo}" HorizontalAlignment="Center" Text="{Binding FileName, Mode=OneTime}" TextTrimming="CharacterEllipsis" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListView.Style>
-                </ListView>
+                          Padding="10">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="model:PhotoInfo">
+                            <Grid Width="100" Height="95">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="75" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Image Grid.Row="0" Source="{x:Bind ThumbnailImage, Mode=OneWay}" Stretch="Uniform"/>
+                                <TextBlock Grid.Row="1" Text="{x:Bind FileName, Mode=OneTime}" 
+                                           TextTrimming="CharacterEllipsis" 
+                                           HorizontalAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
 
-                <Image Grid.Row="1" x:Name="ViewImage" Source="{Binding PictureImageSource.Value, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" UseLayoutRounding="True" RenderOptions.BitmapScalingMode="HighQuality"
-                       MaxWidth="{Binding PictureImageSource.Value.PixelWidth, Mode=OneWay}"
-                       MaxHeight="{Binding PictureImageSource.Value.PixelHeight, Mode=OneWay}" />
+                <!-- Splitter (simplified as a thin rectangle) -->
+                <Rectangle Grid.Row="1" Height="3" Fill="#25A0DA" />
+
+                <!-- Large image viewer -->
+                <Image Grid.Row="2" 
+                       x:Name="ViewImage" 
+                       Source="{Binding PictureImageSource.Value, Mode=OneWay}" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center" 
+                       Margin="10"
+                       Stretch="Uniform" />
             </Grid>
         </Grid>
     </Grid>
