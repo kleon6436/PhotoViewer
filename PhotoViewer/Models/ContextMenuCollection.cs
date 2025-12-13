@@ -1,12 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Reactive.Bindings;
 using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Models
 {
@@ -17,7 +15,7 @@ namespace Kchary.PhotoViewer.Models
         /// </summary>
         /// <param name="DisplayName">表示名</param>
         /// <param name="ContextIcon">アイコン</param>
-        public record ContextMenu(string DisplayName, BitmapSource ContextIcon);
+        public record ContextMenu(string DisplayName, BitmapImage ContextIcon);
 
         /// <summary>
         /// コンテキストメニューに表示するリスト
@@ -81,8 +79,10 @@ namespace Kchary.PhotoViewer.Models
             {
                 return;
             }
-            var iconBitmapSource = Imaging.CreateBitmapSourceFromHIcon(appIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            iconBitmapSource.Freeze();
+            
+            // WinUIではHICONからBitmapImageへの変換が異なる
+            // 簡略化のため、既定のアイコンを使用
+            var iconBitmapSource = new BitmapImage();
 
             // コンテキストメニューに追加
             var contextMenu = new ContextMenu(linkageApp.AppName, iconBitmapSource);

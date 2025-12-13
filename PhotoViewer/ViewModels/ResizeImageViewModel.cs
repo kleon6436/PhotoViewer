@@ -1,13 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kchary.PhotoViewer.Models;
-using Microsoft.Win32;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
 using System.IO;
 using System.Reactive.Disposables;
-using System.Windows;
-using System.Windows.Media.Imaging;
+using Windows.Storage.Pickers;
 
 namespace Kchary.PhotoViewer.ViewModels
 {

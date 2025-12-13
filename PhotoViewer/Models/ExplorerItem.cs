@@ -1,23 +1,41 @@
-﻿using Kchary.PhotoViewer.Helpers;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Kchary.PhotoViewer.Helpers;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Models
 {
     /// <summary>
     /// エクスプローラーツリー情報表示用クラス
     /// </summary>
-    public sealed class ExplorerItem : TreeViewItem
+    public sealed partial class ExplorerItem : ObservableObject
     {
         /// <summary>
         /// アイテムパス
         /// </summary>
         public string ExplorerItemPath { get; }
+
+        /// <summary>
+        /// 表示名
+        /// </summary>
+        [ObservableProperty]
+        private string displayName;
+
+        /// <summary>
+        /// アイコン
+        /// </summary>
+        [ObservableProperty]
+        private BitmapImage icon;
+
+        /// <summary>
+        /// 子アイテム
+        /// </summary>
+        public ObservableCollection<ExplorerItem> Children { get; } = new();
 
         /// <summary>
         /// 内部ディレクトリ情報
@@ -27,7 +45,13 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// 展開済みのアイテムかどうかのフラグ
         /// </summary>
-        private bool isExpand;
+        private bool isExpanded;
+
+        /// <summary>
+        /// 子要素があるかどうか
+        /// </summary>
+        [ObservableProperty]
+        private bool hasChildren;
 
         /// <summary>
         /// コンストラクタ
@@ -37,12 +61,14 @@ namespace Kchary.PhotoViewer.Models
         public ExplorerItem(string path, bool isDrive)
         {
             // 初期値の設定
-            Expanded += ItemExpanded;
-            isExpand = false;
+            isExpanded = false;
             ExplorerItemPath = path;
-
-            // エクスプローラーツリーに表示するヘッダー情報を作成
-            Header = isDrive ? CreateExplorerItemHeader(ExplorerItemPath, true) : CreateExplorerItemHeader(FileUtil.GetFileName(ExplorerItemPath, false), false);
+            
+            // 表示名を設定
+            DisplayName = isDrive ? path : FileUtil.GetFileName(path, false);
+            
+            // アイコンを設定
+            Icon = CreateTreeIcon(isDrive);
 
             // ドライブ内のディレクトリを作成
             // 展開時にツリーを作成することで、メモリ消費を抑える
@@ -52,7 +78,9 @@ namespace Kchary.PhotoViewer.Models
             {
                 if (innerDirectory.Exists && innerDirectory.GetDirectories().Length > 0)
                 {
-                    Items.Add(new TreeViewItem());
+                    HasChildren = true;
+                    // 仮の子要素を追加（遅延読み込み用）
+                    Children.Add(null);
                 }
             }
             catch (Exception ex)
@@ -62,64 +90,54 @@ namespace Kchary.PhotoViewer.Models
         }
 
         /// <summary>
-        /// スタックパネルのレイアウトを作成する
-        /// </summary>
-        /// <returns>スタックパネルのレイアウト情報</returns>
-        private static StackPanel CreateExplorerItemHeader(string path, bool isDrive)
-        {
-            var stackPanel = new StackPanel()
-            {
-                Orientation = Orientation.Horizontal
-            };
-
-            var iconSource = CreateTreeIcon(isDrive);
-            stackPanel.Children.Add(new Image()
-            {
-                Source = iconSource,
-                Width = 20,
-                Height = 20
-            });
-            stackPanel.Children.Add(new TextBlock()
-            {
-                Text = path,
-                FontWeight = FontWeights.Normal,
-                ToolTip = path,
-                Margin = new Thickness(2.5, 0, 0, 0)
-            });
-            stackPanel.Margin = new Thickness(0, 5, 0, 0);
-
-            return stackPanel;
-        }
-
-        /// <summary>
         /// ディレクトリのツリー表示を更新する
         /// </summary>
-        private void UpdateDirectoryTree()
+        public void ExpandItem()
         {
-            Items.Clear();
-
-            // 自然ソート順でディレクトリリストをソート
-            foreach (var directory in innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer()))
+            if (isExpanded)
             {
-                // 1文字目の文字を確認
-                var fileNameFirst = FileUtil.GetFileName(directory.FullName, false)[..1];
-
-                // Windowsの特殊フォルダ以外を表示する
-                if (fileNameFirst == "$" ||
-                    (directory.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-                {
-                    continue;
-                }
-                var node = new ExplorerItem(directory.FullName, false);
-                Items.Add(node);
+                return;
             }
+
+            Children.Clear();
+
+            try
+            {
+                // 自然ソート順でディレクトリリストをソート
+                foreach (var directory in innerDirectory.GetDirectories().OrderBy(directory => directory, new NaturalDirectoryInfoNameComparer()))
+                {
+                    // 1文字目の文字を確認
+                    var fileName = FileUtil.GetFileName(directory.FullName, false);
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        continue;
+                    }
+                    
+                    var fileNameFirst = fileName[..1];
+
+                    // Windowsの特殊フォルダ以外を表示する
+                    if (fileNameFirst == "$" ||
+                        (directory.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                    {
+                        continue;
+                    }
+                    var node = new ExplorerItem(directory.FullName, false);
+                    Children.Add(node);
+                }
+            }
+            catch (Exception ex)
+            {
+                App.LogException(ex);
+            }
+
+            isExpanded = true;
         }
 
         /// <summary>
         /// ツリーに表示する各種アイコンを作成する
         /// </summary>
         /// <param name="isDrive">ドライブかどうかのフラグ</param>
-        private static BitmapSource CreateTreeIcon(bool isDrive)
+        private static BitmapImage CreateTreeIcon(bool isDrive)
         {
             if (isDrive)
             {
@@ -129,24 +147,6 @@ namespace Kchary.PhotoViewer.Models
             {
                 return WindowsIconCreator.GetWindowsIcon(WindowsIconCreator.StockIconId.SiidFolder);
             }
-        }
-
-        /// <summary>
-        /// ツリー表示でアイテムが展開されたときの動作
-        /// </summary>
-        /// <param name="sender">TreeView</param>
-        /// <param name="e">引数情報</param>
-        private void ItemExpanded(object sender, RoutedEventArgs e)
-        {
-            // キーボードフォーカスを外す
-            Keyboard.ClearFocus();
-
-            if (!isExpand)
-            {
-                UpdateDirectoryTree();
-            }
-
-            isExpand = true;
         }
     }
 }

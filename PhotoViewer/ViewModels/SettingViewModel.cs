@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kchary.PhotoViewer.Views;
+using Microsoft.UI.Xaml.Controls;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
 using System.Reactive.Disposables;
-using System.Windows.Controls;
 
 namespace Kchary.PhotoViewer.ViewModels
 {

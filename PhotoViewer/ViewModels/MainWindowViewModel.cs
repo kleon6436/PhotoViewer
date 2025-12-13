@@ -2,6 +2,7 @@
 using Kchary.PhotoViewer.Helpers;
 using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.Views;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using System;
@@ -9,8 +10,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
-using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.ViewModels
 {
@@ -79,7 +78,7 @@ namespace Kchary.PhotoViewer.ViewModels
         /// <summary>
         /// 表示する画像データ
         /// </summary>
-        public ReactivePropertySlim<BitmapSource> PictureImageSource { get; } = new();
+        public ReactivePropertySlim<BitmapImage> PictureImageSource { get; } = new();
 
         /// <summary>
         /// 編集ボタンの有効無効フラグ

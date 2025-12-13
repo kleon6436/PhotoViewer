@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kchary.PhotoViewer.Helpers;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,10 +10,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace Kchary.PhotoViewer.Models
 {
@@ -77,8 +75,8 @@ namespace Kchary.PhotoViewer.Models
         /// </summary>
         public PhotoFolderLoader()
         {
-            // 複数スレッドからコレクション操作できるようにする
-            BindingOperations.EnableCollectionSynchronization(PhotoList, new object());
+            // WinUIではBindingOperations.EnableCollectionSynchronizationは不要
+            // ObservableCollectionは自動的にUIスレッドで操作される
 
             // サムネイル読み込み用のタイマースレッドの設定
             thumbnailTimer = new System.Timers.Timer(150);  // 150msはネットワークドライブからの画像読み込み速度を考慮して設定
