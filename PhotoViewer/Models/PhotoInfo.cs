@@ -1,10 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Kchary.PhotoViewer.Helpers;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using Windows.Graphics.Imaging;
 
 namespace Kchary.PhotoViewer.Models
 {
@@ -19,7 +19,7 @@ namespace Kchary.PhotoViewer.Models
         /// サムネイル画像
         /// </summary>
         [ObservableProperty]
-        private BitmapSource thumbnailImage;
+        private BitmapImage thumbnailImage;
 
         /// <summary>
         /// ファイル名
@@ -92,8 +92,8 @@ namespace Kchary.PhotoViewer.Models
         /// ピクチャビューに表示する画像を作成する
         /// </summary>
         /// <param name="cancellationToken">キャンセルトークン</param>
-        /// <returns>BitmapSource</returns>
-        public BitmapSource CreatePictureViewImage(CancellationToken cancellationToken)
+        /// <returns>BitmapImage</returns>
+        public BitmapImage CreatePictureViewImage(CancellationToken cancellationToken)
         {
             const int LongSideLength = 2200;
             return ImageUtil.DecodePicture(FilePath, LongSideLength, IsRawImage, cancellationToken);
@@ -105,17 +105,12 @@ namespace Kchary.PhotoViewer.Models
         /// <param name="defaultPictureWidth">DefaultPictureWidth</param>
         /// <param name="defaultPictureHeight">DefaultPictureHeight</param>
         /// <param name="rotation">Rotation</param>
-        /// <returns>BitmapSource</returns>
-        public BitmapSource CreateEditViewImage(out int defaultPictureWidth, out int defaultPictureHeight, out uint rotation)
+        /// <returns>BitmapImage</returns>
+        public BitmapImage CreateEditViewImage(out int defaultPictureWidth, out int defaultPictureHeight, out uint rotation)
         {
-            using FileStream sourceStream = new(FilePath, FileMode.Open, FileAccess.Read);
-
-            sourceStream.Seek(0, SeekOrigin.Begin);
-            var bitmapFrame = BitmapFrame.Create(sourceStream);
-
-            defaultPictureWidth = bitmapFrame.PixelWidth;
-            defaultPictureHeight = bitmapFrame.PixelHeight;
-            rotation = ImageUtil.GetRotation(bitmapFrame.Metadata as BitmapMetadata);
+            defaultPictureWidth = 0;
+            defaultPictureHeight = 0;
+            rotation = 0;
 
             var longSideLength = rotation is 5 or 6 or 7 or 8 ? 240 : 350;
             return ImageUtil.DecodePicture(FilePath, longSideLength, IsRawImage);
@@ -125,29 +120,11 @@ namespace Kchary.PhotoViewer.Models
         /// 保存用の画像を作成する
         /// </summary>
         /// <param name="scale">scale</param>
-        /// <returns>BitmapSource</returns>
-        public BitmapSource CreateSaveImage(double scale)
+        /// <returns>BitmapImage</returns>
+        public BitmapImage CreateSaveImage(double scale)
         {
-            using var sourceStream = new FileStream(FilePath, FileMode.Open, FileAccess.Read);
-
-            sourceStream.Seek(0, SeekOrigin.Begin);
-            var bitmapFrame = BitmapFrame.Create(sourceStream);
-
-            // 回転情報をメタデータから取得
-            var metaData = bitmapFrame.Metadata as BitmapMetadata;
-
-            // 画像を指定サイズにリサイズ
-            BitmapSource saveImage = bitmapFrame;
-            saveImage = new TransformedBitmap(saveImage, new ScaleTransform(scale, scale));
-
-            // リサイズ後に回転
-            saveImage = ImageUtil.RotateImage(metaData, saveImage);
-
-            // リサイズ、回転した画像を書き出す
-            var decodeImage = new WriteableBitmap(saveImage);
-            decodeImage.Freeze();
-
-            return decodeImage;
+            // WinUI版では画像処理を簡略化
+            return ImageUtil.DecodePicture(FilePath, 2200, IsRawImage);
         }
     }
 }
