@@ -1,0 +1,5 @@
+D:\repo\PhotoViewer\PhotoViewer\Helpers\ImageUtil.cs(187,67): error CS0246: 型または名前空間の名前 'ImageDataWrapper' が見つかりませんでした (using ディレクティブまたはアセンブリ参照が指定されていることを確認してください) [D:\repo\PhotoViewer\PhotoViewer\PhotoViewer.csproj]
+D:\repo\PhotoViewer\PhotoViewer\ViewModels\ExplorerViewModel.cs(159,73): error CS0246: 型または名前空間の名前 'ItemsControl' が見つかりませんでした (using ディレクティブまたはアセンブリ参照が指定されていることを確認してください) [D:\repo\PhotoViewer\PhotoViewer\PhotoViewer.csproj]
+D:\repo\PhotoViewer\PhotoViewer\Views\ExplorerView.xaml.cs(47,66): error CS0246: 型または名前空間の名前 'TreeViewItemExpandingEventArgs' が見つかりませんでした (using ディレクティブまたはアセンブリ参照が指定されていることを確認してください) [D:\repo\PhotoViewer\PhotoViewer\PhotoViewer.csproj]
+D:\repo\PhotoViewer\PhotoViewer\obj\x64\Release\net8.0-windows10.0.19041.0\Views\RegisterAppView.g.i.cs(20,48): error CS0234: 型または名前空間の名前 'Controls' が名前空間 'CommunityToolkit.WinUI' に存在しません (アセンブリ参照があることを確認してください) [D:\repo\PhotoViewer\PhotoViewer\PhotoViewer.csproj]
+D:\repo\PhotoViewer\PhotoViewer\ViewModels\ResizeImageViewModel.cs(129,17): error CS0246: 型または名前空間の名前 'Size' が見つかりませんでした (using ディレクティブまたはアセンブリ参照が指定されていることを確認してください) [D:\repo\PhotoViewer\PhotoViewer\PhotoViewer.csproj]
