@@ -1,38 +1,34 @@
-﻿<UserControl x:Class="Kchary.PhotoViewer.Views.ExifInfoView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
-             mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance viewmodel:ExifInfoViewModel}"
-             d:DesignHeight="500" d:DesignWidth="500">
+﻿<UserControl
+    x:Class="Kchary.PhotoViewer.Views.ExifInfoView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:viewmodel="using:Kchary.PhotoViewer.ViewModels"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance viewmodel:ExifInfoViewModel}"
+    d:DesignHeight="500" d:DesignWidth="500">
     <Grid>
-        <DataGrid BorderBrush="LightGray" BorderThickness="1" FontWeight="Normal" FontSize="14" Focusable="False"
-                  ItemsSource="{Binding ExifDataList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" HeadersVisibility="Column"
-                  CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
-                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" AutoGenerateColumns="False" IsHitTestVisible="False"
-                  VerticalGridLinesBrush="#F0F0F0" HorizontalGridLinesBrush="#F0F0F0">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Parameter" Binding="{Binding ExifParameterText, Mode=OneWay}" Width="auto" MinWidth="160">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style>
-                            <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis" />
-                            <Setter Property="TextBlock.VerticalAlignment" Value="Center" />
-                            <Setter Property="TextBlock.Margin" Value="5,0,0,0" />
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-                <DataGridTextColumn Header="Value" Binding="{Binding ExifParameterValue, Mode=OneWay}" Width="*" MinWidth="100">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style>
-                            <Setter Property="TextBlock.TextTrimming" Value="WordEllipsis" />
-                            <Setter Property="TextBlock.VerticalAlignment" Value="Center" />
-                            <Setter Property="TextBlock.Margin" Value="5,0,0,0" />
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+        <controls:DataGrid 
+            BorderBrush="LightGray" 
+            BorderThickness="1"
+            FontWeight="Normal" 
+            FontSize="14"
+            ItemsSource="{x:Bind ExifDataList, Mode=OneWay}" 
+            IsReadOnly="True" 
+            HeadersVisibility="Column"
+            CanUserReorderColumns="False" 
+            CanUserResizeColumns="False" 
+            CanUserSortColumns="False"
+            VerticalScrollBarVisibility="Auto" 
+            HorizontalScrollBarVisibility="Disabled" 
+            AutoGenerateColumns="False"
+            GridLinesVisibility="All">
+            <controls:DataGrid.Columns>
+                <controls:DataGridTextColumn Header="Parameter" Binding="{Binding ExifParameterText, Mode=OneWay}" Width="Auto" MinWidth="160" />
+                <controls:DataGridTextColumn Header="Value" Binding="{Binding ExifParameterValue, Mode=OneWay}" Width="*" MinWidth="100" />
+            </controls:DataGrid.Columns>
+        </controls:DataGrid>
     </Grid>
 </UserControl>

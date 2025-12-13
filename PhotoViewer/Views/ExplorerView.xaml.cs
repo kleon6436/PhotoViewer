@@ -10,6 +10,8 @@ namespace Kchary.PhotoViewer.Views
     /// </summary>
     public sealed partial class ExplorerView : UserControl
     {
+        public ExplorerViewModel ViewModel => DataContext as ExplorerViewModel;
+
         public ExplorerView()
         {
             this.InitializeComponent();
@@ -22,7 +24,12 @@ namespace Kchary.PhotoViewer.Views
         /// <param name="e">引数情報</param>
         private void TreeView_SelectionChanged(object sender, TreeViewSelectionChangedEventArgs e)
         {
-            if ((sender as TreeView)?.SelectedItem is not ExplorerItem selectedExplorerItem)
+            if (sender is not TreeView treeView)
+            {
+                return;
+            }
+
+            if (treeView.SelectedItem is not ExplorerItem selectedExplorerItem)
             {
                 return;
             }
@@ -31,6 +38,17 @@ namespace Kchary.PhotoViewer.Views
             if (DataContext is ExplorerViewModel vm && vm.SelectedItem != selectedExplorerItem)
             {
                 vm.SelectedItem = selectedExplorerItem;
+            }
+        }
+
+        /// <summary>
+        /// TreeViewItem展開時の処理
+        /// </summary>
+        private void TreeViewItem_Expanding(TreeViewItem sender, TreeViewItemExpandingEventArgs args)
+        {
+            if (args.Item is ExplorerItem item)
+            {
+                item.ExpandItem();
             }
         }
     }
