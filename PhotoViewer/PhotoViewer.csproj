@@ -1,18 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows7.0</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <PackageIcon>PhotoExifViewerIcon.ico</PackageIcon>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>Kchary.PhotoViewer</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x64</Platforms>
-    <ApplicationIcon>PhotoExifViewerIcon.ico</ApplicationIcon>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <PublishProfile>win-x64.pubxml</PublishProfile>
+    <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <PackageIcon>PhotoExifViewerIcon.ico</PackageIcon>
+    <ApplicationIcon>Images\PhotoExifViewerIcon.ico</ApplicationIcon>
     <AssemblyName>PhotoViewer</AssemblyName>
     <Version>3.6.0</Version>
     <Authors>Kleon</Authors>
-    <RootNamespace>Kchary.PhotoViewer</RootNamespace>
     <AssemblyVersion>3.6.0.0</AssemblyVersion>
     <FileVersion>3.6.0.0</FileVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -43,10 +49,11 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="FastEnum" Version="2.0.5" />
     <PackageReference Include="MetadataExtractor" Version="2.8.1" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250114003" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="ReactiveProperty" Version="9.7.0" />
-    <PackageReference Include="ReactiveProperty.WPF" Version="9.7.0" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.4" />
-    <PackageReference Include="VirtualizingWrapPanel" Version="2.1.1" />
+    <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,20 +61,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Images\bluetooth.png" />
-    <Resource Include="Images\edit.png" />
-    <Resource Include="Images\folder.png" />
-    <Resource Include="Images\PhotoExifViewerIcon.ico">
+    <Content Include="Images\bluetooth.png" />
+    <Content Include="Images\edit.png" />
+    <Content Include="Images\folder.png" />
+    <Content Include="Images\PhotoExifViewerIcon.ico">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
-    </Resource>
-    <Resource Include="Images\PlaceholderImage_100x100.png" />
-    <Resource Include="Images\reload.png" />
-    <Resource Include="Images\settings.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Images\SplashScreen.png" />
+    </Content>
+    <Content Include="Images\PlaceholderImage_100x100.png" />
+    <Content Include="Images\reload.png" />
+    <Content Include="Images\settings.png" />
+    <Content Include="Images\SplashScreen.png" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

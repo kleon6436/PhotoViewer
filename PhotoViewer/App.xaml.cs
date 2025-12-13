@@ -1,17 +1,16 @@
-﻿using Reactive.Bindings;
-using Reactive.Bindings.Schedulers;
+﻿using Microsoft.UI.Xaml;
+using Reactive.Bindings;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows;
-using System.Windows.Input;
 
 namespace Kchary.PhotoViewer
 {
-    public partial class App
+    public partial class App : Application
     {
         private static Mutex Mutex = new(false, "PhotoViewer");
+        private Window m_window;
 
         internal static class NativeMethods
         {
@@ -31,7 +30,8 @@ namespace Kchary.PhotoViewer
 
         public App()
         {
-            DispatcherUnhandledException += AppDispatcherUnhandledException;
+            this.InitializeComponent();
+            UnhandledException += App_UnhandledException;
         }
 
         /// <summary>
@@ -52,9 +52,16 @@ namespace Kchary.PhotoViewer
         /// </summary>
         /// <param name="message">メッセージ</param>
         /// <param name="caption">タイトル</param>
-        public static void ShowErrorMessageBox(string message, string caption)
+        public static async void ShowErrorMessageBox(string message, string caption)
         {
-            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Error);
+            var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+            {
+                Title = caption,
+                Content = message,
+                CloseButtonText = "OK",
+                XamlRoot = (Current as App)?.m_window?.Content?.XamlRoot
+            };
+            await dialog.ShowAsync();
         }
 
         /// <summary>
@@ -62,9 +69,16 @@ namespace Kchary.PhotoViewer
         /// </summary>
         /// <param name="message">メッセージ</param>
         /// <param name="caption">タイトル</param>
-        public static void ShowSuccessMessageBox(string message, string caption)
+        public static async void ShowSuccessMessageBox(string message, string caption)
         {
-            MessageBox.Show(message, caption, MessageBoxButton.OK, MessageBoxImage.Information);
+            var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+            {
+                Title = caption,
+                Content = message,
+                CloseButtonText = "OK",
+                XamlRoot = (Current as App)?.m_window?.Content?.XamlRoot
+            };
+            await dialog.ShowAsync();
         }
 
         /// <summary>
@@ -80,7 +94,12 @@ namespace Kchary.PhotoViewer
         {
             try
             {
-                Mouse.OverrideCursor = Cursors.Wait;
+                // WinUIでは Window.Current.CoreWindow.PointerCursor を使用
+                var window = (Current as App)?.m_window;
+                if (window?.Content?.XamlRoot != null)
+                {
+                    window.Content.XamlRoot.Content.ProtectedCursor = Microsoft.UI.Input.InputSystemCursor.Create(Microsoft.UI.Input.InputSystemCursorShape.Wait);
+                }
                 action.Invoke();
             }
             catch (Exception ex)
@@ -90,24 +109,22 @@ namespace Kchary.PhotoViewer
             }
             finally
             {
-                Mouse.OverrideCursor = null;
+                var window = (Current as App)?.m_window;
+                if (window?.Content?.XamlRoot != null)
+                {
+                    window.Content.XamlRoot.Content.ProtectedCursor = Microsoft.UI.Input.InputSystemCursor.Create(Microsoft.UI.Input.InputSystemCursorShape.Arrow);
+                }
             }
         }
 
-        /// <summary>
-        /// アプリスタート時の処理
-        /// </summary>
-        /// <remarks>
-        /// mutexを作成して多重起動を抑制する
-        /// </remarks>
-        /// <param name="sender">sender</param>
-        /// <param name="e">引数情報</param>
-        private void App_OnStartup(object sender, StartupEventArgs e)
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            ReactivePropertyScheduler.SetDefault(new ReactivePropertyWpfScheduler(Dispatcher));
+            ReactivePropertyScheduler.SetDefault(new ReactivePropertySynchronizationContextScheduler(SynchronizationContext.Current));
 
             if (Mutex.WaitOne(0, false))
             {
+                m_window = new Views.MainWindow();
+                m_window.Activate();
                 return;
             }
 
@@ -128,37 +145,17 @@ namespace Kchary.PhotoViewer
 
             Mutex.Close();
             Mutex = null;
-            Shutdown();
-        }
-
-        /// <summary>
-        /// アプリ終了時の処理
-        /// </summary>
-        /// <remarks>
-        /// Release mutex to prevent multiple startup.
-        /// </remarks>
-        /// <param name="sender">sender</param>
-        /// <param name="e">引数情報</param>
-        private void App_OnExit(object sender, ExitEventArgs e)
-        {
-            if (Mutex == null)
-            {
-                return;
-            }
-
-            Mutex.ReleaseMutex();
-            Mutex.Close();
+            Exit();
         }
 
         /// <summary>
         /// アプリケーションのハンドルされていないExceptionが発生したとき
         /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="e">引数情報</param>
-        private static void AppDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             LogException(e.Exception);
             ShowErrorMessageBox("File access error occurred", "File access error");
+            e.Handled = true;
         }
     }
 }

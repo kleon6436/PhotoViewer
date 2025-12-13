@@ -1,18 +1,18 @@
 ﻿using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.ViewModels;
+using Microsoft.UI.Xaml;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows;
-using System.Windows.Interop;
+using WinRT.Interop;
 
 namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow
+    public sealed partial class MainWindow : Window
     {
         /// <summary>
         /// Native method class.
@@ -73,7 +73,7 @@ namespace Kchary.PhotoViewer.Views
         {
             // SplashScreenの表示
             var splashScreen = new SplashScreenView();
-            splashScreen.Show();
+            splashScreen.Activate();
 
             // SplashScreen表示中にViewModelの読み込み
             var timer = new Stopwatch();
@@ -90,15 +90,24 @@ namespace Kchary.PhotoViewer.Views
             }
             splashScreen.Close();
 
-            InitializeComponent();
+            this.InitializeComponent();
+            
+            // ウィンドウ表示時の設定
+            var hwnd = WindowNative.GetWindowHandle(this);
+            var windowPlacement = AppConfigManager.PlaceData;
+            windowPlacement.showCmd = (windowPlacement.showCmd == NativeMethods.Sw.ShowMinimized) ? NativeMethods.Sw.ShowNormal : windowPlacement.showCmd;
+            NativeMethods.SetWindowPlacement(hwnd, windowPlacement);
+
+            this.Closed += Window_Closed;
+            this.SizeChanged += Window_SizeChanged;
         }
 
         /// <summary>
         /// ウィンドウクローズ処理
         /// </summary>
         /// <param name="sender">Window</param>
-        /// <param name="e">引数情報</param>
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        /// <param name="args">引数情報</param>
+        private void Window_Closed(object sender, WindowEventArgs args)
         {
             var vm = DataContext as MainWindowViewModel;
             if (!vm.RequestStopThreadAndTask())
@@ -108,7 +117,7 @@ namespace Kchary.PhotoViewer.Views
             }
 
             // ウィンドウ情報を保存
-            var hwnd = new WindowInteropHelper(this).Handle;
+            var hwnd = WindowNative.GetWindowHandle(this);
             NativeMethods.GetWindowPlacement(hwnd, out var placement);
 
             AppConfigManager.PlaceData = placement;
@@ -121,8 +130,8 @@ namespace Kchary.PhotoViewer.Views
         /// ウィンドウサイズ切り替え時の処理
         /// </summary>
         /// <param name="sender">Window</param>
-        /// <param name="e">引数情報</param>
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        /// <param name="args">引数情報</param>
+        private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs args)
         {
             // ListBoxのアイテム選択時は、そのアイテムまでスクロールする
             var selectedItem = MediaListBox.SelectedItem;
@@ -130,21 +139,6 @@ namespace Kchary.PhotoViewer.Views
             {
                 MediaListBox.ScrollIntoView(selectedItem);
             }
-        }
-
-        /// <summary>
-        /// ウィンドウ表示時
-        /// </summary>
-        /// <param name="e">引数情報</param>
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-
-            var windowPlacement = AppConfigManager.PlaceData;
-            windowPlacement.showCmd = (windowPlacement.showCmd == NativeMethods.Sw.ShowMinimized) ? NativeMethods.Sw.ShowNormal : windowPlacement.showCmd;
-
-            var hwnd = new WindowInteropHelper(this).Handle;
-            NativeMethods.SetWindowPlacement(hwnd, windowPlacement);
         }
     }
 }
