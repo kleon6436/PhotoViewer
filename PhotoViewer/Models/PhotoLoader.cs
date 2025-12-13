@@ -1,9 +1,9 @@
 ﻿using Kchary.PhotoViewer.Helpers;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Models
 {
@@ -40,7 +40,7 @@ namespace Kchary.PhotoViewer.Models
         /// 写真とExif情報を読み込む
         /// </summary>
         /// <returns>写真とExif情報</returns>
-        public async Task<(BitmapSource Image, ExifInfo[] ExifInfos)> LoadPhotoAsync()
+        public async Task<(BitmapImage Image, ExifInfo[] ExifInfos)> LoadPhotoAsync()
         {
             if (PhotoInfo == null)
             {
@@ -78,7 +78,7 @@ namespace Kchary.PhotoViewer.Models
         /// 選択されたメディア情報を非同期で読み込み、画像、Exif情報を取得する
         /// </summary>
         /// <returns>画像とExif情報</returns>
-        private async Task<(BitmapSource Image, ExifInfo[] ExifInfos)> LoadImageAndExifAsync(CancellationToken cancellationToken)
+        private async Task<(BitmapImage Image, ExifInfo[] ExifInfos)> LoadImageAndExifAsync(CancellationToken cancellationToken)
         {
             var loadImageTask = Task.Run(() =>
             {
