@@ -1,50 +1,16 @@
-﻿<Window x:Class="Kchary.PhotoViewer.Views.SettingView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:converter="clr-namespace:Kchary.PhotoViewer.Converter"
-        xmlns:viewmodel="clr-namespace:Kchary.PhotoViewer.ViewModels"
-        mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance viewmodel:SettingViewModel}"
-        ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
-        Icon="/Images/PhotoExifViewerIcon.ico"
-        Title="PhotoViewer" Height="600" Width="800" Closed="Window_Closed">
+﻿<Window
+    x:Class="Kchary.PhotoViewer.Views.SettingView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converter="using:Kchary.PhotoViewer.Converter"
+    xmlns:viewmodel="using:Kchary.PhotoViewer.ViewModels"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance viewmodel:SettingViewModel}"
+    Title="PhotoViewer">
     <Window.Resources>
         <converter:BoolToSelectPageConverter x:Key="SelectPageBoolToEnumConverter" />
-        <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type RadioButton}">
-                        <BulletDecorator Cursor="Hand">
-                            <Border BorderBrush="#FF909090" BorderThickness="0,0,0,1" Height="50">
-                                <Grid>
-                                    <!-- ラジオのチェック部分 -->
-                                    <Border Width="25" Margin="10, 10, 0, 10" HorizontalAlignment="Left" Background="#FFCDCDCD" CornerRadius="1" Name="RadioMark" />
-                                    <!-- ラジオのコンテンツ部分-->
-                                    <ContentPresenter VerticalAlignment="Center" Margin="45,0,0,0" />
-                                </Grid>
-
-                                 <!--ボタンの背景グラデーション設定-->
-                                <Border.Background>
-                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                        <GradientStop Color="White" Offset="0" />
-                                        <GradientStop Color="LightGray" Offset="1" />
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                            </Border>
-                        </BulletDecorator>
-
-                        <!-- チェック時のスタイル設定 -->
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="true">
-                                <Setter TargetName="RadioMark" Property="Background" Value="LightSkyBlue" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -52,23 +18,25 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <Rectangle Grid.Row="0" Fill="LightSkyBlue"/>
-        <TextBlock Grid.Row="0" Text="Application settings" FontWeight="Medium"
-                   FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+        <Grid Grid.Row="0" Background="LightSkyBlue">
+            <TextBlock Text="Application settings" FontWeight="Medium"
+                       FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+        </Grid>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Rectangle Grid.Column="0" Fill="#D4D4D4" />
-            <StackPanel Grid.Column="0" Orientation="Vertical">
-                <RadioButton Content="Register link apps" Style="{StaticResource RadioButtonStyle}" FontSize="14"
-                             IsChecked="{Binding SelectPageButtonValue.Value, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterParameter=LinkageAppPage}" />
-                <RadioButton Content="Information" Style="{StaticResource RadioButtonStyle}" FontSize="14"
-                             IsChecked="{Binding SelectPageButtonValue.Value, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ConverterParameter=InformationPage}" />
-            </StackPanel>
-            <Frame x:Name="Frame" Grid.Column="1" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage.Value, Mode=OneWay}" />
+            <Grid Grid.Column="0" Background="#D4D4D4">
+                <StackPanel Orientation="Vertical">
+                    <RadioButton Content="Register link apps" FontSize="14" Margin="10" Height="50"
+                                 IsChecked="{Binding SelectPageButtonValue.Value, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=LinkageAppPage}" />
+                    <RadioButton Content="Information" FontSize="14" Margin="10" Height="50"
+                                 IsChecked="{Binding SelectPageButtonValue.Value, Converter={StaticResource SelectPageBoolToEnumConverter}, Mode=TwoWay, ConverterParameter=InformationPage}" />
+                </StackPanel>
+            </Grid>
+            <Frame x:Name="Frame" Grid.Column="1" Content="{Binding DisplayPage.Value, Mode=OneWay}" />
         </Grid>
     </Grid>
 </Window>
