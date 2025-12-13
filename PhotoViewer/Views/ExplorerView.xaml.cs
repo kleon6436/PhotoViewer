@@ -1,18 +1,18 @@
 ﻿using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.ViewModels;
-using System.Windows;
-using System.Windows.Controls;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for ExplorerView.xaml
     /// </summary>
-    public partial class ExplorerView
+    public sealed partial class ExplorerView : UserControl
     {
         public ExplorerView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         /// <summary>
@@ -20,16 +20,12 @@ namespace Kchary.PhotoViewer.Views
         /// </summary>
         /// <param name="sender">TreeView</param>
         /// <param name="e">引数情報</param>
-        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void TreeView_SelectionChanged(object sender, TreeViewSelectionChangedEventArgs e)
         {
             if ((sender as TreeView)?.SelectedItem is not ExplorerItem selectedExplorerItem)
             {
                 return;
             }
-
-            // スクロールして、フォーカスを当てる
-            selectedExplorerItem.BringIntoView();
-            selectedExplorerItem.Focus();
 
             // 選択したアイテムをVMに通知
             if (DataContext is ExplorerViewModel vm && vm.SelectedItem != selectedExplorerItem)

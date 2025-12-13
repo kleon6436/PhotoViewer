@@ -1,13 +1,15 @@
-﻿namespace Kchary.PhotoViewer.Views
+﻿using Microsoft.UI.Xaml;
+
+namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for SplashScreen.xaml
     /// </summary>
-    public partial class SplashScreenView
+    public sealed partial class SplashScreenView : Window
     {
         public SplashScreenView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

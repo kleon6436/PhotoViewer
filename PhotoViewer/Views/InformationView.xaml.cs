@@ -1,13 +1,15 @@
-﻿namespace Kchary.PhotoViewer.Views
+﻿using Microsoft.UI.Xaml.Controls;
+
+namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for InformationView.xaml
     /// </summary>
-    public partial class InformationView
+    public sealed partial class InformationView : Page
     {
         public InformationView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

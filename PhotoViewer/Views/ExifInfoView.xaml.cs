@@ -1,13 +1,15 @@
-﻿namespace Kchary.PhotoViewer.Views
+﻿using Microsoft.UI.Xaml.Controls;
+
+namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for ExifInfoView.xaml
     /// </summary>
-    public partial class ExifInfoView
+    public sealed partial class ExifInfoView : UserControl
     {
         public ExifInfoView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

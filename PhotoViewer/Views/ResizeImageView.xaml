@@ -8,7 +8,7 @@
         d:DataContext="{d:DesignInstance viewmodel:ResizeImageViewModel}"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
         Icon="/Images/PhotoExifViewerIcon.ico"
-        Title="PhotoViewer" Height="400" Width="650" Closing="Window_Closing">
+        Title="PhotoViewer" Height="400" Width="650" Closed="Window_Closed">
     <Window.Background>
         <SolidColorBrush Color="#F0F0F0" />
     </Window.Background>

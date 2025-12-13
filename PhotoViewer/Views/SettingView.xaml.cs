@@ -1,18 +1,19 @@
 ﻿using Kchary.PhotoViewer.ViewModels;
+using Microsoft.UI.Xaml;
 
 namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for SettingView.xaml
     /// </summary>
-    public partial class SettingView
+    public sealed partial class SettingView : Window
     {
         public SettingView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closed(object sender, WindowEventArgs args)
         {
             var vm = DataContext as SettingViewModel;
             vm?.Dispose();

@@ -1,17 +1,17 @@
 ﻿using Kchary.PhotoViewer.Models;
 using Kchary.PhotoViewer.ViewModels;
-using System.Windows;
+using Microsoft.UI.Xaml;
 
 namespace Kchary.PhotoViewer.Views
 {
     /// <summary>
     /// Interaction logic for ExifDeleteToolView.xaml
     /// </summary>
-    public partial class ImageEditToolView
+    public sealed partial class ImageEditToolView : Window
     {
         public ImageEditToolView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             DataContextChanged += (_, _) =>
             {
@@ -37,7 +37,7 @@ namespace Kchary.PhotoViewer.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void ComboBox_SelectionChanged(object sender, Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs e)
         {
             if (DataContext is not ResizeImageViewModel vm)
             {
@@ -48,7 +48,7 @@ namespace Kchary.PhotoViewer.Views
             vm.IsEnableImageSaveQuality.Value = vm.SelectedForm.Value.Form == FileExtensionType.Jpeg;
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closed(object sender, WindowEventArgs args)
         {
             var vm = DataContext as ResizeImageViewModel;
             vm?.Dispose();
