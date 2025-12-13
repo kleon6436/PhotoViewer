@@ -1,8 +1,8 @@
 ﻿using Kchary.PhotoViewer.Helpers;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Media.Imaging;
 
 namespace Kchary.PhotoViewer.Models
 {
@@ -30,7 +30,7 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// サムネイルをキャッシュから取得。なければ作成してキャッシュ。
         /// </summary>
-        public static BitmapSource GetOrCreate(string filePath, ThumbnailQuality quality)
+        public static BitmapImage GetOrCreate(string filePath, ThumbnailQuality quality)
         {
             lock (thumbnailLock)
             {
@@ -92,9 +92,10 @@ namespace Kchary.PhotoViewer.Models
         /// <summary>
         /// サムネイルサイズを推定する（Bytes単位）
         /// </summary>
-        private static long EstimateMemorySize(BitmapSource bitmap)
+        private static long EstimateMemorySize(BitmapImage bitmap)
         {
-            return (long)bitmap.PixelWidth * bitmap.PixelHeight * (bitmap.Format.BitsPerPixel / 8);
+            // WinUI BitmapImageの場合、PixelWidthとPixelHeightから推定
+            return (long)bitmap.PixelWidth * bitmap.PixelHeight * 4; // 4 bytes per pixel (RGBA)
         }
 
         /// <summary>
@@ -116,7 +117,7 @@ namespace Kchary.PhotoViewer.Models
         /// </summary>
         private class CacheEntry
         {
-            public BitmapSource Image { get; set; }
+            public BitmapImage Image { get; set; }
             public long Size { get; set; }
             public DateTime LastAccess { get; set; }
         }
